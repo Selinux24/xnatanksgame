@@ -8,8 +8,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Physics")]
 [assembly: AssemblyProduct("Physics")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("Windows uE")]
-[assembly: AssemblyCopyright("Copyright © Windows uE 2007")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyCopyright("Copyright ©  2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
