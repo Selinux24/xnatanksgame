@@ -8,8 +8,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("DrawingComponents")]
 [assembly: AssemblyProduct("DrawingComponents")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("Windows uE")]
-[assembly: AssemblyCopyright("Copyright © Windows uE 2008")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyCopyright("Copyright ©  2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
