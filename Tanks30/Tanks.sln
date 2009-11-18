@@ -10,6 +10,36 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Physics", "Physics\Physics.csproj", "{1F2830F8-092D-4399-82E1-0BC0B1544517}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs02.codeplex.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = SceneryComponent\\SceneryComponent.csproj
+		SccProjectName1 = SceneryComponent
+		SccLocalPath1 = SceneryComponent
+		SccProjectUniqueName2 = Tanks\\Tanks.csproj
+		SccProjectName2 = Tanks
+		SccLocalPath2 = Tanks
+		SccProjectUniqueName3 = CustomProcessors\\CustomProcessors.csproj
+		SccProjectName3 = CustomProcessors
+		SccLocalPath3 = CustomProcessors
+		SccProjectUniqueName4 = Physics\\Physics.csproj
+		SccProjectName4 = Physics
+		SccLocalPath4 = Physics
+		SccProjectUniqueName5 = SceneryComponent\\Content.contentproj
+		SccProjectTopLevelParentUniqueName5 = SceneryComponent\\SceneryComponent.csproj
+		SccProjectName5 = SceneryComponent
+		SccLocalPath5 = SceneryComponent
+		SccProjectUniqueName6 = Tanks\\Content.contentproj
+		SccProjectTopLevelParentUniqueName6 = Tanks\\Tanks.csproj
+		SccProjectName6 = Tanks
+		SccLocalPath6 = Tanks
+		SccProjectUniqueName7 = Physics\\Content.contentproj
+		SccProjectTopLevelParentUniqueName7 = Physics\\Physics.csproj
+		SccProjectName7 = Physics
+		SccLocalPath7 = Physics
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Debug|Xbox 360 = Debug|Xbox 360
