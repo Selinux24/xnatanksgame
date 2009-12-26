@@ -1,17 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Input;
-using Physics;
-using CustomProcessors;
-using GameComponents;
-using GameComponents.Physics;
-using GameComponents.Scenery;
-using GameComponents.Vehicles.Animation;
 using GameComponents.Camera;
 using GameComponents.Components.Particles;
+using GameComponents.Scenery;
+using GameComponents.Vehicles.Animation;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Physics;
 
 namespace GameComponents.Vehicles
 {
@@ -25,7 +21,7 @@ namespace GameComponents.Vehicles
         // Escenario
         protected SceneryGameComponent scenery = null;
         // Modelo
-        protected Model model;
+        private Model model;
 
         // Piloto automático
         private AutoPilot m_Autopilot = new AutoPilot();
@@ -68,14 +64,6 @@ namespace GameComponents.Vehicles
         // Indica si la escala ha sido modificada desde la último actualización
         protected bool m_ScaleHasChanged = false;
 
-        // Lista de transformaciones del modelo
-        protected Matrix[] m_BoneTransforms;
-        // Controlador de animación
-        protected AnimationController m_AnimationController = new AnimationController();
-        // Lista de posibles posiciones de jugador
-        protected List<PlayerPosition> m_PlayerControlList = new List<PlayerPosition>();
-        // Posición actual del jugador en el modelo
-        protected PlayerPosition m_CurrentPlayerControl = null;
         // Indica si el tanque tiene el foco
         public bool HasFocus = false;
 
@@ -298,6 +286,16 @@ namespace GameComponents.Vehicles
         protected override void LoadContent()
         {
             base.LoadContent();
+
+            VehicleComponentInfo componentInfo = VehicleComponentInfo.Load("Content/Rhino.xml");
+
+            this.model = contentManager.Load<Model>("Content/" + componentInfo.Model);
+
+            this.m_AnimationController.AddRange(componentInfo.CreateAnimationList(this.model));
+
+            this.m_PlayerControlList.AddRange(componentInfo.CreatePlayerPositionList(this.model));
+
+            this.m_BoneTransforms = new Matrix[model.Bones.Count];
         }
         /// <summary>
         /// Actualiza el estado del componente

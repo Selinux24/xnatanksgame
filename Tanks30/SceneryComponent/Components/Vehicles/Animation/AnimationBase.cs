@@ -11,10 +11,14 @@ namespace GameComponents.Vehicles.Animation
     /// </summary>
     public class AnimationBase
     {
+        /// <summary>
+        /// Nombre de la animación
+        /// </summary>
+        public readonly string Name = null;
         // Indice del bone que se va a animar
         public readonly int Index = -1;
         // Nombre del bone que se va a animar
-        public readonly string Name = null;
+        public readonly string BoneName = null;
 
         // Bone que se va a animar
         private ModelBone m_Bone = null;
@@ -49,13 +53,16 @@ namespace GameComponents.Vehicles.Animation
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="name">Nombre</param>
         /// <param name="bone">Bone que se va a animar</param>
-        public AnimationBase(ModelBone bone)
+        public AnimationBase(string name, ModelBone bone)
         {
+            this.Name = name;
+
             if (bone != null)
             {
                 this.m_Bone = bone;
-                this.Name = m_Bone.Name;
+                this.BoneName = m_Bone.Name;
                 this.Index = m_Bone.Index;
             }
         }
@@ -108,7 +115,7 @@ namespace GameComponents.Vehicles.Animation
         {
             string mask = "{0}:{1}";
 
-            return string.Format(mask, this.GetType(), this.Name);
+            return string.Format(mask, this.GetType(), this.BoneName);
         }
     }
 }

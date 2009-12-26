@@ -118,6 +118,7 @@
     <Compile Include="Components\Scenery\SceneryPrimitiveNode.cs">
       <Name>SceneryPrimitiveNode</Name>
     </Compile>
+    <Compile Include="Components\Vehicles\Animation\AnimationInfo.cs" />
     <Compile Include="Components\Vehicles\Animation\PlayerPosition.cs">
       <Name>PlayerPosition</Name>
     </Compile>
@@ -130,6 +131,10 @@
     <Compile Include="Components\Vehicles\Animation\AnimationController.cs">
       <Name>AnimationController</Name>
     </Compile>
+    <Compile Include="Components\Vehicles\Animation\PlayerPositionInfo.cs" />
+    <Compile Include="Components\Vehicles\Animation\VehicleAnimationControler.cs" />
+    <Compile Include="Components\Vehicles\TankGameComponent.Animation.cs" />
+    <Compile Include="Components\Vehicles\VehicleComponentInfo.cs" />
     <Compile Include="InputHelper.cs">
       <Name>InputHelper</Name>
     </Compile>

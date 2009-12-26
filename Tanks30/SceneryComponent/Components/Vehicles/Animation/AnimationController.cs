@@ -50,6 +50,20 @@ namespace GameComponents.Vehicles.Animation
             }
         }
         /// <summary>
+        /// Añade una lista de animaciones al controlador
+        /// </summary>
+        /// <param name="animationList">Animaciones</param>
+        public void AddRange(AnimationBase[] animationList)
+        {
+            if (animationList != null && animationList.Length > 0)
+            {
+                foreach (AnimationBase animation in animationList)
+                {
+                    this.Add(animation);
+                }
+            }
+        }
+        /// <summary>
         /// Elimina una animación del controlador
         /// </summary>
         /// <param name="animation">Animación</param>

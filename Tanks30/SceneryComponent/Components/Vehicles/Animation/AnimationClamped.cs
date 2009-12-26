@@ -17,8 +17,10 @@ namespace GameComponents.Vehicles.Animation
         private float m_RotationTo = 0f;
         // Ángulo actual en radianes
         private float m_CurrentAngle = 0f;
-        // Velocidad angular en radianes
+        // Velocidad angular de la animación
         private float m_AngularVelocity = 0f;
+        // Velocidad angular en radianes
+        private float m_CurrentAngularVelocity = 0f;
 
         /// <summary>
         /// Indica si la rotación tiene límites establecidos
@@ -64,9 +66,10 @@ namespace GameComponents.Vehicles.Animation
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="name">Nombre</param>
         /// <param name="bone">Bone que se va a animar</param>
-        public AnimationClamped(ModelBone bone)
-            : base(bone)
+        public AnimationClamped(string name, ModelBone bone)
+            : base(name, bone)
         {
 
         }
@@ -80,13 +83,13 @@ namespace GameComponents.Vehicles.Animation
             base.Update(gameTime);
 
             //Animación automática
-            if (m_AngularVelocity != 0f)
+            if (m_CurrentAngularVelocity != 0f)
             {
-                this.Rotate(m_AngularVelocity);
+                this.Rotate(m_CurrentAngularVelocity);
 
                 if (RotationFromReached || RotationToReached)
                 {
-                    m_AngularVelocity = 0f;
+                    m_CurrentAngularVelocity = 0f;
                 }
             }
         }
@@ -96,12 +99,14 @@ namespace GameComponents.Vehicles.Animation
         /// <param name="axis">Eje de rotación</param>
         /// <param name="angleFrom">Ángulo desde</param>
         /// <param name="angleTo">Ángulo hasta</param>
-        public virtual void Initialize(Vector3 axis, float angleFrom, float angleTo)
+        /// <param name="angularVelocity">Velocidad angular</param>
+        public virtual void Initialize(Vector3 axis, float angleFrom, float angleTo, float angularVelocity)
         {
             base.Initialize(axis);
 
             m_RotationFrom = MathHelper.ToRadians(angleFrom);
             m_RotationTo = MathHelper.ToRadians(angleTo);
+            m_AngularVelocity = angularVelocity;
         }
         /// <summary>
         /// Reinicia la animación
@@ -139,17 +144,17 @@ namespace GameComponents.Vehicles.Animation
         /// <summary>
         /// Comienza la animación
         /// </summary>
-        /// <param name="angularVelocity">Velocidad angular de la animación</param>
-        public void Begin(float angularVelocity)
+        /// <param name="reverse">Indica si debe realizarse hacia atrás</param>
+        public void Begin(bool reverse)
         {
-            m_AngularVelocity = angularVelocity;
+            m_CurrentAngularVelocity = (reverse) ? -m_AngularVelocity : m_AngularVelocity;
         }
         /// <summary>
         /// Termina la animación
         /// </summary>
         public void End()
         {
-            m_AngularVelocity = 0f;
+            m_CurrentAngularVelocity = 0f;
         }
         /// <summary>
         /// Corta el ángulo especificado entre los límites establecidos

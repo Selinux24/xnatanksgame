@@ -11,10 +11,12 @@ namespace GameComponents.Vehicles.Animation
     /// </summary>
     public class PlayerPosition
     {
+        // Nombre de la posición
+        public readonly string Name = null;
         // Indice del bone que representa la posición del jugador
         public readonly int Index = -1;
         // Nombre del bone que representa la posición del jugador
-        public readonly string Name = null;
+        public readonly string BoneName = null;
 
         // Bone que representa la posición del jugador
         private ModelBone m_Bone = null;
@@ -24,12 +26,14 @@ namespace GameComponents.Vehicles.Animation
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="name">Nombre</param>
         /// <param name="bone">Bone que representa la posición del jugador</param>
         /// <param name="translation">Posición adicional a la posición marcada por el bone</param>
-        public PlayerPosition(ModelBone bone, Vector3 translation)
+        public PlayerPosition(string name, ModelBone bone, Vector3 translation)
         {
+            this.Name = name;
             this.Index = bone.Index;
-            this.Name = bone.Name;
+            this.BoneName = bone.Name;
 
             m_Bone = bone;
             m_AditionalTranslation = translation;
