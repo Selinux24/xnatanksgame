@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Input;
 using GameComponents;
 using GameComponents.Vehicles;
 using GameComponents.Vehicles.Animation;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Tanks.Vehicles
 {
@@ -17,16 +14,15 @@ namespace Tanks.Vehicles
     {
         #region Incialización del control de animación
 
-        string _Model = @"Content\Rhino";
-        AnimationClamped m_BOLTER; string _BOLTER = "HULL_BODY_BOLTER";
-        AnimationBase m_BOLTER_BASE; string _BOLTER_BASE = "HULL_BODY_BOLTER_BASE";
-        AnimationClamped m_BOLTER_HATCH; string _BOLTER_HATCH = "HULL_BODY_BOLTER_HATCH";
-        AnimationClamped m_DRIVER_HATCH; string _DRIVER_HATCH = "HULL_BODY_HATCH_NORTH";
-        AnimationClamped m_RIGHT_HATCH; string _RIGHT_HATCH = "HULL_BODY_HATCH_RIGHT";
-        AnimationClamped m_LEFT_HATCH; string _LEFT_HATCH = "HULL_BODY_HATCH_LEFT";
-        AnimationClamped m_RIGHT_DOOR; string _RIGHT_DOOR = "HULL_RIGHT_DOOR";
-        AnimationClamped m_LEFT_DOOR; string _LEFT_DOOR = "HULL_LEFT_DOOR";
-        AnimationClamped m_BACK_DOOR; string _BACK_DOOR = "HULL_BODY_BACK_DOOR";
+        AnimationClamped m_BOLTER; string _BOLTER = "Bolter";
+        AnimationBase m_BOLTER_BASE; string _BOLTER_BASE = "BolterBase";
+        AnimationClamped m_BOLTER_HATCH; string _BOLTER_HATCH = "BolterHatch";
+        AnimationClamped m_DRIVER_HATCH; string _DRIVER_HATCH = "DriverHatch";
+        AnimationClamped m_RIGHT_HATCH; string _RIGHT_HATCH = "RightHatch";
+        AnimationClamped m_LEFT_HATCH; string _LEFT_HATCH = "LeftHatch";
+        AnimationClamped m_RIGHT_DOOR; string _RIGHT_DOOR = "RightDoor";
+        AnimationClamped m_LEFT_DOOR; string _LEFT_DOOR = "LeftDoor";
+        AnimationClamped m_BACK_DOOR; string _BACK_DOOR = "BackDoor";
 
         #endregion
 
@@ -55,9 +51,9 @@ namespace Tanks.Vehicles
             CoveredBolter
         }
 
-        PlayerPosition m_DRIVER_POSITION; string _DRIVER_POSITION = "POSITION_DRIVER";
-        PlayerPosition m_GUNNER_POSITION; string _GUNNER_POSITION = "HULL_BODY_BOLTER";
-        PlayerPosition m_GUNNER_COVERED_POSITION; string _GUNNER_COVERED_POSITION = "POSITION_GUNNER";
+        PlayerPosition m_DRIVER_POSITION; string _DRIVER_POSITION = "Driver";
+        PlayerPosition m_GUNNER_POSITION; string _GUNNER_POSITION = "Gunner";
+        PlayerPosition m_GUNNER_COVERED_POSITION; string _GUNNER_COVERED_POSITION = "CoveredGunner";
 
         #endregion
 
@@ -73,17 +69,17 @@ namespace Tanks.Vehicles
         Keys m_RotateUpBolterKey = Keys.Up;
         Keys m_RotateDownBolterKey = Keys.Down;
 
-        Keys m_BolterHatchKey = Keys.D7;
+        Keys m_BolterHatchKey = Keys.NumPad7;
         bool m_BolterHatchAction = false;
-        Keys m_DriverHatchKey = Keys.D9;
+        Keys m_DriverHatchKey = Keys.NumPad9;
         bool m_DriverHatchAction = false;
-        Keys m_BackDoorKey = Keys.D2;
+        Keys m_BackDoorKey = Keys.NumPad2;
         bool m_BackDoorAction = false;
-        Keys m_HatchDoorKey = Keys.D5;
+        Keys m_HatchDoorKey = Keys.NumPad5;
         bool m_HatchDoorAction = false;
-        Keys m_RightDoorKey = Keys.D6;
+        Keys m_RightDoorKey = Keys.NumPad6;
         bool m_RightDoorAction = false;
-        Keys m_LeftDoorKey = Keys.D4;
+        Keys m_LeftDoorKey = Keys.NumPad4;
         bool m_LeftDoorAction = false;
 
         Keys m_ChangeDirectionKey = Keys.R;
@@ -111,60 +107,33 @@ namespace Tanks.Vehicles
         {
             base.LoadContent();
 
-            model = contentManager.Load<Model>(_Model);
-
             #region Controlador de animación
 
-            m_BOLTER = new AnimationClamped(model.Bones[_BOLTER]);
-            m_BOLTER.Initialize(Vector3.Right, -25, 45);
-            m_BOLTER_BASE = new AnimationBase(model.Bones[_BOLTER_BASE]);
-            m_BOLTER_BASE.Initialize(Vector3.Up);
-            m_BOLTER_HATCH = new AnimationClamped(model.Bones[_BOLTER_HATCH]);
-            m_BOLTER_HATCH.Initialize(Vector3.Right, 0, 100);
+            m_BOLTER = (AnimationClamped)this.GetAnimation(_BOLTER);
+            m_BOLTER_BASE = this.GetAnimation(_BOLTER_BASE);
+            m_BOLTER_HATCH = (AnimationClamped)this.GetAnimation(_BOLTER_HATCH);
 
-            m_DRIVER_HATCH = new AnimationClamped(model.Bones[_DRIVER_HATCH]);
-            m_DRIVER_HATCH.Initialize(Vector3.Right, 0, 150);
+            m_DRIVER_HATCH = (AnimationClamped)this.GetAnimation(_DRIVER_HATCH);
 
-            m_RIGHT_DOOR = new AnimationClamped(model.Bones[_RIGHT_DOOR]);
-            m_RIGHT_DOOR.Initialize(Vector3.Forward, 0, 135);
-            m_LEFT_DOOR = new AnimationClamped(model.Bones[_LEFT_DOOR]);
-            m_LEFT_DOOR.Initialize(Vector3.Forward, -135, 0);
+            m_RIGHT_DOOR = (AnimationClamped)this.GetAnimation(_RIGHT_DOOR);
+            m_LEFT_DOOR = (AnimationClamped)this.GetAnimation(_LEFT_DOOR);
 
-            m_RIGHT_HATCH = new AnimationClamped(model.Bones[_RIGHT_HATCH]);
-            m_RIGHT_HATCH.Initialize(Vector3.Forward, 0, 135);
-            m_LEFT_HATCH = new AnimationClamped(model.Bones[_LEFT_HATCH]);
-            m_LEFT_HATCH.Initialize(Vector3.Forward, -135, 0);
+            m_RIGHT_HATCH = (AnimationClamped)this.GetAnimation(_RIGHT_HATCH);
+            m_LEFT_HATCH = (AnimationClamped)this.GetAnimation(_LEFT_HATCH);
 
-            m_BACK_DOOR = new AnimationClamped(model.Bones[_BACK_DOOR]);
-            m_BACK_DOOR.Initialize(Vector3.Right, 0, 90);
-
-            m_AnimationController.Add(m_BOLTER);
-            m_AnimationController.Add(m_BOLTER_BASE);
-            m_AnimationController.Add(m_BOLTER_HATCH);
-            m_AnimationController.Add(m_DRIVER_HATCH);
-            m_AnimationController.Add(m_RIGHT_DOOR);
-            m_AnimationController.Add(m_LEFT_DOOR);
-            m_AnimationController.Add(m_RIGHT_HATCH);
-            m_AnimationController.Add(m_LEFT_HATCH);
-            m_AnimationController.Add(m_BACK_DOOR);
+            m_BACK_DOOR = (AnimationClamped)this.GetAnimation(_BACK_DOOR);
 
             #endregion
 
             #region Controladores de posición
 
-            m_DRIVER_POSITION = new PlayerPosition(model.Bones[_DRIVER_POSITION], new Vector3(0f, 0f, 0.4f));
-            m_GUNNER_POSITION = new PlayerPosition(model.Bones[_GUNNER_POSITION], new Vector3(0f, 0.3f, 0.4f));
-            m_GUNNER_COVERED_POSITION = new PlayerPosition(model.Bones[_GUNNER_COVERED_POSITION], new Vector3(0f, 0f, 0.4f));
-
-            m_PlayerControlList.Add(m_DRIVER_POSITION);
-            m_PlayerControlList.Add(m_GUNNER_POSITION);
-            m_PlayerControlList.Add(m_GUNNER_COVERED_POSITION);
+            m_DRIVER_POSITION = this.GetPlayerPosition(_DRIVER_POSITION);
+            m_GUNNER_POSITION = this.GetPlayerPosition(_GUNNER_POSITION);
+            m_GUNNER_COVERED_POSITION = this.GetPlayerPosition(_GUNNER_COVERED_POSITION);
 
             #endregion
 
             m_CurrentPlayerControl = m_GUNNER_POSITION;
-
-            m_BoneTransforms = new Matrix[model.Bones.Count];
         }
         /// <summary>
         /// Actualiza el estado del componente
@@ -392,14 +361,14 @@ namespace Tanks.Vehicles
         /// </summary>
         public void OpenBolterHatch()
         {
-            this.m_BOLTER_HATCH.Begin(0.08f);
+            this.m_BOLTER_HATCH.Begin(false);
         }
         /// <summary>
         /// Cerrar escotilla del bolter
         /// </summary>
         public void CloseBolterHatch()
         {
-            this.m_BOLTER_HATCH.Begin(-0.08f);
+            this.m_BOLTER_HATCH.Begin(true);
         }
 
         /// <summary>
@@ -407,14 +376,14 @@ namespace Tanks.Vehicles
         /// </summary>
         public void OpenDriverHatch()
         {
-            this.m_DRIVER_HATCH.Begin(0.08f);
+            this.m_DRIVER_HATCH.Begin(false);
         }
         /// <summary>
         /// Cerrar escotilla del conductor
         /// </summary>
         public void CloseDriverHatch()
         {
-            this.m_DRIVER_HATCH.Begin(-0.08f);
+            this.m_DRIVER_HATCH.Begin(true);
         }
 
         /// <summary>
@@ -422,14 +391,14 @@ namespace Tanks.Vehicles
         /// </summary>
         public void OpenHullBackDoor()
         {
-            this.m_BACK_DOOR.Begin(0.06f);
+            this.m_BACK_DOOR.Begin(false);
         }
         /// <summary>
         /// Cerrar la puerta del atrás
         /// </summary>
         public void CloseHullBackDoor()
         {
-            this.m_BACK_DOOR.Begin(-0.01f);
+            this.m_BACK_DOOR.Begin(true);
         }
 
         /// <summary>
@@ -437,16 +406,16 @@ namespace Tanks.Vehicles
         /// </summary>
         public void OpenHullHatch()
         {
-            this.m_RIGHT_HATCH.Begin(0.02f);
-            this.m_LEFT_HATCH.Begin(-0.02f);
+            this.m_RIGHT_HATCH.Begin(false);
+            this.m_LEFT_HATCH.Begin(false);
         }
         /// <summary>
         /// Cerrar la escotilla superior
         /// </summary>
         public void CloseHullHatch()
         {
-            this.m_RIGHT_HATCH.Begin(-0.02f);
-            this.m_LEFT_HATCH.Begin(0.02f);
+            this.m_RIGHT_HATCH.Begin(true);
+            this.m_LEFT_HATCH.Begin(true);
         }
 
         /// <summary>
@@ -454,14 +423,14 @@ namespace Tanks.Vehicles
         /// </summary>
         public void OpenRightDoor()
         {
-            this.m_RIGHT_DOOR.Begin(0.06f);
+            this.m_RIGHT_DOOR.Begin(false);
         }
         /// <summary>
         /// Cerrar la puerta derecha
         /// </summary>
         public void CloseRightDoor()
         {
-            this.m_RIGHT_DOOR.Begin(-0.01f);
+            this.m_RIGHT_DOOR.Begin(true);
         }
 
         /// <summary>
@@ -469,14 +438,14 @@ namespace Tanks.Vehicles
         /// </summary>
         public void OpenLeftDoor()
         {
-            this.m_LEFT_DOOR.Begin(-0.06f);
+            this.m_LEFT_DOOR.Begin(false);
         }
         /// <summary>
         /// Cerrar la puerta izquierda
         /// </summary>
         public void CloseLeftDoor()
         {
-            this.m_LEFT_DOOR.Begin(0.01f);
+            this.m_LEFT_DOOR.Begin(true);
         }
 
         /// <summary>

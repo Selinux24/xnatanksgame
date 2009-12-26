@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework;
 using GameComponents.Vehicles;
+using Microsoft.Xna.Framework;
 using Tanks.Vehicles;
 
 namespace Tanks.Services
