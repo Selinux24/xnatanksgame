@@ -16,6 +16,8 @@ namespace GameComponents.Vehicles
     /// </summary>
     public partial class TankGameComponent : DrawableGameComponent, IVehicleController
     {
+        // Nombre del componente
+        protected string componentInfoName;
         // Administrador de contenidos
         protected ContentManager contentManager;
         // Escenario
@@ -54,6 +56,10 @@ namespace GameComponents.Vehicles
         protected float m_BrakeModifier = 0f;
         // Velocidad angular
         protected float m_AngularVelocityModifier = 0f;
+        // Altura
+        protected float m_Height = 0f;
+        // Vehículo volador
+        protected bool m_Skimmer = false;
 
         // Indica que el vehículo se ha inicializado
         protected bool m_Initialized = false;
@@ -287,9 +293,24 @@ namespace GameComponents.Vehicles
         {
             base.LoadContent();
 
-            VehicleComponentInfo componentInfo = VehicleComponentInfo.Load("Content/Rhino.xml");
+            VehicleComponentInfo componentInfo = VehicleComponentInfo.Load("Content/" + this.componentInfoName);
 
             this.model = contentManager.Load<Model>("Content/" + componentInfo.Model);
+
+            // Velocidad máxima que puede alcanzar el tanque hacia delante
+            this.m_MaxForwardVelocity = componentInfo.MaxForwardVelocity;
+            // Velocidad máxima que puede alcanzar el tanque marcha atrás
+            this.m_MaxBackwardVelocity = componentInfo.MaxBackwardVelocity;
+            // Modificador de aceleración
+            this.m_AccelerationModifier = m_MaxForwardVelocity / componentInfo.AccelerationModifier;
+            // Modificador de frenado
+            this.m_BrakeModifier = m_AccelerationModifier * componentInfo.BrakeModifier;
+            // Velocidad angular
+            this.m_AngularVelocityModifier = MathHelper.ToRadians(componentInfo.AngularVelocityModifier);
+            // Altura
+            this.m_Height = componentInfo.Height;
+            // Vehículo volador
+            this.m_Skimmer = componentInfo.Skimmer;
 
             this.m_AnimationController.AddRange(componentInfo.CreateAnimationList(this.model));
 
@@ -325,7 +346,7 @@ namespace GameComponents.Vehicles
             if (!m_Initialized)
             {
                 // Actualizar inclinación y altura
-                this.UpdateWithScenery(gameTime);
+                this.UpdateWithScenery(gameTime, m_Height);
 
                 m_Initialized = true;
             }
@@ -334,7 +355,7 @@ namespace GameComponents.Vehicles
                 if (m_PositionHasChanged || m_RotationHasChanged || m_ScaleHasChanged)
                 {
                     // Actualizar inclinación y altura
-                    this.UpdateWithScenery(gameTime);
+                    this.UpdateWithScenery(gameTime, m_Height);
                 }
 
                 // Añadiendo humo
@@ -347,7 +368,7 @@ namespace GameComponents.Vehicles
                 if (frames >= maxframes)
                 {
                     // Actualizar inclinación y altura
-                    this.UpdateWithScenery(gameTime);
+                    this.UpdateWithScenery(gameTime, m_Height);
 
                     frames = 0;
                 }
@@ -399,7 +420,7 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Actualiza el vehículo con el escenario
         /// </summary>
-        protected virtual void UpdateWithScenery(GameTime gameTime)
+        protected virtual void UpdateWithScenery(GameTime gameTime, float height)
         {
             Triangle? tri = null;
             Vector3? point = null;
@@ -407,9 +428,6 @@ namespace GameComponents.Vehicles
 
             if (scenery.Intersects(m_Position.X, m_Position.Z, out tri, out point, out distance))
             {
-                // Establecer la posición definitiva
-                m_Position = point.Value;
-
                 // Obtener la normal actual
                 Vector3 currentNormal = Matrix.CreateFromQuaternion(m_Rotation).Up;
 
@@ -425,17 +443,42 @@ namespace GameComponents.Vehicles
                     newInclination = Quaternion.CreateFromAxisAngle(axis, angle);
                 }
 
-                // Obtener el factor para aplicar a la inclinación
-                float slerpFactor = this.CalcInclinationSlerpFactor();
+                if (m_Skimmer)
+                {
+                    // Establecer la posición definitiva
+                    float hdiff = m_Position.Y - point.Value.Y;
+                    if (hdiff > 0)
+                    {
+                        hdiff = MathHelper.Clamp(((hdiff * 2f) + m_Height), 0, m_Height);
 
-                // Establecer la interpolación entre la inclinación actual y la nueva
-                m_Inclination = Quaternion.Slerp(m_Inclination, newInclination, slerpFactor);
+                        m_Position = point.Value + (Vector3.Up * hdiff);
+                    }
+                    else
+                    {
+                        hdiff = MathHelper.Clamp(((hdiff / 2f) + m_Height), 0, m_Height);
+
+                        m_Position = point.Value + (Vector3.Up * hdiff);
+                    }
+
+                    // Establecer la interpolación entre la inclinación actual y la nueva
+                    m_Inclination = Quaternion.Slerp(m_Inclination, newInclination, 0.01f);
+                }
+                else
+                {
+                    // Establecer la posición definitiva
+                    m_Position = point.Value;
+
+                    float slerpFactor = this.CalcInclinationSlerpFactor(25f);
+
+                    // Establecer la interpolación entre la inclinación actual y la nueva
+                    m_Inclination = Quaternion.Slerp(m_Inclination, newInclination, slerpFactor);
+                }
             }
         }
         /// <summary>
         /// Obtiene el factor para aplicar la inclinación según la velocidad
         /// </summary>
-        protected virtual float CalcInclinationSlerpFactor()
+        protected virtual float CalcInclinationSlerpFactor(float factor)
         {
             if (m_Velocity == 0f)
             {
@@ -445,11 +488,11 @@ namespace GameComponents.Vehicles
             {
                 if (m_MovingDirection == MovingDirections.Forward)
                 {
-                    return m_Velocity / m_MaxForwardVelocity / 25f;
+                    return m_Velocity / m_MaxForwardVelocity / factor;
                 }
                 else if (m_MovingDirection == MovingDirections.Backward)
                 {
-                    return m_Velocity / m_MaxBackwardVelocity / 25f;
+                    return m_Velocity / m_MaxBackwardVelocity / factor;
                 }
                 else
                 {

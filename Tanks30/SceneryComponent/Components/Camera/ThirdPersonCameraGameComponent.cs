@@ -12,7 +12,7 @@ namespace GameComponents.Camera
     public partial class ThirdPersonCameraGameComponent : BaseCameraGameComponent
     {
         // Posición relativa del espectador
-        private readonly Vector3 viewerPosition = new Vector3(0f, 5f, 20f);
+        private readonly Vector3 viewerPosition = new Vector3(0f, 10f, 18f);
         // Modelo que sigue la cámara
         private TankGameComponent m_ModelToFollow;
 

@@ -21,6 +21,8 @@ namespace GameComponents.Vehicles.Animation
         private float m_AngularVelocity = 0f;
         // Velocidad angular en radianes
         private float m_CurrentAngularVelocity = 0f;
+        // Indica si se realizará el giro de la animación en sentido inverso
+        private bool m_InverseAngle = false;
 
         /// <summary>
         /// Indica si la rotación tiene límites establecidos
@@ -100,13 +102,14 @@ namespace GameComponents.Vehicles.Animation
         /// <param name="angleFrom">Ángulo desde</param>
         /// <param name="angleTo">Ángulo hasta</param>
         /// <param name="angularVelocity">Velocidad angular</param>
-        public virtual void Initialize(Vector3 axis, float angleFrom, float angleTo, float angularVelocity)
+        public virtual void Initialize(Vector3 axis, float angleFrom, float angleTo, float angularVelocity, bool inverse)
         {
             base.Initialize(axis);
 
             m_RotationFrom = MathHelper.ToRadians(angleFrom);
             m_RotationTo = MathHelper.ToRadians(angleTo);
             m_AngularVelocity = angularVelocity;
+            m_InverseAngle = inverse;
         }
         /// <summary>
         /// Reinicia la animación
@@ -134,6 +137,8 @@ namespace GameComponents.Vehicles.Animation
         /// <param name="angle">Ángulo de rotación</param>
         public override void Rotate(float angle)
         {
+            angle = MathHelper.Clamp(angle, -m_AngularVelocity, m_AngularVelocity);
+
             // Añadir el ángulo
             m_CurrentAngle += angle;
             // Cortar el ángulo si está fuera de los límites de rotación
@@ -173,7 +178,23 @@ namespace GameComponents.Vehicles.Animation
             else
             {
                 // Si hay límites se corta el ángulo
-                newAngle = MathHelper.Clamp(angle, m_RotationFrom, m_RotationTo);
+                if (!m_InverseAngle)
+                {
+                    newAngle = MathHelper.Clamp(angle, m_RotationFrom, m_RotationTo);
+                }
+                else
+                {
+                    if (angle < 0)
+                    {
+                        //Negativo
+                        newAngle = -MathHelper.Clamp(-angle, m_RotationFrom, m_RotationTo);
+                    }
+                    else if (angle > 0)
+                    {
+                        //Positivo
+                        newAngle = MathHelper.Clamp(angle, -m_RotationTo, -m_RotationFrom);
+                    }
+                }
             }
 
             return newAngle;

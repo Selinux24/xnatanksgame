@@ -37,7 +37,7 @@ namespace Tanks
         private TankContainerService tankContainer;
 
         // Tanque actual
-        private Rhino currentTank;
+        private TankGameComponent currentTank;
 
         #region Teclas
 
@@ -95,40 +95,61 @@ namespace Tanks
         {
             InputHelper.GraphicsDevice = graphics.GraphicsDevice;
 
-            collision = new CollisionManager(this);
-            Components.Add(collision);
-            Services.AddService(collision.GetType(), collision);
-
             scenery = new SceneryGameComponent(this);
+            scenery.UpdateOrder = 0;
             Components.Add(scenery);
             Services.AddService(typeof(SceneryGameComponent), scenery);
 
-            info = new SceneryInfoGameComponent(this);
-            Components.Add(info);
+            tankContainer = new TankContainerService(this);
+            tankContainer.UpdateOrder = 1;
+            Services.AddService(tankContainer.GetType(), tankContainer);
+
+            collision = new CollisionManager(this);
+            collision.UpdateOrder = 2;
+            Components.Add(collision);
+            Services.AddService(collision.GetType(), collision);
 
             camera = new ThirdPersonCameraGameComponent(this);
+            camera.UpdateOrder = 3;
             Components.Add(camera);
 
             skyBox = new SkyBoxGameComponent(this);
+            skyBox.UpdateOrder = 4;
             Components.Add(skyBox);
 
-            tankContainer = new TankContainerService(this);
-            Services.AddService(tankContainer.GetType(), tankContainer);
+            info = new SceneryInfoGameComponent(this);
+            info.UpdateOrder = 5;
+            Components.Add(info);
 
             Random rnd = new Random();
 
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < 4; i++)
             {
-                Rhino rhino = tankContainer.AddRhino(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
+                tankContainer.AddLemanRuss(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                tankContainer.AddLandSpeeder(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                tankContainer.AddLandRaider(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
+            }
+
+            for (int i = 0; i < 25; i++)
+            {
+                tankContainer.AddRhino(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
             }
 
             base.Initialize();
 
-            currentTank = (Rhino)tankContainer.Tanks[0];
+            currentTank = (TankGameComponent)tankContainer.Tanks[0];
             camera.ModelToFollow = currentTank;
             currentTank.HasFocus = true;
 
-            tankContainer.Tanks[0].Position = new Vector3(8000, 0, 8000);
+            tankContainer.Tanks[0].Position = new Vector3(15000, 0, 15000);
             tankContainer.Tanks[1].Position = currentTank.Position - Vector3.Multiply(Vector3.One, 5f);
             tankContainer.Tanks[2].Position = currentTank.Position - Vector3.Multiply(Vector3.One, 10f);
             tankContainer.Tanks[3].Position = currentTank.Position - Vector3.Multiply(Vector3.One, 15f);

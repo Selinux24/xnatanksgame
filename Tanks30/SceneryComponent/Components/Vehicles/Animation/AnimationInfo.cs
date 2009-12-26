@@ -13,6 +13,7 @@ namespace GameComponents.Vehicles.Animation
         public float AngleFrom;
         public float AngleTo;
         public float Velocity;
+        public bool Inverse;
 
         public AnimationInfo()
         {
