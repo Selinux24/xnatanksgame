@@ -14,6 +14,13 @@ namespace GameComponents.Vehicles
         public string Model = null;
         public AnimationInfo[] AnimationControlers;
         public PlayerPositionInfo[] PlayerPositions;
+        public float MaxForwardVelocity;
+        public float MaxBackwardVelocity;
+        public float AccelerationModifier;
+        public float BrakeModifier;
+        public float AngularVelocityModifier;
+        public float Height;
+        public bool Skimmer = false;
 
         public static VehicleComponentInfo Load(string xml)
         {
@@ -55,7 +62,7 @@ namespace GameComponents.Vehicles
                 else if (animationInfo.Type == typeof(AnimationClamped).ToString())
                 {
                     AnimationClamped animation = new AnimationClamped(animationInfo.Name, model.Bones[animationInfo.BoneName]);
-                    animation.Initialize(animationInfo.Axis, animationInfo.AngleFrom, animationInfo.AngleTo, animationInfo.Velocity);
+                    animation.Initialize(animationInfo.Axis, animationInfo.AngleFrom, animationInfo.AngleTo, animationInfo.Velocity, animationInfo.Inverse);
 
                     animationList.Add(animation);
                 }

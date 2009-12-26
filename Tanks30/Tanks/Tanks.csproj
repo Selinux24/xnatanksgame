@@ -91,6 +91,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LandRaider.cs" />
+    <Compile Include="LandSpeeder.cs" />
+    <Compile Include="LemanRuss.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs">
       <Name>Program</Name>

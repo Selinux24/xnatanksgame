@@ -47,7 +47,10 @@ namespace Tanks.Services
 
         public Rhino AddRhino(Point where)
         {
-            Rhino newRhino = new Rhino(this.Game);
+            Rhino newRhino = new Rhino(this.Game)
+            {
+                UpdateOrder = this.UpdateOrder,
+            };
 
             this.Game.Components.Add(newRhino);
 
@@ -56,6 +59,54 @@ namespace Tanks.Services
             newRhino.Position = new Vector3(where.X, 0f, where.Y);
 
             return newRhino;
+        }
+
+        public LandRaider AddLandRaider(Point where)
+        {
+            LandRaider newLandRaider = new LandRaider(this.Game)
+            {
+                UpdateOrder = this.UpdateOrder,
+            };
+
+            this.Game.Components.Add(newLandRaider);
+
+            updateList = true;
+
+            newLandRaider.Position = new Vector3(where.X, 0f, where.Y);
+
+            return newLandRaider;
+        }
+
+        public LandSpeeder AddLandSpeeder(Point where)
+        {
+            LandSpeeder newLandSpeeder = new LandSpeeder(this.Game)
+            {
+                UpdateOrder = this.UpdateOrder,
+            };
+
+            this.Game.Components.Add(newLandSpeeder);
+
+            updateList = true;
+
+            newLandSpeeder.Position = new Vector3(where.X, 0f, where.Y);
+
+            return newLandSpeeder;
+        }
+
+        public LemanRuss AddLemanRuss(Point where)
+        {
+            LemanRuss newLemanRuss = new LemanRuss(this.Game)
+            {
+                UpdateOrder = this.UpdateOrder,
+            };
+
+            this.Game.Components.Add(newLemanRuss);
+
+            updateList = true;
+
+            newLemanRuss.Position = new Vector3(where.X, 0f, where.Y);
+
+            return newLemanRuss;
         }
 
         public void RemoveTank(TankGameComponent tank)

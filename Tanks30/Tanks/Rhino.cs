@@ -2,7 +2,6 @@ using GameComponents;
 using GameComponents.Vehicles;
 using GameComponents.Vehicles.Animation;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Tanks.Vehicles
@@ -93,11 +92,7 @@ namespace Tanks.Vehicles
         public Rhino(Game game)
             : base(game)
         {
-            m_MaxForwardVelocity = 2f;
-            m_MaxBackwardVelocity = 1f;
-            m_AccelerationModifier = m_MaxForwardVelocity / 10f;
-            m_BrakeModifier = m_AccelerationModifier * 2f;
-            m_AngularVelocityModifier = MathHelper.ToRadians(5f);
+
         }
 
         /// <summary>
@@ -105,6 +100,8 @@ namespace Tanks.Vehicles
         /// </summary>
         protected override void LoadContent()
         {
+            this.componentInfoName = "Rhino.xml";
+
             base.LoadContent();
 
             #region Controlador de animación
@@ -218,35 +215,8 @@ namespace Tanks.Vehicles
                 {
                     #region Bolter
 
-                    // Marcar los límites de movimiento del bolter
-                    float maxPitch = 0.05f;
-                    float maxYaw = 0.05f;
-
-                    // Obtener el input del ratón
-                    float pitch = MathHelper.Clamp(InputHelper.PitchDelta, -maxPitch, maxPitch);
-                    float yaw = MathHelper.Clamp(InputHelper.YawDelta, -maxYaw, maxYaw);
-
-                    // Procesar el input del teclado
-                    if (Keyboard.GetState().IsKeyDown(m_RotateLeftBolterKey))
-                    {
-                        pitch = maxPitch;
-                    }
-                    if (Keyboard.GetState().IsKeyDown(m_RotateRightBolterKey))
-                    {
-                        pitch = -maxPitch;
-                    }
-
-                    if (Keyboard.GetState().IsKeyDown(m_RotateUpBolterKey))
-                    {
-                        yaw = maxYaw;
-                    }
-                    if (Keyboard.GetState().IsKeyDown(m_RotateDownBolterKey))
-                    {
-                        yaw = -maxYaw;
-                    }
-
                     // Apuntar el bolter
-                    this.AimBolter(pitch, yaw);
+                    this.AimBolter(InputHelper.PitchDelta, InputHelper.YawDelta);
 
                     #endregion
 
