@@ -123,22 +123,22 @@ namespace Tanks
 
             Random rnd = new Random();
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
                 tankContainer.AddLemanRuss(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
             }
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 3; i++)
             {
                 tankContainer.AddLandSpeeder(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
             }
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 1; i++)
             {
                 tankContainer.AddLandRaider(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
             }
 
-            for (int i = 0; i < 25; i++)
+            for (int i = 0; i < 6; i++)
             {
                 tankContainer.AddRhino(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
             }
@@ -150,9 +150,8 @@ namespace Tanks
             currentTank.HasFocus = true;
 
             tankContainer.Tanks[0].Position = new Vector3(15000, 0, 15000);
-            tankContainer.Tanks[1].Position = currentTank.Position - Vector3.Multiply(Vector3.One, 5f);
-            tankContainer.Tanks[2].Position = currentTank.Position - Vector3.Multiply(Vector3.One, 10f);
-            tankContainer.Tanks[3].Position = currentTank.Position - Vector3.Multiply(Vector3.One, 15f);
+            tankContainer.Tanks[1].Position = currentTank.Position - Vector3.Multiply(Vector3.One, 10f);
+            tankContainer.Tanks[2].Position = currentTank.Position - Vector3.Multiply(Vector3.One, 20f);
 
             foreach (TankGameComponent tank in tankContainer.Tanks)
             {
@@ -162,7 +161,6 @@ namespace Tanks
             tankContainer.Tanks[0].AutoPilot.Enabled = true;
             tankContainer.Tanks[1].AutoPilot.Follow(tankContainer.Tanks[0]);
             tankContainer.Tanks[2].AutoPilot.Follow(tankContainer.Tanks[1]);
-            tankContainer.Tanks[3].AutoPilot.Follow(tankContainer.Tanks[2]);
         }
 
         /// <summary>
