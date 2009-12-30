@@ -198,7 +198,7 @@ namespace GameComponents.Camera
                     MathHelper.PiOver4,
                     (float)device.Viewport.Width / (float)device.Viewport.Height,
                     SceneryEnvironment.GlobalNearClip,
-                    SceneryEnvironment.GlobalFarClip);
+                    SceneryEnvironment.GlobalFarClip * 100);
 
                 // Calcular la matriz de proyección
                 m_LODHighProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(

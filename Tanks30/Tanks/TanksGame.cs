@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Tanks.Services;
 using Tanks.Vehicles;
+using System.Collections.Generic;
 
 namespace Tanks
 {
@@ -34,10 +35,10 @@ namespace Tanks
         // Información del terreno
         private SceneryInfoGameComponent info;
         // Servicio contenedor de tanques
-        private TankContainerService tankContainer;
+        private VehicleContainerService tankContainer;
 
         // Tanque actual
-        private TankGameComponent currentTank;
+        private Vehicle currentTank;
 
         #region Teclas
 
@@ -62,6 +63,10 @@ namespace Tanks
 
         // Tecla que cambia a la siguiente posición del vehículo
         private Keys m_NextVehiclePositionKey = Keys.Tab;
+        // Cambio al siguiente vehículo
+        private Keys m_NextVehicleKey = Keys.Add;
+        // Cambio al vehículo anterior
+        private Keys m_PreviousVehicleKey = Keys.Subtract;
 
         #endregion
 
@@ -100,7 +105,7 @@ namespace Tanks
             Components.Add(scenery);
             Services.AddService(typeof(SceneryGameComponent), scenery);
 
-            tankContainer = new TankContainerService(this);
+            tankContainer = new VehicleContainerService(this);
             tankContainer.UpdateOrder = 1;
             Services.AddService(tankContainer.GetType(), tankContainer);
 
@@ -123,46 +128,20 @@ namespace Tanks
 
             Random rnd = new Random();
 
-            for (int i = 0; i < 3; i++)
-            {
-                tankContainer.AddLemanRuss(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                tankContainer.AddLandSpeeder(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
-            }
-
-            for (int i = 0; i < 1; i++)
-            {
-                tankContainer.AddLandRaider(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
-            }
-
-            for (int i = 0; i < 6; i++)
-            {
-                tankContainer.AddRhino(new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000));
-            }
+            AddSquadron(TankTypes.LandSpeeder, 3, rnd);
+            AddSquadron(TankTypes.LandSpeeder, 3, rnd);
+            AddSquadron(TankTypes.LandSpeeder, 3, rnd);
+            AddSquadron(TankTypes.LandRaider, 2, rnd);
+            AddSquadron(TankTypes.LemanRuss, 3, rnd);
+            AddSquadron(TankTypes.LemanRuss, 3, rnd);
+            AddSquadron(TankTypes.Rhino, 3, rnd);
+            AddSquadron(TankTypes.Rhino, 3, rnd);
+            AddSquadron(TankTypes.Rhino, 3, rnd);
 
             base.Initialize();
 
-            currentTank = (TankGameComponent)tankContainer.Tanks[0];
-            camera.ModelToFollow = currentTank;
-            currentTank.HasFocus = true;
-
-            tankContainer.Tanks[0].Position = new Vector3(15000, 0, 15000);
-            tankContainer.Tanks[1].Position = currentTank.Position - Vector3.Multiply(Vector3.One, 10f);
-            tankContainer.Tanks[2].Position = currentTank.Position - Vector3.Multiply(Vector3.One, 20f);
-
-            foreach (TankGameComponent tank in tankContainer.Tanks)
-            {
-                tank.AutoPilot.GoTo(scenery.Center, 10f);
-            }
-
-            tankContainer.Tanks[0].AutoPilot.Enabled = true;
-            tankContainer.Tanks[1].AutoPilot.Follow(tankContainer.Tanks[0]);
-            tankContainer.Tanks[2].AutoPilot.Follow(tankContainer.Tanks[1]);
+            this.SetFocus(tankContainer.Vehicles[0]);
         }
-
         /// <summary>
         /// Carga de los componentes gráficos
         /// </summary>
@@ -209,6 +188,79 @@ namespace Tanks
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// Establece el foco en el tanque designado
+        /// </summary>
+        /// <param name="tank">Tanque</param>
+        private void SetFocus(Vehicle tank)
+        {
+            if (this.currentTank != null)
+            {
+                // Quitar el foco del tanque anterior
+                this.currentTank.HasFocus = false;
+
+                // Indicar que la cámara no seguirá a ningún tanque
+                this.camera.ModelToFollow = null;
+            }
+
+            if (tank != null)
+            {
+                // Indicar que la cámara debe seguir al tanque seleccionado
+                this.camera.ModelToFollow = tank;
+
+                // Establecer el foco en el tanque
+                tank.HasFocus = true;
+
+                // Actualizar el marcador de tanque actual
+                this.currentTank = tank;
+            }
+        }
+        /// <summary>
+        /// Añade un escuadrón del tipo y la cantidad especificada
+        /// </summary>
+        /// <param name="type">Tipo de escuadrón</param>
+        /// <param name="count">Cantidad de vehículos</param>
+        /// <param name="rnd">Aleatorio</param>
+        private void AddSquadron(TankTypes type, int count, Random rnd)
+        {
+            // Punto de posición del escuadrón
+            Point where = new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000);
+
+            // Lista de componentes creados
+            List<Vehicle> tankList = new List<Vehicle>();
+
+            for (int i = 0; i < count; i++)
+            {
+                if (type == TankTypes.Rhino)
+                {
+                    tankList.Add(tankContainer.AddRhino(where));
+                }
+                else if (type == TankTypes.LandSpeeder)
+                {
+                    tankList.Add(tankContainer.AddLandSpeeder(where));
+                }
+                else if (type == TankTypes.LandRaider)
+                {
+                    tankList.Add(tankContainer.AddLandRaider(where));
+                }
+                else if (type == TankTypes.LemanRuss)
+                {
+                    tankList.Add(tankContainer.AddLemanRuss(where));
+                }
+            }
+
+            // Establecer el destino del piloto automático
+            tankList[0].AutoPilot.GoTo(scenery.Center, 50f);
+            tankList[0].AutoPilot.Enabled = true;
+
+            for (int i = 1; i < count; i++)
+            {
+                // Posición de cada tanque relativa al anterior
+                tankList[i].Position = tankList[i - 1].Position - Vector3.Multiply(Vector3.One, 10f);
+                // Indicar a cada tanque que siga al anterior
+                tankList[i].AutoPilot.Follow(tankList[i - 1]);
+            }
+        }
         /// <summary>
         /// Actualizar elementos del entorno
         /// </summary>
@@ -311,12 +363,44 @@ namespace Tanks
         /// <param name="gameTime">Tiempo de juego</param>
         private void UpdateTanks(GameTime gameTime)
         {
+            if (InputHelper.KeyUpEvent(m_NextVehicleKey))
+            {
+                int index = tankContainer.IndexOf(currentTank);
+                if (index >= 0)
+                {
+                    if (index < tankContainer.Vehicles.Length - 1)
+                    {
+                        this.SetFocus(tankContainer.Vehicles[index + 1]);
+                    }
+                    else
+                    {
+                        this.SetFocus(tankContainer.Vehicles[0]);
+                    }
+                }
+            }
+
+            if (InputHelper.KeyUpEvent(m_PreviousVehicleKey))
+            {
+                int index = tankContainer.IndexOf(currentTank);
+                if (index >= 0)
+                {
+                    if (index == 0)
+                    {
+                        this.SetFocus(tankContainer.Vehicles[tankContainer.Vehicles.Length - 1]);
+                    }
+                    else
+                    {
+                        this.SetFocus(tankContainer.Vehicles[index - 1]);
+                    }
+                }
+            }
+
             if (InputHelper.KeyUpEvent(m_NextVehiclePositionKey))
             {
                 currentTank.SetNextPlayerPosition();
             }
 
-            foreach (TankGameComponent tank in tankContainer.Tanks)
+            foreach (Vehicle tank in tankContainer.Vehicles)
             {
                 if ((tank != currentTank) && (!tank.AutoPilot.Enabled))
                 {

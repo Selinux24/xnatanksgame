@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <VehicleComponentInfo>
   <Model>LandSpeeder</Model>
-  <MaxForwardVelocity>15</MaxForwardVelocity>
-  <MaxBackwardVelocity>10</MaxBackwardVelocity>
+  <MaxForwardVelocity>45</MaxForwardVelocity>
+  <MaxBackwardVelocity>40</MaxBackwardVelocity>
   <AccelerationModifier>15</AccelerationModifier>
   <BrakeModifier>1</BrakeModifier>
-  <AngularVelocityModifier>10</AngularVelocityModifier>
-  <Height>8</Height>
+  <AngularVelocityModifier>20</AngularVelocityModifier>
+  <Height>25</Height>
   <Skimmer>true</Skimmer>
   <AnimationControlers>
     <AnimationInfo>

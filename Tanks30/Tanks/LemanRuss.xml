@@ -52,8 +52,8 @@
       <BoneName>HULL_DRIVER_HATCH</BoneName>
       <Translation>
         <X>0.0</X>
-        <Y>0.0</Y>
-        <Z>0.0</Z>
+        <Y>-0.2</Y>
+        <Z>-0.1</Z>
       </Translation>
     </PlayerPositionInfo>
     <PlayerPositionInfo>
