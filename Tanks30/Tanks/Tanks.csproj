@@ -101,12 +101,13 @@
     <Compile Include="Rhino.cs">
       <Name>Rhino</Name>
     </Compile>
-    <Compile Include="TankContainerService.cs">
+    <Compile Include="VehicleContainerService.cs">
       <Name>TankContainerService</Name>
     </Compile>
     <Compile Include="TanksGame.cs">
       <Name>TanksGame</Name>
     </Compile>
+    <Compile Include="TankTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico">

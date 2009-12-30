@@ -10,7 +10,7 @@ using GameComponents;
 
 namespace Tanks.Vehicles
 {
-    public partial class LandRaider : TankGameComponent
+    public partial class LandRaider : Vehicle
     {
         #region Incialización del control de animación
 
@@ -68,16 +68,11 @@ namespace Tanks.Vehicles
         Keys m_MoveBackwardKey = Keys.S;
         Keys m_RotateLeftTankKey = Keys.A;
         Keys m_RotateRightTankKey = Keys.D;
-
-        Keys m_RotateLeftBolterKey = Keys.Left;
-        Keys m_RotateRightBolterKey = Keys.Right;
-        Keys m_RotateUpBolterKey = Keys.Up;
-        Keys m_RotateDownBolterKey = Keys.Down;
+        Keys m_ChangeDirectionKey = Keys.R;
+        Keys m_AutoPilotKey = Keys.P;
 
         Keys m_FrontDoorKey = Keys.NumPad8;
         bool m_FrontDoorAction = false;
-
-        Keys m_ChangeDirectionKey = Keys.R;
 
         #endregion
 
@@ -139,10 +134,14 @@ namespace Tanks.Vehicles
             {
                 if (m_CurrentPlayerControl == m_Driver || m_CurrentPlayerControl == m_CoveredDriver)
                 {
+                    bool driving = false;
+
                     #region Moving Tank
 
                     if (Keyboard.GetState().IsKeyDown(m_MoveForwardKey))
                     {
+                        driving = true;
+
                         if (this.IsAdvancing)
                         {
                             this.Accelerate();
@@ -154,6 +153,8 @@ namespace Tanks.Vehicles
                     }
                     if (Keyboard.GetState().IsKeyDown(m_MoveBackwardKey))
                     {
+                        driving = true;
+
                         if (this.IsAdvancing)
                         {
                             this.Brake();
@@ -170,20 +171,43 @@ namespace Tanks.Vehicles
 
                     if (Keyboard.GetState().IsKeyDown(m_RotateLeftTankKey))
                     {
+                        driving = true;
+
                         this.TurnLeft();
                     }
                     if (Keyboard.GetState().IsKeyDown(m_RotateRightTankKey))
                     {
+                        driving = true;
+
                         this.TurnRight();
                     }
 
                     #endregion
 
-                    #region Dirección
+                    #region Direction
 
                     if (InputHelper.KeyUpEvent(m_ChangeDirectionKey))
                     {
+                        driving = true;
+
                         this.ChangeDirection();
+                    }
+
+                    #endregion
+
+                    #region Autopilot
+
+                    if (driving)
+                    {
+                        if (this.AutoPilot.Enabled)
+                        {
+                            this.AutoPilot.Enabled = false;
+                        }
+                    }
+
+                    if (InputHelper.KeyUpEvent(m_AutoPilotKey))
+                    {
+                        this.AutoPilot.Enabled = !this.AutoPilot.Enabled;
                     }
 
                     #endregion

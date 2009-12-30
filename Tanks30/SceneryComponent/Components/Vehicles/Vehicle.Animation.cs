@@ -6,7 +6,7 @@ namespace GameComponents.Vehicles
 {
     using GameComponents.Vehicles.Animation;
 
-    public partial class TankGameComponent
+    public partial class Vehicle
     {
         // Lista de transformaciones del modelo
         protected Matrix[] m_BoneTransforms;

@@ -133,7 +133,7 @@
     </Compile>
     <Compile Include="Components\Vehicles\Animation\PlayerPositionInfo.cs" />
     <Compile Include="Components\Vehicles\Animation\VehicleAnimationControler.cs" />
-    <Compile Include="Components\Vehicles\TankGameComponent.Animation.cs" />
+    <Compile Include="Components\Vehicles\Vehicle.Animation.cs" />
     <Compile Include="Components\Vehicles\VehicleComponentInfo.cs" />
     <Compile Include="InputHelper.cs">
       <Name>InputHelper</Name>
@@ -156,7 +156,7 @@
     <Compile Include="Components\Scenery\SkyBoxGameComponent.cs">
       <Name>SkyBoxGameComponent</Name>
     </Compile>
-    <Compile Include="Components\Vehicles\TankGameComponent.cs">
+    <Compile Include="Components\Vehicles\Vehicle.cs">
       <Name>TankGameComponent</Name>
     </Compile>
     <Compile Include="Components\Camera\ThirdPersonCameraGameComponent.cs">

@@ -14,12 +14,12 @@ namespace GameComponents.Camera
         // Posición relativa del espectador
         private readonly Vector3 viewerPosition = new Vector3(0f, 10f, 18f);
         // Modelo que sigue la cámara
-        private TankGameComponent m_ModelToFollow;
+        private Vehicle m_ModelToFollow;
 
         /// <summary>
         /// Obtiene o establece el modelo que sigue la cámara
         /// </summary>
-        public TankGameComponent ModelToFollow
+        public Vehicle ModelToFollow
         {
             get
             {

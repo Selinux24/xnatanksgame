@@ -415,7 +415,7 @@ namespace GameComponents.Scenery
                     this.m_Effect.Parameters["xLightDirection"].SetValue(SceneryEnvironment.Ambient.Light0Direction);
                     this.m_Effect.Parameters["xAmbient"].SetValue(0.2f);
 
-                    //SceneryEnvironment.Fog.SetFogToEffect(m_Effect);
+                    //SceneryEnvironment.Fog.SetFogToEffect(m_Effect as BasicEffect);
 
                     // Inicializar los nodos para el dibujado
                     m_Root.PrepareForDrawing();
