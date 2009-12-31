@@ -4,17 +4,28 @@ using Microsoft.Xna.Framework;
 
 namespace GameComponents.Vehicles
 {
-    using GameComponents.Vehicles.Animation;
+    using GameComponents.Vehicles.Animations;
 
+    /// <summary>
+    /// Información de animación de un vehículo
+    /// </summary>
     public partial class Vehicle
     {
-        // Lista de transformaciones del modelo
+        /// <summary>
+        /// Lista de transformaciones del modelo
+        /// </summary>
         protected Matrix[] m_BoneTransforms;
-        // Controlador de animación
+        /// <summary>
+        /// Controlador de animación
+        /// </summary>
         protected AnimationController m_AnimationController = new AnimationController();
-        // Lista de posibles posiciones de jugador
+        /// <summary>
+        /// Lista de posibles posiciones de jugador
+        /// </summary>
         protected List<PlayerPosition> m_PlayerControlList = new List<PlayerPosition>();
-        // Posición actual del jugador en el modelo
+        /// <summary>
+        /// Posición actual del jugador en el modelo
+        /// </summary>
         protected PlayerPosition m_CurrentPlayerControl = null;
         
         /// <summary>
@@ -22,9 +33,9 @@ namespace GameComponents.Vehicles
         /// </summary>
         /// <param name="name">Nombre del controlador de animación</param>
         /// <returns>Devuelve el controlador de animación</returns>
-        public AnimationBase GetAnimation(string name)
+        public Animation GetAnimation(string name)
         {
-            foreach (AnimationBase animation in m_AnimationController.AnimationList)
+            foreach (Animation animation in m_AnimationController.AnimationList)
             {
                 if (string.Compare(animation.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
                 {
@@ -50,6 +61,37 @@ namespace GameComponents.Vehicles
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Establecer el siguiente controlador de jugador
+        /// </summary>
+        public void SetNextPlayerPosition()
+        {
+            int index = m_PlayerControlList.IndexOf(m_CurrentPlayerControl);
+            if (index == m_PlayerControlList.Count - 1)
+            {
+                m_CurrentPlayerControl = m_PlayerControlList[0];
+            }
+            else
+            {
+                m_CurrentPlayerControl = m_PlayerControlList[index + 1];
+            }
+        }
+        /// <summary>
+        /// Establecer el anterior controlador de jugador
+        /// </summary>
+        public void SetPreviousPlayerControl()
+        {
+            int index = m_PlayerControlList.IndexOf(m_CurrentPlayerControl);
+            if (index == 0)
+            {
+                m_CurrentPlayerControl = m_PlayerControlList[m_PlayerControlList.Count - 1];
+            }
+            else
+            {
+                m_CurrentPlayerControl = m_PlayerControlList[index - 1];
+            }
         }
     }
 }

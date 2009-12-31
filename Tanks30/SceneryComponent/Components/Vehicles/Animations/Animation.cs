@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GameComponents.Vehicles.Animation
+namespace GameComponents.Vehicles.Animations
 {
     /// <summary>
     /// Representa una rotación sobre un eje específico
     /// </summary>
-    public class AnimationBase
+    public class Animation
     {
         /// <summary>
         /// Nombre de la animación
@@ -55,7 +52,7 @@ namespace GameComponents.Vehicles.Animation
         /// </summary>
         /// <param name="name">Nombre</param>
         /// <param name="bone">Bone que se va a animar</param>
-        public AnimationBase(string name, ModelBone bone)
+        public Animation(string name, ModelBone bone)
         {
             this.Name = name;
 

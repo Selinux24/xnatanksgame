@@ -128,15 +128,15 @@ namespace Tanks
 
             Random rnd = new Random();
 
-            AddSquadron(TankTypes.LandSpeeder, 3, rnd);
-            AddSquadron(TankTypes.LandSpeeder, 3, rnd);
-            AddSquadron(TankTypes.LandSpeeder, 3, rnd);
-            AddSquadron(TankTypes.LandRaider, 2, rnd);
-            AddSquadron(TankTypes.LemanRuss, 3, rnd);
-            AddSquadron(TankTypes.LemanRuss, 3, rnd);
-            AddSquadron(TankTypes.Rhino, 3, rnd);
-            AddSquadron(TankTypes.Rhino, 3, rnd);
-            AddSquadron(TankTypes.Rhino, 3, rnd);
+            AddSquadron(VehicleTypes.LandSpeeder, 3, rnd);
+            AddSquadron(VehicleTypes.LandSpeeder, 3, rnd);
+            AddSquadron(VehicleTypes.LandSpeeder, 3, rnd);
+            AddSquadron(VehicleTypes.LandRaider, 2, rnd);
+            AddSquadron(VehicleTypes.LemanRuss, 3, rnd);
+            AddSquadron(VehicleTypes.LemanRuss, 3, rnd);
+            AddSquadron(VehicleTypes.Rhino, 3, rnd);
+            AddSquadron(VehicleTypes.Rhino, 3, rnd);
+            AddSquadron(VehicleTypes.Rhino, 3, rnd);
 
             base.Initialize();
 
@@ -221,7 +221,7 @@ namespace Tanks
         /// <param name="type">Tipo de escuadrón</param>
         /// <param name="count">Cantidad de vehículos</param>
         /// <param name="rnd">Aleatorio</param>
-        private void AddSquadron(TankTypes type, int count, Random rnd)
+        private void AddSquadron(VehicleTypes type, int count, Random rnd)
         {
             // Punto de posición del escuadrón
             Point where = new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000);
@@ -231,19 +231,19 @@ namespace Tanks
 
             for (int i = 0; i < count; i++)
             {
-                if (type == TankTypes.Rhino)
+                if (type == VehicleTypes.Rhino)
                 {
                     tankList.Add(tankContainer.AddRhino(where));
                 }
-                else if (type == TankTypes.LandSpeeder)
+                else if (type == VehicleTypes.LandSpeeder)
                 {
                     tankList.Add(tankContainer.AddLandSpeeder(where));
                 }
-                else if (type == TankTypes.LandRaider)
+                else if (type == VehicleTypes.LandRaider)
                 {
                     tankList.Add(tankContainer.AddLandRaider(where));
                 }
-                else if (type == TankTypes.LemanRuss)
+                else if (type == VehicleTypes.LemanRuss)
                 {
                     tankList.Add(tankContainer.AddLemanRuss(where));
                 }

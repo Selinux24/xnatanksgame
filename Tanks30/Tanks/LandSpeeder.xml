@@ -6,12 +6,12 @@
   <AccelerationModifier>15</AccelerationModifier>
   <BrakeModifier>1</BrakeModifier>
   <AngularVelocityModifier>20</AngularVelocityModifier>
-  <Height>25</Height>
+  <FlightHeight>25</FlightHeight>
   <Skimmer>true</Skimmer>
   <AnimationControlers>
     <AnimationInfo>
       <Name>FusionCannon</Name>
-      <Type>GameComponents.Vehicles.Animation.AnimationClamped</Type>
+      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
       <BoneName>FUSION_CANNON</BoneName>
       <Axis>
         <X>1</X>
@@ -24,7 +24,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>FusionCannonBase</Name>
-      <Type>GameComponents.Vehicles.Animation.AnimationClamped</Type>
+      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
       <BoneName>FUSION_CANNON_BASE</BoneName>
       <Axis>
         <X>0</X>

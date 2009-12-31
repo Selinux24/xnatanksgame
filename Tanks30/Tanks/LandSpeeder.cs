@@ -5,14 +5,14 @@ namespace Tanks
 {
     using GameComponents;
     using GameComponents.Vehicles;
-    using GameComponents.Vehicles.Animation;
+    using GameComponents.Vehicles.Animations;
 
     public partial class LandSpeeder : Vehicle
     {
         #region Incialización del control de animación
 
-        AnimationClamped m_FusionCannon;
-        AnimationClamped m_FusionCannonBase;
+        AnimationAxis m_FusionCannon;
+        AnimationAxis m_FusionCannonBase;
 
         #endregion
 
@@ -64,14 +64,14 @@ namespace Tanks
         /// </summary>
         protected override void LoadContent()
         {
-            this.componentInfoName = "LandSpeeder.xml";
+            this.ComponentInfoName = "LandSpeeder.xml";
 
             base.LoadContent();
 
             #region Controlador de animación
 
-            m_FusionCannon = (AnimationClamped)this.GetAnimation("FusionCannon");
-            m_FusionCannonBase = (AnimationClamped)this.GetAnimation("FusionCannonBase");
+            m_FusionCannon = (AnimationAxis)this.GetAnimation("FusionCannon");
+            m_FusionCannonBase = (AnimationAxis)this.GetAnimation("FusionCannonBase");
 
             #endregion
 

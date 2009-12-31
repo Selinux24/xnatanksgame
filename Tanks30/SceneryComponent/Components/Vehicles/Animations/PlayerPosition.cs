@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GameComponents.Vehicles.Animation
+namespace GameComponents.Vehicles.Animations
 {
     /// <summary>
     /// Define la posición de un jugador

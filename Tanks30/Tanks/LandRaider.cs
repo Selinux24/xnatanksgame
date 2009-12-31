@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GameComponents.Vehicles;
 using Microsoft.Xna.Framework;
-using GameComponents.Vehicles.Animation;
+using GameComponents.Vehicles.Animations;
 using Microsoft.Xna.Framework.Input;
 using GameComponents;
 
@@ -14,14 +14,14 @@ namespace Tanks.Vehicles
     {
         #region Incialización del control de animación
 
-        AnimationClamped m_HeavyBolter;
-        AnimationClamped m_HeavyBolterBase;
-        AnimationClamped m_LeftLassCannon;
-        AnimationClamped m_LeftLassCannonBase;
-        AnimationClamped m_RightLassCannon;
-        AnimationClamped m_RightLassCannonBase;
-        AnimationClamped m_UpperFrontDoor;
-        AnimationClamped m_LowerFrontDoor;
+        AnimationAxis m_HeavyBolter;
+        AnimationAxis m_HeavyBolterBase;
+        AnimationAxis m_LeftLassCannon;
+        AnimationAxis m_LeftLassCannonBase;
+        AnimationAxis m_RightLassCannon;
+        AnimationAxis m_RightLassCannonBase;
+        AnimationAxis m_UpperFrontDoor;
+        AnimationAxis m_LowerFrontDoor;
 
         #endregion
 
@@ -91,20 +91,20 @@ namespace Tanks.Vehicles
         /// </summary>
         protected override void LoadContent()
         {
-            this.componentInfoName = "LandRaider.xml";
+            this.ComponentInfoName = "LandRaider.xml";
 
             base.LoadContent();
 
             #region Controlador de animación
 
-            m_HeavyBolter = (AnimationClamped)this.GetAnimation("HeavyBolter");
-            m_HeavyBolterBase = (AnimationClamped)this.GetAnimation("HeavyBolterBase");
-            m_LeftLassCannon = (AnimationClamped)this.GetAnimation("LeftLassCannon");
-            m_LeftLassCannonBase = (AnimationClamped)this.GetAnimation("LeftLassCannonBase");
-            m_RightLassCannon = (AnimationClamped)this.GetAnimation("RightLassCannon");
-            m_RightLassCannonBase = (AnimationClamped)this.GetAnimation("RightLassCannonBase");
-            m_UpperFrontDoor = (AnimationClamped)this.GetAnimation("UpperFrontDoor");
-            m_LowerFrontDoor = (AnimationClamped)this.GetAnimation("LowerFrontDoor");
+            m_HeavyBolter = (AnimationAxis)this.GetAnimation("HeavyBolter");
+            m_HeavyBolterBase = (AnimationAxis)this.GetAnimation("HeavyBolterBase");
+            m_LeftLassCannon = (AnimationAxis)this.GetAnimation("LeftLassCannon");
+            m_LeftLassCannonBase = (AnimationAxis)this.GetAnimation("LeftLassCannonBase");
+            m_RightLassCannon = (AnimationAxis)this.GetAnimation("RightLassCannon");
+            m_RightLassCannonBase = (AnimationAxis)this.GetAnimation("RightLassCannonBase");
+            m_UpperFrontDoor = (AnimationAxis)this.GetAnimation("UpperFrontDoor");
+            m_LowerFrontDoor = (AnimationAxis)this.GetAnimation("LowerFrontDoor");
 
             #endregion
 

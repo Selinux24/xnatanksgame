@@ -1,6 +1,6 @@
 using GameComponents;
 using GameComponents.Vehicles;
-using GameComponents.Vehicles.Animation;
+using GameComponents.Vehicles.Animations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -13,15 +13,15 @@ namespace Tanks.Vehicles
     {
         #region Incialización del control de animación
 
-        AnimationClamped m_BOLTER; string _BOLTER = "Bolter";
-        AnimationBase m_BOLTER_BASE; string _BOLTER_BASE = "BolterBase";
-        AnimationClamped m_BOLTER_HATCH; string _BOLTER_HATCH = "BolterHatch";
-        AnimationClamped m_DRIVER_HATCH; string _DRIVER_HATCH = "DriverHatch";
-        AnimationClamped m_RIGHT_HATCH; string _RIGHT_HATCH = "RightHatch";
-        AnimationClamped m_LEFT_HATCH; string _LEFT_HATCH = "LeftHatch";
-        AnimationClamped m_RIGHT_DOOR; string _RIGHT_DOOR = "RightDoor";
-        AnimationClamped m_LEFT_DOOR; string _LEFT_DOOR = "LeftDoor";
-        AnimationClamped m_BACK_DOOR; string _BACK_DOOR = "BackDoor";
+        AnimationAxis m_BOLTER; string _BOLTER = "Bolter";
+        Animation m_BOLTER_BASE; string _BOLTER_BASE = "BolterBase";
+        AnimationAxis m_BOLTER_HATCH; string _BOLTER_HATCH = "BolterHatch";
+        AnimationAxis m_DRIVER_HATCH; string _DRIVER_HATCH = "DriverHatch";
+        AnimationAxis m_RIGHT_HATCH; string _RIGHT_HATCH = "RightHatch";
+        AnimationAxis m_LEFT_HATCH; string _LEFT_HATCH = "LeftHatch";
+        AnimationAxis m_RIGHT_DOOR; string _RIGHT_DOOR = "RightDoor";
+        AnimationAxis m_LEFT_DOOR; string _LEFT_DOOR = "LeftDoor";
+        AnimationAxis m_BACK_DOOR; string _BACK_DOOR = "BackDoor";
 
         #endregion
 
@@ -95,25 +95,25 @@ namespace Tanks.Vehicles
         /// </summary>
         protected override void LoadContent()
         {
-            this.componentInfoName = "Rhino.xml";
+            this.ComponentInfoName = "Rhino.xml";
 
             base.LoadContent();
 
             #region Controlador de animación
 
-            m_BOLTER = (AnimationClamped)this.GetAnimation(_BOLTER);
+            m_BOLTER = (AnimationAxis)this.GetAnimation(_BOLTER);
             m_BOLTER_BASE = this.GetAnimation(_BOLTER_BASE);
-            m_BOLTER_HATCH = (AnimationClamped)this.GetAnimation(_BOLTER_HATCH);
+            m_BOLTER_HATCH = (AnimationAxis)this.GetAnimation(_BOLTER_HATCH);
 
-            m_DRIVER_HATCH = (AnimationClamped)this.GetAnimation(_DRIVER_HATCH);
+            m_DRIVER_HATCH = (AnimationAxis)this.GetAnimation(_DRIVER_HATCH);
 
-            m_RIGHT_DOOR = (AnimationClamped)this.GetAnimation(_RIGHT_DOOR);
-            m_LEFT_DOOR = (AnimationClamped)this.GetAnimation(_LEFT_DOOR);
+            m_RIGHT_DOOR = (AnimationAxis)this.GetAnimation(_RIGHT_DOOR);
+            m_LEFT_DOOR = (AnimationAxis)this.GetAnimation(_LEFT_DOOR);
 
-            m_RIGHT_HATCH = (AnimationClamped)this.GetAnimation(_RIGHT_HATCH);
-            m_LEFT_HATCH = (AnimationClamped)this.GetAnimation(_LEFT_HATCH);
+            m_RIGHT_HATCH = (AnimationAxis)this.GetAnimation(_RIGHT_HATCH);
+            m_LEFT_HATCH = (AnimationAxis)this.GetAnimation(_LEFT_HATCH);
 
-            m_BACK_DOOR = (AnimationClamped)this.GetAnimation(_BACK_DOOR);
+            m_BACK_DOOR = (AnimationAxis)this.GetAnimation(_BACK_DOOR);
 
             #endregion
 

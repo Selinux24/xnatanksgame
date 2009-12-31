@@ -1,7 +1,7 @@
 ﻿
 namespace Tanks
 {
-    public enum TankTypes
+    public enum VehicleTypes
     {
         Rhino,
         LandRaider,

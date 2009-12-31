@@ -60,23 +60,23 @@ namespace Tanks.Services
         /// <param name="type">Tipo</param>
         /// <param name="where">Posición inicial</param>
         /// <returns>Devuelve el vehículo añadido</returns>
-        public Vehicle AddVehicle(TankTypes type, Point where)
+        public Vehicle AddVehicle(VehicleTypes type, Point where)
         {
             Vehicle newVehicle = null;
 
-            if (type == TankTypes.Rhino)
+            if (type == VehicleTypes.Rhino)
             {
                 newVehicle = new Rhino(this.Game);
             }
-            else if (type == TankTypes.LandRaider)
+            else if (type == VehicleTypes.LandRaider)
             {
                 newVehicle = new LandRaider(this.Game);
             }
-            else if (type == TankTypes.LandSpeeder)
+            else if (type == VehicleTypes.LandSpeeder)
             {
                 newVehicle = new LandSpeeder(this.Game);
             }
-            else if (type == TankTypes.LemanRuss)
+            else if (type == VehicleTypes.LemanRuss)
             {
                 newVehicle = new LemanRuss(this.Game);
             }
@@ -101,7 +101,7 @@ namespace Tanks.Services
         /// <returns>Devuelve el Rhino añadido</returns>
         public Rhino AddRhino(Point where)
         {
-            return AddVehicle(TankTypes.Rhino, where) as Rhino;
+            return AddVehicle(VehicleTypes.Rhino, where) as Rhino;
         }
         /// <summary>
         /// Añade un Land Raider
@@ -110,7 +110,7 @@ namespace Tanks.Services
         /// <returns>Devuelve el Land Raider añadido</returns>
         public LandRaider AddLandRaider(Point where)
         {
-            return AddVehicle(TankTypes.LandRaider, where) as LandRaider;
+            return AddVehicle(VehicleTypes.LandRaider, where) as LandRaider;
         }
         /// <summary>
         /// Añade un Land Speeder
@@ -119,7 +119,7 @@ namespace Tanks.Services
         /// <returns>Devuelve el Land Speeder añadido</returns>
         public LandSpeeder AddLandSpeeder(Point where)
         {
-            return AddVehicle(TankTypes.LandSpeeder, where) as LandSpeeder;
+            return AddVehicle(VehicleTypes.LandSpeeder, where) as LandSpeeder;
         }
         /// <summary>
         /// Añade un Leman Russ
@@ -128,7 +128,7 @@ namespace Tanks.Services
         /// <returns>Devuelve el Leman Russ añadido</returns>
         public LemanRuss AddLemanRuss(Point where)
         {
-            return AddVehicle(TankTypes.LemanRuss, where) as LemanRuss;
+            return AddVehicle(VehicleTypes.LemanRuss, where) as LemanRuss;
         }
 
         /// <summary>
