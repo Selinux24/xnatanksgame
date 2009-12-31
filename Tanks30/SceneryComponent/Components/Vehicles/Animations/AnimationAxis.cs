@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GameComponents.Vehicles.Animation
+namespace GameComponents.Vehicles.Animations
 {
     /// <summary>
     /// Representa una rotación entre límites
     /// </summary>
-    public class AnimationClamped : AnimationBase
+    public class AnimationAxis : Animation
     {
         // Ángulo inicial de la rotación en radianes
         private float m_RotationFrom = 0f;
@@ -70,7 +67,7 @@ namespace GameComponents.Vehicles.Animation
         /// </summary>
         /// <param name="name">Nombre</param>
         /// <param name="bone">Bone que se va a animar</param>
-        public AnimationClamped(string name, ModelBone bone)
+        public AnimationAxis(string name, ModelBone bone)
             : base(name, bone)
         {
 

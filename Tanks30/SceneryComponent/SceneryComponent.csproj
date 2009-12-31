@@ -118,21 +118,20 @@
     <Compile Include="Components\Scenery\SceneryPrimitiveNode.cs">
       <Name>SceneryPrimitiveNode</Name>
     </Compile>
-    <Compile Include="Components\Vehicles\Animation\AnimationInfo.cs" />
-    <Compile Include="Components\Vehicles\Animation\PlayerPosition.cs">
+    <Compile Include="Components\Vehicles\Animations\AnimationInfo.cs" />
+    <Compile Include="Components\Vehicles\Animations\PlayerPosition.cs">
       <Name>PlayerPosition</Name>
     </Compile>
-    <Compile Include="Components\Vehicles\Animation\AnimationBase.cs">
+    <Compile Include="Components\Vehicles\Animations\Animation.cs">
       <Name>AnimationBase</Name>
     </Compile>
-    <Compile Include="Components\Vehicles\Animation\AnimationClamped.cs">
+    <Compile Include="Components\Vehicles\Animations\AnimationAxis.cs">
       <Name>AnimationClamped</Name>
     </Compile>
-    <Compile Include="Components\Vehicles\Animation\AnimationController.cs">
+    <Compile Include="Components\Vehicles\Animations\AnimationController.cs">
       <Name>AnimationController</Name>
     </Compile>
-    <Compile Include="Components\Vehicles\Animation\PlayerPositionInfo.cs" />
-    <Compile Include="Components\Vehicles\Animation\VehicleAnimationControler.cs" />
+    <Compile Include="Components\Vehicles\Animations\PlayerPositionInfo.cs" />
     <Compile Include="Components\Vehicles\Vehicle.Animation.cs" />
     <Compile Include="Components\Vehicles\VehicleComponentInfo.cs" />
     <Compile Include="InputHelper.cs">
@@ -205,6 +204,9 @@
       <ProductName>Microsoft XNA Framework Redistributable 3.0</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Components\Vehicles\Vehicle.Physics.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

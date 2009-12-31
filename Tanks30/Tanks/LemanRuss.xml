@@ -6,11 +6,10 @@
   <AccelerationModifier>5</AccelerationModifier>
   <BrakeModifier>3</BrakeModifier>
   <AngularVelocityModifier>5</AngularVelocityModifier>
-  <Height>0</Height>
   <AnimationControlers>
     <AnimationInfo>
       <Name>BattleCannon</Name>
-      <Type>GameComponents.Vehicles.Animation.AnimationClamped</Type>
+      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
       <BoneName>TURRET_CANNON</BoneName>
       <Axis>
         <X>1</X>
@@ -23,7 +22,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>BattleCannonBase</Name>
-      <Type>GameComponents.Vehicles.Animation.AnimationClamped</Type>
+      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
       <BoneName>TURRET</BoneName>
       <Axis>
         <X>0</X>
@@ -34,7 +33,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>TurretHatch</Name>
-      <Type>GameComponents.Vehicles.Animation.AnimationClamped</Type>
+      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
       <BoneName>TURRET_HATCH</BoneName>
       <Axis>
         <X>1</X>

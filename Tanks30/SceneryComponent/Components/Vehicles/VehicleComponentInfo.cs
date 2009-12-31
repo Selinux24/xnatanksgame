@@ -6,22 +6,61 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Vehicles
 {
-    using GameComponents.Vehicles.Animation;
+    using GameComponents.Vehicles.Animations;
 
+    /// <summary>
+    /// Información de animación de un vehículo
+    /// </summary>
     [Serializable]
     public partial class VehicleComponentInfo
     {
+        /// <summary>
+        /// Nombre del modelo
+        /// </summary>
         public string Model = null;
-        public AnimationInfo[] AnimationControlers;
-        public PlayerPositionInfo[] PlayerPositions;
+        /// <summary>
+        /// Velocidad de avance
+        /// </summary>
         public float MaxForwardVelocity;
+        /// <summary>
+        /// Velocidad de retroceso
+        /// </summary>
         public float MaxBackwardVelocity;
+        /// <summary>
+        /// Modificador de aceleración
+        /// </summary>
         public float AccelerationModifier;
+        /// <summary>
+        /// Modificador de desaceleración
+        /// </summary>
         public float BrakeModifier;
+        /// <summary>
+        /// Modificador de giro
+        /// </summary>
         public float AngularVelocityModifier;
-        public float Height;
+        /// <summary>
+        /// Indica si es un vehículo volador
+        /// </summary>
         public bool Skimmer = false;
+        /// <summary>
+        /// Altura de vuelo
+        /// </summary>
+        public float FlightHeight;
 
+        /// <summary>
+        /// Colección de controladores de animación
+        /// </summary>
+        public AnimationInfo[] AnimationControlers;
+        /// <summary>
+        /// Colección de posiciones de jugador
+        /// </summary>
+        public PlayerPositionInfo[] PlayerPositions;
+
+        /// <summary>
+        /// Carga la información de animación de un vehículo desde un xml
+        /// </summary>
+        /// <param name="xml">Información XML</param>
+        /// <returns>Devuelve la información leída</returns>
         public static VehicleComponentInfo Load(string xml)
         {
             StreamReader rd = new StreamReader(xml);
@@ -41,27 +80,35 @@ namespace GameComponents.Vehicles
             }
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public VehicleComponentInfo()
         {
 
         }
 
-        public AnimationBase[] CreateAnimationList(Model model)
+        /// <summary>
+        /// Crea la lista de animaciones usable por los componentes
+        /// </summary>
+        /// <param name="model">Modelo a animar</param>
+        /// <returns>Devuelve una lista de animaciones</returns>
+        public Animation[] CreateAnimationList(Model model)
         {
-            List<AnimationBase> animationList = new List<AnimationBase>();
+            List<Animation> animationList = new List<Animation>();
 
             foreach (AnimationInfo animationInfo in this.AnimationControlers)
             {
-                if (animationInfo.Type == typeof(AnimationBase).ToString())
+                if (animationInfo.Type == typeof(Animation).ToString())
                 {
-                    AnimationBase animation = new AnimationBase(animationInfo.Name, model.Bones[animationInfo.BoneName]);
+                    Animation animation = new Animation(animationInfo.Name, model.Bones[animationInfo.BoneName]);
                     animation.Initialize(animationInfo.Axis);
 
                     animationList.Add(animation);
                 }
-                else if (animationInfo.Type == typeof(AnimationClamped).ToString())
+                else if (animationInfo.Type == typeof(AnimationAxis).ToString())
                 {
-                    AnimationClamped animation = new AnimationClamped(animationInfo.Name, model.Bones[animationInfo.BoneName]);
+                    AnimationAxis animation = new AnimationAxis(animationInfo.Name, model.Bones[animationInfo.BoneName]);
                     animation.Initialize(animationInfo.Axis, animationInfo.AngleFrom, animationInfo.AngleTo, animationInfo.Velocity, animationInfo.Inverse);
 
                     animationList.Add(animation);
@@ -70,7 +117,11 @@ namespace GameComponents.Vehicles
 
             return animationList.ToArray();
         }
-
+        /// <summary>
+        /// Crea la lista de posiciones de jugador usable por los componentes
+        /// </summary>
+        /// <param name="model">Modelo que contiene las posiciones</param>
+        /// <returns>Devuelve una lista de posiciones de jugador</returns>
         public PlayerPosition[] CreatePlayerPositionList(Model model)
         {
             List<PlayerPosition> m_PlayerControlList = new List<PlayerPosition>();

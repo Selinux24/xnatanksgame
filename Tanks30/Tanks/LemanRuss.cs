@@ -5,14 +5,14 @@ namespace Tanks
 {
     using GameComponents;
     using GameComponents.Vehicles;
-    using GameComponents.Vehicles.Animation;
+    using GameComponents.Vehicles.Animations;
 
     public partial class LemanRuss : Vehicle
     {
         #region Incialización del control de animación
 
-        AnimationClamped m_BattleCannon;
-        AnimationBase m_BattleCannonBase;
+        AnimationAxis m_BattleCannon;
+        Animation m_BattleCannonBase;
 
         #endregion
 
@@ -64,14 +64,14 @@ namespace Tanks
         /// </summary>
         protected override void LoadContent()
         {
-            this.componentInfoName = "LemanRuss.xml";
+            this.ComponentInfoName = "LemanRuss.xml";
 
             base.LoadContent();
 
             #region Controlador de animación
 
-            m_BattleCannon = (AnimationClamped)this.GetAnimation("BattleCannon");
-            m_BattleCannonBase = (AnimationBase)this.GetAnimation("BattleCannonBase");
+            m_BattleCannon = (AnimationAxis)this.GetAnimation("BattleCannon");
+            m_BattleCannonBase = (Animation)this.GetAnimation("BattleCannonBase");
 
             #endregion
 

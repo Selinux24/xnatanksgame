@@ -107,7 +107,7 @@
     <Compile Include="TanksGame.cs">
       <Name>TanksGame</Name>
     </Compile>
-    <Compile Include="TankTypes.cs" />
+    <Compile Include="VehicleTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico">

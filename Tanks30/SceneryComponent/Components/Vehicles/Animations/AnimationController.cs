@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GameComponents.Vehicles.Animation
+namespace GameComponents.Vehicles.Animations
 {
     /// <summary>
     /// Controlador de animación
@@ -12,16 +10,16 @@ namespace GameComponents.Vehicles.Animation
     public class AnimationController
     {
         // Diccionario de animaciones por índice
-        private readonly Dictionary<int, AnimationBase> m_AnimationList = new Dictionary<int, AnimationBase>();
+        private readonly Dictionary<int, Animation> m_AnimationList = new Dictionary<int, Animation>();
 
         /// <summary>
         /// Obtiene la lista de animaciones
         /// </summary>
-        public AnimationBase[] AnimationList
+        public Animation[] AnimationList
         {
             get
             {
-                List<AnimationBase> list = new List<AnimationBase>(m_AnimationList.Values);
+                List<Animation> list = new List<Animation>(m_AnimationList.Values);
 
                 return list.ToArray();
             }
@@ -39,7 +37,7 @@ namespace GameComponents.Vehicles.Animation
         /// Añade una animación al controlador
         /// </summary>
         /// <param name="animation">Animación</param>
-        public void Add(AnimationBase animation)
+        public void Add(Animation animation)
         {
             if (animation != null)
             {
@@ -53,11 +51,11 @@ namespace GameComponents.Vehicles.Animation
         /// Añade una lista de animaciones al controlador
         /// </summary>
         /// <param name="animationList">Animaciones</param>
-        public void AddRange(AnimationBase[] animationList)
+        public void AddRange(Animation[] animationList)
         {
             if (animationList != null && animationList.Length > 0)
             {
-                foreach (AnimationBase animation in animationList)
+                foreach (Animation animation in animationList)
                 {
                     this.Add(animation);
                 }
@@ -67,7 +65,7 @@ namespace GameComponents.Vehicles.Animation
         /// Elimina una animación del controlador
         /// </summary>
         /// <param name="animation">Animación</param>
-        public void Remove(AnimationBase animation)
+        public void Remove(Animation animation)
         {
             if (animation != null)
             {
@@ -83,7 +81,7 @@ namespace GameComponents.Vehicles.Animation
         /// <param name="gameTime">Tiempo de juego</param>
         public void Update(GameTime gameTime)
         {
-            foreach (AnimationBase animation in m_AnimationList.Values)
+            foreach (Animation animation in m_AnimationList.Values)
             {
                 // Actualizar todos los elementos de la colección de animaciones
                 animation.Update(gameTime);
