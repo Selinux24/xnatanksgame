@@ -85,80 +85,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\Camera\BaseCameraGameComponent.cs">
+    <Compile Include="Camera\BaseCameraGameComponent.cs">
       <Name>BaseCameraGameComponent</Name>
     </Compile>
-    <Compile Include="Components\Debug\LineDrawerGameComponent.cs">
+    <Compile Include="Debug\LineDrawerGameComponent.cs">
       <Name>LineDrawerGameComponent</Name>
     </Compile>
-    <Compile Include="Components\Particles\ParticleSettings.cs">
-      <Name>ParticleSettings</Name>
-    </Compile>
-    <Compile Include="Components\Particles\ParticleSystem.cs">
-      <Name>ParticleSystem</Name>
-    </Compile>
-    <Compile Include="Components\Particles\ParticleVertex.cs">
-      <Name>ParticleVertex</Name>
-    </Compile>
-    <Compile Include="Components\Particles\SmokePlumeParticleSystem.cs">
-      <Name>SmokePlumeParticleSystem</Name>
-    </Compile>
-    <Compile Include="Components\Physics\CollisionManager.cs">
-      <Name>CollisionManager</Name>
-    </Compile>
-    <Compile Include="Components\Scenery\SceneryNode.cs">
-      <Name>SceneryNode</Name>
-    </Compile>
-    <Compile Include="Components\Camera\FirstPersonCameraGameComponent.cs">
+    <Compile Include="Camera\FirstPersonCameraGameComponent.cs">
       <Name>FirstPersonCameraGameComponent</Name>
     </Compile>
-    <Compile Include="Components\Scenery\SceneryInfoNodeDrawn.cs">
-      <Name>SceneryInfoNodeDrawn</Name>
-    </Compile>
-    <Compile Include="Components\Scenery\SceneryPrimitiveNode.cs">
-      <Name>SceneryPrimitiveNode</Name>
-    </Compile>
-    <Compile Include="Components\Vehicles\Animations\AnimationInfo.cs" />
-    <Compile Include="Components\Vehicles\Animations\PlayerPosition.cs">
-      <Name>PlayerPosition</Name>
-    </Compile>
-    <Compile Include="Components\Vehicles\Animations\Animation.cs">
-      <Name>AnimationBase</Name>
-    </Compile>
-    <Compile Include="Components\Vehicles\Animations\AnimationAxis.cs">
-      <Name>AnimationClamped</Name>
-    </Compile>
-    <Compile Include="Components\Vehicles\Animations\AnimationController.cs">
-      <Name>AnimationController</Name>
-    </Compile>
-    <Compile Include="Components\Vehicles\Animations\PlayerPositionInfo.cs" />
-    <Compile Include="Components\Vehicles\Vehicle.Animation.cs" />
-    <Compile Include="Components\Vehicles\VehicleComponentInfo.cs" />
     <Compile Include="InputHelper.cs">
       <Name>InputHelper</Name>
-    </Compile>
-    <Compile Include="Components\Scenery\LOD.cs">
-      <Name>LOD</Name>
-    </Compile>
-    <Compile Include="Components\Scenery\SceneryEnvironmet.cs">
-      <Name>SceneryEnvironmet</Name>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <Name>AssemblyInfo</Name>
     </Compile>
-    <Compile Include="Components\Scenery\SceneryGameComponent.cs">
-      <Name>SceneryGameComponent</Name>
-    </Compile>
-    <Compile Include="Components\Scenery\SceneryInfoGameComponent.cs">
-      <Name>SceneryInfoGameComponent</Name>
-    </Compile>
-    <Compile Include="Components\Scenery\SkyBoxGameComponent.cs">
-      <Name>SkyBoxGameComponent</Name>
-    </Compile>
-    <Compile Include="Components\Vehicles\Vehicle.cs">
-      <Name>TankGameComponent</Name>
-    </Compile>
-    <Compile Include="Components\Camera\ThirdPersonCameraGameComponent.cs">
+    <Compile Include="Camera\ThirdPersonCameraGameComponent.cs">
       <Name>ThirdPersonCameraGameComponent</Name>
     </Compile>
   </ItemGroup>
@@ -206,9 +148,31 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\MathComponents\RandomComponent.cs" />
-    <Compile Include="Components\Vehicles\Vehicle.Physics.cs" />
-    <Compile Include="Components\Vehicles\Vehicle.Status.cs" />
+    <Compile Include="MathComponents\RandomComponent.cs" />
+    <Compile Include="Particles\ParticleSettings.cs" />
+    <Compile Include="Particles\ParticleSystem.cs" />
+    <Compile Include="Particles\ParticleVertex.cs" />
+    <Compile Include="Particles\SmokePlumeParticleSystem.cs" />
+    <Compile Include="Physics\CollisionManager.cs" />
+    <Compile Include="Scenery\LOD.cs" />
+    <Compile Include="Scenery\SceneryEnvironmet.cs" />
+    <Compile Include="Scenery\SceneryGameComponent.cs" />
+    <Compile Include="Scenery\SceneryInfoGameComponent.cs" />
+    <Compile Include="Scenery\SceneryInfoNodeDrawn.cs" />
+    <Compile Include="Scenery\SceneryNode.cs" />
+    <Compile Include="Scenery\SceneryPrimitiveNode.cs" />
+    <Compile Include="Scenery\SkyBoxGameComponent.cs" />
+    <Compile Include="Vehicles\Animations\Animation.cs" />
+    <Compile Include="Vehicles\Animations\AnimationAxis.cs" />
+    <Compile Include="Vehicles\Animations\AnimationController.cs" />
+    <Compile Include="Vehicles\Animations\AnimationInfo.cs" />
+    <Compile Include="Vehicles\Animations\PlayerPosition.cs" />
+    <Compile Include="Vehicles\Animations\PlayerPositionInfo.cs" />
+    <Compile Include="Vehicles\Vehicle.Animation.cs" />
+    <Compile Include="Vehicles\Vehicle.cs" />
+    <Compile Include="Vehicles\Vehicle.Physics.cs" />
+    <Compile Include="Vehicles\Vehicle.Status.cs" />
+    <Compile Include="Vehicles\VehicleComponentInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
