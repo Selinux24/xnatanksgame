@@ -6,7 +6,10 @@
   <AccelerationModifier>15</AccelerationModifier>
   <BrakeModifier>1</BrakeModifier>
   <AngularVelocityModifier>20</AngularVelocityModifier>
-  <FlightHeight>25</FlightHeight>
+  <MaxFlightHeight>25</MaxFlightHeight>
+  <MinFlightHeight>10</MinFlightHeight>
+  <AscendingAngle>15</AscendingAngle>
+  <DescendingAngle>20</DescendingAngle>
   <Skimmer>true</Skimmer>
   <AnimationControlers>
     <AnimationInfo>
