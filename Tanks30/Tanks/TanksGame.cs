@@ -86,10 +86,10 @@ namespace Tanks
             m_Graphics.PreferMultiSampling = false;
             m_Graphics.IsFullScreen = false;
 #else
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 800;
-            graphics.PreferMultiSampling = false;
-            graphics.IsFullScreen = true;
+            m_Graphics.PreferredBackBufferWidth = 1280;
+            m_Graphics.PreferredBackBufferHeight = 1024;
+            m_Graphics.PreferMultiSampling = false;
+            m_Graphics.IsFullScreen = true;
 #endif
         }
 
