@@ -151,7 +151,7 @@
       <Project>{1F2830F8-092D-4399-82E1-0BC0B1544517}</Project>
       <Name>Physics</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SceneryComponent\GameComponents.csproj">
+    <ProjectReference Include="..\GameComponents\GameComponents.csproj">
       <Project>{E7AEEB7C-CE8A-4227-986B-FD3657076247}</Project>
       <Name>GameComponents</Name>
     </ProjectReference>
