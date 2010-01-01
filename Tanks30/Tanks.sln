@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SceneryComponent", "SceneryComponent\SceneryComponent.csproj", "{E7AEEB7C-CE8A-4227-986B-FD3657076247}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameComponents", "SceneryComponent\GameComponents.csproj", "{E7AEEB7C-CE8A-4227-986B-FD3657076247}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tanks", "Tanks\Tanks.csproj", "{D4FA8226-1629-43A2-9280-4F26A53B0F88}"
 EndProject
@@ -15,30 +15,30 @@ Global
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs02.codeplex.com/
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = SceneryComponent\\SceneryComponent.csproj
-		SccProjectName1 = SceneryComponent
-		SccLocalPath1 = SceneryComponent
-		SccProjectUniqueName2 = Tanks\\Tanks.csproj
-		SccProjectName2 = Tanks
-		SccLocalPath2 = Tanks
-		SccProjectUniqueName3 = CustomProcessors\\CustomProcessors.csproj
-		SccProjectName3 = CustomProcessors
-		SccLocalPath3 = CustomProcessors
-		SccProjectUniqueName4 = Physics\\Physics.csproj
-		SccProjectName4 = Physics
-		SccLocalPath4 = Physics
-		SccProjectUniqueName5 = SceneryComponent\\Content.contentproj
-		SccProjectTopLevelParentUniqueName5 = SceneryComponent\\SceneryComponent.csproj
-		SccProjectName5 = SceneryComponent
-		SccLocalPath5 = SceneryComponent
-		SccProjectUniqueName6 = Tanks\\Content.contentproj
-		SccProjectTopLevelParentUniqueName6 = Tanks\\Tanks.csproj
-		SccProjectName6 = Tanks
-		SccLocalPath6 = Tanks
-		SccProjectUniqueName7 = Physics\\Content.contentproj
-		SccProjectTopLevelParentUniqueName7 = Physics\\Physics.csproj
-		SccProjectName7 = Physics
-		SccLocalPath7 = Physics
+		SccProjectUniqueName1 = Tanks\\Tanks.csproj
+		SccProjectName1 = Tanks
+		SccLocalPath1 = Tanks
+		SccProjectUniqueName2 = CustomProcessors\\CustomProcessors.csproj
+		SccProjectName2 = CustomProcessors
+		SccLocalPath2 = CustomProcessors
+		SccProjectUniqueName3 = Physics\\Physics.csproj
+		SccProjectName3 = Physics
+		SccLocalPath3 = Physics
+		SccProjectUniqueName4 = SceneryComponent\\Content.contentproj
+		SccProjectTopLevelParentUniqueName4 = SceneryComponent\\SceneryComponent.csproj
+		SccProjectName4 = SceneryComponent
+		SccLocalPath4 = SceneryComponent
+		SccProjectUniqueName5 = Tanks\\Content.contentproj
+		SccProjectTopLevelParentUniqueName5 = Tanks\\Tanks.csproj
+		SccProjectName5 = Tanks
+		SccLocalPath5 = Tanks
+		SccProjectUniqueName6 = Physics\\Content.contentproj
+		SccProjectTopLevelParentUniqueName6 = Physics\\Physics.csproj
+		SccProjectName6 = Physics
+		SccLocalPath6 = Physics
+		SccProjectUniqueName7 = SceneryComponent\\GameComponents.csproj
+		SccProjectName7 = SceneryComponent
+		SccLocalPath7 = SceneryComponent
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
