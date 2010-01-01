@@ -206,7 +206,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\MathComponents\RandomComponent.cs" />
     <Compile Include="Components\Vehicles\Vehicle.Physics.cs" />
+    <Compile Include="Components\Vehicles\Vehicle.Status.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

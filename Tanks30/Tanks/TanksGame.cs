@@ -1,6 +1,7 @@
-using System;
+using System.Collections.Generic;
 using GameComponents;
 using GameComponents.Camera;
+using GameComponents.MathComponents;
 using GameComponents.Physics;
 using GameComponents.Scenery;
 using GameComponents.Vehicles;
@@ -8,37 +9,36 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Tanks.Services;
-using Tanks.Vehicles;
-using System.Collections.Generic;
 
 namespace Tanks
 {
+    using Tanks.Services;
+
     /// <summary>
     /// Juego
     /// </summary>
     public class TanksGame : Microsoft.Xna.Framework.Game
     {
         // Gestor de dispositivos gráficos
-        GraphicsDeviceManager graphics;
+        private GraphicsDeviceManager m_Graphics;
         // Gestor de contenidos
-        ContentManager content;
+        private ContentManager m_Content;
 
         // Controlador de colisión
-        private CollisionManager collision;
+        private CollisionManager m_Collision;
         // Terreno
-        private SceneryGameComponent scenery;
+        private SceneryGameComponent m_Scenery;
         // Cielo
-        private SkyBoxGameComponent skyBox;
+        private SkyBoxGameComponent m_SkyBox;
         // Jugador
-        private ThirdPersonCameraGameComponent camera;
+        private ThirdPersonCameraGameComponent m_Camera;
         // Información del terreno
-        private SceneryInfoGameComponent info;
-        // Servicio contenedor de tanques
-        private VehicleContainerService tankContainer;
+        private SceneryInfoGameComponent m_Info;
+        // Servicio contenedor de vehículos
+        private VehicleContainerService m_VehicleContainer;
 
-        // Tanque actual
-        private Vehicle currentTank;
+        // Vehículo actual
+        private Vehicle m_CurrentVehicle;
 
         #region Teclas
 
@@ -75,16 +75,16 @@ namespace Tanks
         /// </summary>
         public TanksGame()
         {
-            graphics = new GraphicsDeviceManager(this);
-            content = new ContentManager(Services);
+            m_Graphics = new GraphicsDeviceManager(this);
+            m_Content = new ContentManager(Services);
 
-            this.Services.AddService(content.GetType(), content);
+            this.Services.AddService(m_Content.GetType(), m_Content);
 
 #if DEBUG
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 600;
-            graphics.PreferMultiSampling = false;
-            graphics.IsFullScreen = false;
+            m_Graphics.PreferredBackBufferWidth = 800;
+            m_Graphics.PreferredBackBufferHeight = 600;
+            m_Graphics.PreferMultiSampling = false;
+            m_Graphics.IsFullScreen = false;
 #else
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 800;
@@ -98,49 +98,57 @@ namespace Tanks
         /// </summary>
         protected override void Initialize()
         {
-            InputHelper.GraphicsDevice = graphics.GraphicsDevice;
+            InputHelper.GraphicsDevice = m_Graphics.GraphicsDevice;
 
-            scenery = new SceneryGameComponent(this);
-            scenery.UpdateOrder = 0;
-            Components.Add(scenery);
-            Services.AddService(typeof(SceneryGameComponent), scenery);
+            m_Scenery = new SceneryGameComponent(this);
+            m_Scenery.UpdateOrder = 0;
+            Components.Add(m_Scenery);
+            Services.AddService(typeof(SceneryGameComponent), m_Scenery);
 
-            tankContainer = new VehicleContainerService(this);
-            tankContainer.UpdateOrder = 1;
-            Services.AddService(tankContainer.GetType(), tankContainer);
+            m_VehicleContainer = new VehicleContainerService(this);
+            m_VehicleContainer.UpdateOrder = 1;
+            Services.AddService(m_VehicleContainer.GetType(), m_VehicleContainer);
 
-            collision = new CollisionManager(this);
-            collision.UpdateOrder = 2;
-            Components.Add(collision);
-            Services.AddService(collision.GetType(), collision);
+            m_Collision = new CollisionManager(this);
+            m_Collision.UpdateOrder = 2;
+            Components.Add(m_Collision);
+            Services.AddService(m_Collision.GetType(), m_Collision);
 
-            camera = new ThirdPersonCameraGameComponent(this);
-            camera.UpdateOrder = 3;
-            Components.Add(camera);
+            m_Camera = new ThirdPersonCameraGameComponent(this);
+            m_Camera.UpdateOrder = 3;
+            Components.Add(m_Camera);
 
-            skyBox = new SkyBoxGameComponent(this);
-            skyBox.UpdateOrder = 4;
-            Components.Add(skyBox);
+            m_SkyBox = new SkyBoxGameComponent(this);
+            m_SkyBox.UpdateOrder = 4;
+            Components.Add(m_SkyBox);
 
-            info = new SceneryInfoGameComponent(this);
-            info.UpdateOrder = 5;
-            Components.Add(info);
+            m_Info = new SceneryInfoGameComponent(this);
+            m_Info.UpdateOrder = 5;
+            Components.Add(m_Info);
 
-            Random rnd = new Random();
+            Vehicle[] squad01 = AddSquadron(VehicleTypes.LandSpeeder, 3);
+            Vehicle[] squad02 = AddSquadron(VehicleTypes.LandSpeeder, 3);
+            Vehicle[] squad03 = AddSquadron(VehicleTypes.LandSpeeder, 3);
+            Vehicle[] squad04 = AddSquadron(VehicleTypes.LandRaider, 2);
+            Vehicle[] squad05 = AddSquadron(VehicleTypes.LemanRuss, 3);
+            Vehicle[] squad06 = AddSquadron(VehicleTypes.LemanRuss, 3);
+            Vehicle[] squad07 = AddSquadron(VehicleTypes.Rhino, 3);
+            Vehicle[] squad08 = AddSquadron(VehicleTypes.Rhino, 3);
+            Vehicle[] squad09 = AddSquadron(VehicleTypes.Rhino, 3);
 
-            AddSquadron(VehicleTypes.LandSpeeder, 3, rnd);
-            AddSquadron(VehicleTypes.LandSpeeder, 3, rnd);
-            AddSquadron(VehicleTypes.LandSpeeder, 3, rnd);
-            AddSquadron(VehicleTypes.LandRaider, 2, rnd);
-            AddSquadron(VehicleTypes.LemanRuss, 3, rnd);
-            AddSquadron(VehicleTypes.LemanRuss, 3, rnd);
-            AddSquadron(VehicleTypes.Rhino, 3, rnd);
-            AddSquadron(VehicleTypes.Rhino, 3, rnd);
-            AddSquadron(VehicleTypes.Rhino, 3, rnd);
+            squad01[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+            squad02[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+            squad03[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+            squad04[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+            squad05[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+            squad06[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+            squad07[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+            squad08[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+            squad09[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+
+            this.SetFocus(squad01[0]);
 
             base.Initialize();
-
-            this.SetFocus(tankContainer.Vehicles[0]);
         }
         /// <summary>
         /// Carga de los componentes gráficos
@@ -173,7 +181,7 @@ namespace Tanks
 
             this.UpdateEnvironment(gameTime);
 
-            this.UpdateTanks(gameTime);
+            this.UpdateVehicles(gameTime);
 
             InputHelper.End();
         }
@@ -183,7 +191,7 @@ namespace Tanks
         /// <param name="gameTime">Tiempo de juego</param>
         protected override void Draw(GameTime gameTime)
         {
-            graphics.GraphicsDevice.Clear(SceneryEnvironment.Ambient.AmbientColor);
+            m_Graphics.GraphicsDevice.Clear(SceneryEnvironment.Ambient.AmbientColor);
 
             base.Draw(gameTime);
         }
@@ -194,25 +202,25 @@ namespace Tanks
         /// <param name="tank">Tanque</param>
         private void SetFocus(Vehicle tank)
         {
-            if (this.currentTank != null)
+            if (this.m_CurrentVehicle != null)
             {
                 // Quitar el foco del tanque anterior
-                this.currentTank.HasFocus = false;
+                this.m_CurrentVehicle.HasFocus = false;
 
                 // Indicar que la cámara no seguirá a ningún tanque
-                this.camera.ModelToFollow = null;
+                this.m_Camera.ModelToFollow = null;
             }
 
             if (tank != null)
             {
                 // Indicar que la cámara debe seguir al tanque seleccionado
-                this.camera.ModelToFollow = tank;
+                this.m_Camera.ModelToFollow = tank;
 
                 // Establecer el foco en el tanque
                 tank.HasFocus = true;
 
                 // Actualizar el marcador de tanque actual
-                this.currentTank = tank;
+                this.m_CurrentVehicle = tank;
             }
         }
         /// <summary>
@@ -220,46 +228,43 @@ namespace Tanks
         /// </summary>
         /// <param name="type">Tipo de escuadrón</param>
         /// <param name="count">Cantidad de vehículos</param>
-        /// <param name="rnd">Aleatorio</param>
-        private void AddSquadron(VehicleTypes type, int count, Random rnd)
+        private Vehicle[] AddSquadron(VehicleTypes type, int count)
         {
             // Punto de posición del escuadrón
-            Point where = new Point(rnd.Next(5000) + 5000, rnd.Next(5000) + 5000);
+            Point where = new Point(RandomComponent.Next(5000) + 5000, RandomComponent.Next(5000) + 5000);
 
             // Lista de componentes creados
-            List<Vehicle> tankList = new List<Vehicle>();
+            List<Vehicle> vehicleList = new List<Vehicle>();
 
             for (int i = 0; i < count; i++)
             {
                 if (type == VehicleTypes.Rhino)
                 {
-                    tankList.Add(tankContainer.AddRhino(where));
+                    vehicleList.Add(m_VehicleContainer.AddRhino(where));
                 }
                 else if (type == VehicleTypes.LandSpeeder)
                 {
-                    tankList.Add(tankContainer.AddLandSpeeder(where));
+                    vehicleList.Add(m_VehicleContainer.AddLandSpeeder(where));
                 }
                 else if (type == VehicleTypes.LandRaider)
                 {
-                    tankList.Add(tankContainer.AddLandRaider(where));
+                    vehicleList.Add(m_VehicleContainer.AddLandRaider(where));
                 }
                 else if (type == VehicleTypes.LemanRuss)
                 {
-                    tankList.Add(tankContainer.AddLemanRuss(where));
+                    vehicleList.Add(m_VehicleContainer.AddLemanRuss(where));
                 }
             }
-
-            // Establecer el destino del piloto automático
-            tankList[0].AutoPilot.GoTo(scenery.Center, 50f);
-            tankList[0].AutoPilot.Enabled = true;
 
             for (int i = 1; i < count; i++)
             {
                 // Posición de cada tanque relativa al anterior
-                tankList[i].Position = tankList[i - 1].Position - Vector3.Multiply(Vector3.One, 10f);
+                vehicleList[i].Position = vehicleList[i - 1].Position - Vector3.Multiply(Vector3.One, 10f);
                 // Indicar a cada tanque que siga al anterior
-                tankList[i].AutoPilot.Follow(tankList[i - 1]);
+                vehicleList[i].AutoPilot.Follow(vehicleList[i - 1]);
             }
+
+            return vehicleList.ToArray();
         }
         /// <summary>
         /// Actualizar elementos del entorno
@@ -269,54 +274,54 @@ namespace Tanks
         {
             if (InputHelper.KeyUpEvent(m_ShowNodesDrawnKey))
             {
-                info.Visible = !info.Visible;
+                m_Info.Visible = !m_Info.Visible;
             }
 
             if (InputHelper.KeyUpEvent(m_IncLODKey))
             {
-                if (info.Lod == LOD.None)
+                if (m_Info.Lod == LOD.None)
                 {
-                    info.Lod = LOD.High;
-                    scenery.Lod = LOD.High;
+                    m_Info.Lod = LOD.High;
+                    m_Scenery.Lod = LOD.High;
                 }
-                else if (info.Lod == LOD.High)
+                else if (m_Info.Lod == LOD.High)
                 {
-                    info.Lod = LOD.Medium;
-                    scenery.Lod = LOD.Medium;
+                    m_Info.Lod = LOD.Medium;
+                    m_Scenery.Lod = LOD.Medium;
                 }
-                else if (info.Lod == LOD.Medium)
+                else if (m_Info.Lod == LOD.Medium)
                 {
-                    info.Lod = LOD.Low;
-                    scenery.Lod = LOD.Low;
+                    m_Info.Lod = LOD.Low;
+                    m_Scenery.Lod = LOD.Low;
                 }
-                else if (info.Lod == LOD.Low)
+                else if (m_Info.Lod == LOD.Low)
                 {
-                    info.Lod = LOD.None;
-                    scenery.Lod = LOD.None;
+                    m_Info.Lod = LOD.None;
+                    m_Scenery.Lod = LOD.None;
                 }
             }
 
             if (InputHelper.KeyUpEvent(m_DecLODKey))
             {
-                if (info.Lod == LOD.Medium)
+                if (m_Info.Lod == LOD.Medium)
                 {
-                    info.Lod = LOD.High;
-                    scenery.Lod = LOD.High;
+                    m_Info.Lod = LOD.High;
+                    m_Scenery.Lod = LOD.High;
                 }
-                else if (info.Lod == LOD.Low)
+                else if (m_Info.Lod == LOD.Low)
                 {
-                    info.Lod = LOD.Medium;
-                    scenery.Lod = LOD.Medium;
+                    m_Info.Lod = LOD.Medium;
+                    m_Scenery.Lod = LOD.Medium;
                 }
-                else if (info.Lod == LOD.None)
+                else if (m_Info.Lod == LOD.None)
                 {
-                    info.Lod = LOD.Low;
-                    scenery.Lod = LOD.Low;
+                    m_Info.Lod = LOD.Low;
+                    m_Scenery.Lod = LOD.Low;
                 }
-                else if (info.Lod == LOD.High)
+                else if (m_Info.Lod == LOD.High)
                 {
-                    info.Lod = LOD.None;
-                    scenery.Lod = LOD.None;
+                    m_Info.Lod = LOD.None;
+                    m_Scenery.Lod = LOD.None;
                 }
             }
 
@@ -347,13 +352,13 @@ namespace Tanks
 
             if (InputHelper.KeyUpEvent(m_WireFrameKey))
             {
-                if (scenery.FillMode == FillMode.Solid)
+                if (m_Scenery.FillMode == FillMode.Solid)
                 {
-                    scenery.FillMode = FillMode.WireFrame;
+                    m_Scenery.FillMode = FillMode.WireFrame;
                 }
                 else
                 {
-                    scenery.FillMode = FillMode.Solid;
+                    m_Scenery.FillMode = FillMode.Solid;
                 }
             }
         }
@@ -361,52 +366,50 @@ namespace Tanks
         /// Actualiza los tanques
         /// </summary>
         /// <param name="gameTime">Tiempo de juego</param>
-        private void UpdateTanks(GameTime gameTime)
+        private void UpdateVehicles(GameTime gameTime)
         {
-            if (InputHelper.KeyUpEvent(m_NextVehicleKey))
+            if (InputHelper.KeyUpEvent(this.m_NextVehicleKey))
             {
-                int index = tankContainer.IndexOf(currentTank);
+                int index = this.m_VehicleContainer.IndexOf(this.m_CurrentVehicle);
                 if (index >= 0)
                 {
-                    if (index < tankContainer.Vehicles.Length - 1)
+                    if (index < this.m_VehicleContainer.Vehicles.Length - 1)
                     {
-                        this.SetFocus(tankContainer.Vehicles[index + 1]);
+                        this.SetFocus(this.m_VehicleContainer.Vehicles[index + 1]);
                     }
                     else
                     {
-                        this.SetFocus(tankContainer.Vehicles[0]);
+                        this.SetFocus(this.m_VehicleContainer.Vehicles[0]);
                     }
                 }
             }
 
-            if (InputHelper.KeyUpEvent(m_PreviousVehicleKey))
+            if (InputHelper.KeyUpEvent(this.m_PreviousVehicleKey))
             {
-                int index = tankContainer.IndexOf(currentTank);
+                int index = this.m_VehicleContainer.IndexOf(this.m_CurrentVehicle);
                 if (index >= 0)
                 {
                     if (index == 0)
                     {
-                        this.SetFocus(tankContainer.Vehicles[tankContainer.Vehicles.Length - 1]);
+                        this.SetFocus(this.m_VehicleContainer.Vehicles[this.m_VehicleContainer.Vehicles.Length - 1]);
                     }
                     else
                     {
-                        this.SetFocus(tankContainer.Vehicles[index - 1]);
+                        this.SetFocus(this.m_VehicleContainer.Vehicles[index - 1]);
                     }
                 }
             }
 
-            if (InputHelper.KeyUpEvent(m_NextVehiclePositionKey))
+            if (InputHelper.KeyUpEvent(this.m_NextVehiclePositionKey))
             {
-                currentTank.SetNextPlayerPosition();
+                this.m_CurrentVehicle.SetNextPlayerPosition();
             }
 
-            foreach (Vehicle tank in tankContainer.Vehicles)
+            foreach (Vehicle vehicle in this.m_VehicleContainer.Vehicles)
             {
-                if ((tank != currentTank) && (!tank.AutoPilot.Enabled))
+                if (/*(vehicle != this.currentVehicle) && */(!vehicle.AutoPilot.Enabled))
                 {
-                    Random rnd = new Random();
-
-                    tank.AutoPilot.GoTo(new Vector3(rnd.Next(16000), 0, rnd.Next(16000)), 1.0f);
+                    vehicle.AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40.0f);
                 }
             }
         }

@@ -43,9 +43,21 @@ namespace GameComponents.Vehicles
         /// </summary>
         public bool Skimmer = false;
         /// <summary>
-        /// Altura de vuelo
+        /// Altura de vuelo máxima
         /// </summary>
-        public float FlightHeight;
+        public float MaxFlightHeight;
+        /// <summary>
+        /// Altura de vuelo mínima
+        /// </summary>
+        public float MinFlightHeight;
+        /// <summary>
+        /// Angulo de inclinación del morro en el ascenso
+        /// </summary>
+        public float AscendingAngle;
+        /// <summary>
+        /// Angulo de inclinación del morro en el descenso
+        /// </summary>
+        public float DescendingAngle;
 
         /// <summary>
         /// Colección de controladores de animación

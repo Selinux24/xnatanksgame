@@ -46,11 +46,11 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                return m_Position;
+                return this.m_Position;
             }
             set
             {
-                m_Position = value;
+                this.m_Position = value;
             }
         }
         /// <summary>
@@ -60,15 +60,15 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                return m_Rotation;
+                return this.m_Rotation;
             }
             set
             {
-                m_Rotation = value;
+                this.m_Rotation = value;
 
-                m_Direction = Vector3.Transform(Vector3.Forward, m_Rotation);
+                this.m_Direction = Vector3.Transform(Vector3.Forward, this.m_Rotation);
 
-                RotationHasChanged = true;
+                this.RotationHasChanged = true;
             }
         }
         /// <summary>
@@ -78,11 +78,11 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                return m_Scale;
+                return this.m_Scale;
             }
             set
             {
-                m_Scale = value;
+                this.m_Scale = value;
             }
         }
 
@@ -191,13 +191,19 @@ namespace GameComponents.Vehicles
             this.AngularVelocityModifier = MathHelper.ToRadians(componentInfo.AngularVelocityModifier);
             // Vehículo volador
             this.Skimmer = componentInfo.Skimmer;
-            // Altura
-            this.FilghtHeight = componentInfo.FlightHeight;
+            // Altura máxima
+            this.MaxFlightHeight = componentInfo.MaxFlightHeight;
+            // Altura mínima
+            this.MinFlightHeight = componentInfo.MinFlightHeight;
+            // Rotación ascendente del morro
+            this.AscendingAngle = MathHelper.ToRadians(componentInfo.AscendingAngle);
+            // Rotación descendente del morro
+            this.DescendingAngle = MathHelper.ToRadians(componentInfo.DescendingAngle);
             // Controles de animación
             this.m_AnimationController.AddRange(componentInfo.CreateAnimationList(this.m_Model));
             // Posiciones
             this.m_PlayerControlList.AddRange(componentInfo.CreatePlayerPositionList(this.m_Model));
-            
+
             // Transformaciones iniciales
             this.m_BoneTransforms = new Matrix[m_Model.Bones.Count];
         }
@@ -209,10 +215,13 @@ namespace GameComponents.Vehicles
         {
             base.Update(gameTime);
 
-            if (m_Autopilot.Enabled)
+            if (!this.Destroyed)
             {
-                // Piloto automático
-                m_Autopilot.UpdateAutoPilot(this);
+                if (m_Autopilot.Enabled)
+                {
+                    // Piloto automático
+                    m_Autopilot.UpdateAutoPilot(this);
+                }
             }
 
             // Controlador de animación
@@ -227,37 +236,16 @@ namespace GameComponents.Vehicles
             // Establecer la visibilidad del vehículo
             this.Visible = this.TransformedBSph.Intersects(BaseCameraGameComponent.gLODHighFrustum);
 
-            m_SmokePlumeParticles.Visible = this.Visible;
+            // Actualizar con el terreno
+            this.UpdateWithScenery(gameTime);
 
-            if (!this.Initialized)
+            if (this.Damaged && this.Visible)
             {
-                // Actualizar inclinación y altura
-                this.UpdateWithScenery(gameTime);
-
-                this.Initialized = true;
-            }
-            else if (this.Visible)
-            {
-                if (this.PositionHasChanged || this.RotationHasChanged || this.ScaleHasChanged)
-                {
-                    // Actualizar inclinación y altura
-                    this.UpdateWithScenery(gameTime);
-                }
+                // Si el vehículo ha sido dañado mostrar humo
+                this.m_SmokePlumeParticles.Visible = true;
 
                 // Añadiendo humo
                 this.m_SmokePlumeParticles.AddParticle(this.Position, Vector3.Zero);
-            }
-            else
-            {
-                this.m_FramesSinceLastUpdate++;
-
-                if (this.m_FramesSinceLastUpdate >= this.m_MaxFrames)
-                {
-                    // Actualizar inclinación y altura
-                    this.UpdateWithScenery(gameTime);
-
-                    this.m_FramesSinceLastUpdate = 0;
-                }
             }
 
             this.PositionHasChanged = false;
@@ -295,9 +283,12 @@ namespace GameComponents.Vehicles
                 }
             }
 
-            this.m_SmokePlumeParticles.SetCamera(
-                BaseCameraGameComponent.gViewMatrix,
-                BaseCameraGameComponent.gGlobalProjectionMatrix);
+            if (this.Damaged)
+            {
+                this.m_SmokePlumeParticles.SetCamera(
+                    BaseCameraGameComponent.gViewMatrix,
+                    BaseCameraGameComponent.gGlobalProjectionMatrix);
+            }
         }
 
         /// <summary>
@@ -305,7 +296,10 @@ namespace GameComponents.Vehicles
         /// </summary>
         public virtual void Accelerate()
         {
-            this.AddToVelocity(this.AccelerationModifier);
+            if (!this.Destroyed)
+            {
+                this.AddToVelocity(this.AccelerationModifier);
+            }
         }
         /// <summary>
         /// Aumenta la velocidad de traslación del modelo
@@ -313,14 +307,20 @@ namespace GameComponents.Vehicles
         /// <param name="amount">Cantidad de movimiento a añadir</param>
         public virtual void Accelerate(float amount)
         {
-            this.AddToVelocity(amount);
+            if (!this.Destroyed)
+            {
+                this.AddToVelocity(amount);
+            }
         }
         /// <summary>
         /// Disminuye la velocidad de traslación del modelo
         /// </summary>
         public virtual void Brake()
         {
-            this.AddToVelocity(-this.BrakeModifier);
+            if (!this.Destroyed)
+            {
+                this.AddToVelocity(-this.BrakeModifier);
+            }
         }
         /// <summary>
         /// Disminuye la velocidad de traslación del modelo
@@ -328,7 +328,10 @@ namespace GameComponents.Vehicles
         /// <param name="amount">Cantidad de movimiento a disminuir</param>
         public virtual void Brake(float amount)
         {
-            this.AddToVelocity(-amount);
+            if (!this.Destroyed)
+            {
+                this.AddToVelocity(-amount);
+            }
         }
 
         /// <summary>
@@ -336,7 +339,10 @@ namespace GameComponents.Vehicles
         /// </summary>
         public virtual void TurnLeft()
         {
-            this.m_AngularVelocity = this.AngularVelocityModifier;
+            if (!this.Destroyed)
+            {
+                this.m_AngularVelocity = this.AngularVelocityModifier;
+            }
         }
         /// <summary>
         /// Gira el modelo a la izquierda
@@ -344,14 +350,20 @@ namespace GameComponents.Vehicles
         /// <param name="angle">Ángulo</param>
         public virtual void TurnLeft(float angle)
         {
-            this.m_AngularVelocity = MathHelper.Clamp(angle, -this.AngularVelocityModifier, this.AngularVelocityModifier);
+            if (!this.Destroyed)
+            {
+                this.m_AngularVelocity = MathHelper.Clamp(angle, -this.AngularVelocityModifier, this.AngularVelocityModifier);
+            }
         }
         /// <summary>
         /// Gira el modelo a la derecha
         /// </summary>
         public virtual void TurnRight()
         {
-            this.m_AngularVelocity = -this.AngularVelocityModifier;
+            if (!this.Destroyed)
+            {
+                this.m_AngularVelocity = -this.AngularVelocityModifier;
+            }
         }
         /// <summary>
         /// Gira el modelo a la derecha
@@ -359,7 +371,10 @@ namespace GameComponents.Vehicles
         /// <param name="angle">Ángulo</param>
         public virtual void TurnRight(float angle)
         {
-            this.m_AngularVelocity = MathHelper.Clamp(-angle, -this.AngularVelocityModifier, this.AngularVelocityModifier);
+            if (!this.Destroyed)
+            {
+                this.m_AngularVelocity = MathHelper.Clamp(-angle, -this.AngularVelocityModifier, this.AngularVelocityModifier);
+            }
         }
     }
 }

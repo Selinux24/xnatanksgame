@@ -98,7 +98,7 @@ namespace Physics
                 Vector3 tg = new Vector3(m_AutoTarget.X, 0f, m_AutoTarget.Z);
 
                 float distance = Vector3.Distance(pos, tg);
-                if (distance < 10f)
+                if (distance < vehicle.Velocity * 3f || distance < 10f)
                 {
                     // Frenar ...
                     vehicle.Brake();
