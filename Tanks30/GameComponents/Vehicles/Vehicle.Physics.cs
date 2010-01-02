@@ -1,6 +1,7 @@
 ﻿using Physics;
 using Microsoft.Xna.Framework;
 using System;
+using GameComponents.Physics;
 
 namespace GameComponents.Vehicles
 {

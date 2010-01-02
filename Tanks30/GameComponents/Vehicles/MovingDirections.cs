@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Physics
+namespace GameComponents.Vehicles
 {
     /// <summary>
     /// Direcciones de movimiento del vehículo

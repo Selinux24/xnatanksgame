@@ -1,19 +1,27 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Physics;
 
 namespace GameComponents.Physics
 {
+    /// <summary>
+    /// Gestor de colisión de componentes
+    /// </summary>
     public class CollisionManager : GameComponent
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="game">Juego</param>
         public CollisionManager(Game game)
             : base(game)
         {
 
         }
 
+        /// <summary>
+        /// Actualiza el gestor de colisión
+        /// </summary>
+        /// <param name="gameTime">Tiempo de juego</param>
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -45,6 +53,11 @@ namespace GameComponents.Physics
             }
         }
 
+        /// <summary>
+        /// Realiza los tests de colisión
+        /// </summary>
+        /// <param name="obj1">Objeto 1</param>
+        /// <param name="obj2">Objeto 2</param>
         public static void TestCollision(IPhysicObject obj1, IPhysicObject obj2)
         {
             if ((obj1 != null) && (obj2 != null))
