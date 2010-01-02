@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tanks", "Tanks\Tanks.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomProcessors", "CustomProcessors\CustomProcessors.csproj", "{7EFBD9B4-59C0-42EE-BA91-ACBF1BD32D21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Physics", "Physics\Physics.csproj", "{1F2830F8-092D-4399-82E1-0BC0B1544517}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Physics", "Physics2\Physics.csproj", "{F195B1D9-335D-493A-B74C-C7AA42E37A68}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
@@ -21,24 +21,24 @@ Global
 		SccProjectUniqueName2 = CustomProcessors\\CustomProcessors.csproj
 		SccProjectName2 = CustomProcessors
 		SccLocalPath2 = CustomProcessors
-		SccProjectUniqueName3 = Physics\\Physics.csproj
-		SccProjectName3 = Physics
-		SccLocalPath3 = Physics
-		SccProjectUniqueName4 = Tanks\\Content.contentproj
-		SccProjectTopLevelParentUniqueName4 = Tanks\\Tanks.csproj
-		SccProjectName4 = Tanks
-		SccLocalPath4 = Tanks
-		SccProjectUniqueName5 = Physics\\Content.contentproj
-		SccProjectTopLevelParentUniqueName5 = Physics\\Physics.csproj
-		SccProjectName5 = Physics
-		SccLocalPath5 = Physics
-		SccProjectUniqueName6 = GameComponents\\GameComponents.csproj
-		SccProjectName6 = GameComponents
-		SccLocalPath6 = GameComponents
-		SccProjectUniqueName7 = GameComponents\\Content.contentproj
-		SccProjectTopLevelParentUniqueName7 = GameComponents\\GameComponents.csproj
-		SccProjectName7 = GameComponents
-		SccLocalPath7 = GameComponents
+		SccProjectUniqueName3 = Tanks\\Content.contentproj
+		SccProjectTopLevelParentUniqueName3 = Tanks\\Tanks.csproj
+		SccProjectName3 = Tanks
+		SccLocalPath3 = Tanks
+		SccProjectUniqueName4 = GameComponents\\GameComponents.csproj
+		SccProjectName4 = GameComponents
+		SccLocalPath4 = GameComponents
+		SccProjectUniqueName5 = GameComponents\\Content.contentproj
+		SccProjectTopLevelParentUniqueName5 = GameComponents\\GameComponents.csproj
+		SccProjectName5 = GameComponents
+		SccLocalPath5 = GameComponents
+		SccProjectUniqueName6 = Physics2\\Physics.csproj
+		SccProjectName6 = Physics2
+		SccLocalPath6 = Physics2
+		SccProjectUniqueName7 = Physics2\\Content\\Content.contentproj
+		SccProjectTopLevelParentUniqueName7 = Physics2\\Physics.csproj
+		SccProjectName7 = Physics2/Content
+		SccLocalPath7 = Physics2\\Content
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -67,12 +67,10 @@ Global
 		{7EFBD9B4-59C0-42EE-BA91-ACBF1BD32D21}.Release|x86.Build.0 = Release|x86
 		{7EFBD9B4-59C0-42EE-BA91-ACBF1BD32D21}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{7EFBD9B4-59C0-42EE-BA91-ACBF1BD32D21}.Release|Xbox 360.Build.0 = Release|Xbox 360
-		{1F2830F8-092D-4399-82E1-0BC0B1544517}.Debug|x86.ActiveCfg = Debug|x86
-		{1F2830F8-092D-4399-82E1-0BC0B1544517}.Debug|x86.Build.0 = Debug|x86
-		{1F2830F8-092D-4399-82E1-0BC0B1544517}.Debug|Xbox 360.ActiveCfg = Debug|x86
-		{1F2830F8-092D-4399-82E1-0BC0B1544517}.Release|x86.ActiveCfg = Release|x86
-		{1F2830F8-092D-4399-82E1-0BC0B1544517}.Release|x86.Build.0 = Release|x86
-		{1F2830F8-092D-4399-82E1-0BC0B1544517}.Release|Xbox 360.ActiveCfg = Release|x86
+		{D6A28A91-325D-429C-8D43-E6B41A6428B8}.Debug|x86.ActiveCfg = Debug|x86
+		{D6A28A91-325D-429C-8D43-E6B41A6428B8}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{D6A28A91-325D-429C-8D43-E6B41A6428B8}.Release|x86.ActiveCfg = Release|x86
+		{D6A28A91-325D-429C-8D43-E6B41A6428B8}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Debug|x86.ActiveCfg = Debug|x86
 		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Debug|x86.Build.0 = Debug|x86
 		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
@@ -81,18 +79,16 @@ Global
 		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Release|x86.Build.0 = Release|x86
 		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Release|Xbox 360.Build.0 = Release|Xbox 360
-		{513BF716-960A-4A12-A88C-11EAECE94CC7}.Debug|x86.ActiveCfg = Debug|x86
-		{513BF716-960A-4A12-A88C-11EAECE94CC7}.Debug|x86.Build.0 = Debug|x86
-		{513BF716-960A-4A12-A88C-11EAECE94CC7}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
-		{513BF716-960A-4A12-A88C-11EAECE94CC7}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
-		{513BF716-960A-4A12-A88C-11EAECE94CC7}.Release|x86.ActiveCfg = Release|x86
-		{513BF716-960A-4A12-A88C-11EAECE94CC7}.Release|x86.Build.0 = Release|x86
-		{513BF716-960A-4A12-A88C-11EAECE94CC7}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
-		{513BF716-960A-4A12-A88C-11EAECE94CC7}.Release|Xbox 360.Build.0 = Release|Xbox 360
-		{D6A28A91-325D-429C-8D43-E6B41A6428B8}.Debug|x86.ActiveCfg = Debug|x86
-		{D6A28A91-325D-429C-8D43-E6B41A6428B8}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
-		{D6A28A91-325D-429C-8D43-E6B41A6428B8}.Release|x86.ActiveCfg = Release|x86
-		{D6A28A91-325D-429C-8D43-E6B41A6428B8}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{F195B1D9-335D-493A-B74C-C7AA42E37A68}.Debug|x86.ActiveCfg = Debug|x86
+		{F195B1D9-335D-493A-B74C-C7AA42E37A68}.Debug|x86.Build.0 = Debug|x86
+		{F195B1D9-335D-493A-B74C-C7AA42E37A68}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{F195B1D9-335D-493A-B74C-C7AA42E37A68}.Release|x86.ActiveCfg = Release|x86
+		{F195B1D9-335D-493A-B74C-C7AA42E37A68}.Release|x86.Build.0 = Release|x86
+		{F195B1D9-335D-493A-B74C-C7AA42E37A68}.Release|Xbox 360.ActiveCfg = Release|x86
+		{D92A3268-B2F6-4727-B86A-4263E8A7E8C0}.Debug|x86.ActiveCfg = Debug|x86
+		{D92A3268-B2F6-4727-B86A-4263E8A7E8C0}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{D92A3268-B2F6-4727-B86A-4263E8A7E8C0}.Release|x86.ActiveCfg = Release|x86
+		{D92A3268-B2F6-4727-B86A-4263E8A7E8C0}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

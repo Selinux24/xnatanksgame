@@ -29,8 +29,7 @@ namespace CustomProcessors
             output.Write(primitiveList.BSph.Center);
             output.Write(primitiveList.BSph.Radius);
             // El OBB
-            output.Write(primitiveList.OBB.Max);
-            output.Write(primitiveList.OBB.Min);
+            output.Write(primitiveList.OBB.HalfSize);
         }
 
         public override string GetRuntimeType(TargetPlatform targetPlatform)

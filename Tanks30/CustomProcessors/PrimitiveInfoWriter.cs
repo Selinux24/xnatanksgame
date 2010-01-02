@@ -35,8 +35,7 @@ namespace CustomProcessors
                 output.Write(primitiveInfo[index].BSph.Center);
                 output.Write(primitiveInfo[index].BSph.Radius);
                 // El OBB
-                output.Write(primitiveInfo[index].OBB.Min);
-                output.Write(primitiveInfo[index].OBB.Max);
+                output.Write(primitiveInfo[index].OBB.HalfSize);
             }
         }
 

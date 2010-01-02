@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Physics;
 
 namespace GameComponents.Physics
 {
@@ -64,7 +65,7 @@ namespace GameComponents.Physics
             {
                 //if (obj1.BSph.Intersects(obj2.BSph))
                 {
-                    if (obj1.TransformedOBB.Intersects(obj2.TransformedOBB))
+                    if (IntersectionTests.BoxAndBox(obj1.TransformedOBB, obj2.TransformedOBB))
                     {
                         obj1.Reaction(obj2);
                         obj2.Reaction(obj1);

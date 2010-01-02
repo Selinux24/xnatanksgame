@@ -407,7 +407,7 @@ namespace Tanks
 
             foreach (Vehicle vehicle in this.m_VehicleContainer.Vehicles)
             {
-                if (/*(vehicle != this.currentVehicle) && */(!vehicle.AutoPilot.Enabled))
+                if ((vehicle != this.m_CurrentVehicle) && (!vehicle.AutoPilot.Enabled))
                 {
                     vehicle.AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40.0f);
                 }
