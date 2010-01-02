@@ -1,10 +1,11 @@
-﻿using Physics;
+﻿using System;
 using Microsoft.Xna.Framework;
-using System;
-using GameComponents.Physics;
+using Physics;
 
 namespace GameComponents.Vehicles
 {
+    using GameComponents.Physics;
+
     /// <summary>
     /// Control de físicas de un vehículo
     /// </summary>

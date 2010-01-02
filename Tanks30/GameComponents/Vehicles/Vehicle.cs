@@ -1,13 +1,13 @@
-using System;
-using GameComponents.Camera;
-using GameComponents.Components.Particles;
-using GameComponents.Scenery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Vehicles
 {
+    using GameComponents.Camera;
+    using GameComponents.Components.Particles;
+    using GameComponents.Scenery;
+
     /// <summary>
     /// Componente tanque
     /// </summary>
@@ -20,7 +20,7 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Administrador de contenidos
         /// </summary>
-        protected ContentManager ContentManager;
+        protected ContentManager Content;
         /// <summary>
         /// Escenario
         /// </summary>
@@ -157,10 +157,10 @@ namespace GameComponents.Vehicles
         public Vehicle(Game game)
             : base(game)
         {
-            this.ContentManager = (ContentManager)game.Services.GetService(typeof(ContentManager));
+            this.Content = game.Content;
             this.Scenery = (SceneryGameComponent)game.Services.GetService(typeof(SceneryGameComponent));
 
-            this.m_SmokePlumeParticles = new SmokePlumeParticleSystem(game, this.ContentManager);
+            this.m_SmokePlumeParticles = new SmokePlumeParticleSystem(game);
             this.m_SmokePlumeParticles.DrawOrder = 100;
 
             game.Components.Add(this.m_SmokePlumeParticles);
@@ -177,7 +177,7 @@ namespace GameComponents.Vehicles
             VehicleComponentInfo componentInfo = VehicleComponentInfo.Load("Content/" + this.ComponentInfoName);
 
             // Modelo
-            this.m_Model = ContentManager.Load<Model>("Content/" + componentInfo.Model);
+            this.m_Model = Content.Load<Model>("Content/" + componentInfo.Model);
 
             // Velocidad máxima que puede alcanzar el tanque hacia delante
             this.MaxForwardVelocity = componentInfo.MaxForwardVelocity;

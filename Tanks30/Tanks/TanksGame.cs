@@ -20,9 +20,7 @@ namespace Tanks
     public class TanksGame : Microsoft.Xna.Framework.Game
     {
         // Gestor de dispositivos gráficos
-        private GraphicsDeviceManager m_Graphics;
-        // Gestor de contenidos
-        private ContentManager m_Content;
+        protected GraphicsDeviceManager Graphics;
 
         // Controlador de colisión
         private CollisionManager m_Collision;
@@ -75,22 +73,7 @@ namespace Tanks
         /// </summary>
         public TanksGame()
         {
-            m_Graphics = new GraphicsDeviceManager(this);
-            m_Content = new ContentManager(Services);
-
-            this.Services.AddService(m_Content.GetType(), m_Content);
-
-#if DEBUG
-            m_Graphics.PreferredBackBufferWidth = 800;
-            m_Graphics.PreferredBackBufferHeight = 600;
-            m_Graphics.PreferMultiSampling = false;
-            m_Graphics.IsFullScreen = false;
-#else
-            m_Graphics.PreferredBackBufferWidth = 1280;
-            m_Graphics.PreferredBackBufferHeight = 1024;
-            m_Graphics.PreferMultiSampling = false;
-            m_Graphics.IsFullScreen = true;
-#endif
+            this.Graphics = new GraphicsDeviceManager(this);
         }
 
         /// <summary>
@@ -98,7 +81,19 @@ namespace Tanks
         /// </summary>
         protected override void Initialize()
         {
-            InputHelper.GraphicsDevice = m_Graphics.GraphicsDevice;
+#if DEBUG
+            this.Graphics.PreferredBackBufferWidth = 800;
+            this.Graphics.PreferredBackBufferHeight = 600;
+            this.Graphics.PreferMultiSampling = false;
+            this.Graphics.IsFullScreen = false;
+#else
+            this.Graphics.PreferredBackBufferWidth = this.GraphicsDevice.DisplayMode.Width;
+            this.Graphics.PreferredBackBufferHeight = this.GraphicsDevice.DisplayMode.Height;
+            this.Graphics.PreferMultiSampling = false;
+            this.Graphics.IsFullScreen = true;
+#endif
+
+            InputHelper.GraphicsDevice = Graphics.GraphicsDevice;
 
             m_Scenery = new SceneryGameComponent(this);
             m_Scenery.UpdateOrder = 0;
@@ -191,7 +186,7 @@ namespace Tanks
         /// <param name="gameTime">Tiempo de juego</param>
         protected override void Draw(GameTime gameTime)
         {
-            m_Graphics.GraphicsDevice.Clear(SceneryEnvironment.Ambient.AmbientColor);
+            Graphics.GraphicsDevice.Clear(SceneryEnvironment.Ambient.AmbientColor);
 
             base.Draw(gameTime);
         }

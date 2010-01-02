@@ -1,19 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Storage;
 using Physics;
-using CustomProcessors;
-using GameComponents.Camera;
 
 namespace GameComponents.Scenery
 {
+    using GameComponents.Camera;
+
     /// <summary>
     /// Escenario
     /// </summary>
@@ -130,7 +125,7 @@ namespace GameComponents.Scenery
         }
 
         // Contenidos
-        private ContentManager content = null;
+        protected ContentManager Content = null;
         // Efecto para renderizar
         private Effect m_Effect;
 
@@ -349,7 +344,7 @@ namespace GameComponents.Scenery
         public SceneryGameComponent(Game game)
             : base(game)
         {
-            content = (ContentManager)game.Services.GetService(typeof(ContentManager));
+            this.Content = game.Content;
         }
 
         /// <summary>
@@ -367,17 +362,17 @@ namespace GameComponents.Scenery
             base.LoadContent();
 
             // Crear el terreno
-            this.BuildGeometry(content.Load<Texture2D>(@"Content\Terrain\HM2"), 32.0f);
+            this.BuildGeometry(Content.Load<Texture2D>(@"Content\Terrain\HM2"), 32.0f);
 
             // Crear el efecto para renderizar
             if (m_Effect == null)
             {
-                this.m_Effect = content.Load<Effect>(@"Content\Terrain\terrain");
+                this.m_Effect = Content.Load<Effect>(@"Content\Terrain\terrain");
 
-                this.m_Effect.Parameters["xSandTexture"].SetValue(content.Load<Texture2D>(@"Content\Terrain\sand"));
-                this.m_Effect.Parameters["xGrassTexture"].SetValue(content.Load<Texture2D>(@"Content\Terrain\grass"));
-                this.m_Effect.Parameters["xRockTexture"].SetValue(content.Load<Texture2D>(@"Content\Terrain\rock"));
-                this.m_Effect.Parameters["xSnowTexture"].SetValue(content.Load<Texture2D>(@"Content\Terrain\snow"));
+                this.m_Effect.Parameters["xSandTexture"].SetValue(Content.Load<Texture2D>(@"Content\Terrain\sand"));
+                this.m_Effect.Parameters["xGrassTexture"].SetValue(Content.Load<Texture2D>(@"Content\Terrain\grass"));
+                this.m_Effect.Parameters["xRockTexture"].SetValue(Content.Load<Texture2D>(@"Content\Terrain\rock"));
+                this.m_Effect.Parameters["xSnowTexture"].SetValue(Content.Load<Texture2D>(@"Content\Terrain\snow"));
             }
         }
         /// <summary>
