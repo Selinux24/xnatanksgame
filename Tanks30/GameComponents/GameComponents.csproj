@@ -115,8 +115,8 @@
       <Project>{7EFBD9B4-59C0-42EE-BA91-ACBF1BD32D21}</Project>
       <Name>CustomProcessors</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Physics\Physics.csproj">
-      <Project>{1F2830F8-092D-4399-82E1-0BC0B1544517}</Project>
+    <ProjectReference Include="..\Physics2\Physics.csproj">
+      <Project>{F195B1D9-335D-493A-B74C-C7AA42E37A68}</Project>
       <Name>Physics</Name>
     </ProjectReference>
   </ItemGroup>

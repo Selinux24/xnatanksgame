@@ -11,7 +11,7 @@ namespace GameComponents.Physics
         /// <summary>
         /// OBB que contiene al objeto
         /// </summary>
-        OrientedBoundingBox TransformedOBB { get;}
+        CollisionBox TransformedOBB { get; }
         /// <summary>
         /// Esfera que contiene al objeto
         /// </summary>

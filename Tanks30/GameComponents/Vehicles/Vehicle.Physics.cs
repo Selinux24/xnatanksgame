@@ -158,13 +158,13 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Obtiene la caja orientada con la transformación aplicada
         /// </summary>
-        public virtual OrientedBoundingBox TransformedOBB
+        public virtual CollisionBox TransformedOBB
         {
             get
             {
-                OrientedBoundingBox obb = this.TriangleInfo.OBB;
+                CollisionBox obb = this.TriangleInfo.OBB;
 
-                obb.Transforms = GetTransform();
+                obb.Offset = GetTransform();
 
                 return obb;
             }

@@ -31,7 +31,7 @@ namespace CustomProcessors
             BoundingSphere bsph = new BoundingSphere(input.ReadVector3(), input.ReadSingle());
             primitiveList.BSph = bsph;
             // Leer el OBB
-            OrientedBoundingBox obb = new OrientedBoundingBox(input.ReadVector3(), input.ReadVector3());
+            CollisionBox obb = new CollisionBox() { HalfSize = input.ReadVector3() };
             primitiveList.OBB = obb;
 
             return primitiveList;
