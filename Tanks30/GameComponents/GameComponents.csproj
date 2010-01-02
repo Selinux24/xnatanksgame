@@ -154,6 +154,7 @@
     <Compile Include="Particles\ParticleVertex.cs" />
     <Compile Include="Particles\SmokePlumeParticleSystem.cs" />
     <Compile Include="Physics\CollisionManager.cs" />
+    <Compile Include="Physics\IPhysicObject.cs" />
     <Compile Include="Scenery\LOD.cs" />
     <Compile Include="Scenery\SceneryEnvironmet.cs" />
     <Compile Include="Scenery\SceneryGameComponent.cs" />
@@ -168,6 +169,9 @@
     <Compile Include="Vehicles\Animations\AnimationInfo.cs" />
     <Compile Include="Vehicles\Animations\PlayerPosition.cs" />
     <Compile Include="Vehicles\Animations\PlayerPositionInfo.cs" />
+    <Compile Include="Vehicles\AutoPilot.cs" />
+    <Compile Include="Vehicles\IVehicleController.cs" />
+    <Compile Include="Vehicles\MovingDirections.cs" />
     <Compile Include="Vehicles\Vehicle.Animation.cs" />
     <Compile Include="Vehicles\Vehicle.cs" />
     <Compile Include="Vehicles\Vehicle.Physics.cs" />
