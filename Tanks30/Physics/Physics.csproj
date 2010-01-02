@@ -84,26 +84,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoPilot.cs">
-      <Name>AutoPilot</Name>
-    </Compile>
     <Compile Include="Force.cs">
       <Name>Force</Name>
     </Compile>
     <Compile Include="PhysicsMathHelper.cs">
       <Name>PhysicsMathHelper</Name>
     </Compile>
-    <Compile Include="IPhysicObject.cs">
-      <Name>IPhysicObject</Name>
-    </Compile>
-    <Compile Include="IVehicleController.cs">
-      <Name>IVehicleController</Name>
-    </Compile>
     <Compile Include="Matrix3.cs">
       <Name>Matrix3</Name>
-    </Compile>
-    <Compile Include="MovingDirections.cs">
-      <Name>MovingDirections</Name>
     </Compile>
     <Compile Include="OrientedBoundingBox.cs">
       <Name>OrientedBoundingBox</Name>
