@@ -1,34 +1,47 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using GameComponents.Camera;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Scenery
 {
+    using GameComponents.Camera;
+
     /// <summary>
     /// Componente que dibuja el cielo
     /// </summary>
     public partial class SkyBoxGameComponent : Microsoft.Xna.Framework.DrawableGameComponent
     {
-        // Gestor de contenidos
-        ContentManager content;
+        /// <summary>
+        /// Gestor de contenidos
+        /// </summary>
+        protected ContentManager Content;
 
-        // Matriz de proyección del componente de cielo
-        Matrix m_ProjectionMatrix;
+        /// <summary>
+        /// Matriz de proyección del componente de cielo
+        /// </summary>
+        private Matrix m_ProjectionMatrix;
 
-        // Texturas del cielo
-        Texture2D[] m_Textures = new Texture2D[6];
-        // Efecto para renderizar el cielo
-        Effect m_Effect;
+        /// <summary>
+        /// Texturas del cielo
+        /// </summary>
+        private Texture2D[] m_Textures = new Texture2D[6];
+        /// <summary>
+        /// Efecto para renderizar el cielo
+        /// </summary>
+        private Effect m_Effect;
 
-        // Declaración de vértices
-        VertexDeclaration m_VertexDeclaration;
-        // Buffer de vértices
-        VertexBuffer m_Vertices;
-        // Buffer de índices
-        IndexBuffer m_Indices;
+        /// <summary>
+        /// Declaración de vértices
+        /// </summary>
+        private VertexDeclaration m_VertexDeclaration;
+        /// <summary>
+        /// Buffer de vértices
+        /// </summary>
+        private VertexBuffer m_Vertices;
+        /// <summary>
+        /// Buffer de índices
+        /// </summary>
+        private IndexBuffer m_Indices;
 
         /// <summary>
         /// Constructor
@@ -37,7 +50,7 @@ namespace GameComponents.Scenery
         public SkyBoxGameComponent(Game game)
             : base(game)
         {
-            content = (ContentManager)game.Services.GetService(typeof(ContentManager));
+            this.Content = game.Content;
 
             GraphicsDeviceManager deviceManager = (GraphicsDeviceManager)game.Services.GetService(typeof(IGraphicsDeviceManager));
             if (deviceManager != null)
@@ -59,14 +72,14 @@ namespace GameComponents.Scenery
         {
             base.LoadContent();
 
-            m_Textures[0] = content.Load<Texture2D>(@"Content\Skybox\back");
-            m_Textures[1] = content.Load<Texture2D>(@"Content\Skybox\front");
-            m_Textures[2] = content.Load<Texture2D>(@"Content\Skybox\bottom");
-            m_Textures[3] = content.Load<Texture2D>(@"Content\Skybox\top");
-            m_Textures[4] = content.Load<Texture2D>(@"Content\Skybox\left");
-            m_Textures[5] = content.Load<Texture2D>(@"Content\Skybox\right");
+            m_Textures[0] = Content.Load<Texture2D>(@"Content\Skybox\back");
+            m_Textures[1] = Content.Load<Texture2D>(@"Content\Skybox\front");
+            m_Textures[2] = Content.Load<Texture2D>(@"Content\Skybox\bottom");
+            m_Textures[3] = Content.Load<Texture2D>(@"Content\Skybox\top");
+            m_Textures[4] = Content.Load<Texture2D>(@"Content\Skybox\left");
+            m_Textures[5] = Content.Load<Texture2D>(@"Content\Skybox\right");
 
-            m_Effect = content.Load<Effect>(@"Content\Skybox\skybox");
+            m_Effect = Content.Load<Effect>(@"Content\Skybox\skybox");
 
             m_VertexDeclaration = new VertexDeclaration(
                 this.GraphicsDevice,

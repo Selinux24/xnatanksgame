@@ -1,9 +1,5 @@
-#region Using Statements
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-#endregion
 
 namespace GameComponents.Components.Particles
 {
@@ -17,8 +13,8 @@ namespace GameComponents.Components.Particles
         /// </summary>
         /// <param name="game">Juego</param>
         /// <param name="content">Gestor de Contenido</param>
-        public SmokePlumeParticleSystem(Game game, ContentManager content)
-            : base(game, content)
+        public SmokePlumeParticleSystem(Game game)
+            : base(game)
         {
         
         }

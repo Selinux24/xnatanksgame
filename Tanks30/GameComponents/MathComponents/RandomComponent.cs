@@ -27,6 +27,31 @@ namespace GameComponents.MathComponents
         /// <returns>Devuelve el número aleatorio generado</returns>
         public static int Next(int maxValue)
         {
+            return GetRandom().Next(maxValue);
+        }
+        /// <summary>
+        /// Obtiene un float entre 0 y 1
+        /// </summary>
+        /// <returns>Devuelve un float entre 0 y 1</returns>
+        public static float NextFloat()
+        {
+            return (float)GetRandom().NextDouble();
+        }
+        /// <summary>
+        /// Obtiene un double entre 0 y 1
+        /// </summary>
+        /// <returns>Devuelve un double entre 0 y 1</returns>
+        public static double NextDouble()
+        {
+            return GetRandom().NextDouble();
+        }
+
+        /// <summary>
+        /// Obtiene el siguiente generador de números aleatorios
+        /// </summary>
+        /// <returns>Devuelve un generador de números aleatorios</returns>
+        private static Random GetRandom()
+        {
             if (m_RndList == null)
             {
                 m_RndList = new Random[m_RndListLength];
@@ -37,16 +62,6 @@ namespace GameComponents.MathComponents
                 }
             }
 
-            Random rnd = GetRandom();
-
-            return rnd.Next(maxValue);
-        }
-        /// <summary>
-        /// Obtiene el siguiente generador de números aleatorios
-        /// </summary>
-        /// <returns>Devuelve un generador de números aleatorios</returns>
-        private static Random GetRandom()
-        {
             Random res = m_RndList[m_CurrentRnd];
 
             if (m_CurrentRnd >= m_RndListLength - 1)
