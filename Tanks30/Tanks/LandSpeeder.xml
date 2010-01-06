@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <VehicleComponentInfo>
   <Model>LandSpeeder</Model>
-  <MaxForwardVelocity>45</MaxForwardVelocity>
-  <MaxBackwardVelocity>40</MaxBackwardVelocity>
-  <AccelerationModifier>15</AccelerationModifier>
-  <BrakeModifier>1</BrakeModifier>
-  <AngularVelocityModifier>20</AngularVelocityModifier>
+  <MaxForwardVelocity>100</MaxForwardVelocity>
+  <MaxBackwardVelocity>80</MaxBackwardVelocity>
+  <AccelerationModifier>25</AccelerationModifier>
+  <BrakeModifier>20</BrakeModifier>
+  <AngularVelocityModifier>2</AngularVelocityModifier>
   <MaxFlightHeight>25</MaxFlightHeight>
   <MinFlightHeight>10</MinFlightHeight>
   <AscendingAngle>15</AscendingAngle>

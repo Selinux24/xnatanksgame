@@ -9,13 +9,88 @@ namespace Physics
     public abstract class CollisionDetector
     {
         /// <summary>
+        /// Detecta la colisión entre dos objetos
+        /// </summary>
+        /// <param name="obj1">Objeto primero</param>
+        /// <param name="obj2">Objeto segundo</param>
+        /// <param name="data">Información de colisión</param>
+        /// <returns>Devuelve verdadero si ha habido colisión</returns>
+        public static bool BetweenObjects(IPhysicObject obj1, IPhysicObject obj2, ref CollisionData data)
+        {
+            if (obj1 != null && obj2 != null)
+            {
+                BoundingSphere sphere1 = obj1.GetBoundingSphere();
+                BoundingSphere sphere2 = obj2.GetBoundingSphere();
+
+                // Almacenar las posiciones de las esferas
+                Vector3 positionOne = sphere1.Center;
+                Vector3 positionTwo = sphere2.Center;
+
+                // Encontrar el vector entre los objetos
+                Vector3 midline = positionOne - positionTwo;
+                float size = midline.Length();
+
+                if (size <= 0.0f || size >= sphere1.Radius + sphere2.Radius)
+                {
+                    return false;
+                }
+                else
+                {
+                    CollisionPrimitive primitive1 = obj1.GetPrimitive();
+                    CollisionPrimitive primitive2 = obj2.GetPrimitive();
+                    
+                    if (primitive1 is CollisionBox)
+                    {
+                        if (primitive2 is CollisionBox)
+                        {
+                            return BoxAndBox((CollisionBox)primitive1, (CollisionBox)primitive2, ref data);
+                        }
+                        else if (primitive2 is CollisionSphere)
+                        {
+                            return BoxAndSphere((CollisionBox)primitive1, (CollisionSphere)primitive2, ref data);
+                        }
+                        else if (primitive2 is CollisionPlane)
+                        {
+                            return BoxAndHalfSpace((CollisionBox)primitive1, (CollisionPlane)primitive2, ref data);
+                        }
+                        else if (primitive2 is CollisionTriangleSoup)
+                        {
+                            return BoxAndTriangleSoup((CollisionBox)primitive1, (CollisionTriangleSoup)primitive2, ref data);
+                        }
+                    }
+                    else if (primitive1 is CollisionSphere)
+                    {
+                        if (primitive2 is CollisionBox)
+                        {
+                            return BoxAndSphere((CollisionBox)primitive2, (CollisionSphere)primitive1, ref data);
+                        }
+                        else if (primitive2 is CollisionSphere)
+                        {
+                            return SphereAndSphere((CollisionSphere)primitive1, (CollisionSphere)primitive2, ref data);
+                        }
+                        else if (primitive2 is CollisionPlane)
+                        {
+                            return SphereAndHalfSpace((CollisionSphere)primitive1, (CollisionPlane)primitive2, ref data);
+                        }
+                        else if (primitive2 is CollisionTriangleSoup)
+                        {
+                            return SphereAndTriangleSoup((CollisionSphere)primitive1, (CollisionTriangleSoup)primitive2, ref data);
+                        }
+                    }
+                }
+            }
+
+            throw new Exception("Tipo de colisión no controlada");
+        }
+
+        /// <summary>
         /// Detecta la colisión entre una esfera y un plano
         /// </summary>
         /// <param name="sphere">Esfera</param>
         /// <param name="plane">Plano</param>
         /// <param name="data">Rellena los datos de colisión</param>
         /// <returns>Devuelve verdadero si hay colisión o falso en el resto de los casos</returns>
-        public static bool SphereAndHalfSpace(CollisionSphere sphere, CollisionPlane plane, ref CollisionData data)
+        internal static bool SphereAndHalfSpace(CollisionSphere sphere, CollisionPlane plane, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -55,7 +130,7 @@ namespace Physics
         /// <param name="plane">Plano</param>
         /// <param name="data">Rellena los datos de colisión</param>
         /// <returns>Devuelve verdadero si hay colisión o falso en el resto de los casos</returns>
-        public static bool SphereAndTruePlane(CollisionSphere sphere, CollisionPlane plane, ref CollisionData data)
+        internal static bool SphereAndTruePlane(CollisionSphere sphere, CollisionPlane plane, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -104,7 +179,7 @@ namespace Physics
         /// <param name="two">Esfera dos</param>
         /// <param name="data">Datos de la colisión</param>
         /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
-        public static bool SphereAndSphere(CollisionSphere one, CollisionSphere two, ref CollisionData data)
+        internal static bool SphereAndSphere(CollisionSphere one, CollisionSphere two, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -138,6 +213,11 @@ namespace Physics
 
             return true;
         }
+
+        internal static bool SphereAndTriangleSoup(CollisionSphere sphere, CollisionTriangleSoup triangleSoup, ref CollisionData data)
+        {
+            throw new NotImplementedException();
+        }
         /// <summary>
         /// Detecta la colisión entre caja y plano
         /// </summary>
@@ -145,7 +225,7 @@ namespace Physics
         /// <param name="plane">Plano</param>
         /// <param name="data">Datos de la colisión</param>
         /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
-        public static bool BoxAndHalfSpace(CollisionBox box, CollisionPlane plane, ref CollisionData data)
+        internal static bool BoxAndHalfSpace(CollisionBox box, CollisionPlane plane, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -208,7 +288,7 @@ namespace Physics
         /// <param name="two">Caja dos</param>
         /// <param name="data">Datos de colisión</param>
         /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
-        public static bool BoxAndBox(CollisionBox one, CollisionBox two, ref CollisionData data)
+        internal static bool BoxAndBox(CollisionBox one, CollisionBox two, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -357,7 +437,7 @@ namespace Physics
         /// <param name="point">Punto</param>
         /// <param name="data">Datos de colisión</param>
         /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
-        public static bool BoxAndPoint(CollisionBox box, Vector3 point, ref CollisionData data)
+        internal static bool BoxAndPoint(CollisionBox box, Vector3 point, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -417,7 +497,7 @@ namespace Physics
         /// <param name="sphere">Esfera</param>
         /// <param name="data">Datos de colisión a llenar</param>
         /// <returns>Devuelve verdadero si existe colisión, falso en el resto de los casos</returns>
-        public static bool BoxAndSphere(CollisionBox box, CollisionSphere sphere, ref CollisionData data)
+        internal static bool BoxAndSphere(CollisionBox box, CollisionSphere sphere, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -478,7 +558,7 @@ namespace Physics
             return true;
         }
 
-        public static bool BoxAndTriangleSoup(CollisionBox box, CollisionTriangleSoup triangleSoup, ref CollisionData data)
+        internal static bool BoxAndTriangleSoup(CollisionBox box, CollisionTriangleSoup triangleSoup, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {

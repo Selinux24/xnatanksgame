@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 
 namespace Physics
@@ -126,9 +125,66 @@ namespace Physics
         /// <remarks>Esta función simplemente se asegura de que los contactos estén activos y sus datos internos actualizados</remarks>
         private void PrepareContacts(ref CollisionData contacts, float duration)
         {
-            foreach (Contact contact in contacts.ContactArray)
+            for (int i = 0; i < contacts.ContactCount; i++)
             {
-                contact.CalculateInternals(duration);
+                contacts.ContactArray[i].CalculateInternals(duration);
+            }
+        }
+        /// <summary>
+        /// Resuelve problemas posicionales de la lista de contactos
+        /// </summary>
+        /// <param name="contacts">Lista de contactos</param>
+        /// <param name="duration">Duración del frame anterior</param>
+        private void AdjustPositions(ref CollisionData contacts, float duration)
+        {
+            Vector3[] linearChange = new Vector3[2];
+            Vector3[] angularChange = new Vector3[2];
+
+            this.m_PositionIterationsUsed = 0;
+
+            // Resolver las interpenetraciones por orden de severidad
+            while (this.m_PositionIterationsUsed < this.m_PositionIterations)
+            {
+                // Encontrar la penetración mayor
+                float max = this.m_PositionEpsilon;
+                int index = contacts.ContactCount;
+                for (int i = 0; i < contacts.ContactCount; i++)
+                {
+                    if (contacts.ContactArray[i].Penetration > max)
+                    {
+                        max = contacts.ContactArray[i].Penetration;
+                        index = i;
+                    }
+                }
+
+                if (index == contacts.ContactCount)
+                {
+                    break;
+                }
+
+                // Actualizar el estado del contacto
+                contacts.ContactArray[index].MatchAwakeState();
+
+                // Resolver la penetración
+                contacts.ContactArray[index].ApplyPositionChange(ref linearChange, ref angularChange, max);
+
+                for (int i = 0; i < contacts.ContactCount; i++)
+                {
+                    for (uint b = 0; b < 2; b++) if (contacts.ContactArray[i].Bodies[b] != null)
+                        {
+                            for (uint d = 0; d < 2; d++)
+                            {
+                                if (contacts.ContactArray[i].Bodies[b] == contacts.ContactArray[index].Bodies[d])
+                                {
+                                    Vector3 deltaPosition = linearChange[d] + Vector3.Cross(angularChange[d], contacts.ContactArray[i].RelativeContactPositions[b]);
+
+                                    contacts.ContactArray[i].Penetration += Vector3.Dot(deltaPosition, contacts.ContactArray[i].ContactNormal) * (b != 0 ? 1 : -1);
+                                }
+                            }
+                        }
+                }
+
+                this.m_PositionIterationsUsed++;
             }
         }
         /// <summary>
@@ -141,13 +197,13 @@ namespace Physics
             Vector3[] velocityChange = new Vector3[2];
             Vector3[] rotationChange = new Vector3[2];
 
-            m_VelocityIterationsUsed = 0;
+            this.m_VelocityIterationsUsed = 0;
 
             // Resolver los impactos por ordende severidad
-            while (m_VelocityIterationsUsed < m_VelocityIterations)
+            while (this.m_VelocityIterationsUsed < this.m_VelocityIterations)
             {
                 // Encontrar contactos con magnitud máxima de cambio probable de velocidad
-                float max = m_VelocityEpsilon;
+                float max = this.m_VelocityEpsilon;
                 int index = contacts.ContactCount;
                 for (int i = 0; i < contacts.ContactCount; i++)
                 {
@@ -187,64 +243,7 @@ namespace Physics
                         }
                 }
 
-                m_VelocityIterationsUsed++;
-            }
-        }
-        /// <summary>
-        /// Resuelve problemas posicionales de la lista de contactos
-        /// </summary>
-        /// <param name="contacts">Lista de contactos</param>
-        /// <param name="duration">Duración del frame anterior</param>
-        private void AdjustPositions(ref CollisionData contacts, float duration)
-        {
-            Vector3[] linearChange = new Vector3[2];
-            Vector3[] angularChange = new Vector3[2];
-
-            m_PositionIterationsUsed = 0;
-
-            // Resolver las interpenetraciones por orden de severidad
-            while (m_PositionIterationsUsed < m_PositionIterations)
-            {
-                // Encontrar la penetración mayor
-                float max = m_PositionEpsilon;
-                int index = contacts.ContactCount;
-                for (int i = 0; i < contacts.ContactCount; i++)
-                {
-                    if (contacts.ContactArray[i].Penetration > max)
-                    {
-                        max = contacts.ContactArray[i].Penetration;
-                        index = i;
-                    }
-                }
-
-                if (index == contacts.ContactCount)
-                {
-                    break;
-                }
-
-                // Actualizar el estado del contacto
-                contacts.ContactArray[index].MatchAwakeState();
-
-                // Resolver la penetración
-                contacts.ContactArray[index].ApplyPositionChange(ref linearChange, ref angularChange, max);
-
-                for (int i = 0; i < contacts.ContactCount; i++)
-                {
-                    for (uint b = 0; b < 2; b++) if (contacts.ContactArray[i].Bodies[b] != null)
-                        {
-                            for (uint d = 0; d < 2; d++)
-                            {
-                                if (contacts.ContactArray[i].Bodies[b] == contacts.ContactArray[index].Bodies[d])
-                                {
-                                    Vector3 deltaPosition = linearChange[d] + Vector3.Cross(angularChange[d], contacts.ContactArray[i].RelativeContactPositions[b]);
-
-                                    contacts.ContactArray[i].Penetration += Vector3.Dot(deltaPosition, contacts.ContactArray[i].ContactNormal) * (b != 0 ? 1 : -1);
-                                }
-                            }
-                        }
-                }
-
-                m_PositionIterationsUsed++;
+                this.m_VelocityIterationsUsed++;
             }
         }
     }

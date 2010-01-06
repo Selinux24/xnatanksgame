@@ -11,7 +11,7 @@ namespace Physics
         /// <summary>
         /// Matriz de transformación
         /// </summary>
-        private Matrix m_Transform;
+        private Matrix m_Transform = Matrix.Identity;
         /// <summary>
         /// La transformación de la primitiva con respecto al cuerpo rígido.
         /// </summary>
@@ -102,27 +102,6 @@ namespace Physics
             }
 
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Delegado del evento de contacto entre primitivas de colisión
-        /// </summary>
-        /// <param name="primitive">Primitiva de colisión que ha contactado con la actual</param>
-        public delegate void PrimitiveInContactDelegate(CollisionPrimitive primitive);
-        /// <summary>
-        /// Ocurre cuando una primitva de colisión contacta con la actual
-        /// </summary>
-        public event PrimitiveInContactDelegate OnPrimitiveContacted;
-        /// <summary>
-        /// Establece que la primitiva actual ha sido contactada por otra primitiva de colisión
-        /// </summary>
-        /// <param name="primitive">Primitiva de colisión que ha contactado con la actual</param>
-        public virtual void PrimitiveContacted(CollisionPrimitive primitive)
-        {
-            if (OnPrimitiveContacted != null)
-            {
-                OnPrimitiveContacted(primitive);
-            }
         }
     }
 }

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Physics;
 
@@ -20,6 +17,10 @@ namespace GameComponents.Vehicles
         // Vehículo a seguir
         private IVehicleController m_VehicleToFollow;
 
+        private bool m_OnRange = false;
+
+        private float m_DistanceToTarget = 0f;
+
         /// <summary>
         /// Obtiene o establece si el piloto automático está activado
         /// </summary>
@@ -32,10 +33,64 @@ namespace GameComponents.Vehicles
             set
             {
                 m_Enabled = value;
+
                 if (!m_Enabled)
                 {
                     m_VehicleToFollow = null;
                 }
+            }
+        }
+        /// <summary>
+        /// Obtiene la posición destino
+        /// </summary>
+        public Vector3 Target
+        {
+            get
+            {
+                if (this.m_VehicleToFollow != null)
+                {
+                    return this.m_VehicleToFollow.Position;
+                }
+                else
+                {
+                    return this.m_AutoTarget;
+                }
+            }
+        }
+        /// <summary>
+        /// Obtiene la velocidad máxima
+        /// </summary>
+        public float MaximumVelocity
+        {
+            get
+            {
+                return this.m_AutoVelocity;
+            }
+        }
+        /// <summary>
+        /// Obtiene si se está siguiendo a algun objetivo
+        /// </summary>
+        public bool Following
+        {
+            get
+            {
+                return (this.m_VehicleToFollow != null);
+            }
+        }
+
+        public bool OnRange
+        {
+            get
+            {
+                return this.m_OnRange;
+            }
+        }
+
+        public float DistanceToTarget
+        {
+            get
+            {
+                return this.m_DistanceToTarget;
             }
         }
 
@@ -46,88 +101,102 @@ namespace GameComponents.Vehicles
         /// <param name="velocity">Velocidad máxima</param>
         public void GoTo(Vector3 target, float velocity)
         {
-            this.AccelerateTo(velocity);
+            this.m_AutoTarget = target;
 
-            this.LookTo(target);
+            this.m_AutoVelocity = velocity;
 
-            m_Enabled = true;
+            this.m_Enabled = true;
         }
         /// <summary>
         /// Establece el vehículo a seguir
         /// </summary>
         /// <param name="vehicle">Vehículo</param>
-        public void Follow(IVehicleController vehicle)
+        public void Follow(IVehicleController vehicle, float velocity)
         {
-            m_VehicleToFollow = vehicle;
+            this.m_VehicleToFollow = vehicle;
 
-            m_Enabled = true;
+            this.m_AutoVelocity = velocity;
+
+            this.m_Enabled = true;
         }
 
-        /// <summary>
-        /// Establece la velocidad máxima del piloto automático
-        /// </summary>
-        /// <param name="velocity">Velocidad máxima</param>
-        private void AccelerateTo(float velocity)
-        {
-            m_AutoVelocity = velocity;
-        }
-        /// <summary>
-        /// Establece el objetivo del piloto automático
-        /// </summary>
-        /// <param name="target">Objetivo</param>
-        private void LookTo(Vector3 target)
-        {
-            m_AutoTarget = target;
-        }
         /// <summary>
         /// Actualiza el piloto automático
         /// </summary>
         /// <param name="vehicle">Vehículo</param>
         public void UpdateAutoPilot(IVehicleController vehicle)
         {
-            if (m_Enabled)
+            if (this.m_Enabled)
             {
-                if (m_VehicleToFollow != null)
-                {
-                    // Actualizar objetivo y velocidad hasta el objetivo
-                    m_AutoTarget = m_VehicleToFollow.Position;
-                    m_AutoVelocity = m_VehicleToFollow.Velocity;
-                }
-
                 // Obtener las componentes sin altura
-                Vector3 pos = new Vector3(vehicle.Position.X, 0f, vehicle.Position.Z);
-                Vector3 tg = new Vector3(m_AutoTarget.X, 0f, m_AutoTarget.Z);
+                Vector3 currentPosition = new Vector3(vehicle.Position.X, 0f, vehicle.Position.Z);
+                Vector3 targetPosition = new Vector3(this.Target.X, 0f, this.Target.Z);
 
-                float distance = Vector3.Distance(pos, tg);
-                if (distance < vehicle.Velocity * 3f || distance < 10f)
+                this.m_DistanceToTarget = Vector3.Distance(currentPosition, targetPosition);
+                if (this.m_DistanceToTarget < vehicle.Velocity * 2f)
                 {
-                    // Frenar ...
-                    vehicle.Brake();
+                    this.m_OnRange = true;
 
-                    // ... hasta detenerse
-                    m_Enabled = !vehicle.IsStatic;
+                    // Frenar ...
+                    if (this.m_VehicleToFollow != null)
+                    {
+                        if (this.m_VehicleToFollow.Velocity > vehicle.Velocity)
+                        {
+                            // Frenar
+                            //vehicle.Brake();
+                        }
+                    }
+                    else
+                    {
+                        // Frenar
+                        //vehicle.Brake();
+
+                        // Detener el piloto automático si se ha alcanzado el destino
+                        this.m_Enabled = (this.m_DistanceToTarget > 100f);
+                    }                    
                 }
                 else
                 {
-                    // Obtener la matriz que se quiere alcanzar girando con un Billboard
-                    Matrix mat = Matrix.CreateBillboard(pos, tg, Vector3.Up, null);
-                    Quaternion quat = Quaternion.CreateFromRotationMatrix(mat);
+                    this.m_OnRange = false;
 
-                    // Aplicar la nueva rotación directamente a la rotación actual
-                    vehicle.Rotation = Quaternion.Slerp(vehicle.Rotation, quat, MathHelper.ToRadians(1f));
+                    // Obtener la rotación que se quiere alcanzar girando con un Billboard
+                    Matrix rotationMatrix = Matrix.CreateBillboard(currentPosition, targetPosition, Vector3.Up, null);
+                    Quaternion rotationQuaternion = Quaternion.CreateFromRotationMatrix(rotationMatrix);
 
-                    // Obtener el ángulo después de la rotación
-                    Vector3 targetDirection = Vector3.Normalize(tg - pos);
+                    // Obtener el ángulo de la rotación
+                    Vector3 targetDirection = Vector3.Normalize(targetPosition - currentPosition);
                     Vector3 currentDirection = Vector3.Normalize(vehicle.Direction);
                     float angle = PhysicsMathHelper.Angle(currentDirection, targetDirection);
+
+                    // Aplicar la nueva rotación directamente a la rotación actual
+                    if (angle >= 0.01f)
+                    {
+                        vehicle.Orientation = Quaternion.Slerp(vehicle.Orientation, rotationQuaternion, MathHelper.ToRadians(1f));
+                    }
 
                     // Si el ángulo es menor de 180º se acelera
                     if (angle < MathHelper.PiOver2)
                     {
-                        if (vehicle.Velocity < m_AutoVelocity)
+                        if (this.m_VehicleToFollow != null)
                         {
-                            // Si la velocidad a alcanzar no es suficiente se acelera
-                            vehicle.Accelerate();
+                            if (this.m_DistanceToTarget >= vehicle.Velocity * 3f)
+                            {
+                                // Acelerar
+                                if (this.m_AutoVelocity > vehicle.Velocity)
+                                {
+                                    // La velocidad actual es menor que la máxima que se puede usar
+                                    vehicle.Accelerate();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Acelerar
+                            if (this.m_AutoVelocity > vehicle.Velocity)
+                            {
+                                // Si la velocidad a alcanzar no es suficiente se acelera
+                                vehicle.Accelerate();
+                            }
                         }
                     }
                 }

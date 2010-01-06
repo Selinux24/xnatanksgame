@@ -52,7 +52,7 @@ namespace GameComponents.Camera
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                 {
                     // Obtener la rotación del objetivo desde el quaternion
-                    Matrix rotation = Matrix.CreateFromQuaternion(ModelToFollow.Rotation);
+                    Matrix rotation = Matrix.CreateFromQuaternion(ModelToFollow.Orientation);
 
                     // Calcular la posición relativa de la cámara
                     Vector3 transformedCameraPosition = Vector3.Transform(viewerPosition, rotation);

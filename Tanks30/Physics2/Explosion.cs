@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace Physics
@@ -87,12 +84,15 @@ namespace Physics
         }
 
         /// <summary>
-        /// Calcula la fuerza y la aplica al cuerpo especificado
+        /// Calcula la fuerza y la aplica al objeto especificado
         /// </summary>
-        /// <param name="body">Cuerpo</param>
+        /// <param name="obj">Objeto</param>
         /// <param name="duration">Duración</param>
-        public override void UpdateForce(ref RigidBody body, float duration)
+        public override void UpdateForce(ref IPhysicObject obj, float duration)
         {
+            // Obtener el cuerpo del objeto
+            RigidBody body = obj.GetPrimitive().Body;
+
             // Detectar la fase de la explosión en la que estamos
             if (m_TimePassed <= ImplosionDuration)
             {

@@ -2,12 +2,10 @@ using Microsoft.Xna.Framework;
 
 namespace GameComponents.Vehicles
 {
-    using GameComponents.Physics;
-
     /// <summary>
     /// Controlador de vehículo
     /// </summary>
-    public interface IVehicleController : IPhysicObject
+    public interface IVehicleController
     {
         /// <summary>
         /// Posición
@@ -16,7 +14,7 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Rotación
         /// </summary>
-        Quaternion Rotation { get; set;}
+        Quaternion Orientation { get; set;}
         /// <summary>
         /// Escala
         /// </summary>
@@ -43,6 +41,10 @@ namespace GameComponents.Vehicles
         /// Indica si el vehículo está avanzando
         /// </summary>
         bool IsAdvancing { get; }
+        /// <summary>
+        /// Indica si el vehículo está estático
+        /// </summary>
+        bool IsStatic { get; }
 
         /// <summary>
         /// Acelerar

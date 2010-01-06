@@ -65,7 +65,7 @@ namespace Physics
         /// <remarks>Sólo añade un contacto o ninguno</remarks>
         public override int AddContact(ref CollisionData contactData, int limit)
         {
-            if (contactData.HasMoreContacts())
+            if (contactData.HasFreeContacts())
             {
                 // Encontrar la longitud actual
                 Vector3 positionOneWorld = m_BodyOne.GetPointInWorldSpace(m_PositionOne);

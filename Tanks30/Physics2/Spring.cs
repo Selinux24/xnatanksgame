@@ -55,12 +55,15 @@ namespace Physics
         }
 
         /// <summary>
-        /// Aplica la fuerza del amortiguador al cuerpo especificado
+        /// Aplica la fuerza del amortiguador al objeto especificado
         /// </summary>
-        /// <param name="body">Cuerpo</param>
+        /// <param name="obj">Objeto</param>
         /// <param name="duration">Duración</param>
-        public override void UpdateForce(ref RigidBody body, float duration)
+        public override void UpdateForce(ref IPhysicObject obj, float duration)
         {
+            // Obtener el cuerpo del objeto
+            RigidBody body = obj.GetPrimitive().Body;
+
             // Calculate the two ends in world space
             Vector3 lws = body.GetPointInWorldSpace(m_ConnectionPoint);
             Vector3 ows = m_Other.GetPointInWorldSpace(m_OtherConnectionPoint);
