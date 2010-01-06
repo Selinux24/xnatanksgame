@@ -60,7 +60,7 @@ namespace GameComponents.Vehicles
         /// </summary>
         protected virtual void Destroy()
         {
-            this.m_Velocity = 0f;
+            //this.m_Velocity = 0f;
         }
     }
 }

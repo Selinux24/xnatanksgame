@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GameComponents.MathComponents
 {
@@ -47,6 +48,23 @@ namespace GameComponents.MathComponents
         }
 
         /// <summary>
+        /// Inicializa los generadores de números aleatorios
+        /// </summary>
+        /// <returns></returns>
+        private static Random[] InitializeGenerators()
+        {
+            List<Random> list = new List<Random>();
+
+            for (int i = 0; i < m_RndListLength; i++)
+            {
+                Random rnd = new Random(unchecked((int)(DateTime.Now.Ticks >> i)));
+
+                list.Add(rnd);
+            }
+
+            return list.ToArray();
+        }
+        /// <summary>
         /// Obtiene el siguiente generador de números aleatorios
         /// </summary>
         /// <returns>Devuelve un generador de números aleatorios</returns>
@@ -54,12 +72,7 @@ namespace GameComponents.MathComponents
         {
             if (m_RndList == null)
             {
-                m_RndList = new Random[m_RndListLength];
-
-                for (int i = 0; i < m_RndListLength; i++)
-                {
-                    m_RndList[i] = new Random(DateTime.Now.TimeOfDay.Milliseconds + i);
-                }
+                m_RndList = InitializeGenerators();
             }
 
             Random res = m_RndList[m_CurrentRnd];

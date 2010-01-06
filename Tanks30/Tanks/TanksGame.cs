@@ -1,14 +1,15 @@
+using System;
 using System.Collections.Generic;
 using GameComponents;
 using GameComponents.Camera;
 using GameComponents.MathComponents;
-using GameComponents.Physics;
 using GameComponents.Scenery;
+using GameComponents.Text;
 using GameComponents.Vehicles;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Physics.CollideCoarse;
 
 namespace Tanks
 {
@@ -19,51 +20,94 @@ namespace Tanks
     /// </summary>
     public class TanksGame : Microsoft.Xna.Framework.Game
     {
-        // Gestor de dispositivos gráficos
+        /// <summary>
+        /// Gestor de dispositivos gráficos
+        /// </summary>
         protected GraphicsDeviceManager Graphics;
-
-        // Controlador de colisión
-        private CollisionManager m_Collision;
-        // Terreno
+        /// <summary>
+        /// Controlador de físicas
+        /// </summary>
+        protected PhysicsController Physics;
+        /// <summary>
+        /// Componente de texto
+        /// </summary>
+        private TextDrawerComponent m_TextDrawer;
+        /// <summary>
+        /// Terreno
+        /// </summary>
         private SceneryGameComponent m_Scenery;
-        // Cielo
+        /// <summary>
+        /// Cielo
+        /// </summary>
         private SkyBoxGameComponent m_SkyBox;
-        // Jugador
+        /// <summary>
+        /// Jugador
+        /// </summary>
         private ThirdPersonCameraGameComponent m_Camera;
-        // Información del terreno
+        /// <summary>
+        /// Información del terreno
+        /// </summary>
         private SceneryInfoGameComponent m_Info;
-        // Servicio contenedor de vehículos
+        /// <summary>
+        /// Servicio contenedor de vehículos
+        /// </summary>
         private VehicleContainerService m_VehicleContainer;
 
-        // Vehículo actual
+        /// <summary>
+        /// Vehículo actual
+        /// </summary>
         private Vehicle m_CurrentVehicle;
 
         #region Teclas
 
-        // Tecla que indica cuándo hay que dibujar los nodos
+        /// <summary>
+        /// Tecla que indica cuándo hay que dibujar los nodos
+        /// </summary>
         private Keys m_ShowNodesDrawnKey = Keys.F1;
-        // Tecla que cambia el LOD de los nodos a dibujar
+        /// <summary>
+        /// Tecla que cambia el LOD de los nodos a dibujar
+        /// </summary>
         private Keys m_IncLODKey = Keys.F2;
-        // Tecla que cambia el LOD de los nodos a dibujar
+        /// <summary>
+        /// Tecla que cambia el LOD de los nodos a dibujar
+        /// </summary>
         private Keys m_DecLODKey = Keys.F3;
-        // Tecla que activa o desactiva la niebla
+        /// <summary>
+        /// Tecla que activa o desactiva la niebla
+        /// </summary>
         private Keys m_FogKey = Keys.F4;
-        // Tecla que activa o desactiva la luz global
+        /// <summary>
+        /// Tecla que activa o desactiva la luz global
+        /// </summary>
         private Keys m_GlobalLightningKey = Keys.F5;
-        // Tecla que activa o desactiva la luz 1
+        /// <summary>
+        /// Tecla que activa o desactiva la luz 1
+        /// </summary> 
         private Keys m_Light0Key = Keys.F6;
-        // Tecla que activa o desactiva la luz 2
+        /// <summary>
+        /// Tecla que activa o desactiva la luz 2
+        /// </summary>
         private Keys m_Light1Key = Keys.F7;
-        // Tecla que activa o desactiva la luz 3
+        /// <summary>
+        /// Tecla que activa o desactiva la luz 3
+        /// </summary>
         private Keys m_Light2Key = Keys.F8;
-        // Tecla que activa o desactiva el wireframe
+        /// <summary>
+        /// Tecla que activa o desactiva el wireframe
+        /// </summary>
         private Keys m_WireFrameKey = Keys.F12;
 
-        // Tecla que cambia a la siguiente posición del vehículo
+        /// <summary>
+        /// Tecla que cambia a la siguiente posición del vehículo
+        /// </summary>
         private Keys m_NextVehiclePositionKey = Keys.Tab;
-        // Cambio al siguiente vehículo
+        /// <summary>
+        /// Cambio al siguiente vehículo
+        /// </summary>
         private Keys m_NextVehicleKey = Keys.Add;
-        // Cambio al vehículo anterior
+        /// <summary>
+        /// Cambio al vehículo anterior
+        /// </summary>
         private Keys m_PreviousVehicleKey = Keys.Subtract;
 
         #endregion
@@ -74,6 +118,7 @@ namespace Tanks
         public TanksGame()
         {
             this.Graphics = new GraphicsDeviceManager(this);
+            this.Physics = new PhysicsController();
         }
 
         /// <summary>
@@ -93,57 +138,73 @@ namespace Tanks
             this.Graphics.IsFullScreen = true;
 #endif
 
-            InputHelper.GraphicsDevice = Graphics.GraphicsDevice;
+            InputHelper.GraphicsDevice = this.Graphics.GraphicsDevice;
 
-            m_Scenery = new SceneryGameComponent(this);
-            m_Scenery.UpdateOrder = 0;
-            Components.Add(m_Scenery);
-            Services.AddService(typeof(SceneryGameComponent), m_Scenery);
+            this.m_Scenery = new SceneryGameComponent(this);
+            this.m_Scenery.UpdateOrder = 0;
+            this.m_Scenery.DrawOrder = 0;
+            this.Components.Add(this.m_Scenery);
+            this.Services.AddService(typeof(SceneryGameComponent), this.m_Scenery);
 
-            m_VehicleContainer = new VehicleContainerService(this);
-            m_VehicleContainer.UpdateOrder = 1;
-            Services.AddService(m_VehicleContainer.GetType(), m_VehicleContainer);
+            this.m_VehicleContainer = new VehicleContainerService(this);
+            this.m_VehicleContainer.UpdateOrder = 1;
+            this.Services.AddService(typeof(VehicleContainerService), this.m_VehicleContainer);
 
-            m_Collision = new CollisionManager(this);
-            m_Collision.UpdateOrder = 2;
-            Components.Add(m_Collision);
-            Services.AddService(m_Collision.GetType(), m_Collision);
+            this.m_Camera = new ThirdPersonCameraGameComponent(this);
+            this.m_Camera.UpdateOrder = 3;
+            this.Components.Add(this.m_Camera);
 
-            m_Camera = new ThirdPersonCameraGameComponent(this);
-            m_Camera.UpdateOrder = 3;
-            Components.Add(m_Camera);
+            this.m_SkyBox = new SkyBoxGameComponent(this);
+            this.m_SkyBox.UpdateOrder = 4;
+            this.m_SkyBox.DrawOrder = 4;
+            this.Components.Add(this.m_SkyBox);
 
-            m_SkyBox = new SkyBoxGameComponent(this);
-            m_SkyBox.UpdateOrder = 4;
-            Components.Add(m_SkyBox);
+            this.m_Info = new SceneryInfoGameComponent(this);
+            this.m_Info.UpdateOrder = 5;
+            this.m_Info.DrawOrder = 5;
+            this.Components.Add(this.m_Info);
 
-            m_Info = new SceneryInfoGameComponent(this);
-            m_Info.UpdateOrder = 5;
-            Components.Add(m_Info);
+            this.m_TextDrawer = new TextDrawerComponent(this);
+            this.m_TextDrawer.UpdateOrder = 100;
+            this.m_TextDrawer.DrawOrder = 100;
+            this.Components.Add(this.m_TextDrawer);
 
             Vehicle[] squad01 = AddSquadron(VehicleTypes.LandSpeeder, 3);
             Vehicle[] squad02 = AddSquadron(VehicleTypes.LandSpeeder, 3);
             Vehicle[] squad03 = AddSquadron(VehicleTypes.LandSpeeder, 3);
-            Vehicle[] squad04 = AddSquadron(VehicleTypes.LandRaider, 2);
-            Vehicle[] squad05 = AddSquadron(VehicleTypes.LemanRuss, 3);
-            Vehicle[] squad06 = AddSquadron(VehicleTypes.LemanRuss, 3);
-            Vehicle[] squad07 = AddSquadron(VehicleTypes.Rhino, 3);
-            Vehicle[] squad08 = AddSquadron(VehicleTypes.Rhino, 3);
-            Vehicle[] squad09 = AddSquadron(VehicleTypes.Rhino, 3);
-
-            squad01[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
-            squad02[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
-            squad03[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
-            squad04[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
-            squad05[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
-            squad06[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
-            squad07[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
-            squad08[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
-            squad09[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
-
-            this.SetFocus(squad01[0]);
+            Vehicle[] squad04 = AddSquadron(VehicleTypes.LandSpeeder, 3);
+            Vehicle[] squad05 = AddSquadron(VehicleTypes.LandSpeeder, 3);
+            Vehicle[] squad06 = AddSquadron(VehicleTypes.LandSpeeder, 3);
+            //Vehicle[] squad04 = AddSquadron(VehicleTypes.LandRaider, 2);
+            //Vehicle[] squad05 = AddSquadron(VehicleTypes.LemanRuss, 3);
+            //Vehicle[] squad06 = AddSquadron(VehicleTypes.LemanRuss, 3);
+            //Vehicle[] squad07 = AddSquadron(VehicleTypes.Rhino, 3);
+            //Vehicle[] squad08 = AddSquadron(VehicleTypes.Rhino, 3);
+            //Vehicle[] squad09 = AddSquadron(VehicleTypes.Rhino, 3);
 
             base.Initialize();
+
+            this.InitializeSquadron(squad01);
+            this.InitializeSquadron(squad02);
+            this.InitializeSquadron(squad03);
+            this.InitializeSquadron(squad04);
+            this.InitializeSquadron(squad05);
+            this.InitializeSquadron(squad06);
+            //this.InitializeSquadron(squad07);
+            //this.InitializeSquadron(squad08);
+            //this.InitializeSquadron(squad09);
+
+            squad01[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
+            squad02[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
+            squad03[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
+            squad04[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
+            squad05[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
+            squad06[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
+            //squad07[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+            //squad08[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+            //squad09[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
+
+            this.SetFocus(squad01[2]);
         }
         /// <summary>
         /// Carga de los componentes gráficos
@@ -172,11 +233,28 @@ namespace Tanks
 
             InputHelper.Begin(gameTime);
 
+            this.Physics.Update(gameTime);
+
             base.Update(gameTime);
 
             this.UpdateEnvironment(gameTime);
 
             this.UpdateVehicles(gameTime);
+
+            string text = "Vehiculo  " + this.m_CurrentVehicle.Position.ToString() + Environment.NewLine;
+            text += "Velocidad " + this.m_CurrentVehicle.Velocity.ToString() + Environment.NewLine;
+            text += "Piloto    " + this.m_CurrentVehicle.AutoPilot.Enabled.ToString() + " " + this.m_CurrentVehicle.AutoPilot.Target.ToString() + " " + this.m_CurrentVehicle.AutoPilot.MaximumVelocity.ToString() + Environment.NewLine;
+            text += "En Rango  " + this.m_CurrentVehicle.AutoPilot.OnRange.ToString() + " " + this.m_CurrentVehicle.AutoPilot.DistanceToTarget.ToString() + Environment.NewLine;
+            if (this.m_Scenery != null)
+            {
+                text += "Terreno   " + this.m_Scenery.Center.ToString() + Environment.NewLine;
+            }
+            if (this.m_Camera.ModelToFollow != null)
+            {
+                text += "Camara    " + this.m_Camera.Position.ToString() + Environment.NewLine;
+            }
+
+            this.m_TextDrawer.WriteText(text, 5, 5);
 
             InputHelper.End();
         }
@@ -186,7 +264,7 @@ namespace Tanks
         /// <param name="gameTime">Tiempo de juego</param>
         protected override void Draw(GameTime gameTime)
         {
-            Graphics.GraphicsDevice.Clear(SceneryEnvironment.Ambient.AmbientColor);
+            this.Graphics.GraphicsDevice.Clear(SceneryEnvironment.Ambient.AmbientColor);
 
             base.Draw(gameTime);
         }
@@ -225,9 +303,6 @@ namespace Tanks
         /// <param name="count">Cantidad de vehículos</param>
         private Vehicle[] AddSquadron(VehicleTypes type, int count)
         {
-            // Punto de posición del escuadrón
-            Point where = new Point(RandomComponent.Next(5000) + 5000, RandomComponent.Next(5000) + 5000);
-
             // Lista de componentes creados
             List<Vehicle> vehicleList = new List<Vehicle>();
 
@@ -235,31 +310,46 @@ namespace Tanks
             {
                 if (type == VehicleTypes.Rhino)
                 {
-                    vehicleList.Add(m_VehicleContainer.AddRhino(where));
+                    vehicleList.Add(m_VehicleContainer.AddRhino(Point.Zero));
                 }
                 else if (type == VehicleTypes.LandSpeeder)
                 {
-                    vehicleList.Add(m_VehicleContainer.AddLandSpeeder(where));
+                    vehicleList.Add(m_VehicleContainer.AddLandSpeeder(Point.Zero));
                 }
                 else if (type == VehicleTypes.LandRaider)
                 {
-                    vehicleList.Add(m_VehicleContainer.AddLandRaider(where));
+                    vehicleList.Add(m_VehicleContainer.AddLandRaider(Point.Zero));
                 }
                 else if (type == VehicleTypes.LemanRuss)
                 {
-                    vehicleList.Add(m_VehicleContainer.AddLemanRuss(where));
+                    vehicleList.Add(m_VehicleContainer.AddLemanRuss(Point.Zero));
                 }
             }
 
-            for (int i = 1; i < count; i++)
+            return vehicleList.ToArray();
+        }
+        /// <summary>
+        /// Inicializa el escuadron especificado
+        /// </summary>
+        /// <param name="vehicleList">Lista de vehículos</param>
+        private void InitializeSquadron(Vehicle[] vehicleList)
+        {
+            // Punto de posición del escuadrón
+            Vector3 where = new Vector3(RandomComponent.Next(5000) + 5000, 500, RandomComponent.Next(5000) + 5000);
+
+            vehicleList[0].Position = where;
+
+            this.Physics.RegisterVehicle(vehicleList[0]);
+
+            for (int i = 1; i < vehicleList.Length; i++)
             {
                 // Posición de cada tanque relativa al anterior
                 vehicleList[i].Position = vehicleList[i - 1].Position - Vector3.Multiply(Vector3.One, 10f);
                 // Indicar a cada tanque que siga al anterior
-                vehicleList[i].AutoPilot.Follow(vehicleList[i - 1]);
-            }
+                vehicleList[i].AutoPilot.Follow(vehicleList[i - 1], 150f);
 
-            return vehicleList.ToArray();
+                this.Physics.RegisterVehicle(vehicleList[i]);
+            }
         }
         /// <summary>
         /// Actualizar elementos del entorno
@@ -402,9 +492,22 @@ namespace Tanks
 
             foreach (Vehicle vehicle in this.m_VehicleContainer.Vehicles)
             {
-                if ((vehicle != this.m_CurrentVehicle) && (!vehicle.AutoPilot.Enabled))
+                if (!vehicle.Destroyed)
                 {
-                    vehicle.AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40.0f);
+                    if (vehicle != this.m_CurrentVehicle)
+                    {
+                        if (!vehicle.AutoPilot.Enabled)
+                        {
+                            if (vehicle.AutoPilot.Following)
+                            {
+                                vehicle.AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 150.0f);
+                            }
+                            else
+                            {
+                                vehicle.AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60.0f);
+                            }
+                        }
+                    }
                 }
             }
         }

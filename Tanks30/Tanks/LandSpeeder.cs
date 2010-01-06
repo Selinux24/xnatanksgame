@@ -42,6 +42,8 @@ namespace Tanks
 
         Keys m_MoveForwardKey = Keys.W;
         Keys m_MoveBackwardKey = Keys.S;
+        Keys m_MoveUpKey = Keys.U;
+        Keys m_MoveDownKey = Keys.I;
         Keys m_RotateLeftTankKey = Keys.A;
         Keys m_RotateRightTankKey = Keys.D;
         Keys m_ChangeDirectionKey = Keys.R;
@@ -125,6 +127,18 @@ namespace Tanks
                         {
                             this.Accelerate();
                         }
+                    }
+                    if (Keyboard.GetState().IsKeyDown(m_MoveUpKey))
+                    {
+                        driving = true;
+
+                        this.GoUp();
+                    }
+                    if (Keyboard.GetState().IsKeyDown(m_MoveDownKey))
+                    {
+                        driving = true;
+
+                        this.GoDown();
                     }
 
                     #endregion

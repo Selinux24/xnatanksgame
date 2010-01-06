@@ -7,6 +7,7 @@ namespace GameComponents.Vehicles
     using GameComponents.Camera;
     using GameComponents.Components.Particles;
     using GameComponents.Scenery;
+    using Physics;
 
     /// <summary>
     /// Componente tanque
@@ -26,17 +27,21 @@ namespace GameComponents.Vehicles
         /// </summary>
         protected SceneryGameComponent Scenery = null;
 
-        // Modelo
+        /// <summary>
+        /// Modelo
+        /// </summary>
         private Model m_Model;
 
         // Posición
-        private Vector3 m_Position = Vector3.Zero;
+        //private Vector3 m_Position = Vector3.Zero;
         // Rotación
-        private Quaternion m_Rotation = Quaternion.Identity;
+        //private Quaternion m_Rotation = Quaternion.Identity;
         // Escala
         private float m_Scale = 1f;
 
-        // Sistema de partículas
+        /// <summary>
+        /// Sistema de partículas
+        /// </summary>
         private ParticleSystem m_SmokePlumeParticles;
 
         /// <summary>
@@ -46,27 +51,52 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                return this.m_Position;
+                //return this.m_Position;
+                if (this.OBB != null)
+                {
+                    return this.OBB.Body.Position;
+                }
+
+                return Vector3.Zero;
             }
             set
             {
-                this.m_Position = value;
+                //this.m_Position = value;
+                if (this.OBB != null)
+                {
+                    this.OBB.Body.Position = value;
+
+                    this.OBB.Body.CalculateDerivedData();
+                }
             }
         }
         /// <summary>
         /// Obtiene o establece la rotación
         /// </summary>
-        public virtual Quaternion Rotation
+        public virtual Quaternion Orientation
         {
             get
             {
-                return this.m_Rotation;
+                //return this.m_Rotation;
+                if (this.OBB != null)
+                {
+                    return this.OBB.Body.Orientation;
+                }
+
+                return Quaternion.Identity;
             }
             set
             {
-                this.m_Rotation = value;
+                //this.m_Rotation = value;
 
-                this.m_Direction = Vector3.Transform(Vector3.Forward, this.m_Rotation);
+                //this.m_Direction = Vector3.Transform(Vector3.Forward, this.m_Rotation);
+
+                if (this.OBB != null)
+                {
+                    this.OBB.Body.Orientation = value;
+
+                    this.OBB.Body.CalculateDerivedData();
+                }
 
                 this.RotationHasChanged = true;
             }
@@ -115,7 +145,19 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                return GetTransform();
+                //Matrix world = Matrix.CreateScale(this.Scale);
+                //world *= Matrix.CreateFromQuaternion(this.Rotation);
+                //world *= Matrix.CreateFromQuaternion(this.m_Inclination);
+                //world *= Matrix.CreateTranslation(this.Position);
+
+                //return world;
+
+                if (this.OBB != null)
+                {
+                    return this.OBB.Transform;
+                }
+
+                return Matrix.Identity;
             }
         }
         /// <summary>
@@ -125,29 +167,8 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                return GetView();
+                return this.m_CurrentPlayerControl.GetViewMatrix(this.m_AnimationController, this.CurrentTransform);
             }
-        }
-        /// <summary>
-        /// Obtiene la matriz de transformación del modelo
-        /// </summary>
-        /// <returns>Devuelve la matriz de transformación del modelo</returns>
-        protected virtual Matrix GetTransform()
-        {
-            Matrix world = Matrix.CreateScale(this.Scale);
-            world *= Matrix.CreateFromQuaternion(this.Rotation);
-            world *= Matrix.CreateFromQuaternion(this.m_Inclination);
-            world *= Matrix.CreateTranslation(this.Position);
-
-            return world;
-        }
-        /// <summary>
-        /// Obtiene la matriz de vista desde la posición actual del modelo
-        /// </summary>
-        /// <returns>Devuelve la matriz de vista desde la posición actual del modelo</returns>
-        protected virtual Matrix GetView()
-        {
-            return m_CurrentPlayerControl.GetViewMatrix(this.m_AnimationController, this.GetTransform());
         }
 
         /// <summary>
@@ -178,6 +199,19 @@ namespace GameComponents.Vehicles
 
             // Modelo
             this.m_Model = Content.Load<Model>("Content/" + componentInfo.Model);
+            this.m_TriangleInfo = this.m_Model.Tag as TriangleInfo;
+            this.m_Bsph = new BoundingSphere()
+            {
+                Center = this.m_TriangleInfo.BSph.Center,
+                Radius = this.m_TriangleInfo.BSph.Radius,
+            };
+            this.m_OBB = new CollisionBox()
+            {
+                HalfSize = this.m_TriangleInfo.OBB.HalfSize,
+            };
+
+            this.m_OBB.Body.Mass = 100f;
+            this.m_OBB.Body.SetDamping(0.8f, 0.8f);
 
             // Velocidad máxima que puede alcanzar el tanque hacia delante
             this.MaxForwardVelocity = componentInfo.MaxForwardVelocity;
@@ -217,10 +251,10 @@ namespace GameComponents.Vehicles
 
             if (!this.Destroyed)
             {
-                if (m_Autopilot.Enabled)
+                if (this.m_Autopilot.Enabled)
                 {
                     // Piloto automático
-                    m_Autopilot.UpdateAutoPilot(this);
+                    this.m_Autopilot.UpdateAutoPilot(this);
                 }
             }
 
@@ -228,16 +262,16 @@ namespace GameComponents.Vehicles
             this.m_AnimationController.Update(gameTime);
 
             // Actualizar la rotación
-            this.UpdateRotation(gameTime);
+            //this.UpdateRotation(gameTime);
 
             // Actualizar la posición
-            this.UpdatePosition(gameTime);
+            //this.UpdatePosition(gameTime);
 
             // Establecer la visibilidad del vehículo
             this.Visible = this.TransformedBSph.Intersects(BaseCameraGameComponent.gLODHighFrustum);
 
             // Actualizar con el terreno
-            this.UpdateWithScenery(gameTime);
+            //this.UpdateWithScenery(gameTime);
 
             if (this.Damaged && this.Visible)
             {
@@ -262,7 +296,7 @@ namespace GameComponents.Vehicles
 
             if (this.m_Model != null)
             {
-                Matrix modelTransform = this.GetTransform();
+                Matrix modelTransform = this.CurrentTransform;
 
                 this.m_AnimationController.CopyAbsoluteBoneTransformsTo(this.m_Model, this.m_BoneTransforms);
 
@@ -288,92 +322,6 @@ namespace GameComponents.Vehicles
                 this.m_SmokePlumeParticles.SetCamera(
                     BaseCameraGameComponent.gViewMatrix,
                     BaseCameraGameComponent.gGlobalProjectionMatrix);
-            }
-        }
-
-        /// <summary>
-        /// Aumenta la velocidad de traslación del modelo
-        /// </summary>
-        public virtual void Accelerate()
-        {
-            if (!this.Destroyed)
-            {
-                this.AddToVelocity(this.AccelerationModifier);
-            }
-        }
-        /// <summary>
-        /// Aumenta la velocidad de traslación del modelo
-        /// </summary>
-        /// <param name="amount">Cantidad de movimiento a añadir</param>
-        public virtual void Accelerate(float amount)
-        {
-            if (!this.Destroyed)
-            {
-                this.AddToVelocity(amount);
-            }
-        }
-        /// <summary>
-        /// Disminuye la velocidad de traslación del modelo
-        /// </summary>
-        public virtual void Brake()
-        {
-            if (!this.Destroyed)
-            {
-                this.AddToVelocity(-this.BrakeModifier);
-            }
-        }
-        /// <summary>
-        /// Disminuye la velocidad de traslación del modelo
-        /// </summary>
-        /// <param name="amount">Cantidad de movimiento a disminuir</param>
-        public virtual void Brake(float amount)
-        {
-            if (!this.Destroyed)
-            {
-                this.AddToVelocity(-amount);
-            }
-        }
-
-        /// <summary>
-        /// Gira el modelo a la izquierda
-        /// </summary>
-        public virtual void TurnLeft()
-        {
-            if (!this.Destroyed)
-            {
-                this.m_AngularVelocity = this.AngularVelocityModifier;
-            }
-        }
-        /// <summary>
-        /// Gira el modelo a la izquierda
-        /// </summary>
-        /// <param name="angle">Ángulo</param>
-        public virtual void TurnLeft(float angle)
-        {
-            if (!this.Destroyed)
-            {
-                this.m_AngularVelocity = MathHelper.Clamp(angle, -this.AngularVelocityModifier, this.AngularVelocityModifier);
-            }
-        }
-        /// <summary>
-        /// Gira el modelo a la derecha
-        /// </summary>
-        public virtual void TurnRight()
-        {
-            if (!this.Destroyed)
-            {
-                this.m_AngularVelocity = -this.AngularVelocityModifier;
-            }
-        }
-        /// <summary>
-        /// Gira el modelo a la derecha
-        /// </summary>
-        /// <param name="angle">Ángulo</param>
-        public virtual void TurnRight(float angle)
-        {
-            if (!this.Destroyed)
-            {
-                this.m_AngularVelocity = MathHelper.Clamp(-angle, -this.AngularVelocityModifier, this.AngularVelocityModifier);
             }
         }
     }

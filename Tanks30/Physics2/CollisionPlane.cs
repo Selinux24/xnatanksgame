@@ -7,7 +7,7 @@ namespace Physics
     /// <summary>
     /// Plano
     /// </summary>
-    public class CollisionPlane
+    public class CollisionPlane : CollisionPrimitive
     {
         /// <summary>
         /// Normal del plano

@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 
 namespace Physics
 {
@@ -23,15 +21,15 @@ namespace Physics
         private Contact[] m_ContactArray;
 
         /// <summary> 
-        /// Holds the friction value to write into any collisions.
+        /// Factor de fricción a añadir en todas las colisiones
         /// </summary>
         public float Friction = 0f;
         /// <summary> 
-        /// Holds the restitution value to write into any collisions.
+        /// Factor de restitución a añadir en todas las colisiones
         /// </summary>
         public float Restitution = 0f;
         /// <summary>
-        /// Holds the collision tolerance, even uncolliding objects this close should have collisions generated.
+        /// Tolerancia
         /// </summary>
         public float Tolerance = 0f;
 
@@ -46,7 +44,7 @@ namespace Physics
             }
         }
         /// <summary> 
-        /// Holds the contact array to write into.
+        /// Contacto actual
         /// </summary>
         public Contact CurrentContact
         {
@@ -56,7 +54,7 @@ namespace Physics
             }
         }
         /// <summary> 
-        /// Lista de contactos usados
+        /// Número de contactos usados
         /// </summary>
         public int ContactCount
         {
@@ -66,7 +64,7 @@ namespace Physics
             }
         }
         /// <summary> 
-        /// Holds the maximum number of contacts the array can take.
+        /// Número de contactos libres
         /// </summary>
         public int ContactsLeft
         {
@@ -96,7 +94,7 @@ namespace Physics
         /// <summary>
         /// Obtiene si hay más contactos disponibles en la lista de contactos
         /// </summary>
-        public bool HasMoreContacts()
+        public bool HasFreeContacts()
         {
             return m_CurrentContactIndex < m_ContactArray.Length;
         }

@@ -8,16 +8,26 @@ namespace GameComponents.Vehicles.Animations
     /// </summary>
     public class PlayerPosition
     {
-        // Nombre de la posición
+        /// <summary>
+        /// Nombre de la posición
+        /// </summary>
         public readonly string Name = null;
-        // Indice del bone que representa la posición del jugador
+        /// <summary>
+        /// Indice del bone que representa la posición del jugador
+        /// </summary>
         public readonly int Index = -1;
-        // Nombre del bone que representa la posición del jugador
+        /// <summary>
+        /// Nombre del bone que representa la posición del jugador
+        /// </summary>
         public readonly string BoneName = null;
 
-        // Bone que representa la posición del jugador
+        /// <summary>
+        /// Bone que representa la posición del jugador
+        /// </summary>
         private ModelBone m_Bone = null;
-        // Posición adicional a la posición del jugador
+        /// <summary>
+        /// Posición adicional a la posición del jugador
+        /// </summary>
         private Vector3 m_AditionalTranslation = Vector3.Zero;
 
         /// <summary>
@@ -46,8 +56,8 @@ namespace GameComponents.Vehicles.Animations
         {
             // Calcular la transformación global compuesta por la transformación adicional, la transformación del bone y la transformación del modelo
             Matrix transform =
-                Matrix.CreateTranslation(m_AditionalTranslation) *
-                controller.GetAbsoluteTransform(m_Bone) *
+                Matrix.CreateTranslation(this.m_AditionalTranslation) *
+                controller.GetAbsoluteTransform(this.m_Bone) *
                 modelTransform;
 
             return transform;

@@ -69,7 +69,7 @@ namespace Physics
         /// <remarks>Tan solo generará un contacto o ninguno</remarks>
         public override int AddContact(ref CollisionData contactData, int limit)
         {
-            if (contactData.HasMoreContacts())
+            if (contactData.HasFreeContacts())
             {
                 // Calcular las posiciones de los puntos de conexión en coordenadas del mundo
                 Vector3 positionOneWorld = this.m_BodyOne.GetPointInWorldSpace(this.m_PositionOne);

@@ -153,8 +153,6 @@
     <Compile Include="Particles\ParticleSystem.cs" />
     <Compile Include="Particles\ParticleVertex.cs" />
     <Compile Include="Particles\SmokePlumeParticleSystem.cs" />
-    <Compile Include="Physics\CollisionManager.cs" />
-    <Compile Include="Physics\IPhysicObject.cs" />
     <Compile Include="Scenery\LOD.cs" />
     <Compile Include="Scenery\SceneryEnvironmet.cs" />
     <Compile Include="Scenery\SceneryGameComponent.cs" />
@@ -163,6 +161,7 @@
     <Compile Include="Scenery\SceneryNode.cs" />
     <Compile Include="Scenery\SceneryPrimitiveNode.cs" />
     <Compile Include="Scenery\SkyBoxGameComponent.cs" />
+    <Compile Include="Text\TextDrawerComponent.cs" />
     <Compile Include="Vehicles\Animations\Animation.cs" />
     <Compile Include="Vehicles\Animations\AnimationAxis.cs" />
     <Compile Include="Vehicles\Animations\AnimationController.cs" />
@@ -177,6 +176,9 @@
     <Compile Include="Vehicles\Vehicle.Physics.cs" />
     <Compile Include="Vehicles\Vehicle.Status.cs" />
     <Compile Include="Vehicles\VehicleComponentInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Physics\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

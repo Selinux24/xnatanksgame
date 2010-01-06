@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CollideCoarse\BVHNode.cs" />
+    <Compile Include="CollideCoarse\PhysicsController.cs" />
     <Compile Include="CollisionBox.cs" />
     <Compile Include="CollisionData.cs" />
     <Compile Include="CollisionDetector.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Explosion.cs" />
     <Compile Include="ForceGenerator.cs" />
     <Compile Include="IntersectionTests.cs" />
+    <Compile Include="IPhysicObject.cs" />
     <Compile Include="Joint.cs" />
     <Compile Include="Matrix3.cs" />
     <Compile Include="PhysicsMathHelper.cs" />

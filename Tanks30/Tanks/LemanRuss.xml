@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <VehicleComponentInfo>
   <Model>LemanRuss</Model>
-  <MaxForwardVelocity>1.5</MaxForwardVelocity>
-  <MaxBackwardVelocity>1.5</MaxBackwardVelocity>
+  <MaxForwardVelocity>4</MaxForwardVelocity>
+  <MaxBackwardVelocity>4</MaxBackwardVelocity>
   <AccelerationModifier>5</AccelerationModifier>
-  <BrakeModifier>3</BrakeModifier>
-  <AngularVelocityModifier>5</AngularVelocityModifier>
+  <BrakeModifier>1</BrakeModifier>
+  <AngularVelocityModifier>10</AngularVelocityModifier>
   <AnimationControlers>
     <AnimationInfo>
       <Name>BattleCannon</Name>
