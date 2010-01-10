@@ -1,6 +1,4 @@
-using System;
 using Microsoft.Xna.Framework;
-
 
 namespace Physics
 {
@@ -19,6 +17,15 @@ namespace Physics
         /// </summary>
         public float D;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="plane">Plano</param>
+        public CollisionPlane(Plane plane)
+            : this(plane.Normal, plane.D)
+        {
+
+        }
         /// <summary>
         /// Constructor
         /// </summary>

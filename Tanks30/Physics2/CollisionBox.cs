@@ -1,6 +1,4 @@
-using System;
 using Microsoft.Xna.Framework;
-
 
 namespace Physics
 {
@@ -23,7 +21,6 @@ namespace Physics
         {
             return new CollisionBox()
             {
-                Offset = Matrix.Identity,
                 HalfSize = (aabb.Max - aabb.Min) * 0.5f,
             };
         }

@@ -90,7 +90,7 @@ namespace Physics
         /// <param name="plane">Plano</param>
         /// <param name="data">Rellena los datos de colisión</param>
         /// <returns>Devuelve verdadero si hay colisión o falso en el resto de los casos</returns>
-        internal static bool SphereAndHalfSpace(CollisionSphere sphere, CollisionPlane plane, ref CollisionData data)
+        private static bool SphereAndHalfSpace(CollisionSphere sphere, CollisionPlane plane, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -130,7 +130,7 @@ namespace Physics
         /// <param name="plane">Plano</param>
         /// <param name="data">Rellena los datos de colisión</param>
         /// <returns>Devuelve verdadero si hay colisión o falso en el resto de los casos</returns>
-        internal static bool SphereAndTruePlane(CollisionSphere sphere, CollisionPlane plane, ref CollisionData data)
+        private static bool SphereAndTruePlane(CollisionSphere sphere, CollisionPlane plane, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -179,7 +179,7 @@ namespace Physics
         /// <param name="two">Esfera dos</param>
         /// <param name="data">Datos de la colisión</param>
         /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
-        internal static bool SphereAndSphere(CollisionSphere one, CollisionSphere two, ref CollisionData data)
+        private static bool SphereAndSphere(CollisionSphere one, CollisionSphere two, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -213,10 +213,36 @@ namespace Physics
 
             return true;
         }
-
-        internal static bool SphereAndTriangleSoup(CollisionSphere sphere, CollisionTriangleSoup triangleSoup, ref CollisionData data)
+        /// <summary>
+        /// Detecta la colisión entre una esfera y una lista de triángulos
+        /// </summary>
+        /// <param name="sphere">Esfera</param>
+        /// <param name="triangleSoup">Lista de triángulos</param>
+        /// <param name="data">Datos de la colisión</param>
+        /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
+        private static bool SphereAndTriangleSoup(CollisionSphere sphere, CollisionTriangleSoup triangleSoup, ref CollisionData data)
         {
-            throw new NotImplementedException();
+            if (data.ContactsLeft <= 0)
+            {
+                // Si no hay más contactos disponibles se sale de la función.
+                return false;
+            }
+
+            foreach (Triangle triangle in triangleSoup.Triangles)
+            {
+                // Comprobar la intersección
+                if (IntersectionTests.SphereAndTri(sphere, triangle, true))
+                {
+                    // Informar la colisión
+                    if (CollisionDetector.SphereAndHalfSpace(sphere, new CollisionPlane(triangle.Plane), ref data))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+
         }
         /// <summary>
         /// Detecta la colisión entre caja y plano
@@ -225,7 +251,7 @@ namespace Physics
         /// <param name="plane">Plano</param>
         /// <param name="data">Datos de la colisión</param>
         /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
-        internal static bool BoxAndHalfSpace(CollisionBox box, CollisionPlane plane, ref CollisionData data)
+        private static bool BoxAndHalfSpace(CollisionBox box, CollisionPlane plane, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -234,7 +260,7 @@ namespace Physics
             }
 
             // Comprobar la intersección
-            if (!IntersectionTests.BoxAndHalfSpace(box, plane))
+            if (!IntersectionTests.BoxAndPlane(box, plane))
             {
                 return false;
             }
@@ -288,7 +314,7 @@ namespace Physics
         /// <param name="two">Caja dos</param>
         /// <param name="data">Datos de colisión</param>
         /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
-        internal static bool BoxAndBox(CollisionBox one, CollisionBox two, ref CollisionData data)
+        private static bool BoxAndBox(CollisionBox one, CollisionBox two, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -437,7 +463,7 @@ namespace Physics
         /// <param name="point">Punto</param>
         /// <param name="data">Datos de colisión</param>
         /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
-        internal static bool BoxAndPoint(CollisionBox box, Vector3 point, ref CollisionData data)
+        private static bool BoxAndPoint(CollisionBox box, Vector3 point, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -497,7 +523,7 @@ namespace Physics
         /// <param name="sphere">Esfera</param>
         /// <param name="data">Datos de colisión a llenar</param>
         /// <returns>Devuelve verdadero si existe colisión, falso en el resto de los casos</returns>
-        internal static bool BoxAndSphere(CollisionBox box, CollisionSphere sphere, ref CollisionData data)
+        private static bool BoxAndSphere(CollisionBox box, CollisionSphere sphere, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -557,8 +583,14 @@ namespace Physics
 
             return true;
         }
-
-        internal static bool BoxAndTriangleSoup(CollisionBox box, CollisionTriangleSoup triangleSoup, ref CollisionData data)
+        /// <summary>
+        /// Detecta la colisión entre una caja y una colección de triángulos
+        /// </summary>
+        /// <param name="box">Caja</param>
+        /// <param name="triangleSoup">Colección de triángulos</param>
+        /// <param name="data">Datos de colisión a llenar</param>
+        /// <returns>Devuelve verdadero si existe colisión, falso en el resto de los casos</returns>
+        private static bool BoxAndTriangleSoup(CollisionBox box, CollisionTriangleSoup triangleSoup, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -566,19 +598,70 @@ namespace Physics
                 return false;
             }
 
-            // Los triángulos están en coordenadas del mundo
-            bool hasCollisions = false;
-            for (int i = 0; i < triangleSoup.Triangles.Length; i++)
-            {
-                Triangle tri = triangleSoup.Triangles[i];
+            bool intersection = false;
+            int contacts = 0;
 
-                if (IntersectionTests.BoxAndTri(box, tri, ref data))
+            foreach (Triangle triangle in triangleSoup.Triangles)
+            {
+                // Comprobar la intersección
+                if (IntersectionTests.BoxAndTri(box, triangle))
                 {
-                    hasCollisions = true;
+                    // Hay intersección, ahora hay que encontrar los puntos de intersección.
+                    // Podemos hacerlo únicamente chequeando los vértices.
+                    // Si la caja está descansando sobre el plano o un eje, se reportarán cuatro o dos puntos de contacto.
+
+                    for (int i = 0; i < 8; i++)
+                    {
+                        // Calcular la positición de cada vértice
+                        Vector3 vertexPos = box.GetCorner(i);
+                        Plane plane = triangle.Plane;
+
+                        // Calcular la distancia al plano
+                        float vertexDistance = Vector3.Dot(vertexPos, plane.Normal);
+
+                        // Comparar las distancias
+                        if (vertexDistance <= plane.D)
+                        {
+                            // Intersección entre línea y triángulo
+                            Vector3 direction = vertexPos - box.Position;
+                            if (IntersectionTests.TriAndRay(triangle, new Ray(box.Position, direction)))
+                            {
+                                intersection = true;
+                                contacts++;
+
+                                // Crear la información del contacto.
+
+                                // El punto de contacto está a medio camino entre el vértice y el plano.
+                                // Se obtiene multiplicando la dirección por la mitad de la distancia de separación, y añadiendo la posición del vértice.
+                                Contact contact = data.CurrentContact;
+                                contact.ContactPoint = vertexPos;
+                                contact.ContactNormal = plane.Normal;
+                                contact.Penetration = plane.D - vertexDistance;
+
+                                // Establecer los datos del contacto
+                                RigidBody one = box.Body;
+                                RigidBody two = null;
+                                contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
+
+                                // Añadir contacto
+                                data.AddContact();
+
+                                if (data.ContactsLeft <= 0)
+                                {
+                                    return true;
+                                }
+
+                                if (contacts > 3)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
-            return hasCollisions;
+            return intersection;
         }
 
         /// <summary>
