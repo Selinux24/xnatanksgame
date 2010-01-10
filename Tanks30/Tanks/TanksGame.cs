@@ -27,7 +27,7 @@ namespace Tanks
         /// <summary>
         /// Controlador de físicas
         /// </summary>
-        protected PhysicsController Physics;
+        protected PhysicsController Physics = new PhysicsController();
         /// <summary>
         /// Componente de texto
         /// </summary>
@@ -118,7 +118,6 @@ namespace Tanks
         public TanksGame()
         {
             this.Graphics = new GraphicsDeviceManager(this);
-            this.Physics = new PhysicsController();
         }
 
         /// <summary>
@@ -127,16 +126,19 @@ namespace Tanks
         protected override void Initialize()
         {
 #if DEBUG
-            this.Graphics.PreferredBackBufferWidth = 800;
+            this.Graphics.PreferredBackBufferWidth = 1024;
             this.Graphics.PreferredBackBufferHeight = 600;
             this.Graphics.PreferMultiSampling = false;
             this.Graphics.IsFullScreen = false;
 #else
             this.Graphics.PreferredBackBufferWidth = this.GraphicsDevice.DisplayMode.Width;
             this.Graphics.PreferredBackBufferHeight = this.GraphicsDevice.DisplayMode.Height;
+            this.Graphics.PreferredBackBufferFormat = this.GraphicsDevice.DisplayMode.Format;
             this.Graphics.PreferMultiSampling = false;
             this.Graphics.IsFullScreen = true;
 #endif
+
+            this.Graphics.ApplyChanges();
 
             InputHelper.GraphicsDevice = this.Graphics.GraphicsDevice;
 
