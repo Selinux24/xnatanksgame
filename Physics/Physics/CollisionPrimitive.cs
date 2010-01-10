@@ -9,18 +9,25 @@ namespace Physics
     public class CollisionPrimitive
     {
         /// <summary>
-        /// Matriz de transformación
-        /// </summary>
-        private Matrix m_Transform;
-        /// <summary>
-        /// La transformación de la primitiva con respecto al cuerpo rígido.
-        /// </summary>
-        public Matrix Offset = Matrix.Identity;
-        /// <summary>
         /// Cuerpo rígido representado por esta primitiva
         /// </summary>
         public RigidBody Body = new RigidBody();
 
+        /// <summary>
+        /// Obtiene la transformación resultante del cuerpo rígido y la transformación de la primitiva con respecto al cuerpo rígido.
+        /// </summary>
+        public Matrix Transform
+        {
+            get
+            {
+                if (this.Body != null)
+                {
+                    return this.Body.Transform;
+                }
+
+                return Matrix.Identity;
+            }
+        }
         /// <summary>
         /// Obtiene el eje X de la transformación
         /// </summary>
@@ -28,7 +35,7 @@ namespace Physics
         {
             get
             {
-                return this.m_Transform.Right;
+                return this.Transform.Right;
             }
         }
         /// <summary>
@@ -38,7 +45,7 @@ namespace Physics
         {
             get
             {
-                return this.m_Transform.Up;
+                return this.Transform.Up;
             }
         }
         /// <summary>
@@ -48,7 +55,7 @@ namespace Physics
         {
             get
             {
-                return this.m_Transform.Backward;
+                return this.Transform.Backward;
             }
         }
         /// <summary>
@@ -58,30 +65,24 @@ namespace Physics
         {
             get
             {
-                return this.m_Transform.Translation;
+                return this.Transform.Translation;
             }
         }
+              
         /// <summary>
-        /// Obtiene la transformación resultante del cuerpo rígido y la transformación de la primitiva con respecto al cuerpo rígido.
+        /// Constructor
         /// </summary>
-        public Matrix Transform
-        {
-            get
-            {
-                return this.m_Transform;
-            }
-        }
-
-        /// <summary>
-        /// Calcula las variables internas de la primitiva.
-        /// </summary>
-        public void CalculateInternals()
+        /// <param name="halfSize">Longitud del centro hasta las caras en los tres ejes</param>
+        /// <param name="mass">Masa</param>
+        public CollisionPrimitive(float mass)
         {
             if (this.Body != null)
             {
-                this.m_Transform = this.Body.Transform * this.Offset;
+                this.Body.Mass = mass;
+                this.Body.SetDamping(0.99f, 0.8f);
             }
         }
+
         /// <summary>
         /// Obtiene los ejes de transformación de la primitiva.
         /// </summary>
@@ -102,6 +103,39 @@ namespace Physics
             }
 
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Establece el estado inicial de la caja en la posición indicada
+        /// </summary>
+        /// <param name="position">Posición inicial</param>
+        public virtual void SetState(Vector3 position)
+        {
+            this.SetState(position, Quaternion.Identity);
+        }
+        /// <summary>
+        /// Establece el estado inicial de la caja en la posición y orientación indicadas
+        /// </summary>
+        /// <param name="position">Posición inicial</param>
+        /// <param name="orientation">Orientación inicial</param>
+        public virtual void SetState(Vector3 position, Quaternion orientation)
+        {
+            if (this.Body != null)
+            {
+                this.Body.Position = position;
+                this.Body.Orientation = orientation;
+
+                this.Body.Velocity = Vector3.Zero;
+                this.Body.Rotation = Vector3.Zero;
+                this.Body.Acceleration = Physics.Constants.GravityForce;
+
+                this.Body.ClearAccumulators();
+
+                this.Body.CanSleep = true;
+                this.Body.IsAwake = true;
+
+                this.Body.CalculateDerivedData();
+            }
         }
 
         /// <summary>

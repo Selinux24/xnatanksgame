@@ -48,7 +48,7 @@ namespace BigBallisticDemo
         /// <summary>
         /// Caja que representa este componente
         /// </summary>
-        private Box m_Box = null;
+        private CollisionBox m_Box = null;
 
         /// <summary>
         /// Método de relleno de la geometría
@@ -58,11 +58,16 @@ namespace BigBallisticDemo
         /// <summary>
         /// Constructor
         /// </summary>
-        public CubeGameComponent(Game game)
+        public CubeGameComponent(Game game, Vector3 min, Vector3 max)
             : base(game)
         {
-            this.m_Box = new Box(Vector3.One);
-            this.SetMinMax(-Vector3.One, Vector3.One);
+            Vector3 halfSize = (max - min) / 2f;
+
+            this.m_Box = new CollisionBox(halfSize, halfSize.X * halfSize.Y * halfSize.Z * 20f);
+
+            PolyGenerator.InitializeCube(out m_Vertices, min, max);
+
+            this.m_PrimitiveCount = m_Vertices.Length / 3;
         }
 
         /// <summary>
@@ -156,21 +161,6 @@ namespace BigBallisticDemo
         internal void Register(PhysicsController controller)
         {
             controller.RegisterBox(this.m_Box);
-        }
-        /// <summary>
-        /// Establece las dimensiones de la caja
-        /// </summary>
-        /// <param name="min">Vértice mínimo</param>
-        /// <param name="max">Vértice máximo</param>
-        public void SetMinMax(Vector3 min, Vector3 max)
-        {
-            Vector3 halfSize = (max - min) / 2f;
-            m_Box.HalfSize = halfSize;
-            m_Box.SetMass(halfSize.X * halfSize.Y * halfSize.Z * 20f);
-
-            PolyGenerator.InitializeCube(out m_Vertices, min, max);
-
-            this.m_PrimitiveCount = m_Vertices.Length / 3;
         }
         /// <summary>
         /// Establece el estado inicial de posición y orientación del componente

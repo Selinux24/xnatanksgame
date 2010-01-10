@@ -32,6 +32,18 @@ namespace BigBallisticDemo
         }
 
         /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="shotType">Tipo de disparo</param>
+        /// <param name="radius">Radio</param>
+        /// <param name="mass">Masa</param>
+        public AmmoRound(ShotType shotType, float radius, float mass)
+            : base(radius, mass)
+        {
+            this.m_ShotType = shotType;
+        }
+
+        /// <summary>
         /// Establece el tipo de munición de la bala y la activa
         /// </summary>
         /// <param name="shotType">Tipo de munición</param>
@@ -89,9 +101,6 @@ namespace BigBallisticDemo
 
             // Limpiar los acumuladores de fuerzas
             this.Body.CalculateDerivedData();
-
-            // Calcular las variables internas
-            this.CalculateInternals();
         }
         /// <summary>
         /// Valida si la bala sigue viva. Si no sigue viva modifica su tipo a Sin Uso

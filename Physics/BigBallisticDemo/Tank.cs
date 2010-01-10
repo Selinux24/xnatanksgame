@@ -15,10 +15,10 @@ namespace BigBallisticDemo
     class Tank : Microsoft.Xna.Framework.DrawableGameComponent
     {
         Model m_Model = null;
+        CollisionBox m_Box = null;
         Matrix[] m_BoneTransforms = null;
-        Box m_Box = null;
-        Matrix m_Offset = Matrix.Identity;
         Matrix m_Transform = Matrix.Identity;
+        Matrix m_Offset = Matrix.Identity;
 
         float m_FrontArmor = 11;
         float m_UpperArmor = 11;
@@ -27,7 +27,7 @@ namespace BigBallisticDemo
         float m_Hull = 100;
 
         float m_LaserDelay = 10f;
-        float m_ArtilleryDelay = 25f;
+        float m_ArtilleryDelay = 1f;
 
         float m_LastLaser = 0f;
         float m_LastArtillery = 0f;
@@ -40,48 +40,25 @@ namespace BigBallisticDemo
         public Tank(Game game)
             : base(game)
         {
-            m_Box = new Box(Vector3.One);
-            m_Box.OnPrimitiveContacted += new Box.PrimitiveInContactDelegate(OnPrimitiveContacted);
+            
         }
 
         protected override void LoadContent()
         {
             base.LoadContent();
 
-            m_Model = this.Game.Content.Load<Model>(@"rhino");
-            m_BoneTransforms = new Matrix[m_Model.Bones.Count];
-            m_Model.CopyAbsoluteBoneTransformsTo(m_BoneTransforms);
-
-            //Vector3 maxCorner = new Vector3(float.MinValue, float.MinValue, float.MinValue);
-            //Vector3 minCorner = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-            //foreach (ModelMesh mesh in m_Model.Meshes)
-            //{
-            //    Matrix transform = m_BoneTransforms[mesh.ParentBone.Index];
-
-            //    int sizeInBytes = mesh.VertexBuffer.SizeInBytes;
-            //    int count = sizeInBytes / VertexPositionNormalTexture.SizeInBytes;
-
-            //    VertexPositionNormalTexture[] data = new VertexPositionNormalTexture[count];
-
-            //    mesh.VertexBuffer.GetData<VertexPositionNormalTexture>(data);
-
-            //    foreach (VertexPositionNormalTexture vertex in data)
-            //    {
-            //        Vector3 position = Vector3.Transform(vertex.Position, transform);
-
-            //        minCorner = Vector3.Min(minCorner, position);
-            //        maxCorner = Vector3.Max(maxCorner, position);
-            //    }
-            //}
+            this.m_Model = this.Game.Content.Load<Model>(@"rhino");
+            this.m_BoneTransforms = new Matrix[m_Model.Bones.Count];
+            this.m_Model.CopyAbsoluteBoneTransformsTo(m_BoneTransforms);
 
             Vector3 minCorner = new Vector3(-1.41379f, -0.2828076f, -2.537132f);
             Vector3 maxCorner = new Vector3(1.392938f, 1.856467f, 2.462098f);
-
             Vector3 halfSize = (maxCorner - minCorner) / 2f;
 
-            m_Box.HalfSize = halfSize;
-            m_Box.Body.Mass = 1000f;
-            m_Offset = Matrix.CreateTranslation(new Vector3(0f, -halfSize.Y, 0f));
+            this.m_Box = new CollisionBox(halfSize, 1000f);
+            this.m_Box.OnPrimitiveContacted += new CollisionBox.PrimitiveInContactDelegate(OnPrimitiveContacted);
+
+            this.m_Offset = Matrix.CreateTranslation(new Vector3(0f, -halfSize.Y, 0f));
         }
         public override void Update(GameTime gameTime)
         {
@@ -117,7 +94,7 @@ namespace BigBallisticDemo
         {
             if (this.CanMove()) m_Box.Body.Velocity = m_Transform.Forward * amount;
 
-            m_Box.Body.IsAwake = true;
+            this.m_Box.Body.IsAwake = true;
         }
         public void GoBackward(float amount)
         {

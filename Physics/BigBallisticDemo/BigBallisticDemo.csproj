@@ -87,7 +87,6 @@
   <ItemGroup>
     <Compile Include="AmmoDrawer.cs" />
     <Compile Include="AmmoRound.cs" />
-    <Compile Include="Box.cs" />
     <Compile Include="PhysicsController.cs" />
     <Compile Include="CubeGameComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
