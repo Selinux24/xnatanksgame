@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
+using DrawingComponents;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Net;
-using Microsoft.Xna.Framework.Storage;
 using Physics;
-using DrawingComponents;
 
 namespace BigBallisticDemo
 {
@@ -25,7 +20,9 @@ namespace BigBallisticDemo
         /// <summary>
         /// Número de cajas en la simulación
         /// </summary>
-        private const int _Boxes = 40;
+        private const int _Boxes = 30;
+
+        private const float _TerrainSize = 200f;
 
         /// <summary>
         /// Dispositivo gráfico
@@ -63,18 +60,6 @@ namespace BigBallisticDemo
         public BigBallisticDemo()
             : base()
         {
-            //Triangle tri = new Triangle(
-            //    new Vector3(0f, -0.9f, 3f),
-            //    new Vector3(-3f, -1.5f, -3f),
-            //    new Vector3(3f, -0.5f, -3f));
-
-            //Box box = new Box(new Vector3(1, 1, 1));
-
-            //if (IntersectionTests.BoxAndTri(box, tri))
-            //{
-            //    this.Exit();
-            //}
-
             this.Graphics = new GraphicsDeviceManager(this);
             this.Content.RootDirectory = "Content";
             this.Physics = new PhysicsController();
@@ -95,14 +80,14 @@ namespace BigBallisticDemo
             this.Components.Add(camera);
 
             // Suelo
-            Vector3 NO = new Vector3(-50, 10, 50);
-            Vector3 NE = new Vector3(50, 0, 50);
-            Vector3 SO = new Vector3(-50, 0, -50);
-            Vector3 SE = new Vector3(50, 10, -50);
+            float size = _TerrainSize * 0.5f;
+            Vector3 NO = new Vector3(-size, -20, size);
+            Vector3 NE = new Vector3(size, 0, size);
+            Vector3 SO = new Vector3(-size, 0, -size);
+            Vector3 SE = new Vector3(size, -10, -size);
             Triangle tr1 = new Triangle(NO, SO, NE);
             Triangle tr2 = new Triangle(NE, SO, SE);
-            this.Physics.RegisterTerrain(new CollisionTriangleSoup(new Triangle[] { tr1, tr2 }));
-            this.Physics.RegisterPlane(new CollisionPlane(Vector3.Up, 0f));
+            this.Physics.RegisterTerrain(new CollisionTriangleSoup(new Triangle[] { tr1, tr2 }, float.PositiveInfinity));
             FloorGameComponent floor = new FloorGameComponent(this, new Vector3[] { NO, NE, SO, SE }, @"floor");
             floor.Position = new Vector3(0f, 0f, 0f);
             this.Components.Add(floor);
@@ -111,7 +96,7 @@ namespace BigBallisticDemo
             List<AmmoRound> roundList = new List<AmmoRound>();
             for (int i = 0; i < _AmmoRounds; i++)
             {
-                AmmoRound round = new AmmoRound();
+                AmmoRound round = new AmmoRound(ShotType.UnUsed, 0f, 0f);
                 this.Physics.RegisterAmmoData(round);
                 roundList.Add(round);
             }
@@ -121,10 +106,17 @@ namespace BigBallisticDemo
             this.Components.Add(ammoDrawer);
 
             // Inicializa las cajas
+            Random rnd = new Random(DateTime.Now.Millisecond);
             for (int i = 0; i < _Boxes; i++)
             {
                 // Inicializa los componentes gráficos de las cajas
-                CubeGameComponent cube = new CubeGameComponent(this);
+                float hsX = 0.5f + ((float)rnd.NextDouble() * 1.5f);
+                float hsY = 0.5f + ((float)rnd.NextDouble() * 1.5f);
+                float hsZ = 0.5f + ((float)rnd.NextDouble() * 1.5f);
+                Vector3 min = new Vector3(-hsX, -hsY, -hsZ);
+                Vector3 max = new Vector3(hsX, hsY, hsZ);
+
+                CubeGameComponent cube = new CubeGameComponent(this, min, max);
                 cube.Register(this.Physics);
                 this.m_Cubes.Add(cube);
                 this.Components.Add(cube);
@@ -132,15 +124,16 @@ namespace BigBallisticDemo
 
             // El tanque del jugador 1
             m_Tank_1 = new Tank(this);
-            m_Tank_1.Register(this.Physics);
             this.Components.Add(m_Tank_1);
 
             // El tanque del jugador 2
             m_Tank_2 = new Tank(this);
-            m_Tank_2.Register(this.Physics);
             this.Components.Add(m_Tank_2);
 
             base.Initialize();
+
+            m_Tank_1.Register(this.Physics);
+            m_Tank_2.Register(this.Physics);
 
             this.Reset();
         }
@@ -307,29 +300,26 @@ namespace BigBallisticDemo
         {
             this.Physics.Reset();
 
+            float tankArea = _TerrainSize * 0.9f * 0.5f;
+
             // Tanque 1
-            m_Tank_1.SetState(new Vector3(40f, 10f, 40f), Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(45f)));
+            m_Tank_1.SetState(new Vector3(tankArea, 1f, tankArea), Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(45f)));
 
             // Tanque 2
-            m_Tank_2.SetState(new Vector3(-40f, 10f, -40f), Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(225f)));
+            m_Tank_2.SetState(new Vector3(-tankArea, 1f, -tankArea), Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(225f)));
 
             // Inicializar las cajas
-            float area = 35f;
+            float boxArea = _TerrainSize * 0.8f * 0.5f;
             Random rnd = new Random(DateTime.Now.Millisecond);
             foreach (CubeGameComponent box in this.m_Cubes)
             {
-                float x = ((float)rnd.NextDouble() * area * 2f) - area;
+                float x = ((float)rnd.NextDouble() * boxArea * 2f) - boxArea;
                 float y = 5f;
-                float z = ((float)rnd.NextDouble() * area * 2f) - area;
+                float z = ((float)rnd.NextDouble() * boxArea * 2f) - boxArea;
                 float yaw = (float)rnd.NextDouble() * 0.5f;
                 float pitch = (float)rnd.NextDouble() * 0.5f;
                 float roll = (float)rnd.NextDouble() * 0.5f;
-                float hsX = 0.5f + ((float)rnd.NextDouble() * 1.5f);
-                float hsY = 0.5f + ((float)rnd.NextDouble() * 1.5f);
-                float hsZ = 0.5f + ((float)rnd.NextDouble() * 1.5f);
-                Vector3 halfSize = new Vector3(hsX, hsY, hsZ);
 
-                box.SetMinMax(-halfSize, halfSize);
                 box.SetState(new Vector3(x, y, z), Quaternion.CreateFromYawPitchRoll(yaw, pitch, roll));
             }
         }

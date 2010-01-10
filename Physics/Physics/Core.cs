@@ -12,6 +12,11 @@ namespace Physics
             return Convert.ToSingle(Math.Pow(a, b));
         }
 
+        public static bool IsZero(float number)
+        {
+            return (Math.Abs(number) < float.Epsilon);
+        }
+
         public static void TransformInertiaTensor(ref Quaternion q, ref Matrix3 iitBody, ref Matrix rotmat, out Matrix3 iitWorld)
         {
             float t4 = rotmat.M11 * iitBody.M11 + rotmat.M12 * iitBody.M21 + rotmat.M13 * iitBody.M31;
@@ -67,16 +72,6 @@ namespace Physics
             matrix.M33 = iz;
 
             return matrix;
-        }
-
-        public static Matrix3 SetInertiaTensorToBox(Vector3 halfSizes, float mass)
-        {
-            Vector3 squares = ComponentProductUpdate(halfSizes, halfSizes);
-
-            return SetInertiaTensorCoeffs(
-                0.3f * mass * (squares.Y + squares.Z),
-                0.3f * mass * (squares.X + squares.Z),
-                0.3f * mass * (squares.X + squares.Y));
         }
 
         public static Quaternion AddScaledVector(Vector3 vector, float scale, Quaternion q)

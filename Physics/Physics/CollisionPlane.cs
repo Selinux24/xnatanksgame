@@ -1,6 +1,4 @@
-using System;
 using Microsoft.Xna.Framework;
-
 
 namespace Physics
 {
@@ -13,12 +11,20 @@ namespace Physics
         /// Normal del plano
         /// </summary>
         public Vector3 Normal;
-
         /// <summary>
         /// Distancia del plano al origen de coordenadas
         /// </summary>
         public float D;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="plane">Plano</param>
+        public CollisionPlane(Plane plane)
+            : this(plane.Normal, plane.D)
+        {
+
+        }
         /// <summary>
         /// Constructor
         /// </summary>

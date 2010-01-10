@@ -24,6 +24,62 @@ namespace Physics
             return midline.LengthSquared() < (one.Radius + two.Radius) * (one.Radius + two.Radius);
         }
 
+        public static bool SphereAndTri(CollisionSphere sphere, Triangle triangle, bool halfSpace)
+        {
+            bool axisTest = true;
+
+            if (!halfSpace)
+            {
+                // Find the distance from the origin
+                float ballDistance = Math.Abs(Vector3.Dot(triangle.Plane.Normal, sphere.Position)) - sphere.Radius;
+
+                // Check for the intersection
+                if (ballDistance > triangle.Plane.D)
+                {
+                    axisTest = false;
+                }
+            }
+
+            if (axisTest)
+            {
+                // Obtener los ejes del triángulo
+                Vector3 edge0 = Vector3.Subtract(triangle.Point2, triangle.Point1);
+                Vector3 edge1 = Vector3.Subtract(triangle.Point3, triangle.Point2);
+                Vector3 edge2 = Vector3.Subtract(triangle.Point1, triangle.Point3);
+
+                // Proyectar desde el punto 1
+                Vector3 toPoint1 = sphere.Position - triangle.Point1;
+                float distanceTo1 = toPoint1.Length();
+                toPoint1.Normalize();
+                float f1a = Math.Abs(Vector3.Dot(edge0, toPoint1));
+                float f1b = Math.Abs(Vector3.Dot(edge2, toPoint1));
+                if (distanceTo1 > f1a + sphere.Radius) return false;
+                if (distanceTo1 > f1a + sphere.Radius) return false;
+
+                // Proyectar desde el punto 2
+                Vector3 toPoint2 = sphere.Position - triangle.Point2;
+                float distanceTo2 = toPoint2.Length();
+                toPoint2.Normalize();
+                float f2a = Math.Abs(Vector3.Dot(edge0, toPoint2));
+                float f2b = Math.Abs(Vector3.Dot(edge1, toPoint2));
+                if (distanceTo2 > f2a + sphere.Radius) return false;
+                if (distanceTo2 > f2a + sphere.Radius) return false;
+
+                // Proyectar desde el punto 3
+                Vector3 toPoint3 = sphere.Position - triangle.Point3;
+                float distanceTo3 = toPoint3.Length();
+                toPoint3.Normalize();
+                float f3a = Math.Abs(Vector3.Dot(edge1, toPoint3));
+                float f3b = Math.Abs(Vector3.Dot(edge2, toPoint3));
+                if (distanceTo3 > f3a + sphere.Radius) return false;
+                if (distanceTo3 > f3a + sphere.Radius) return false;
+
+                return true;
+            }
+
+            return false;
+        }
+
         static float TransformToAxis(CollisionBox box, Vector3 axis)
         {
             return
@@ -95,18 +151,24 @@ namespace Physics
             float boxDistance = Vector3.Dot(plane.Normal, box.Position) - projectedRadius;
 
             // Check for the intersection
-            return boxDistance <= plane.D;
+            if (boxDistance <= plane.D)
+            {
+                return true;
+            }
+
+            return false;
         }
 
 
-        public static bool BoxAndTri(CollisionBox box, Triangle tri, ref CollisionData data)
+        public static bool BoxAndTri(CollisionBox box, Triangle tri)
         {
+            // Pasar el triángulo a coordenadas de la caja
             Triangle trnTri = new Triangle(
                 Vector3.Subtract(tri.Point1, box.Position),
                 Vector3.Subtract(tri.Point2, box.Position),
                 Vector3.Subtract(tri.Point3, box.Position));
 
-            // Ejes del triángulo
+            // Obtener los ejes del triángulo
             Vector3 edge0 = Vector3.Subtract(trnTri.Point2, trnTri.Point1);
             Vector3 edge1 = Vector3.Subtract(trnTri.Point3, trnTri.Point2);
             Vector3 edge2 = Vector3.Subtract(trnTri.Point1, trnTri.Point3);
@@ -136,9 +198,8 @@ namespace Physics
             if (!AXISTEST_Y1(trnTri.Point1, trnTri.Point2, box.HalfSize, edge2.Z, edge2.X, fez, fex)) return false;
             if (!AXISTEST_Z12(trnTri.Point2, trnTri.Point3, box.HalfSize, edge2.Y, edge2.X, fey, fex)) return false;
 
-            // Colisión
-            CollisionPlane plane = new CollisionPlane(tri.Plane.Normal, tri.Plane.D);
-            return CollisionDetector.BoxAndHalfSpace(box, plane, ref data);
+            // Hay intersección
+            return true;
         }
 
         static bool AXISTEST_Z0(Vector3 v0, Vector3 v1, Vector3 boxhalfsize, float a, float b, float fa, float fb)
@@ -344,6 +405,168 @@ namespace Physics
             if (Vector3.Dot(planeNormal, vmax) >= 0.0f) return true;
 
             return false;
+        }
+
+        /// <summary>
+        /// Obtiene si existe intersección entre el rayo y el triángulo
+        /// </summary>
+        /// <param name="ray">Rayo</param>
+        /// <returns>Devuelve verdadero si hay intersección, y falso en el resto de los casos</returns>
+        public static bool TriAndRay(Triangle tri, Ray ray)
+        {
+            float? distanceToPoint = null;
+            Vector3? intersectionPoint = null;
+            return TriAndRay(tri, ray, out intersectionPoint, out distanceToPoint, false);
+        }
+        /// <summary>
+        /// Obtiene si existe intersección entre el rayo y el triángulo
+        /// </summary>
+        /// <param name="ray">Rayo</param>
+        /// <param name="segmentMode">Indica si usar el rayo como un segmento en vez de como un rayo</param>
+        /// <returns>Devuelve verdadero si hay intersección, y falso en el resto de los casos</returns>
+        public static bool TriAndRay(Triangle tri, Ray ray, bool segmentMode)
+        {
+            float? distanceToPoint = null;
+            Vector3? intersectionPoint = null;
+            return TriAndRay(tri, ray, out intersectionPoint, out distanceToPoint, segmentMode);
+        }
+        /// <summary>
+        /// Obtiene si existe intersección entre el rayo y el triángulo
+        /// </summary>
+        /// <param name="ray">Rayo</param>
+        /// <param name="intersectionPoint">Punto de interseccion</param>
+        /// <returns>Devuelve verdadero si hay intersección, y falso en el resto de los casos</returns>
+        public static bool TriAndRay(Triangle tri, Ray ray, out Vector3? intersectionPoint)
+        {
+            float? distanceToPoint = null;
+            return TriAndRay(tri, ray, out intersectionPoint, out distanceToPoint, false);
+        }
+        /// <summary>
+        /// Obtiene si existe intersección entre el rayo y el triángulo
+        /// </summary>
+        /// <param name="ray">Rayo</param>
+        /// <param name="intersectionPoint">Punto de interseccion</param>
+        /// <param name="segmentMode">Indica si usar el rayo como un segmento en vez de como un rayo</param>
+        /// <returns>Devuelve verdadero si hay intersección, y falso en el resto de los casos</returns>
+        public static bool TriAndRay(Triangle tri, Ray ray, out Vector3? intersectionPoint, bool segmentMode)
+        {
+            float? distanceToPoint = null;
+            return TriAndRay(tri, ray, out intersectionPoint, out distanceToPoint, segmentMode);
+        }
+        /// <summary>
+        /// Obtiene si existe intersección entre el rayo y el triángulo
+        /// </summary>
+        /// <param name="ray">Rayo</param>
+        /// <param name="intersectionPoint">Punto de interseccion</param>
+        /// <param name="distanceToPoint">Distancia al punto de interscción desde el origen del rayo</param>
+        /// <returns>Devuelve verdadero si hay intersección, y falso en el resto de los casos</returns>
+        public static bool TriAndRay(Triangle tri, Ray ray, out Vector3? intersectionPoint, out float? distanceToPoint)
+        {
+            return TriAndRay(tri, ray, out intersectionPoint, out distanceToPoint, false);
+        }
+        /// <summary>
+        /// Obtiene si existe intersección entre el rayo y el triángulo
+        /// </summary>
+        /// <param name="ray">Rayo</param>
+        /// <param name="intersectionPoint">Punto de interseccion</param>
+        /// <param name="distanceToPoint">Distancia al punto de interscción desde el origen del rayo</param>
+        /// <param name="segmentMode">Indica si usar el rayo como un segmento en vez de como un rayo</param>
+        /// <returns>Devuelve verdadero si hay intersección, y falso en el resto de los casos</returns>
+        public static bool TriAndRay(Triangle tri, Ray ray, out Vector3? intersectionPoint, out float? distanceToPoint, bool segmentMode)
+        {
+            intersectionPoint = null;
+            distanceToPoint = null;
+
+            float denom = Vector3.Dot(tri.Plane.Normal, ray.Direction);
+            if (Core.IsZero(denom))
+            {
+                return false;
+            }
+
+            float t = -(tri.Plane.D + Vector3.Dot(tri.Plane.Normal, ray.Position)) / denom;
+            if (t <= 0.0f)
+            {
+                return false;
+            }
+
+            Vector3 intersection = ray.Position + (t * ray.Direction);
+            if (PointInTriangle(tri, intersection))
+            {
+                float distance = Vector3.Distance(ray.Position, intersection);
+
+                if (segmentMode)
+                {
+                    if (distance <= ray.Direction.Length())
+                    {
+                        intersectionPoint = intersection;
+                        distanceToPoint = distance;
+
+                        return true;
+                    }
+                }
+                else
+                {
+                    intersectionPoint = intersection;
+                    distanceToPoint = distance;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool TriAndTri(Triangle tri, Triangle triangle)
+        {
+            // TODO: Intersección con un triángulo
+
+            return false;
+        }
+
+        /// <summary>
+        /// Obtiene si el punto especificado está contenido en el triángulo
+        /// </summary>
+        /// <param name="point">Punto</param>
+        /// <returns>Devuelve verdadero si el punto está contenido en el triángulo, o falso en el resto de los casos</returns>
+        public static bool PointInTriangle(Triangle tri, Vector3 point)
+        {
+            Vector3 u = new Vector3(
+                Triangle.PointFromVector3(point, tri.I1) - Triangle.PointFromVector3(tri.Point1, tri.I1),
+                Triangle.PointFromVector3(tri.Point2, tri.I1) - Triangle.PointFromVector3(tri.Point1, tri.I1),
+                Triangle.PointFromVector3(tri.Point3, tri.I1) - Triangle.PointFromVector3(tri.Point1, tri.I1));
+
+            Vector3 v = new Vector3(
+                Triangle.PointFromVector3(point, tri.I2) - Triangle.PointFromVector3(tri.Point1, tri.I2),
+                Triangle.PointFromVector3(tri.Point2, tri.I2) - Triangle.PointFromVector3(tri.Point1, tri.I2),
+                Triangle.PointFromVector3(tri.Point3, tri.I2) - Triangle.PointFromVector3(tri.Point1, tri.I2));
+
+            float a, b;
+            if (u.Y == 0.0f)
+            {
+                b = u.X / u.Z;
+                if (b >= 0.0f && b <= 1.0f)
+                {
+                    a = (v.X - b * v.Z) / v.Y;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                b = (v.X * u.Y - u.X * v.Y) / (v.Z * u.Y - u.Z * v.Y);
+                if (b >= 0.0f && b <= 1.0f)
+                {
+                    a = (u.X - b * u.Z) / u.Y;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return (a >= 0 && (a + b) <= 1);
         }
     }
 }

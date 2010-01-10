@@ -1,4 +1,3 @@
-using System;
 
 namespace Physics
 {
@@ -11,5 +10,16 @@ namespace Physics
         /// The radius of the sphere.
         /// </summary>
         public float Radius;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="radius">Radio de la esfera</param>
+        /// <param name="mass">Masa</param>
+        public CollisionSphere(float radius, float mass)
+            : base(mass)
+        {
+            this.Radius = radius;
+        }
     }
 }

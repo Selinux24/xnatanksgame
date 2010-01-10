@@ -15,10 +15,6 @@ namespace BigBallisticDemo
         /// Número máximo de contactos a generar en la simulación
         /// </summary>
         private const int _MaxContacts = 1024;
-        /// <summary>
-        /// Plano del suelo
-        /// </summary>
-        private CollisionPlane m_Plane = null;
 
         private CollisionTriangleSoup m_TriangleSoup = null;
         /// <summary>
@@ -44,7 +40,7 @@ namespace BigBallisticDemo
         /// <summary>
         /// Colección de cuerpos contenidos en cajas
         /// </summary>
-        private List<Box> m_BoxData = new List<Box>();
+        private List<CollisionBox> m_BoxData = new List<CollisionBox>();
         /// <summary>
         /// Lista de generadores de contactos
         /// </summary>
@@ -54,14 +50,6 @@ namespace BigBallisticDemo
         /// </summary>
         private List<Explosion> m_ExplosionData = new List<Explosion>();
 
-        /// <summary>
-        /// Registra el plano que actúa como suelo
-        /// </summary>
-        /// <param name="plane">Plano</param>
-        public void RegisterPlane(CollisionPlane plane)
-        {
-            m_Plane = plane;
-        }
         /// <summary>
         /// Registra una bala
         /// </summary>
@@ -74,21 +62,9 @@ namespace BigBallisticDemo
         /// Registra una caja
         /// </summary>
         /// <param name="box">Caja</param>
-        public void RegisterBox(Box box)
+        public void RegisterBox(CollisionBox box)
         {
             this.m_BoxData.Add(box);
-
-            //BoundingSphere sphere = BoundingSphere.CreateFromBoundingBox(new BoundingBox(-box.HalfSize, box.HalfSize));
-            //sphere.Center = box.Position;
-
-            //if (this.m_Tree == null)
-            //{
-            //    this.m_Tree = new BVHNode(null, sphere, box.Body);
-            //}
-            //else
-            //{
-            //    this.m_Tree.Insert(box.Body, sphere);
-            //}
         }
         /// <summary>
         /// Registra una explosión
@@ -184,7 +160,6 @@ namespace BigBallisticDemo
                 {
                     // Integrar y actualizar las variables
                     m_AmmoData[i].Body.Integrate(duration);
-                    m_AmmoData[i].CalculateInternals();
                 }
             }
 
@@ -193,7 +168,6 @@ namespace BigBallisticDemo
             {
                 // Integrar y actualizar las variables
                 m_BoxData[i].Body.Integrate(duration);
-                m_BoxData[i].CalculateInternals();
 
                 // Actualizar las explosiones
                 Explosion[] explosions = m_ExplosionData.ToArray();
@@ -228,7 +202,7 @@ namespace BigBallisticDemo
             }
 
             // Chequear colisiones de las cajas
-            foreach (Box box in m_BoxData)
+            foreach (CollisionBox box in m_BoxData)
             {
                 // Comprobar si se pueden almacenar más contactos
                 if (m_ContactData.HasMoreContacts())
@@ -249,7 +223,7 @@ namespace BigBallisticDemo
                             if (m_ContactData.HasMoreContacts())
                             {
                                 // Colisión de bala y suelo
-                                if (CollisionDetector.SphereAndHalfSpace(shot, m_Plane, ref m_ContactData))
+                                if (CollisionDetector.SphereAndTriangleSoup(shot, m_TriangleSoup, ref m_ContactData))
                                 {
                                     if (shot.ShotType == ShotType.Artillery)
                                     {

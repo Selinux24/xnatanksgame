@@ -119,17 +119,13 @@ namespace Physics
             }
         }
         /// <summary>
-        /// Obtiene o establece la masa inversa
+        /// Obtiene la masa inversa
         /// </summary>
         public float InverseMass
         {
             get
             {
                 return this.m_InverseMass;
-            }
-            set
-            {
-                this.m_InverseMass = value;
             }
         }
 
@@ -158,8 +154,7 @@ namespace Physics
             }
             set
             {
-                this.m_Orientation = value;
-                this.m_Orientation.Normalize();
+                this.m_Orientation = Quaternion.Normalize(value);
             }
         }
         /// <summary>
