@@ -573,7 +573,6 @@ namespace GameComponents.Vehicles
             if (this.OBB != null)
             {
                 this.OBB.Body.Integrate(time);
-                this.OBB.CalculateInternals();
             }
         }
 
