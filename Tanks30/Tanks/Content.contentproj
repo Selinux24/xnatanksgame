@@ -98,40 +98,40 @@
       <Processor>ModelProcessor</Processor>
       <Name>Sphere</Name>
     </Compile>
-    <Compile Include="Terrain\HM2.jpg">
+    <None Include="Terrain\HM2.jpg">
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Name>HM2</Name>
-    </Compile>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Terrain\grass.dds">
+    <None Include="Terrain\grass.dds">
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Name>grass</Name>
-    </Compile>
-    <Compile Include="Terrain\rock.dds">
+    </None>
+    <None Include="Terrain\rock.dds">
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Name>rock</Name>
-    </Compile>
-    <Compile Include="Terrain\sand.dds">
+    </None>
+    <None Include="Terrain\sand.dds">
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Name>sand</Name>
-    </Compile>
-    <Compile Include="Terrain\snow.dds">
+    </None>
+    <None Include="Terrain\snow.dds">
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Name>snow</Name>
-    </Compile>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Terrain\Terrain.fx">
+    <None Include="Terrain\Terrain.fx">
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
       <Name>Terrain</Name>
-    </Compile>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LandRaider.fbx">
@@ -194,6 +194,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ContentPipelineExtension\ContentPipelineExtension.csproj">
+      <Project>{85CEBE8C-817E-47D1-A58C-33992EBACB3F}</Project>
+      <Name>ContentPipelineExtension</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CustomProcessors\CustomProcessors.csproj">
       <Project>{7EFBD9B4-59C0-42EE-BA91-ACBF1BD32D21}</Project>
       <Name>CustomProcessors</Name>
@@ -235,6 +239,13 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Terrain\Scenery.scn">
+      <Name>Scenery</Name>
+      <Importer>SceneryContentImporter</Importer>
+      <Processor>SceneryContentProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

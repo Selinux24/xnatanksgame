@@ -1,17 +1,10 @@
-
-#region Using Statements
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.ObjectModel;
-#endregion
 
 namespace GameComponents.Scenery
 {
     /// <summary>
-    /// This is a game component that implements IUpdateable.
+    /// Información en 2D del terreno
     /// </summary>
     public partial class SceneryInfoGameComponent : Microsoft.Xna.Framework.DrawableGameComponent
     {
@@ -163,14 +156,14 @@ namespace GameComponents.Scenery
                 nodeColor = Color.Green;
             }
 
-            SceneryInfoNodeDrawn[] nodes = m_Scenery.GetNodesDrawn(lod);
+            SceneryInfoNodeDrawn[] nodes = m_Scenery.Scenery.GetNodesDrawn(lod);
             int numVerts = ((nodes.Length * 4) > _MaxNodeVertexes) ? _MaxNodeVertexes : (nodes.Length * 4);
-            if ((numVerts > 0) && (m_Scenery.Width > 2))
+            if ((numVerts > 0) && (m_Scenery.Scenery.Width > 2))
             {
                 // Inicializar el buffer de vértices
                 int n = 0;
                 Vector3 pos = new Vector3();
-                float scale = (1.0f / m_Scenery.Width) * 100.0f;
+                float scale = (1.0f / m_Scenery.Scenery.Width) * 100.0f;
                 for (int i = 0; i <= numVerts - 4; i += 4)
                 {
                     SceneryInfoNodeDrawn node = nodes[n++];

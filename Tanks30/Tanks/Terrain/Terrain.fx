@@ -149,7 +149,7 @@ technique Textured
  {
      pass Pass0
      {
-         VertexShader = compile vs_1_1 MultiTexturedVS();
+         VertexShader = compile vs_2_0 MultiTexturedVS();
          PixelShader = compile ps_2_0 MultiTexturedPS();
      }
  }

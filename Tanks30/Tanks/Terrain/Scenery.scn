@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <Asset Type="ContentPipelineExtension.SceneryFile">
+    <HeightMapFile>HM2.jpg</HeightMapFile>
+    <HeightMapCellSize>32</HeightMapCellSize>
+    <HeightMapCellScale>2.5</HeightMapCellScale>
+    <EffectFile>Terrain.fx</EffectFile>
+    <Texture1File>snow.dds</Texture1File>
+    <Texture2File>rock.dds</Texture2File>
+    <Texture3File>sand.dds</Texture3File>
+    <Texture4File>grass.dds</Texture4File>
+  </Asset>
+</XnaContent>

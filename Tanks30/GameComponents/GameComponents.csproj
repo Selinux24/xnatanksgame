@@ -75,14 +75,8 @@
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera\BaseCameraGameComponent.cs">
@@ -103,12 +97,6 @@
     <Compile Include="Camera\ThirdPersonCameraGameComponent.cs">
       <Name>ThirdPersonCameraGameComponent</Name>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <NestedContentProject Include="Content.contentproj">
-      <Project>{d6a28a91-325d-429c-8d43-e6b41a6428b8}</Project>
-      <Visible>False</Visible>
-    </NestedContentProject>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomProcessors\CustomProcessors.csproj">
@@ -153,13 +141,15 @@
     <Compile Include="Particles\ParticleSystem.cs" />
     <Compile Include="Particles\ParticleVertex.cs" />
     <Compile Include="Particles\SmokePlumeParticleSystem.cs" />
+    <Compile Include="Scenery\HeightMap.cs" />
     <Compile Include="Scenery\LOD.cs" />
+    <Compile Include="Scenery\Scenery.cs" />
     <Compile Include="Scenery\SceneryEnvironmet.cs" />
     <Compile Include="Scenery\SceneryGameComponent.cs" />
     <Compile Include="Scenery\SceneryInfoGameComponent.cs" />
     <Compile Include="Scenery\SceneryInfoNodeDrawn.cs" />
     <Compile Include="Scenery\SceneryNode.cs" />
-    <Compile Include="Scenery\SceneryPrimitiveNode.cs" />
+    <Compile Include="Scenery\SceneryTriangleNode.cs" />
     <Compile Include="Scenery\SkyBoxGameComponent.cs" />
     <Compile Include="Text\TextDrawerComponent.cs" />
     <Compile Include="Vehicles\Animations\Animation.cs" />
@@ -176,6 +166,7 @@
     <Compile Include="Vehicles\Vehicle.Physics.cs" />
     <Compile Include="Vehicles\Vehicle.Status.cs" />
     <Compile Include="Vehicles\VehicleComponentInfo.cs" />
+    <Compile Include="VertexMultitextured.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Physics\" />
