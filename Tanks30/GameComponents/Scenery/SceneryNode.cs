@@ -1,23 +1,20 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Physics;
-using CustomProcessors;
-using GameComponents.Camera;
 
 namespace GameComponents.Scenery
 {
+    using GameComponents.Camera;
+
     /// <summary>
     /// Nodo del escenario
     /// </summary>
-    internal class SceneryNode
+    public class SceneryNode
     {
         /// <summary>
         /// Bordes de un nodo
         /// </summary>
-        internal enum NodeHeads
+        public enum NodeHeads
         {
             /// <summary>
             /// Noroeste
@@ -38,38 +35,42 @@ namespace GameComponents.Scenery
         }
 
         /// <summary>
-        /// Escenario al que pertenece el nodo
+        /// Bbox
         /// </summary>
-        protected SceneryGameComponent m_Scenery;
+        private BoundingBox m_BoundingBox = new BoundingBox();
+
         /// <summary>
         /// Nodo padre
         /// </summary>
-        protected SceneryNode m_Parent;
+        protected SceneryNode Parent;
         /// <summary>
         /// Nodos hijo
         /// </summary>
-        protected Dictionary<NodeHeads, SceneryNode> m_Childs = new Dictionary<NodeHeads, SceneryNode>();
-        /// <summary>
-        /// Bbox
-        /// </summary>
-        protected BoundingBox m_BoundingBox = new BoundingBox();
+        protected Dictionary<NodeHeads, SceneryNode> Childs = new Dictionary<NodeHeads, SceneryNode>();
         /// <summary>
         /// Indica cuál es el punto geométrico central del nodo
         /// </summary>
-        protected Vector3 m_NodeCenter = Vector3.Zero;
+        protected Vector3 NodeCenter = Vector3.Zero;
         /// <summary>
         /// Indica si el nodo ha sido dibujado
         /// </summary>
-        protected bool m_Drawn = false;
+        protected bool Drawn = false;
 
+        /// <summary>
+        /// Indica si el nodo tiene nodos hijo
+        /// </summary>
         public bool HasChilds
         {
             get
             {
-                return (m_Childs.Values.Count > 0);
+                if (this.Childs != null)
+                {
+                    return (this.Childs.Values.Count > 0);
+                }
+
+                return false;
             }
         }
-
         /// <summary>
         /// Obtiene el nodo hijo al noroeste
         /// </summary>
@@ -77,7 +78,12 @@ namespace GameComponents.Scenery
         {
             get
             {
-                return m_Childs[NodeHeads.NorthWest];
+                if (this.Childs != null)
+                {
+                    return this.Childs[NodeHeads.NorthWest];
+                }
+
+                return null;
             }
         }
         /// <summary>
@@ -87,7 +93,12 @@ namespace GameComponents.Scenery
         {
             get
             {
-                return m_Childs[NodeHeads.NorthEast];
+                if (this.Childs != null)
+                {
+                    return this.Childs[NodeHeads.NorthEast];
+                }
+
+                return null;
             }
         }
         /// <summary>
@@ -97,7 +108,12 @@ namespace GameComponents.Scenery
         {
             get
             {
-                return m_Childs[NodeHeads.SouthWest];
+                if (this.Childs != null)
+                {
+                    return this.Childs[NodeHeads.SouthWest];
+                }
+
+                return null;
             }
         }
         /// <summary>
@@ -107,7 +123,12 @@ namespace GameComponents.Scenery
         {
             get
             {
-                return m_Childs[NodeHeads.SouthEast];
+                if (this.Childs != null)
+                {
+                    return this.Childs[NodeHeads.SouthEast];
+                }
+
+                return null;
             }
         }
         /// <summary>
@@ -117,17 +138,20 @@ namespace GameComponents.Scenery
         {
             get
             {
-                return m_BoundingBox;
+                return this.m_BoundingBox;
+            }
+            protected set
+            {
+                this.m_BoundingBox = value;
             }
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="scenery">Escenario al que pertenece el nodo</param>
-        public SceneryNode(SceneryGameComponent scenery)
+        public SceneryNode()
         {
-            m_Scenery = scenery;
+
         }
 
         /// <summary>
@@ -139,19 +163,19 @@ namespace GameComponents.Scenery
         /// <param name="southEast">Nodo al sureste</param>
         public virtual void Build(SceneryNode northWest, SceneryNode northEast, SceneryNode southWest, SceneryNode southEast)
         {
-            northWest.m_Parent = this;
-            northEast.m_Parent = this;
-            southWest.m_Parent = this;
-            southEast.m_Parent = this;
+            northWest.Parent = this;
+            northEast.Parent = this;
+            southWest.Parent = this;
+            southEast.Parent = this;
 
-            m_Childs.Clear();
+            Childs.Clear();
 
-            m_Childs.Add(NodeHeads.NorthWest, northWest);
-            m_Childs.Add(NodeHeads.NorthEast, northEast);
-            m_Childs.Add(NodeHeads.SouthWest, southWest);
-            m_Childs.Add(NodeHeads.SouthEast, southEast);
+            Childs.Add(NodeHeads.NorthWest, northWest);
+            Childs.Add(NodeHeads.NorthEast, northEast);
+            Childs.Add(NodeHeads.SouthWest, southWest);
+            Childs.Add(NodeHeads.SouthEast, southEast);
 
-            foreach (SceneryNode node in m_Childs.Values)
+            foreach (SceneryNode node in Childs.Values)
             {
                 if (m_BoundingBox == new BoundingBox())
                 {
@@ -163,16 +187,16 @@ namespace GameComponents.Scenery
                 }
             }
 
-            m_NodeCenter = Vector3.Divide(m_BoundingBox.Max + m_BoundingBox.Min, 2.0f);
+            NodeCenter = Vector3.Divide(m_BoundingBox.Max + m_BoundingBox.Min, 2.0f);
         }
         /// <summary>
         /// Prepara el nodo y sus hijos para el dibujado
         /// </summary>
         public virtual void PrepareForDrawing()
         {
-            m_Drawn = false;
+            Drawn = false;
 
-            foreach (SceneryNode node in m_Childs.Values)
+            foreach (SceneryNode node in Childs.Values)
             {
                 node.PrepareForDrawing();
             }
@@ -189,14 +213,14 @@ namespace GameComponents.Scenery
                 // Inicializar la colección de nodos
                 List<SceneryNode> resultNodes = new List<SceneryNode>();
 
-                foreach (SceneryNode childNode in m_Childs.Values)
+                foreach (SceneryNode childNode in Childs.Values)
                 {
                     // Obtener los nodos a dibujar de los nodos hijo
                     resultNodes.AddRange(childNode.GetNodesToDraw(lod));
                 }
 
                 // Marcar este nodo para dibujar
-                m_Drawn = true;
+                Drawn = true;
 
                 // Devolver los nodos obtenidos para dibujar
                 return resultNodes.ToArray();
@@ -237,9 +261,9 @@ namespace GameComponents.Scenery
         {
             List<SceneryInfoNodeDrawn> nodesDrawn = new List<SceneryInfoNodeDrawn>();
 
-            if (m_Drawn)
+            if (Drawn)
             {
-                foreach (SceneryNode node in m_Childs.Values)
+                foreach (SceneryNode node in Childs.Values)
                 {
                     nodesDrawn.AddRange(node.GetNodesDrawn(lod));
                 }
@@ -256,7 +280,7 @@ namespace GameComponents.Scenery
         /// <returns>Devuelve si el punto está contenido en el nodo actual</returns>
         public ContainmentType Contains(float x, float z)
         {
-            Vector3 point = new Vector3(x, m_NodeCenter.Y, z);
+            Vector3 point = new Vector3(x, NodeCenter.Y, z);
 
             return Contains(point);
         }
@@ -326,7 +350,7 @@ namespace GameComponents.Scenery
             float? distance = m_BoundingBox.Intersects(ray);
             if (distance.HasValue)
             {
-                foreach (SceneryNode node in m_Childs.Values)
+                foreach (SceneryNode node in Childs.Values)
                 {
                     Triangle? nodeTriangle = null;
                     Vector3? nodeIntersectionPoint = null;

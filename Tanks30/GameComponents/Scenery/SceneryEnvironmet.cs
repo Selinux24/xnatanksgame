@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Scenery
 {
@@ -70,7 +67,7 @@ namespace GameComponents.Scenery
             public static bool Light0Enable = false;
             public static Color Light0DiffuseColor = Color.White;
             public static Color Light0SpecularColor = Color.White;
-            public static Vector3 Light0Direction = new Vector3(0.0f, -10.0f, 10.0f);
+            public static Vector3 Light0Direction = Vector3.Normalize(new Vector3(0.0f, -10.0f, 10.0f));
 
             public static bool Light1Enable = false;
             public static Color Light1DiffuseColor = Color.White;

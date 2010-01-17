@@ -209,20 +209,6 @@ namespace Tanks
             this.SetFocus(squad01[2]);
         }
         /// <summary>
-        /// Carga de los componentes gráficos
-        /// </summary>
-        protected override void LoadContent()
-        {
-            base.LoadContent();
-        }
-        /// <summary>
-        /// Descarga los componentes gráficos
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            base.UnloadContent();
-        }
-        /// <summary>
         /// Actualizar los componentes del juego
         /// </summary>
         /// <param name="gameTime">Tiempo de juego</param>
@@ -249,7 +235,7 @@ namespace Tanks
             text += "En Rango  " + this.m_CurrentVehicle.AutoPilot.OnRange.ToString() + " " + this.m_CurrentVehicle.AutoPilot.DistanceToTarget.ToString() + Environment.NewLine;
             if (this.m_Scenery != null)
             {
-                text += "Terreno   " + this.m_Scenery.Center.ToString() + Environment.NewLine;
+                text += "Terreno   " + this.m_Scenery.Scenery.Center.ToString() + Environment.NewLine;
             }
             if (this.m_Camera.ModelToFollow != null)
             {
@@ -337,7 +323,7 @@ namespace Tanks
         private void InitializeSquadron(Vehicle[] vehicleList)
         {
             // Punto de posición del escuadrón
-            Vector3 where = new Vector3(RandomComponent.Next(5000) + 5000, 500, RandomComponent.Next(5000) + 5000);
+            Vector3 where = new Vector3(RandomComponent.Next(5000) + 5000, 600, RandomComponent.Next(5000) + 5000);
 
             vehicleList[0].Position = where;
 
@@ -369,22 +355,22 @@ namespace Tanks
                 if (m_Info.Lod == LOD.None)
                 {
                     m_Info.Lod = LOD.High;
-                    m_Scenery.Lod = LOD.High;
+                    m_Scenery.Scenery.LevelOfDetail = LOD.High;
                 }
                 else if (m_Info.Lod == LOD.High)
                 {
                     m_Info.Lod = LOD.Medium;
-                    m_Scenery.Lod = LOD.Medium;
+                    m_Scenery.Scenery.LevelOfDetail = LOD.Medium;
                 }
                 else if (m_Info.Lod == LOD.Medium)
                 {
                     m_Info.Lod = LOD.Low;
-                    m_Scenery.Lod = LOD.Low;
+                    m_Scenery.Scenery.LevelOfDetail = LOD.Low;
                 }
                 else if (m_Info.Lod == LOD.Low)
                 {
                     m_Info.Lod = LOD.None;
-                    m_Scenery.Lod = LOD.None;
+                    m_Scenery.Scenery.LevelOfDetail = LOD.None;
                 }
             }
 
@@ -393,22 +379,22 @@ namespace Tanks
                 if (m_Info.Lod == LOD.Medium)
                 {
                     m_Info.Lod = LOD.High;
-                    m_Scenery.Lod = LOD.High;
+                    m_Scenery.Scenery.LevelOfDetail = LOD.High;
                 }
                 else if (m_Info.Lod == LOD.Low)
                 {
                     m_Info.Lod = LOD.Medium;
-                    m_Scenery.Lod = LOD.Medium;
+                    m_Scenery.Scenery.LevelOfDetail = LOD.Medium;
                 }
                 else if (m_Info.Lod == LOD.None)
                 {
                     m_Info.Lod = LOD.Low;
-                    m_Scenery.Lod = LOD.Low;
+                    m_Scenery.Scenery.LevelOfDetail = LOD.Low;
                 }
                 else if (m_Info.Lod == LOD.High)
                 {
                     m_Info.Lod = LOD.None;
-                    m_Scenery.Lod = LOD.None;
+                    m_Scenery.Scenery.LevelOfDetail = LOD.None;
                 }
             }
 

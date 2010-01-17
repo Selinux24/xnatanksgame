@@ -86,9 +86,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LandRaider.cs" />
@@ -148,6 +145,10 @@
     </NestedContentProject>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ContentPipelineExtension\ContentPipelineExtension.csproj">
+      <Project>{85CEBE8C-817E-47D1-A58C-33992EBACB3F}</Project>
+      <Name>ContentPipelineExtension</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CustomProcessors\CustomProcessors.csproj">
       <Project>{7EFBD9B4-59C0-42EE-BA91-ACBF1BD32D21}</Project>
       <Name>CustomProcessors</Name>
