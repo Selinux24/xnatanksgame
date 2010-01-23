@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Physics;
 
-namespace CustomProcessors
+namespace ContentPipelineExtension
 {
     [ContentTypeWriter]
     public class PrimitiveListWriter : ContentTypeWriter<TriangleList>
@@ -39,7 +39,7 @@ namespace CustomProcessors
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "CustomProcessors.PrimitiveListReader, CustomProcessors, Version=1.0.0.0, Culture=neutral";
+            return "ContentPipelineExtension.PrimitiveListReader, ContentPipelineExtension, Version=1.0.0.0, Culture=neutral";
         }
     }
 }

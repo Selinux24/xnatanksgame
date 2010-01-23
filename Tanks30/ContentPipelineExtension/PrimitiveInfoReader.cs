@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Physics;
 
-namespace CustomProcessors
+namespace ContentPipelineExtension
 {
     public class PrimitiveInfoReader : ContentTypeReader<TriangleInfo>
     {

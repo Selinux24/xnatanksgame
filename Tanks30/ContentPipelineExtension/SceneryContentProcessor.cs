@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using GameComponents;
+using Common.Format;
+using Common.Helpers;
 using GameComponents.Scenery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
@@ -12,11 +13,17 @@ using Physics;
 namespace ContentPipelineExtension
 {
     /// <summary>
-    /// 
+    /// Procesador de contenidos de mapa de alturas
     /// </summary>
-    [ContentProcessor(DisplayName = "Scenery Processor")]
+    [ContentProcessor(DisplayName = "Scenery - Heightmap Processor")]
     public class SceneryContentProcessor : ContentProcessor<SceneryFile, SceneryInfo>
     {
+        /// <summary>
+        /// Procesar el mapa de alturas
+        /// </summary>
+        /// <param name="input">Información del escenario de entrada</param>
+        /// <param name="context">Contexto de procesado</param>
+        /// <returns>Devuelve la información de escenario leída</returns>
         public override SceneryInfo Process(SceneryFile input, ContentProcessorContext context)
         {
             // Cargar la textura del mapa de alturas
@@ -26,12 +33,12 @@ namespace ContentPipelineExtension
             HeightMap heightMap = this.BuildHeightMap(terrain, input.HeightMapCellScale, context);
 
             // Generar los vértices e inicializar el buffer
-            VertexMultitextured[] vertList = this.BuildVertices(heightMap, input.HeightMapCellSize);
+            VertexMultitextured[] vertList = heightMap.BuildVertices(input.HeightMapCellSize);
             VertexBufferContent vertexBuffer = new VertexBufferContent(VertexMultitextured.SizeInBytes * vertList.Length);
             vertexBuffer.Write<VertexMultitextured>(0, VertexMultitextured.SizeInBytes, vertList, context.TargetPlatform);
 
             // Generar los índices e inicializar los buffers
-            double lowOrderLevels = Math.Sqrt(heightMap.Data.Length) / 2.0f;
+            double lowOrderLevels = Math.Sqrt(heightMap.DataLength) / 2.0f;
             int levels = Convert.ToInt32(Math.Log(lowOrderLevels, 4.0d)) - 1;
             SceneryIndexInfo indices = this.BuildIndices(vertList, heightMap, levels);
 
@@ -56,10 +63,12 @@ namespace ContentPipelineExtension
         }
 
         /// <summary>
-        /// Contruye la información gráfica
+        /// Construye el mapa de alturas a partir de la textura especificada
         /// </summary>
-        /// <param name="heightMap">Mapa de alturas</param>
-        /// <param name="cellSize">Tamaño de la celda</param>
+        /// <param name="terrain">Textura con el mapa de alturas del terreno</param>
+        /// <param name="cellScale">Escala de alturas</param>
+        /// <param name="context">Contexto</param>
+        /// <returns>Devuelve el mapa de alturas generado</returns>
         private HeightMap BuildHeightMap(Texture2DContent terrain, float cellScale, ContentProcessorContext context)
         {
             if (terrain.Mipmaps.Count > 0)
@@ -77,36 +86,6 @@ namespace ContentPipelineExtension
                         heightMapContent.Height,
                         heightMapContent.Width,
                         cellScale);
-
-                    //// Inicializar el buffer de índices
-                    //m_LODIndexBuffers[LOD.High] = new IndexBuffer(
-                    //    device,
-                    //    sizeof(int) * indices[LOD.High].Length,
-                    //    BufferUsage.None,
-                    //    IndexElementSize.ThirtyTwoBits);
-
-                    //// Establecer los índices
-                    //m_LODIndexBuffers[LOD.High].SetData<int>(indices[LOD.High]);
-
-                    //// Inicializar el buffer de índices
-                    //m_LODIndexBuffers[LOD.Medium] = new IndexBuffer(
-                    //    device,
-                    //    sizeof(int) * indices[LOD.Medium].Length,
-                    //    BufferUsage.None,
-                    //    IndexElementSize.ThirtyTwoBits);
-
-                    //// Establecer los índices
-                    //m_LODIndexBuffers[LOD.Medium].SetData<int>(indices[LOD.Medium]);
-
-                    //// Inicializar el buffer de índices
-                    //m_LODIndexBuffers[LOD.Low] = new IndexBuffer(
-                    //    device,
-                    //    sizeof(int) * indices[LOD.Low].Length,
-                    //    BufferUsage.None,
-                    //    IndexElementSize.ThirtyTwoBits);
-
-                    //// Establecer los índices
-                    //m_LODIndexBuffers[LOD.Low].SetData<int>(indices[LOD.Low]);
                 }
                 else
                 {
@@ -117,162 +96,6 @@ namespace ContentPipelineExtension
             else
             {
                 throw new PipelineException("El archivo de mapa de alturas no tiene el formato correcto. No se encuentra la imagen");
-            }
-        }
- 
-        /// <summary>
-        /// Construye los vértices
-        /// </summary>
-        /// <param name="heightData">Mapa de alturas</param>
-        /// <param name="cellSize">Tamaño de la celda</param>
-        /// <returns>Devuelve la colección de vértices</returns>
-        private VertexMultitextured[] BuildVertices(HeightMap heightData, float cellSize)
-        {
-            // Contador de vértices
-            int vertexCountX = heightData.Width;
-            int vertexCountZ = heightData.Deep;
-            int vertexCount = vertexCountX * vertexCountZ;
-
-            float level0 = heightData.Min;
-            float level1 = heightData.Max * 0.1f;
-            float level2 = heightData.Max * 0.4f;
-            float level3 = heightData.Max * 0.5f;
-            float level4 = heightData.Max;
-
-            // Crear los vértices
-            List<VertexMultitextured> vertList = new List<VertexMultitextured>(vertexCount);
-            Vector3[,] normals = this.CreateNormals(heightData, cellSize);
-
-            for (int width = 0; width < vertexCountX; width++)
-            {
-                for (int deep = 0; deep < vertexCountZ; deep++)
-                {
-                    VertexMultitextured newVertex = new VertexMultitextured();
-
-                    float posX = width * cellSize;
-                    float posY = heightData.Data[deep, width];
-                    float posZ = deep * cellSize;
-
-                    newVertex.Position = new Vector3(posX, posY, posZ);
-                    newVertex.Normal = normals[deep, width];
-                    newVertex.TextureCoordinate.X = (float)width / 10.0f;
-                    newVertex.TextureCoordinate.Y = (float)deep / 10.0f;
-
-                    float twX = (posY < level1) ? (posY / level1) : 0.0f;
-                    float twY = (posY < level2) ? (posY / level2) : 0.0f;
-                    float twZ = (posY < level3) ? (posY / level3) : 0.0f;
-                    float twW = (posY < level4) ? (posY / level4) : 0.0f;
-                    float totalWeight = twX + twY + twZ + twW;
-
-                    newVertex.TexWeights.X = twX / totalWeight;
-                    newVertex.TexWeights.Y = twY / totalWeight;
-                    newVertex.TexWeights.Z = twZ / totalWeight;
-                    newVertex.TexWeights.W = twW / totalWeight;
-
-                    vertList.Add(newVertex);
-                }
-            }
-
-            return vertList.ToArray();
-        }
-        /// <summary>
-        /// Crea las normales del escenario
-        /// </summary>
-        /// <param name="heightData">Mapa de alturas</param>
-        /// <param name="cellSize">Tamaño de la celda</param>
-        /// <returns>Devuelve la lista de normales del escenario</returns>
-        private Vector3[,] CreateNormals(HeightMap heightData, float cellSize)
-        {
-            // Obtener las dimensiones del mapa de alturas
-            int width = heightData.Width;
-            int deep = heightData.Deep;
-
-            // Inicalizar la lista de normales
-            Vector3[,] normals = new Vector3[width, deep];
-            if (normals != null)
-            {
-                // Recorrer e inicializar la lista de normales
-                for (int y = 0; y < width; y++)
-                {
-                    for (int x = 0; x < deep; x++)
-                    {
-                        if (x == 0 || y == 0 || x == (deep - 1) || y == (width - 1))
-                        {
-                            // Los vértices del borde son siempre el vector de altura uno
-                            normals[y, x] = Vector3.Up;
-                        }
-                        else
-                        {
-                            Vector3 pos = new Vector3(cellSize * x, heightData.Data[y, x], cellSize * y);
-                            Vector3 pos2;
-                            Vector3 pos3;
-                            Vector3 norm1;
-                            Vector3 norm2;
-                            Vector3 norm3;
-                            Vector3 norm4;
-                            Vector3 norm5;
-                            Vector3 norm6;
-
-                            pos2 = new Vector3(cellSize * (x), heightData.Data[y - 1, x], cellSize * (y - 1));
-                            pos3 = new Vector3(cellSize * (x - 1), heightData.Data[y, x - 1], cellSize * (y));
-                            pos2 -= pos;
-                            pos3 -= pos;
-                            pos2.Normalize();
-                            pos3.Normalize();
-                            norm1 = Vector3.Cross(pos2, pos3);
-
-                            pos2 = new Vector3(cellSize * (x - 1), heightData.Data[y, x - 1], cellSize * (y));
-                            pos3 = new Vector3(cellSize * (x - 1), heightData.Data[y + 1, x - 1], cellSize * (y + 1));
-                            pos2 -= pos;
-                            pos3 -= pos;
-                            pos2.Normalize();
-                            pos3.Normalize();
-                            norm2 = Vector3.Cross(pos2, pos3);
-
-                            pos2 = new Vector3(cellSize * (x - 1), heightData.Data[y + 1, x - 1], cellSize * (y + 1));
-                            pos3 = new Vector3(cellSize * (x), heightData.Data[y + 1, x], cellSize * (y + 1));
-                            pos2 -= pos;
-                            pos3 -= pos;
-                            pos2.Normalize();
-                            pos3.Normalize();
-                            norm3 = Vector3.Cross(pos2, pos3);
-
-                            pos2 = new Vector3(cellSize * (x), heightData.Data[y + 1, x], cellSize * (y + 1));
-                            pos3 = new Vector3(cellSize * (x + 1), heightData.Data[y, x + 1], cellSize * (y));
-                            pos2 -= pos;
-                            pos3 -= pos;
-                            pos2.Normalize();
-                            pos3.Normalize();
-                            norm4 = Vector3.Cross(pos2, pos3);
-
-                            pos2 = new Vector3(cellSize * (x + 1), heightData.Data[y, x + 1], cellSize * (y));
-                            pos3 = new Vector3(cellSize * (x + 1), heightData.Data[y - 1, x + 1], cellSize * (y - 1));
-                            pos2 -= pos;
-                            pos3 -= pos;
-                            pos2.Normalize();
-                            pos3.Normalize();
-                            norm5 = Vector3.Cross(pos2, pos3);
-
-                            pos2 = new Vector3(cellSize * (x + 1), heightData.Data[y - 1, x + 1], cellSize * (y - 1));
-                            pos3 = new Vector3(cellSize * (x), heightData.Data[y - 1, x], cellSize * (y - 1));
-                            pos2 -= pos;
-                            pos3 -= pos;
-                            pos2.Normalize();
-                            pos3.Normalize();
-                            norm6 = Vector3.Cross(pos2, pos3);
-
-                            Vector3 norm = (norm1 + norm2 + norm3 + norm4 + norm5 + norm6) / 6.0f;
-
-                            normals[y, x] = Vector3.Normalize(norm);
-                        }
-                    }
-                }
-
-                return normals;
-            }
-            else
-            {
-                throw new Exception("La memoria es insuficiente");
             }
         }
 
