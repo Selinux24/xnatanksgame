@@ -11,7 +11,7 @@ namespace ContentPipelineExtension
     /// <summary>
     /// 
     /// </summary>
-    [ContentImporter(".scn", DisplayName = "Scenery Importer", DefaultProcessor = "ContentPipelineExtension.SceneryContentProcessor")]
+    [ContentImporter(".scn", DisplayName = "Scenery - Xml Importer", DefaultProcessor = "ContentPipelineExtension.SceneryContentProcessor")]
     public class SceneryContentImporter : ContentImporter<SceneryFile>
     {
         public override SceneryFile Import(string filename, ContentImporterContext context)

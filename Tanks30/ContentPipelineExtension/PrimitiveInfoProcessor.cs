@@ -1,14 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
-using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 using Physics;
 
-namespace CustomProcessors
+namespace ContentPipelineExtension
 {
     [ContentProcessor(DisplayName = "Model - TriangleInfo")]
     public class PrimitiveInfoProcessor : ModelProcessor

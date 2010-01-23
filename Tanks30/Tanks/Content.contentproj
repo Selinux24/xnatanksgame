@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectGuid>{F4CC90C6-4225-495D-8C8A-D689BD637A62}</ProjectGuid>
     <ProjectTypeGuids>{96E2B04D-8817-42c6-938A-82C39BA4D311};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -180,10 +180,6 @@
     <ProjectReference Include="..\ContentPipelineExtension\ContentPipelineExtension.csproj">
       <Project>{85CEBE8C-817E-47D1-A58C-33992EBACB3F}</Project>
       <Name>ContentPipelineExtension</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CustomProcessors\CustomProcessors.csproj">
-      <Project>{7EFBD9B4-59C0-42EE-BA91-ACBF1BD32D21}</Project>
-      <Name>CustomProcessors</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

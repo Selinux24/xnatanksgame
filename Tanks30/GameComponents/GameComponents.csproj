@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectGuid>{E7AEEB7C-CE8A-4227-986B-FD3657076247}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -75,7 +75,6 @@
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Data" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
@@ -99,9 +98,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CustomProcessors\CustomProcessors.csproj">
-      <Project>{7EFBD9B4-59C0-42EE-BA91-ACBF1BD32D21}</Project>
-      <Name>CustomProcessors</Name>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{2645CF09-370C-4539-8214-308F1C5A388E}</Project>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Physics2\Physics.csproj">
       <Project>{F195B1D9-335D-493A-B74C-C7AA42E37A68}</Project>
@@ -141,7 +140,6 @@
     <Compile Include="Particles\ParticleSystem.cs" />
     <Compile Include="Particles\ParticleVertex.cs" />
     <Compile Include="Particles\SmokePlumeParticleSystem.cs" />
-    <Compile Include="Scenery\HeightMap.cs" />
     <Compile Include="Scenery\LOD.cs" />
     <Compile Include="Scenery\Scenery.cs" />
     <Compile Include="Scenery\SceneryEnvironmet.cs" />
@@ -166,7 +164,6 @@
     <Compile Include="Vehicles\Vehicle.Physics.cs" />
     <Compile Include="Vehicles\Vehicle.Status.cs" />
     <Compile Include="Vehicles\VehicleComponentInfo.cs" />
-    <Compile Include="VertexMultitextured.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Physics\" />

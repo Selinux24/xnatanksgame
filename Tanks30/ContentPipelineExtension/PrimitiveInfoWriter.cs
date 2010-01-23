@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Physics;
 
-namespace CustomProcessors
+namespace ContentPipelineExtension
 {
     [ContentTypeWriter]
     public class PrimitiveInfoWriter : ContentTypeWriter<TriangleInfo>
@@ -46,7 +46,7 @@ namespace CustomProcessors
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "CustomProcessors.PrimitiveInfoReader, CustomProcessors, Version=1.0.0.0, Culture=neutral";
+            return "ContentPipelineExtension.PrimitiveInfoReader, ContentPipelineExtension, Version=1.0.0.0, Culture=neutral";
         }
     }
 

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 using Physics;
 
-namespace CustomProcessors
+namespace ContentPipelineExtension
 {
     public class PrimitiveListReader : ContentTypeReader<TriangleList>
     {

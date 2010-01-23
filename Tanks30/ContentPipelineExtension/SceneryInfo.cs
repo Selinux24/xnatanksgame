@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Processors;
-using GameComponents.Scenery;
 
 namespace ContentPipelineExtension
 {
