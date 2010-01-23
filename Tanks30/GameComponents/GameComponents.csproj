@@ -102,7 +102,7 @@
       <Project>{2645CF09-370C-4539-8214-308F1C5A388E}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Physics2\Physics.csproj">
+    <ProjectReference Include="..\Physics\Physics.csproj">
       <Project>{F195B1D9-335D-493A-B74C-C7AA42E37A68}</Project>
       <Name>Physics</Name>
     </ProjectReference>

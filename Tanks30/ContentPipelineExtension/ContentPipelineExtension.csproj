@@ -116,7 +116,7 @@
       <Project>{E7AEEB7C-CE8A-4227-986B-FD3657076247}</Project>
       <Name>GameComponents</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Physics2\Physics.csproj">
+    <ProjectReference Include="..\Physics\Physics.csproj">
       <Project>{F195B1D9-335D-493A-B74C-C7AA42E37A68}</Project>
       <Name>Physics</Name>
     </ProjectReference>
