@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameComponents", "GameCompo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tanks", "Tanks\Tanks.csproj", "{D4FA8226-1629-43A2-9280-4F26A53B0F88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Physics", "Physics2\Physics.csproj", "{F195B1D9-335D-493A-B74C-C7AA42E37A68}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Physics", "Physics\Physics.csproj", "{F195B1D9-335D-493A-B74C-C7AA42E37A68}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentPipelineExtension", "ContentPipelineExtension\ContentPipelineExtension.csproj", "{85CEBE8C-817E-47D1-A58C-33992EBACB3F}"
 EndProject
@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 9
+		SccNumberOfProjects = 8
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs02.codeplex.com/
 		SccLocalPath0 = .
@@ -31,19 +31,15 @@ Global
 		SccProjectTopLevelParentUniqueName4 = GameComponents\\GameComponents.csproj
 		SccProjectName4 = GameComponents
 		SccLocalPath4 = GameComponents
-		SccProjectUniqueName5 = Physics2\\Physics.csproj
-		SccProjectName5 = Physics2
-		SccLocalPath5 = Physics2
-		SccProjectUniqueName6 = Physics2\\Content\\Content.contentproj
-		SccProjectTopLevelParentUniqueName6 = Physics2\\Physics.csproj
-		SccProjectName6 = Physics2/Content
-		SccLocalPath6 = Physics2\\Content
-		SccProjectUniqueName7 = ContentPipelineExtension\\ContentPipelineExtension.csproj
-		SccProjectName7 = ContentPipelineExtension
-		SccLocalPath7 = ContentPipelineExtension
-		SccProjectUniqueName8 = Common\\Common.csproj
-		SccProjectName8 = Common
-		SccLocalPath8 = Common
+		SccProjectUniqueName5 = ContentPipelineExtension\\ContentPipelineExtension.csproj
+		SccProjectName5 = ContentPipelineExtension
+		SccLocalPath5 = ContentPipelineExtension
+		SccProjectUniqueName6 = Common\\Common.csproj
+		SccProjectName6 = Common
+		SccLocalPath6 = Common
+		SccProjectUniqueName7 = Physics\\Physics.csproj
+		SccProjectName7 = Physics
+		SccLocalPath7 = Physics
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -90,12 +86,6 @@ Global
 		{85CEBE8C-817E-47D1-A58C-33992EBACB3F}.Release|Xbox 360.Build.0 = Release|Xbox 360
 		{85CEBE8C-817E-47D1-A58C-33992EBACB3F}.Release|Zune.ActiveCfg = Release|Zune
 		{85CEBE8C-817E-47D1-A58C-33992EBACB3F}.Release|Zune.Build.0 = Release|Zune
-		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Debug|x86.ActiveCfg = Debug|x86
-		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
-		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Debug|Zune.ActiveCfg = Debug|Xbox 360
-		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Release|x86.ActiveCfg = Release|x86
-		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
-		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Release|Zune.ActiveCfg = Release|Xbox 360
 		{2645CF09-370C-4539-8214-308F1C5A388E}.Debug|x86.ActiveCfg = Debug|x86
 		{2645CF09-370C-4539-8214-308F1C5A388E}.Debug|x86.Build.0 = Debug|x86
 		{2645CF09-370C-4539-8214-308F1C5A388E}.Debug|Xbox 360.ActiveCfg = Debug|x86
@@ -104,6 +94,12 @@ Global
 		{2645CF09-370C-4539-8214-308F1C5A388E}.Release|x86.Build.0 = Release|x86
 		{2645CF09-370C-4539-8214-308F1C5A388E}.Release|Xbox 360.ActiveCfg = Release|x86
 		{2645CF09-370C-4539-8214-308F1C5A388E}.Release|Zune.ActiveCfg = Release|x86
+		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Debug|x86.ActiveCfg = Debug|x86
+		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Debug|Zune.ActiveCfg = Debug|Xbox 360
+		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Release|x86.ActiveCfg = Release|x86
+		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{F4CC90C6-4225-495D-8C8A-D689BD637A62}.Release|Zune.ActiveCfg = Release|Xbox 360
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
