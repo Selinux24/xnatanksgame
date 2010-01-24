@@ -12,7 +12,7 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Colección de triángulos del modelo
         /// </summary>
-        private TriangleInfo m_TriangleInfo = null;
+        private PrimitiveInfo m_TriangleInfo = null;
         /// <summary>
         /// Esfera que contiene el vehículo
         /// </summary>
@@ -97,7 +97,7 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Obtiene la información de primitivas del modelo
         /// </summary>
-        public TriangleInfo TriangleInfo
+        public PrimitiveInfo TriangleInfo
         {
             get
             {

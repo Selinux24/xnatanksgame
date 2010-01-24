@@ -345,7 +345,104 @@ namespace Physics
 
             return false;
         }
+        /// <summary>
+        /// Obtiene la primera intersección entre el rayo y la lista de triángulos
+        /// </summary>
+        /// <param name="triangleSoup">Lista de triángulos</param>
+        /// <param name="ray">Rayo</param>
+        /// <param name="triangle">Devuelve el triángulo de intersección si existe</param>
+        /// <param name="intersectionPoint">Devuelve el punto de intersección con el triángulo</param>
+        /// <param name="distanceToPoint">Devuelve la distancia desde el origen del ray al punto de intersección</param>
+        /// <returns>Devuelve verdadero si hay intersección o falso en el resto de los casos</returns>
+        public static bool TriangleSoupAndRay(CollisionTriangleSoup triangleSoup, Ray ray, out Triangle? triangle, out Vector3? intersectionPoint, out float? distanceToPoint)
+        {
+            return TriangleSoupAndRay(triangleSoup, ray, out triangle, out intersectionPoint, out distanceToPoint, false);
+        }
+        /// <summary>
+        /// Obtiene si hay intersección entre el rayo y la lista de triángulos
+        /// </summary>
+        /// <param name="triangleSoup">Lista de triángulos</param>
+        /// <param name="ray">Rayo</param>
+        /// <param name="triangle">Devuelve el triángulo de intersección si existe</param>
+        /// <param name="intersectionPoint">Devuelve el punto de intersección con el triángulo</param>
+        /// <param name="distanceToPoint">Devuelve la distancia desde el origen del ray al punto de intersección</param>
+        /// <param name="findNearest">Indica si se debe testear la intersección hasta encontrar el más cercano</param>
+        /// <returns>Devuelve verdadero si hay intersección o falso en el resto de los casos</returns>
+        public static bool TriangleSoupAndRay(CollisionTriangleSoup triangleSoup, Ray ray, out Triangle? triangle, out Vector3? intersectionPoint, out float? distanceToPoint, bool findNearest)
+        {
+            triangle = null;
+            intersectionPoint = null;
+            distanceToPoint = null;
 
+            // Primero ver si hay contacto con el bbox
+            if (ray.Intersects(triangleSoup.AABB).HasValue)
+            {
+                // Indica si ha habido intersección
+                bool intersectionOccur = false;
+
+                // Variables para almacenar la interscción más cercana
+                Triangle? closestTriangle = null;
+                Vector3? closestIntersectionPoint = null;
+                float? closestDistanceToPoint = null;
+
+                // Recorremos todos los triángulos de la lista realizando el test de intersección
+                foreach (Triangle currentTriangle in triangleSoup.Triangles)
+                {
+                    // Variables para almacener la intersección actual
+                    Vector3? currentIntersectionPoint = null;
+                    float? currentDistanceToPoint = null;
+
+                    if (IntersectionTests.TriAndRay(currentTriangle, ray, out currentIntersectionPoint, out currentDistanceToPoint))
+                    {
+                        bool update = false;
+
+                        if (closestDistanceToPoint.HasValue)
+                        {
+                            // Comprobar si la distancia obtenida en la intersección es más cercana a la obtenida anteriormente
+                            if (closestDistanceToPoint.Value > currentDistanceToPoint.Value)
+                            {
+                                // Actualizar la intersección más cercana
+                                update = true;
+                            }
+                        }
+                        else
+                        {
+                            // No hay intersección todavía, se debe actualizar la intersección más cercana con la obtenida
+                            update = true;
+                        }
+
+                        if (update)
+                        {
+                            // Indicar que ha habido una intersección
+                            intersectionOccur = true;
+
+                            // Actualizar la información de intersección más cercana
+                            closestTriangle = currentTriangle;
+                            closestIntersectionPoint = currentIntersectionPoint;
+                            closestDistanceToPoint = currentDistanceToPoint;
+
+                            if (!findNearest)
+                            {
+                                // Salimos en la primera intersección
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (intersectionOccur)
+                {
+                    // Si ha habido intersección se establece el resultado de la intersección más cercana
+                    triangle = closestTriangle;
+                    intersectionPoint = closestIntersectionPoint;
+                    distanceToPoint = closestDistanceToPoint;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private static float TransformToAxis(CollisionBox box, Vector3 axis)
         {

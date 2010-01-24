@@ -12,20 +12,7 @@ namespace ContentPipelineExtension
         protected override SceneryTriangleNode Read(ContentReader input, SceneryTriangleNode existingInstance)
         {
             //Triángulos
-            int triangleCount = input.ReadInt32();
-
-            List<Triangle> triangles = new List<Triangle>();
-
-            for (int i = 0; i < triangleCount; i++)
-            {
-                Vector3 point1 = input.ReadVector3();
-                Vector3 point2 = input.ReadVector3();
-                Vector3 point3 = input.ReadVector3();
-
-                Triangle tri = new Triangle(point1, point2, point3);
-
-                triangles.Add(tri);
-            }
+            Triangle[] triangles = input.ReadObject<Triangle[]>();
 
             //Indices
             int indexKeyCount = input.ReadInt32();
@@ -53,7 +40,7 @@ namespace ContentPipelineExtension
                 primitiveCount.Add(key, index);
             }
 
-            return new SceneryTriangleNode(triangles.ToArray(), startIndexes, primitiveCount);
+            return new SceneryTriangleNode(triangles, startIndexes, primitiveCount);
         }
     }
 }

@@ -6,23 +6,21 @@ namespace Physics
     /// <summary>
     /// Información de triángulos de un modelo
     /// </summary>
-    public class TriangleInfo
+    public class PrimitiveInfo
     {
-        // Diccionario con los grupos de triángulos (meshes) del modelo
-        private Dictionary<string, TriangleList> m_Triangles = new Dictionary<string, TriangleList>();
+        /// <summary>
+        /// Diccionario con los grupos de triángulos (meshes) del modelo
+        /// </summary>
+        private Dictionary<string, Triangle[]> m_TriangleDictionary = new Dictionary<string, Triangle[]>();
 
         /// <summary>
         /// BoundingBox de todo el modelo
         /// </summary>
-        public BoundingBox AABB;
+        public BoundingBox AABB { get; protected set; }
         /// <summary>
         /// BoundingSphere de todo el modelo
         /// </summary>
-        public BoundingSphere BSph;
-        /// <summary>
-        /// Bbox Orientado de todo el modelo
-        /// </summary>
-        public CollisionBox OBB;
+        public BoundingSphere BSph { get; protected set; }
         /// <summary>
         /// Obtiene los nombres de grupos de triángulos (meshes)
         /// </summary>
@@ -30,9 +28,9 @@ namespace Physics
         {
             get
             {
-                string[] indexes = new string[m_Triangles.Keys.Count];
+                string[] indexes = new string[m_TriangleDictionary.Keys.Count];
 
-                m_Triangles.Keys.CopyTo(indexes, 0);
+                m_TriangleDictionary.Keys.CopyTo(indexes, 0);
 
                 return indexes;
             }
@@ -42,18 +40,18 @@ namespace Physics
         /// </summary>
         /// <param name="index">Grupo de triángulos</param>
         /// <returns>Devuelve la lista de triángulos</returns>
-        public TriangleList this[string index]
+        public Triangle[] this[string index]
         {
             get
             {
-                return m_Triangles[index];
+                return m_TriangleDictionary[index];
             }
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public TriangleInfo()
+        public PrimitiveInfo()
         {
 
         }
@@ -65,13 +63,19 @@ namespace Physics
         /// <param name="triangles">Lista de triángulos</param>
         public void AddTriangles(string index, Triangle[] triangles)
         {
-            if (this.m_Triangles.ContainsKey(index))
+            if (this.m_TriangleDictionary.ContainsKey(index))
             {
-                this.m_Triangles[index].AddRange(triangles);
+                List<Triangle> tmpList = new List<Triangle>();
+
+                tmpList.AddRange(this.m_TriangleDictionary[index]);
+                tmpList.AddRange(triangles);
+
+                this.m_TriangleDictionary[index] = tmpList.ToArray();
+
             }
             else
             {
-                this.m_Triangles.Add(index, new TriangleList(triangles));
+                this.m_TriangleDictionary.Add(index, triangles);
             }
 
             this.Update();
@@ -81,13 +85,22 @@ namespace Physics
         /// </summary>
         public void Update()
         {
-            foreach (TriangleList triList in m_Triangles.Values)
+            // Obtener la lista de vértices
+            List<Vector3> vertices = new List<Vector3>();
+
+            foreach (Triangle[] triList in m_TriangleDictionary.Values)
             {
-                this.AABB = BoundingBox.CreateMerged(this.AABB, triList.AABB); 
-                // TODO: La esfera debería crearse con las otras esferas, no con el AABB
-                this.BSph = BoundingSphere.CreateFromBoundingBox(this.AABB);
-                this.OBB = CollisionBox.CreateFromBoundingBox(this.AABB);
+                foreach (Triangle tri in triList)
+                {
+                    vertices.Add(tri.Point1);
+                    vertices.Add(tri.Point2);
+                    vertices.Add(tri.Point3);
+                }
             }
+
+            // Crear los objetos circundantes
+            this.AABB = BoundingBox.CreateFromPoints(vertices);
+            this.BSph = BoundingSphere.CreateFromPoints(vertices);
         }
     }
 }
