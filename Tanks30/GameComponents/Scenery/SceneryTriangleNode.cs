@@ -18,7 +18,7 @@ namespace GameComponents.Scenery
         /// <summary>
         /// Lista de primitivas del nodo
         /// </summary>
-        public readonly TriangleList Triangles;
+        public readonly CollisionTriangleSoup TriangleSoup;
         /// <summary>
         /// Diccionario de índices base para renderizar según el nivel de detalle
         /// </summary>
@@ -35,15 +35,15 @@ namespace GameComponents.Scenery
         public SceneryTriangleNode(Triangle[] triangles, Dictionary<LOD, int> startIndexes, Dictionary<LOD, int> triangleCount)
             : base()
         {
-            this.Triangles = new TriangleList(triangles);
+            this.TriangleSoup = new CollisionTriangleSoup(triangles);
 
             this.StartIndexes = startIndexes;
 
             this.PrimitiveCount = triangleCount;
 
-            if ((this.Triangles != null) && (this.Triangles.Count > 0))
+            if ((this.TriangleSoup != null) && (this.TriangleSoup.Triangles.Length > 0))
             {
-                this.BoundingBox = this.Triangles.AABB;
+                this.BoundingBox = this.TriangleSoup.AABB;
 
                 this.NodeCenter = Vector3.Divide(this.BoundingBox.Max + this.BoundingBox.Min, 2.0f);
             }
@@ -95,12 +95,12 @@ namespace GameComponents.Scenery
 
             if ((this.m_Lod == lod) && (this.m_Lod != LOD.None))
             {
-                if (this.Triangles.Count > 0)
+                if (this.TriangleSoup.Triangles.Length > 0)
                 {
                     SceneryInfoNodeDrawn nodeDrawn = new SceneryInfoNodeDrawn(
-                        this.BoundingBox.Max.X, 
-                        this.BoundingBox.Max.Z, 
-                        this.BoundingBox.Min.X, 
+                        this.BoundingBox.Max.X,
+                        this.BoundingBox.Max.Z,
+                        this.BoundingBox.Min.X,
                         this.BoundingBox.Min.Z);
 
                     nodesDrawn.Add(nodeDrawn);
@@ -124,13 +124,13 @@ namespace GameComponents.Scenery
             intersectionPoint = null;
             distanceToPoint = null;
 
-            if (this.Triangles.Count > 0)
+            if (this.TriangleSoup.Triangles.Length > 0)
             {
                 Triangle? pTriangle = null;
                 Vector3? pIntersectionPoint = null;
                 float? pDistanceToPoint = null;
 
-                if (this.Triangles.Intersects(ray, out pTriangle, out pIntersectionPoint, out pDistanceToPoint))
+                if (IntersectionTests.TriangleSoupAndRay(this.TriangleSoup, ray, out pTriangle, out pIntersectionPoint, out pDistanceToPoint))
                 {
                     triangle = pTriangle;
                     intersectionPoint = pIntersectionPoint;

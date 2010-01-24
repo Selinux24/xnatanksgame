@@ -10,15 +10,13 @@ namespace ContentPipelineExtension
     [ContentProcessor(DisplayName = "Model - TriangleInfo")]
     public class PrimitiveInfoProcessor : ModelProcessor
     {
-        TriangleInfo m_Info = new TriangleInfo();
+        private PrimitiveInfo m_PrimitiveInfo = new PrimitiveInfo();
 
-        protected override void ProcessVertexChannel(
-            GeometryContent geometry,
-            int vertexChannelIndex,
-            ContentProcessorContext context)
+        protected override void ProcessVertexChannel(GeometryContent geometry, int vertexChannelIndex, ContentProcessorContext context)
         {
             base.ProcessVertexChannel(geometry, vertexChannelIndex, context);
 
+            // Extraer todos los triángulos del modelo
             List<Triangle> primitives = new List<Triangle>();
 
             for (int i = 0; i < (geometry.Indices.Count - 2); i += 3)
@@ -32,31 +30,27 @@ namespace ContentPipelineExtension
                 primitives.Add(triangle);
             }
 
-            m_Info.AddTriangles(geometry.Parent.Name, primitives.ToArray());
-
-            m_Info[geometry.Parent.Name].Update();
+            this.m_PrimitiveInfo.AddTriangles(geometry.Parent.Name, primitives.ToArray());
         }
 
-        public override ModelContent Process(
-            NodeContent input,
-            ContentProcessorContext context)
+        public override ModelContent Process(NodeContent input, ContentProcessorContext context)
         {
             ModelContent modelContent = base.Process(input, context);
 
-            foreach (string index in m_Info.Indexes)
+            foreach (string index in m_PrimitiveInfo.Indexes)
             {
                 foreach (ModelMeshContent mesh in modelContent.Meshes)
                 {
                     if (string.Compare(index, mesh.Name) == 0)
                     {
-                        mesh.Tag = m_Info[index];
+                        mesh.Tag = m_PrimitiveInfo[index];
                     }
                 }
             }
 
-            m_Info.Update();
+            m_PrimitiveInfo.Update();
 
-            modelContent.Tag = m_Info;
+            modelContent.Tag = m_PrimitiveInfo;
 
             return modelContent;
         }

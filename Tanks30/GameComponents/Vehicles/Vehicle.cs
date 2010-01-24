@@ -199,17 +199,14 @@ namespace GameComponents.Vehicles
 
             // Modelo
             this.m_Model = Content.Load<Model>("Content/" + componentInfo.Model);
-            this.m_TriangleInfo = this.m_Model.Tag as TriangleInfo;
+            this.m_TriangleInfo = this.m_Model.Tag as PrimitiveInfo;
             this.m_Bsph = new BoundingSphere()
             {
                 Center = this.m_TriangleInfo.BSph.Center,
                 Radius = this.m_TriangleInfo.BSph.Radius,
             };
-            this.m_OBB = new CollisionBox()
-            {
-                HalfSize = this.m_TriangleInfo.OBB.HalfSize,
-            };
 
+            this.m_OBB = CollisionBox.CreateFromBoundingBox(this.m_TriangleInfo.AABB);
             this.m_OBB.Body.Mass = 100f;
             this.m_OBB.Body.SetDamping(0.8f, 0.8f);
 

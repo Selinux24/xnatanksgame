@@ -2,6 +2,7 @@ using Common.Components;
 using GameComponents.Scenery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
+using Physics;
 
 namespace ContentPipelineExtension
 {
@@ -14,15 +15,7 @@ namespace ContentPipelineExtension
         protected override void Write(ContentWriter output, SceneryTriangleNode value)
         {
             //Triángulos
-            int triangleCount = value.Triangles.Count;
-            output.Write(triangleCount);
-
-            for (int i = 0; i < triangleCount; i++)
-            {
-                output.Write(value.Triangles[i].Point1);
-                output.Write(value.Triangles[i].Point2);
-                output.Write(value.Triangles[i].Point3);
-            }
+            output.WriteObject<Triangle[]>(value.TriangleSoup.Triangles);
 
             //Indices
             LOD[] indexKeys = new LOD[value.StartIndexes.Keys.Count];
