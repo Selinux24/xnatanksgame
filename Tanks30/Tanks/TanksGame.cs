@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Common.Components;
 using GameComponents;
 using GameComponents.Camera;
 using GameComponents.MathComponents;

@@ -140,7 +140,6 @@
     <Compile Include="Particles\ParticleSystem.cs" />
     <Compile Include="Particles\ParticleVertex.cs" />
     <Compile Include="Particles\SmokePlumeParticleSystem.cs" />
-    <Compile Include="Scenery\LOD.cs" />
     <Compile Include="Scenery\Scenery.cs" />
     <Compile Include="Scenery\SceneryEnvironmet.cs" />
     <Compile Include="Scenery\SceneryGameComponent.cs" />

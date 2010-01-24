@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Common.Components;
 using Microsoft.Xna.Framework;
 using Physics;
 
@@ -17,24 +18,28 @@ namespace GameComponents.Scenery
         /// <summary>
         /// Lista de primitivas del nodo
         /// </summary>
-        public readonly TriangleList Triangles = new TriangleList();
+        public readonly TriangleList Triangles;
         /// <summary>
         /// Diccionario de índices base para renderizar según el nivel de detalle
         /// </summary>
-        public readonly Dictionary<LOD, int> StartIndexes = new Dictionary<LOD, int>();
+        public readonly Dictionary<LOD, int> StartIndexes;
         /// <summary>
         /// Diccionario de número de primitivas a renderizar según el nivel de detalle
         /// </summary>
-        public readonly Dictionary<LOD, int> PrimitiveCount = new Dictionary<LOD, int>();
+        public readonly Dictionary<LOD, int> PrimitiveCount;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="scenery">Escenario</param>
-        public SceneryTriangleNode(TriangleList triangles, Dictionary<LOD, int> startIndexes, Dictionary<LOD, int> triangleCount)
+        public SceneryTriangleNode(Triangle[] triangles, Dictionary<LOD, int> startIndexes, Dictionary<LOD, int> triangleCount)
             : base()
         {
-            this.Triangles = triangles;
+            this.Triangles = new TriangleList(triangles);
+
+            this.StartIndexes = startIndexes;
+
+            this.PrimitiveCount = triangleCount;
 
             if ((this.Triangles != null) && (this.Triangles.Count > 0))
             {
@@ -42,10 +47,6 @@ namespace GameComponents.Scenery
 
                 this.NodeCenter = Vector3.Divide(this.BoundingBox.Max + this.BoundingBox.Min, 2.0f);
             }
-
-            this.StartIndexes = startIndexes;
-
-            this.PrimitiveCount = triangleCount;
         }
 
         /// <summary>

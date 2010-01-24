@@ -1,5 +1,5 @@
 
-namespace GameComponents.Scenery
+namespace Common.Components
 {
     /// <summary>
     /// Niveles de detalle
