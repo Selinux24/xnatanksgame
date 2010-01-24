@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common.Components;
 using GameComponents.Scenery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -26,8 +27,6 @@ namespace ContentPipelineExtension
                 triangles.Add(tri);
             }
 
-            TriangleList triangleList = new TriangleList(triangles.ToArray());
-
             //Indices
             int indexKeyCount = input.ReadInt32();
 
@@ -54,7 +53,7 @@ namespace ContentPipelineExtension
                 primitiveCount.Add(key, index);
             }
 
-            return new SceneryTriangleNode(triangleList, startIndexes, primitiveCount);
+            return new SceneryTriangleNode(triangles.ToArray(), startIndexes, primitiveCount);
         }
     }
 }

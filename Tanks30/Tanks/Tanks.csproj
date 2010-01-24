@@ -144,6 +144,10 @@
     </NestedContentProject>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{2645CF09-370C-4539-8214-308F1C5A388E}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ContentPipelineExtension\ContentPipelineExtension.csproj">
       <Project>{85CEBE8C-817E-47D1-A58C-33992EBACB3F}</Project>
       <Name>ContentPipelineExtension</Name>

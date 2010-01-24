@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common.Components;
+using GameComponents.Scenery;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using GameComponents.Scenery;
 
 namespace ContentPipelineExtension
 {

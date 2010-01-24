@@ -1,3 +1,4 @@
+using Common.Components;
 using GameComponents.Scenery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;

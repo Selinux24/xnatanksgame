@@ -12,7 +12,7 @@ namespace ContentPipelineExtension
 
         public int TerrainBufferVertexCount;
 
-        public SceneryIndexInfo TerrainInfo;
+        public SceneryNodeInfo TerrainInfo;
 
         public CompiledEffect Effect;
 

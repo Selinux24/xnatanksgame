@@ -1,3 +1,4 @@
+using Common.Components;
 using Common.Format;
 using GameComponents.Scenery;
 using Microsoft.Xna.Framework;
@@ -9,36 +10,52 @@ using Microsoft.Xna.Framework.Graphics;
 namespace ContentPipelineExtension
 {
     /// <summary>
-    /// 
+    /// Generador del fichero binario con la información del terreno
     /// </summary>
     [ContentTypeWriter]
     public class SceneryContentTypeWriter : ContentTypeWriter<SceneryInfo>
     {
-        protected override void Write(ContentWriter output, SceneryInfo value)
+        /// <summary>
+        /// Escribe el fichero de recurso con la información del terreno
+        /// </summary>
+        /// <param name="output">Salida</param>
+        /// <param name="sceneryInfo">Información del terreno</param>
+        protected override void Write(ContentWriter output, SceneryInfo sceneryInfo)
         {
-            output.WriteObject<Texture2DContent>(value.Terrain);
+            // Escribir la textura del mapa de alturas
+            output.WriteObject<Texture2DContent>(sceneryInfo.Terrain);
+            // Escribir la definición de los vértices
             output.WriteObject<VertexElement[]>(VertexMultitextured.VertexElements);
+            // Escribir el tamaño en bytes de cada vértice
             output.Write(VertexMultitextured.SizeInBytes);
-            output.WriteObject<VertexBufferContent>(value.TerrainBuffer);
-            output.Write(value.TerrainBufferVertexCount);
+            // Escribir el buffer de los vértices
+            output.WriteObject<VertexBufferContent>(sceneryInfo.TerrainBuffer);
+            // Escribir el número total de vértices
+            output.Write(sceneryInfo.TerrainBufferVertexCount);
 
-            int nodesCount = value.TerrainInfo.TerrainNodes.Length;
+            // Obtener y escribir el número total de nodos del escenario
+            int nodesCount = sceneryInfo.TerrainInfo.Nodes.Length;
             output.Write(nodesCount);
 
             for (int i = 0; i < nodesCount; i++)
             {
-                output.WriteObject<SceneryTriangleNode>(value.TerrainInfo.TerrainNodes[i]);
+                // Escribir cada nodo
+                output.WriteObject<SceneryTriangleNode>(sceneryInfo.TerrainInfo.Nodes[i]);
             }
 
-            output.WriteObject<IndexCollection>(value.TerrainInfo.Indices[LOD.High]);
-            output.WriteObject<IndexCollection>(value.TerrainInfo.Indices[LOD.Medium]);
-            output.WriteObject<IndexCollection>(value.TerrainInfo.Indices[LOD.Low]);
+            // Escribir los buffers de índices para cada nivel de detalle
+            output.WriteObject<IndexCollection>(sceneryInfo.TerrainInfo.Indices[LOD.High]);
+            output.WriteObject<IndexCollection>(sceneryInfo.TerrainInfo.Indices[LOD.Medium]);
+            output.WriteObject<IndexCollection>(sceneryInfo.TerrainInfo.Indices[LOD.Low]);
 
-            output.WriteObject<CompiledEffect>(value.Effect);
-            output.WriteObject<Texture2DContent>(value.Texture1);
-            output.WriteObject<Texture2DContent>(value.Texture2);
-            output.WriteObject<Texture2DContent>(value.Texture3);
-            output.WriteObject<Texture2DContent>(value.Texture4);
+            // Escribir el efecto para renderizar
+            output.WriteObject<CompiledEffect>(sceneryInfo.Effect);
+
+            // Escribir las texturas del terreno
+            output.WriteObject<Texture2DContent>(sceneryInfo.Texture1);
+            output.WriteObject<Texture2DContent>(sceneryInfo.Texture2);
+            output.WriteObject<Texture2DContent>(sceneryInfo.Texture3);
+            output.WriteObject<Texture2DContent>(sceneryInfo.Texture4);
         }
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)

@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HeightMap.cs" />
+    <Compile Include="LOD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VertexMultitextured.cs" />
   </ItemGroup>
