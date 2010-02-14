@@ -75,16 +75,16 @@ namespace BigBallisticDemo
 
             // Cámara
             CameraGameComponent camera = new CameraGameComponent(this);
-            camera.Position = new Vector3(50.0f, 10.0f, 50.0f);
+            camera.Position = new Vector3(50.0f, 80.0f, 50.0f);
             camera.KeyBoardSensibility = 50;
             this.Components.Add(camera);
 
             // Suelo
             float size = _TerrainSize * 0.5f;
-            Vector3 NO = new Vector3(-size, -20, size);
-            Vector3 NE = new Vector3(size, 0, size);
-            Vector3 SO = new Vector3(-size, 0, -size);
-            Vector3 SE = new Vector3(size, -10, -size);
+            Vector3 NO = new Vector3(-size, 40, size);
+            Vector3 NE = new Vector3(size, 20, size);
+            Vector3 SO = new Vector3(-size, 20, -size);
+            Vector3 SE = new Vector3(size, 30, -size);
             Triangle tr1 = new Triangle(NO, SO, NE);
             Triangle tr2 = new Triangle(NE, SO, SE);
             this.Physics.RegisterTerrain(new CollisionTriangleSoup(new Triangle[] { tr1, tr2 }, float.PositiveInfinity));
@@ -303,10 +303,10 @@ namespace BigBallisticDemo
             float tankArea = _TerrainSize * 0.9f * 0.5f;
 
             // Tanque 1
-            m_Tank_1.SetState(new Vector3(tankArea, 1f, tankArea), Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(45f)));
+            m_Tank_1.SetState(new Vector3(tankArea, 50f, tankArea), Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(45f)));
 
             // Tanque 2
-            m_Tank_2.SetState(new Vector3(-tankArea, 1f, -tankArea), Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(225f)));
+            m_Tank_2.SetState(new Vector3(-tankArea, 50f, -tankArea), Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(225f)));
 
             // Inicializar las cajas
             float boxArea = _TerrainSize * 0.8f * 0.5f;
@@ -314,7 +314,7 @@ namespace BigBallisticDemo
             foreach (CubeGameComponent box in this.m_Cubes)
             {
                 float x = ((float)rnd.NextDouble() * boxArea * 2f) - boxArea;
-                float y = 5f;
+                float y = 50f;
                 float z = ((float)rnd.NextDouble() * boxArea * 2f) - boxArea;
                 float yaw = (float)rnd.NextDouble() * 0.5f;
                 float pitch = (float)rnd.NextDouble() * 0.5f;

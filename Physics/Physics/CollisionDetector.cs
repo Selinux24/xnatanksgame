@@ -510,12 +510,12 @@ namespace Physics
             return true;
         }
         /// <summary>
-        /// Detecta la colisión entre caja y plano
+        /// Detecta la colisión entre una caja y una colección de triángulos
         /// </summary>
         /// <param name="box">Caja</param>
-        /// <param name="plane">Plano</param>
-        /// <param name="data">Datos de la colisión</param>
-        /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
+        /// <param name="triangleSoup">Colección de triángulos</param>
+        /// <param name="data">Datos de colisión a llenar</param>
+        /// <returns>Devuelve verdadero si existe colisión, falso en el resto de los casos</returns>
         public static bool BoxAndTriangleSoup(CollisionBox box, CollisionTriangleSoup triangleSoup, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
@@ -536,7 +536,6 @@ namespace Physics
                     // Podemos hacerlo únicamente chequeando los vértices.
                     // Si la caja está descansando sobre el plano o un eje, se reportarán cuatro o dos puntos de contacto.
 
-                    uint contactsUsed = 0;
                     for (int i = 0; i < 8; i++)
                     {
                         // Calcular la positición de cada vértice
@@ -544,10 +543,10 @@ namespace Physics
                         Plane plane = triangle.Plane;
 
                         // Calcular la distancia al plano
-                        float vertexDistance = Vector3.Dot(vertexPos, plane.Normal);
+                        float distanceToPlane = Vector3.Dot(vertexPos, plane.Normal) + plane.D;
 
-                        // Comparar las distancias
-                        if (vertexDistance <= plane.D)
+                        // Si la distancia es negativa está tras el plano. Si es 0, está en el plano
+                        if (distanceToPlane <= 0f)
                         {
                             // Intersección entre línea y triángulo
                             Vector3 direction = vertexPos - box.Position;
@@ -563,7 +562,7 @@ namespace Physics
                                 Contact contact = data.CurrentContact;
                                 contact.ContactPoint = vertexPos;
                                 contact.ContactNormal = plane.Normal;
-                                contact.Penetration = plane.D - vertexDistance;
+                                contact.Penetration = -distanceToPlane;
 
                                 // Establecer los datos del contacto
                                 RigidBody one = box.Body;
@@ -573,13 +572,12 @@ namespace Physics
                                 // Añadir contacto
                                 data.AddContact();
 
-                                contactsUsed++;
-                                if (contactsUsed == data.ContactsLeft)
+                                if (data.ContactsLeft <= 0)
                                 {
                                     return true;
                                 }
 
-                                if (contacts > 3)
+                                if (contacts > 4)
                                 {
                                     return true;
                                 }
