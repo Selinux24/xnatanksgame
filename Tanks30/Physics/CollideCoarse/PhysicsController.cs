@@ -12,6 +12,7 @@ namespace Physics.CollideCoarse
         /// Número máximo de contactos a generar en la simulación
         /// </summary>
         private const int _MaxContacts = 1024;
+
         /// <summary>
         /// Estructura de datos de colisión
         /// </summary>
@@ -173,22 +174,30 @@ namespace Physics.CollideCoarse
             // Chequear colisiones de los vehículos
             foreach (IPhysicObject pObj in this.m_VehicleData)
             {
+                CollisionPrimitive pObjPrimitive = pObj.GetPrimitive();
+
                 // Comprobar si se pueden almacenar más contactos
                 if (this.m_ContactData.HasFreeContacts())
                 {
-                    // Colisión contra el suelo de cada caja
+                    // Colisión contra el suelo de cada vehículo
                     if (this.m_EsceneryPrimitive != null)
                     {
-                        if (CollisionDetector.BetweenObjects(pObj, this.m_EsceneryPrimitive, ref this.m_ContactData))
+                        if (pObj.IsActive())
                         {
-                            // Informar de la colisión entre la caja y el suelo
-                            pObj.Contacted(null);
+                            CollisionPrimitive sceneryPrimitive = this.m_EsceneryPrimitive.GetContactedPrimitive(pObj);
+                            if (CollisionDetector.BetweenObjects(ref pObjPrimitive, ref sceneryPrimitive, ref this.m_ContactData))
+                            {
+                                // Informar de la colisión entre la caja y el suelo
+                                pObj.Contacted(this.m_EsceneryPrimitive);
+                            }
                         }
                     }
 
                     // Colisiones contra cada proyectil
                     foreach (IPhysicObject sObj in this.m_ProyectileData)
                     {
+                        CollisionPrimitive sObjPrimitive = sObj.GetPrimitive();
+
                         //if (shot.ShotType != ShotType.UnUsed)
                         {
                             // Colisión de bala y suelo
@@ -196,7 +205,8 @@ namespace Physics.CollideCoarse
                             {
                                 if (m_ContactData.HasFreeContacts())
                                 {
-                                    if (CollisionDetector.BetweenObjects(sObj, this.m_EsceneryPrimitive, ref m_ContactData))
+                                    CollisionPrimitive sceneryPrimitive = this.m_EsceneryPrimitive.GetContactedPrimitive(sObj);
+                                    if (CollisionDetector.BetweenObjects(ref sObjPrimitive, ref sceneryPrimitive, ref m_ContactData))
                                     {
                                         //if (shot.ShotType == ShotType.Artillery)
                                         //{
@@ -205,7 +215,7 @@ namespace Physics.CollideCoarse
                                         //}
 
                                         // Informar de la colisión entre la bala y el suelo
-                                        sObj.Contacted(null);
+                                        sObj.Contacted(this.m_EsceneryPrimitive);
 
                                         // Bala anulada
                                         break;
@@ -216,7 +226,7 @@ namespace Physics.CollideCoarse
                             // Comprobar si se pueden almacenar más colisiones
                             if (m_ContactData.HasFreeContacts())
                             {
-                                if (CollisionDetector.BetweenObjects(pObj, sObj, ref m_ContactData))
+                                if (CollisionDetector.BetweenObjects(ref pObjPrimitive, ref sObjPrimitive, ref m_ContactData))
                                 {
                                     //if (shot.ShotType == ShotType.Artillery)
                                     //{
@@ -239,11 +249,17 @@ namespace Physics.CollideCoarse
             {
                 for (int x = i + 1; x < m_VehicleData.Count; x++)
                 {
-                    if (CollisionDetector.BetweenObjects(m_VehicleData[i], m_VehicleData[x], ref m_ContactData))
+                    if (m_VehicleData[i].IsActive() || m_VehicleData[x].IsActive())
                     {
-                        // Informar de la colisión entre cajas
-                        m_VehicleData[i].Contacted(m_VehicleData[x]);
-                        m_VehicleData[x].Contacted(m_VehicleData[i]);
+                        CollisionPrimitive primitive1 = m_VehicleData[i].GetPrimitive();
+                        CollisionPrimitive primitive2 = m_VehicleData[x].GetContactedPrimitive(m_VehicleData[i]);
+
+                        if (CollisionDetector.BetweenObjects(ref primitive1, ref primitive2, ref m_ContactData))
+                        {
+                            // Informar de la colisión entre cajas
+                            m_VehicleData[i].Contacted(m_VehicleData[x]);
+                            m_VehicleData[x].Contacted(m_VehicleData[i]);
+                        }
                     }
                 }
             }

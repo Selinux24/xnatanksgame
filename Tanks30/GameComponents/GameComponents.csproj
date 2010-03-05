@@ -75,26 +75,18 @@
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Camera\BaseCameraGameComponent.cs">
+    <Compile Include="Camera\CameraGameComponent.cs">
       <Name>BaseCameraGameComponent</Name>
     </Compile>
     <Compile Include="Debug\LineDrawerGameComponent.cs">
       <Name>LineDrawerGameComponent</Name>
     </Compile>
-    <Compile Include="Camera\FirstPersonCameraGameComponent.cs">
-      <Name>FirstPersonCameraGameComponent</Name>
-    </Compile>
-    <Compile Include="InputHelper.cs">
-      <Name>InputHelper</Name>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <Name>AssemblyInfo</Name>
-    </Compile>
-    <Compile Include="Camera\ThirdPersonCameraGameComponent.cs">
-      <Name>ThirdPersonCameraGameComponent</Name>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -135,12 +127,19 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Debug\DebugDrawer.cs" />
     <Compile Include="MathComponents\RandomComponent.cs" />
     <Compile Include="Particles\ParticleSettings.cs" />
     <Compile Include="Particles\ParticleSystem.cs" />
     <Compile Include="Particles\ParticleVertex.cs" />
     <Compile Include="Particles\SmokePlumeParticleSystem.cs" />
+    <Compile Include="Readers\PrimitiveInfoReader.cs" />
+    <Compile Include="Readers\PrimitiveListReader.cs" />
+    <Compile Include="Readers\SceneryReader.cs" />
+    <Compile Include="Readers\SceneryTriangleNodeReader.cs" />
     <Compile Include="Scenery\Scenery.cs" />
+    <Compile Include="Scenery\Scenery.Debug.cs" />
+    <Compile Include="Scenery\Scenery.Physics.cs" />
     <Compile Include="Scenery\SceneryEnvironmet.cs" />
     <Compile Include="Scenery\SceneryGameComponent.cs" />
     <Compile Include="Scenery\SceneryInfoGameComponent.cs" />
@@ -160,6 +159,7 @@
     <Compile Include="Vehicles\MovingDirections.cs" />
     <Compile Include="Vehicles\Vehicle.Animation.cs" />
     <Compile Include="Vehicles\Vehicle.cs" />
+    <Compile Include="Vehicles\Vehicle.Debug.cs" />
     <Compile Include="Vehicles\Vehicle.Physics.cs" />
     <Compile Include="Vehicles\Vehicle.Status.cs" />
     <Compile Include="Vehicles\VehicleComponentInfo.cs" />

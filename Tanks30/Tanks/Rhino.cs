@@ -1,11 +1,12 @@
-using GameComponents;
-using GameComponents.Vehicles;
-using GameComponents.Vehicles.Animations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Tanks.Vehicles
 {
+    using Common;
+    using GameComponents.Vehicles;
+    using GameComponents.Vehicles.Animations;
+
     /// <summary>
     /// Un rhino
     /// </summary>
@@ -149,11 +150,11 @@ namespace Tanks.Vehicles
 
                         if (this.IsAdvancing)
                         {
-                            this.Accelerate();
+                            this.Accelerate(gameTime);
                         }
                         else
                         {
-                            this.Brake();
+                            this.Brake(gameTime);
                         }
                     }
                     if (Keyboard.GetState().IsKeyDown(m_MoveBackwardKey))
@@ -162,11 +163,11 @@ namespace Tanks.Vehicles
 
                         if (this.IsAdvancing)
                         {
-                            this.Brake();
+                            this.Brake(gameTime);
                         }
                         else
                         {
-                            this.Accelerate();
+                            this.Accelerate(gameTime);
                         }
                     }
 
@@ -178,13 +179,13 @@ namespace Tanks.Vehicles
                     {
                         driving = true;
 
-                        this.TurnLeft();
+                        this.TurnLeft(gameTime);
                     }
                     if (Keyboard.GetState().IsKeyDown(m_RotateRightTankKey))
                     {
                         driving = true;
 
-                        this.TurnRight();
+                        this.TurnRight(gameTime);
                     }
 
                     #endregion

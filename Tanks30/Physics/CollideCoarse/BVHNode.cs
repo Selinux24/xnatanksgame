@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace Physics.CollideCoarse
@@ -27,13 +25,9 @@ namespace Physics.CollideCoarse
         /// </summary>
         public BoundingSphere Volume;
         /// <summary>
-        /// Holds the rigid body at this node of the hierarchy.
-        /// Only leaf nodes can have a rigid body defined (see isLeaf).
-        /// Note that it is possible to rewrite the algorithms in this
-        /// class to handle objects at all levels of the hierarchy,
-        /// but the code provided ignores this vector unless firstChild
-        /// is NULL.
+        /// Almacena el cuerpo que contiene el nodo
         /// </summary>
+        /// <remarks>Sólo los nodos de último nivel tiene cuerpo</remarks>
         public RigidBody Body = null;
 
         /// <summary>
@@ -157,10 +151,9 @@ namespace Physics.CollideCoarse
 
             // Determinar por cual nodo descender
             // Si uno es rama final, se desciende por el otro
-            // Si ambos son ramas intermedias, entonces se debe usar el más grande
-            if (other.IsLeaf || (!this.IsLeaf && this.GetSphereVolume(this.Volume) >= this.GetSphereVolume(other.Volume)))
+            // Si ambos son ramas intermedias, entonces se debe usar el más grande por ser el más probable
+            if (other.IsLeaf || (!this.IsLeaf && this.Volume.Volume() >= other.Volume.Volume()))
             {
-
                 // Bajar por nuestro primer hijo
                 int count = this.FirstChildren.GetPotentialContactsWith(ref other, ref contacts, limit);
 
@@ -190,6 +183,7 @@ namespace Physics.CollideCoarse
                 }
             }
         }
+
         /// <summary>
         /// Para ramas intermedias, este método recalcula los volúmenes que engloban a todos los hijos
         /// </summary>
@@ -200,8 +194,8 @@ namespace Physics.CollideCoarse
         /// <summary>
         /// Para ramas intermedias, este método recalcula los volúmenes que engloban a todos los hijos, si así se indica
         /// </summary>
-        /// <param name="recurse">Indica si se debe hacer el cálculo recursivamente por todos los hijos hacia arriba</param>
-        protected void RecalculateBoundingVolume(bool recurse)
+        /// <param name="recursive">Indica si se debe hacer el cálculo recursivamente por todos los hijos hacia arriba</param>
+        protected void RecalculateBoundingVolume(bool recursive)
         {
             if (!this.IsLeaf)
             {
@@ -228,16 +222,6 @@ namespace Physics.CollideCoarse
 
             // Se devuelve un valor proporcional al cambio en el área de superficie de la esfera
             return (newSphere.Radius * newSphere.Radius) - (sphere1.Radius * sphere1.Radius);
-        }
-        /// <summary>
-        /// Obtiene el volúmen de la esfera especificada
-        /// </summary>
-        /// <param name="sphere">Esfera</param>
-        /// <returns>Devuelve el volúmen de la esfera especificada</returns>
-        private float GetSphereVolume(BoundingSphere sphere)
-        {
-            // 4/3 de PI por el radio al cubo
-            return 1.333333f * MathHelper.Pi * sphere.Radius * sphere.Radius * sphere.Radius;
         }
     }
 

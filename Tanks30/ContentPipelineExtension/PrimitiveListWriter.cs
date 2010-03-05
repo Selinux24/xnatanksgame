@@ -1,10 +1,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 using Microsoft.Xna.Framework.Graphics;
-using Physics;
 
 namespace ContentPipelineExtension
 {
+    using Common.Primitives;
+
     [ContentTypeWriter]
     public class PrimitiveListWriter : ContentTypeWriter<Triangle[]>
     {
@@ -29,7 +30,7 @@ namespace ContentPipelineExtension
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "ContentPipelineExtension.PrimitiveListReader, ContentPipelineExtension, Version=1.0.0.0, Culture=neutral";
+            return "GameComponents.Readers.PrimitiveListReader, GameComponents, Version=1.0.0.0, Culture=neutral";
         }
     }
 }

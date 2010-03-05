@@ -1,11 +1,12 @@
 using System.Collections.Generic;
-using Common.Components;
 using Microsoft.Xna.Framework;
-using Physics;
 
 namespace GameComponents.Scenery
 {
-    using GameComponents.Camera;
+    using Common;
+    using Common.Components;
+    using Common.Primitives;
+    using Physics;
 
     /// <summary>
     /// Nodo del escenario
@@ -36,9 +37,13 @@ namespace GameComponents.Scenery
         }
 
         /// <summary>
-        /// Bbox
+        /// Caja alineada con los ejes que contiene el nodo completo
         /// </summary>
-        private BoundingBox m_BoundingBox = new BoundingBox();
+        private BoundingBox m_AABB;
+        /// <summary>
+        /// Esfera que contiene el nodo completo
+        /// </summary>
+        private BoundingSphere m_SPH;
 
         /// <summary>
         /// Nodo padre
@@ -133,17 +138,31 @@ namespace GameComponents.Scenery
             }
         }
         /// <summary>
-        /// Obtiene le Bbox
+        /// Obtiene la caja alineada con los ejes que rodea al nodo
         /// </summary>
-        public BoundingBox BoundingBox
+        public BoundingBox AABB
         {
             get
             {
-                return this.m_BoundingBox;
+                return this.m_AABB;
             }
             protected set
             {
-                this.m_BoundingBox = value;
+                this.m_AABB = value;
+            }
+        }
+        /// <summary>
+        /// Obtiene la esfera que rodea al nodo
+        /// </summary>
+        public BoundingSphere SPH
+        {
+            get
+            {
+                return this.m_SPH;
+            }
+            protected set
+            {
+                this.m_SPH = value;
             }
         }
 
@@ -176,19 +195,15 @@ namespace GameComponents.Scenery
             Childs.Add(NodeHeads.SouthWest, southWest);
             Childs.Add(NodeHeads.SouthEast, southEast);
 
-            foreach (SceneryNode node in Childs.Values)
-            {
-                if (m_BoundingBox == new BoundingBox())
-                {
-                    m_BoundingBox = node.m_BoundingBox;
-                }
-                else
-                {
-                    m_BoundingBox = BoundingBox.CreateMerged(m_BoundingBox, node.m_BoundingBox);
-                }
-            }
+            BoundingBox northAABB = BoundingBox.CreateMerged(northWest.m_AABB, northEast.m_AABB);
+            BoundingBox southAABB = BoundingBox.CreateMerged(southWest.m_AABB, southEast.m_AABB);
+            m_AABB = BoundingBox.CreateMerged(northAABB, southAABB);
 
-            NodeCenter = Vector3.Divide(m_BoundingBox.Max + m_BoundingBox.Min, 2.0f);
+            BoundingSphere northSPH = BoundingSphere.CreateMerged(northWest.m_SPH, northEast.m_SPH);
+            BoundingSphere southSPH = BoundingSphere.CreateMerged(southWest.m_SPH, southEast.m_SPH);
+            m_SPH = BoundingSphere.CreateMerged(northSPH, southSPH);
+
+            NodeCenter = Vector3.Divide(m_AABB.Max + m_AABB.Min, 2.0f);
         }
         /// <summary>
         /// Prepara el nodo y sus hijos para el dibujado
@@ -238,21 +253,21 @@ namespace GameComponents.Scenery
         /// <remarks>Este test se realiza usando el BoundingBox del nodo</remarks>
         protected bool NodeIsInLODFrustum(LOD lod)
         {
-            BoundingFrustum frustum = BaseCameraGameComponent.gGlobalFrustum;
+            BoundingFrustum frustum = GlobalMatrices.gGlobalFrustum;
             if (lod == LOD.High)
             {
-                frustum = BaseCameraGameComponent.gLODHighFrustum;
+                frustum = GlobalMatrices.gLODHighFrustum;
             }
             else if (lod == LOD.Medium)
             {
-                frustum = BaseCameraGameComponent.gLODMediumFrustum;
+                frustum = GlobalMatrices.gLODMediumFrustum;
             }
             else if (lod == LOD.Low)
             {
-                frustum = BaseCameraGameComponent.gLODLowFrustum;
+                frustum = GlobalMatrices.gLODLowFrustum;
             }
 
-            return frustum.Intersects(m_BoundingBox);
+            return frustum.Intersects(m_AABB);
         }
         /// <summary>
         /// Obtiene la lista de nodos dibujados
@@ -292,7 +307,7 @@ namespace GameComponents.Scenery
         /// <returns>Devuelve si el punto está contenido en el nodo actual</returns>
         public ContainmentType Contains(Vector3 point)
         {
-            return m_BoundingBox.Contains(point);
+            return m_AABB.Contains(point);
         }
 
         /// <summary>
@@ -348,7 +363,7 @@ namespace GameComponents.Scenery
             intersectionPoint = null;
             distanceToPoint = null;
 
-            float? distance = m_BoundingBox.Intersects(ray);
+            float? distance = m_AABB.Intersects(ray);
             if (distance.HasValue)
             {
                 foreach (SceneryNode node in Childs.Values)

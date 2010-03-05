@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 
 namespace Physics
 {
+    using Common.Primitives;
+
     /// <summary>
     /// Detector de colisiones
     /// </summary>
@@ -15,72 +17,53 @@ namespace Physics
         /// <param name="obj2">Objeto segundo</param>
         /// <param name="data">Información de colisión</param>
         /// <returns>Devuelve verdadero si ha habido colisión</returns>
-        public static bool BetweenObjects(IPhysicObject obj1, IPhysicObject obj2, ref CollisionData data)
+        public static bool BetweenObjects(ref CollisionPrimitive primitive1, ref CollisionPrimitive primitive2, ref CollisionData data)
         {
-            if (obj1 != null && obj2 != null)
+            if (primitive1 != null && primitive2 != null)
             {
-                BoundingSphere sphere1 = obj1.GetBoundingSphere();
-                BoundingSphere sphere2 = obj2.GetBoundingSphere();
-
-                // Almacenar las posiciones de las esferas
-                Vector3 positionOne = sphere1.Center;
-                Vector3 positionTwo = sphere2.Center;
-
-                // Encontrar el vector entre los objetos
-                Vector3 midline = positionOne - positionTwo;
-                float size = midline.Length();
-
-                if (size <= 0.0f || size >= sphere1.Radius + sphere2.Radius)
+                if (primitive1 is CollisionBox)
                 {
-                    return false;
-                }
-                else
-                {
-                    CollisionPrimitive primitive1 = obj1.GetPrimitive();
-                    CollisionPrimitive primitive2 = obj2.GetPrimitive();
-                    
-                    if (primitive1 is CollisionBox)
+                    if (primitive2 is CollisionBox)
                     {
-                        if (primitive2 is CollisionBox)
-                        {
-                            return BoxAndBox((CollisionBox)primitive1, (CollisionBox)primitive2, ref data);
-                        }
-                        else if (primitive2 is CollisionSphere)
-                        {
-                            return BoxAndSphere((CollisionBox)primitive1, (CollisionSphere)primitive2, ref data);
-                        }
-                        else if (primitive2 is CollisionPlane)
-                        {
-                            return BoxAndHalfSpace((CollisionBox)primitive1, (CollisionPlane)primitive2, ref data);
-                        }
-                        else if (primitive2 is CollisionTriangleSoup)
-                        {
-                            return BoxAndTriangleSoup((CollisionBox)primitive1, (CollisionTriangleSoup)primitive2, ref data);
-                        }
+                        return BoxAndBox((CollisionBox)primitive1, (CollisionBox)primitive2, ref data);
                     }
-                    else if (primitive1 is CollisionSphere)
+                    else if (primitive2 is CollisionSphere)
                     {
-                        if (primitive2 is CollisionBox)
-                        {
-                            return BoxAndSphere((CollisionBox)primitive2, (CollisionSphere)primitive1, ref data);
-                        }
-                        else if (primitive2 is CollisionSphere)
-                        {
-                            return SphereAndSphere((CollisionSphere)primitive1, (CollisionSphere)primitive2, ref data);
-                        }
-                        else if (primitive2 is CollisionPlane)
-                        {
-                            return SphereAndHalfSpace((CollisionSphere)primitive1, (CollisionPlane)primitive2, ref data);
-                        }
-                        else if (primitive2 is CollisionTriangleSoup)
-                        {
-                            return SphereAndTriangleSoup((CollisionSphere)primitive1, (CollisionTriangleSoup)primitive2, ref data);
-                        }
+                        return BoxAndSphere((CollisionBox)primitive1, (CollisionSphere)primitive2, ref data);
+                    }
+                    else if (primitive2 is CollisionPlane)
+                    {
+                        return BoxAndHalfSpace((CollisionBox)primitive1, (CollisionPlane)primitive2, ref data);
+                    }
+                    else if (primitive2 is CollisionTriangleSoup)
+                    {
+                        return BoxAndTriangleSoup((CollisionBox)primitive1, (CollisionTriangleSoup)primitive2, ref data);
                     }
                 }
+                else if (primitive1 is CollisionSphere)
+                {
+                    if (primitive2 is CollisionBox)
+                    {
+                        return BoxAndSphere((CollisionBox)primitive2, (CollisionSphere)primitive1, ref data);
+                    }
+                    else if (primitive2 is CollisionSphere)
+                    {
+                        return SphereAndSphere((CollisionSphere)primitive1, (CollisionSphere)primitive2, ref data);
+                    }
+                    else if (primitive2 is CollisionPlane)
+                    {
+                        return SphereAndHalfSpace((CollisionSphere)primitive1, (CollisionPlane)primitive2, ref data);
+                    }
+                    else if (primitive2 is CollisionTriangleSoup)
+                    {
+                        return SphereAndTriangleSoup((CollisionSphere)primitive1, (CollisionTriangleSoup)primitive2, ref data);
+                    }
+                }
+
+                throw new Exception("Tipo de colisión no controlada");
             }
 
-            throw new Exception("Tipo de colisión no controlada");
+            return false;
         }
 
         /// <summary>
@@ -115,8 +98,9 @@ namespace Physics
             contact.ContactPoint = position - plane.Normal * (ballDistance + sphere.Radius);
 
             // No hay cuerpo para el plano. Se considera escenario.
+            RigidBody one = sphere;
             RigidBody two = null;
-            contact.SetBodyData(ref sphere.Body, ref two, data.Friction, data.Restitution);
+            contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
 
             // Añadir el contacto
             data.AddContact();
@@ -165,8 +149,9 @@ namespace Physics
             contact.Penetration = penetration;
             contact.ContactPoint = position - plane.Normal * centreDistance;
 
+            RigidBody one = sphere;
             RigidBody two = null;
-            contact.SetBodyData(ref sphere.Body, ref two, data.Friction, data.Restitution);
+            contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
 
             data.AddContact();
 
@@ -207,7 +192,9 @@ namespace Physics
             contact.ContactNormal = normal;
             contact.ContactPoint = positionOne + midline * 0.5f;
             contact.Penetration = (one.Radius + two.Radius - size);
-            contact.SetBodyData(ref one.Body, ref two.Body, data.Friction, data.Restitution);
+            RigidBody rbOne = one;
+            RigidBody rbTwo = two;
+            contact.SetBodyData(ref rbOne, ref rbTwo, data.Friction, data.Restitution);
 
             data.AddContact();
 
@@ -234,7 +221,7 @@ namespace Physics
                 if (IntersectionTests.SphereAndTri(sphere, triangle, true))
                 {
                     // Informar la colisión
-                    if (CollisionDetector.SphereAndHalfSpace(sphere, new CollisionPlane(triangle.Plane), ref data))
+                    if (CollisionDetector.SphereAndHalfSpace(sphere, new CollisionPlane(triangle.Plane, float.PositiveInfinity), ref data))
                     {
                         return true;
                     }
@@ -291,8 +278,9 @@ namespace Physics
                     contact.Penetration = plane.D - vertexDistance;
 
                     // Establecer los datos del contacto
+                    RigidBody one = box;
                     RigidBody two = null;
-                    contact.SetBodyData(ref box.Body, ref two, data.Friction, data.Restitution);
+                    contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
 
                     // Añadir contacto
                     data.AddContact();
@@ -446,7 +434,9 @@ namespace Physics
                     contact.Penetration = pen;
                     contact.ContactNormal = axis;
                     contact.ContactPoint = vertex;
-                    contact.SetBodyData(ref one.Body, ref two.Body, data.Friction, data.Restitution);
+                    RigidBody rbOne = one;
+                    RigidBody rbTwo = two;
+                    contact.SetBodyData(ref rbOne, ref rbTwo, data.Friction, data.Restitution);
 
                     data.AddContact();
 
@@ -509,8 +499,9 @@ namespace Physics
             contact.ContactPoint = point;
             contact.Penetration = min_depth;
 
+            RigidBody one = box;
             RigidBody two = null;
-            contact.SetBodyData(ref box.Body, ref two, data.Friction, data.Restitution);
+            contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
 
             data.AddContact();
 
@@ -570,14 +561,16 @@ namespace Physics
             Vector3 closestPtWorld = Vector3.Transform(closestPt, box.Transform);
 
             //HACKBYME: Añadimos la velocidad de la esfera para calcular la normal
-            Vector3 relativeVelocity = sphere.Body.Velocity + box.Body.Velocity;
+            Vector3 relativeVelocity = sphere.Velocity + box.Velocity;
             Vector3 normal = Vector3.Normalize(closestPtWorld - centre + relativeVelocity);
 
             Contact contact = data.CurrentContact;
             contact.ContactNormal = normal;
             contact.ContactPoint = closestPtWorld;
             contact.Penetration = sphere.Radius - (float)Math.Sqrt(dist);
-            contact.SetBodyData(ref box.Body, ref sphere.Body, data.Friction, data.Restitution);
+            RigidBody one = box;
+            RigidBody two = sphere;
+            contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
 
             data.AddContact();
 
@@ -592,6 +585,11 @@ namespace Physics
         /// <returns>Devuelve verdadero si existe colisión, falso en el resto de los casos</returns>
         private static bool BoxAndTriangleSoup(CollisionBox box, CollisionTriangleSoup triangleSoup, ref CollisionData data)
         {
+            return BoxAndTriangleList(box, triangleSoup.Triangles, ref data);
+        }
+
+        private static bool BoxAndTriangleList(CollisionBox box, Triangle[] triangleList, ref CollisionData data)
+        {
             if (data.ContactsLeft <= 0)
             {
                 // Si no hay más contactos disponibles se sale de la función.
@@ -601,30 +599,33 @@ namespace Physics
             bool intersection = false;
             int contacts = 0;
 
-            foreach (Triangle triangle in triangleSoup.Triangles)
+            foreach (Triangle triangle in triangleList)
             {
-                // Comprobar la intersección
+                // Comprobar la intersección con el triángulo
                 if (IntersectionTests.BoxAndTri(box, triangle))
                 {
+                    // Obtener si la posición está bajo el plano
+                    Plane plane = triangle.Plane;
+                    float posDistanceToPlane = plane.Distance(box.Position);
+
                     // Hay intersección, ahora hay que encontrar los puntos de intersección.
                     // Podemos hacerlo únicamente chequeando los vértices.
                     // Si la caja está descansando sobre el plano o un eje, se reportarán cuatro o dos puntos de contacto.
-
                     for (int i = 0; i < 8; i++)
                     {
                         // Calcular la positición de cada vértice
                         Vector3 vertexPos = box.GetCorner(i);
-                        Plane plane = triangle.Plane;
 
                         // Calcular la distancia al plano
-                        float vertexDistance = Vector3.Dot(vertexPos, plane.Normal);
-
-                        // Comparar las distancias
-                        if (vertexDistance <= plane.D)
+                        float distanceToPlane = plane.Distance(vertexPos);
+                        if (distanceToPlane <= 0f)
                         {
+                            // Si la distancia es negativa está tras el plano. Si es 0, está en el plano
+
                             // Intersección entre línea y triángulo
-                            Vector3 direction = vertexPos - box.Position;
-                            if (IntersectionTests.TriAndRay(triangle, new Ray(box.Position, direction)))
+                            Vector3 direction = Vector3.Normalize(box.Position - vertexPos);
+                            Ray r = new Ray(vertexPos, direction);
+                            if (IntersectionTests.TriAndRay(triangle, r))
                             {
                                 intersection = true;
                                 contacts++;
@@ -636,10 +637,10 @@ namespace Physics
                                 Contact contact = data.CurrentContact;
                                 contact.ContactPoint = vertexPos;
                                 contact.ContactNormal = plane.Normal;
-                                contact.Penetration = plane.D - vertexDistance;
+                                contact.Penetration = -distanceToPlane;
 
                                 // Establecer los datos del contacto
-                                RigidBody one = box.Body;
+                                RigidBody one = box;
                                 RigidBody two = null;
                                 contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
 
@@ -651,10 +652,10 @@ namespace Physics
                                     return true;
                                 }
 
-                                if (contacts > 3)
-                                {
-                                    return true;
-                                }
+                                //if (contacts > 4)
+                                //{
+                                //    return true;
+                                //}
                             }
                         }
                     }
@@ -763,7 +764,9 @@ namespace Physics
             contact.ContactNormal = normal;
             contact.Penetration = pen;
             contact.ContactPoint = Vector3.Transform(vertex, two.Transform);
-            contact.SetBodyData(ref one.Body, ref two.Body, data.Friction, data.Restitution);
+            RigidBody rbOne = one;
+            RigidBody rbTwo = two;
+            contact.SetBodyData(ref rbOne, ref rbTwo, data.Friction, data.Restitution);
         }
         /// <summary>
         /// Obtiene el punto de mayor cercanía a los segmentos implicados en una colisión canto a canto o cara a canto, o cara a cara

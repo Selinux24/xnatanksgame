@@ -1,11 +1,12 @@
-using Common.Components;
-using GameComponents.Scenery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
-using Physics;
 
 namespace ContentPipelineExtension
 {
+    using Common.Components;
+    using Common.Primitives;
+    using GameComponents.Scenery;
+
     /// <summary>
     /// 
     /// </summary>
@@ -15,7 +16,7 @@ namespace ContentPipelineExtension
         protected override void Write(ContentWriter output, SceneryTriangleNode value)
         {
             //Triángulos
-            output.WriteObject<Triangle[]>(value.TriangleSoup.Triangles);
+            output.WriteObject<Triangle[]>(value.TriangleList);
 
             //Indices
             LOD[] indexKeys = new LOD[value.StartIndexes.Keys.Count];
@@ -50,7 +51,7 @@ namespace ContentPipelineExtension
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "ContentPipelineExtension.SceneryTriangleNodeReader, ContentPipelineExtension, Version=1.0.0.0, Culture=neutral";
+            return "GameComponents.Readers.SceneryTriangleNodeReader, GameComponents, Version=1.0.0.0, Culture=neutral";
         }
     }
 }

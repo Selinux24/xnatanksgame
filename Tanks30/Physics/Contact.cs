@@ -411,10 +411,9 @@ namespace Physics
                     // Aplicar el movimiento lineal
                     this.Bodies[i].Position += Vector3.Multiply(this.ContactNormal, linearMove[i]);
 
-                    // Aplicar el cambio en la rotación
-                    Quaternion q = this.Bodies[i].Orientation;
-                    Core.AddScaledVector(ref q, angularChange[i], 1.0f);
-                    this.Bodies[i].Orientation = q;
+                    // Aplicar el cambio en la orientación
+                    Quaternion orientationDelta = new Quaternion(angularChange[i], 0f) * this.Bodies[i].Orientation;
+                    this.Bodies[i].Orientation += orientationDelta * Constants.OrientationContactFactor;
 
                     // Hay que actualizar cada cuerpo que esté activo, para que los cambios se reflejen en el cuerpo.
                     // De otro modo, la resolución no modificará la posición para el objeto, y la siguiente ronda de detección de colisión resultará en la misma penetración.

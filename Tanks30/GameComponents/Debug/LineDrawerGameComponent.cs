@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using GameComponents.Scenery;
-using GameComponents.Camera;
 
 namespace GameComponents.Debug
 {
+    using Common;
+    using GameComponents.Scenery;
+
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
@@ -111,8 +110,8 @@ namespace GameComponents.Debug
             this.GraphicsDevice.VertexDeclaration = declaration;
             this.GraphicsDevice.Vertices[0].SetSource(buffer, 0, VertexPositionColor.SizeInBytes);
 
-            effect.View = BaseCameraGameComponent.gViewMatrix;
-            effect.Projection = BaseCameraGameComponent.gGlobalProjectionMatrix;
+            effect.View = GlobalMatrices.gViewMatrix;
+            effect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
             effect.World = m_ModelSpace;
 
             effect.TextureEnabled = false;

@@ -60,7 +60,7 @@ namespace ContentPipelineExtension
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "ContentPipelineExtension.SceneryReader, ContentPipelineExtension, Version=1.0.0.0, Culture=neutral";
+            return "GameComponents.Readers.SceneryReader, GameComponents, Version=1.0.0.0, Culture=neutral";
         }
     }
 }

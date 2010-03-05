@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
-using Common.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Physics;
 
 namespace GameComponents.Scenery
 {
-    public class Scenery
+    using Common.Components;
+    using Common.Primitives;
+    
+    /// <summary>
+    /// Escenario
+    /// </summary>
+    public partial class Scenery
     {
         /// <summary>
         /// Textura del mapa de alturas del terreno
@@ -73,8 +77,8 @@ namespace GameComponents.Scenery
             {
                 if (this.Root != null)
                 {
-                    Vector3 pointA = new Vector3(this.Root.BoundingBox.Min.X, 0.0f, 0.0f);
-                    Vector3 pointB = new Vector3(this.Root.BoundingBox.Max.X, 0.0f, 0.0f);
+                    Vector3 pointA = new Vector3(this.Root.AABB.Min.X, 0.0f, 0.0f);
+                    Vector3 pointB = new Vector3(this.Root.AABB.Max.X, 0.0f, 0.0f);
 
                     return Vector3.Distance(pointA, pointB);
                 }
@@ -91,8 +95,8 @@ namespace GameComponents.Scenery
             {
                 if (this.Root != null)
                 {
-                    Vector3 pointA = new Vector3(0.0f, 0.0f, this.Root.BoundingBox.Min.Z);
-                    Vector3 pointB = new Vector3(0.0f, 0.0f, this.Root.BoundingBox.Max.Z);
+                    Vector3 pointA = new Vector3(0.0f, 0.0f, this.Root.AABB.Min.Z);
+                    Vector3 pointB = new Vector3(0.0f, 0.0f, this.Root.AABB.Max.Z);
 
                     return Vector3.Distance(pointA, pointB);
                 }
@@ -109,8 +113,8 @@ namespace GameComponents.Scenery
             {
                 if (this.Root != null)
                 {
-                    Vector3 pointA = new Vector3(0.0f, this.Root.BoundingBox.Min.Y, 0.0f);
-                    Vector3 pointB = new Vector3(0.0f, this.Root.BoundingBox.Max.Y, 0.0f);
+                    Vector3 pointA = new Vector3(0.0f, this.Root.AABB.Min.Y, 0.0f);
+                    Vector3 pointB = new Vector3(0.0f, this.Root.AABB.Max.Y, 0.0f);
 
                     return Vector3.Distance(pointA, pointB);
                 }
@@ -128,7 +132,7 @@ namespace GameComponents.Scenery
             {
                 if (this.Root != null)
                 {
-                    return this.Root.BoundingBox.Min.X;
+                    return this.Root.AABB.Min.X;
                 }
 
                 return 0.0f;
@@ -143,7 +147,7 @@ namespace GameComponents.Scenery
             {
                 if (this.Root != null)
                 {
-                    return this.Root.BoundingBox.Max.X;
+                    return this.Root.AABB.Max.X;
                 }
 
                 return 0.0f;
@@ -158,7 +162,7 @@ namespace GameComponents.Scenery
             {
                 if (this.Root != null)
                 {
-                    return this.Root.BoundingBox.Min.Z;
+                    return this.Root.AABB.Min.Z;
                 }
 
                 return 0.0f;
@@ -173,7 +177,7 @@ namespace GameComponents.Scenery
             {
                 if (this.Root != null)
                 {
-                    return this.Root.BoundingBox.Max.Z;
+                    return this.Root.AABB.Max.Z;
                 }
 
                 return 0.0f;
@@ -188,7 +192,7 @@ namespace GameComponents.Scenery
             {
                 if (this.Root != null)
                 {
-                    return this.Root.BoundingBox.Min.Y;
+                    return this.Root.AABB.Min.Y;
                 }
 
                 return 0.0f;
@@ -203,7 +207,7 @@ namespace GameComponents.Scenery
             {
                 if (this.Root != null)
                 {
-                    return this.Root.BoundingBox.Max.Y;
+                    return this.Root.AABB.Max.Y;
                 }
 
                 return 0.0f;
@@ -268,6 +272,61 @@ namespace GameComponents.Scenery
 
             return null;
         }
+        /// <summary>
+        /// Obtiene la lista de nodos que tienen intersección con el AABB
+        /// </summary>
+        /// <param name="aabb">AABB</param>
+        /// <returns>Devuelve la lista de nodos que tienen intersección con el AABB</returns>
+        private SceneryTriangleNode[] GetNodes(BoundingBox aabb)
+        {
+            List<SceneryTriangleNode> resultNodes = new List<SceneryTriangleNode>();
+
+            this.GetNodes(aabb, this.Root, ref resultNodes);
+
+            return resultNodes.ToArray();
+        }
+        /// <summary>
+        /// Obtiene la lista de nodos que tienen intersección con el AABB a partir del nodo especificado
+        /// </summary>
+        /// <param name="aabb">AABB</param>
+        /// <param name="node">Nodo inicial</param>
+        /// <param name="resultNodes">Obtiene la lista de nodos finales con intersección</param>
+        private void GetNodes(BoundingBox aabb, SceneryNode node, ref List<SceneryTriangleNode> resultNodes)
+        {
+            if (node != null)
+            {
+                if (node.HasChilds)
+                {
+                    if (aabb.Contains(node.NorthEast.AABB) != ContainmentType.Disjoint)
+                    {
+                        this.GetNodes(aabb, node.NorthEast, ref resultNodes);
+                    }
+
+                    if (aabb.Contains(node.NorthWest.AABB) != ContainmentType.Disjoint)
+                    {
+                        this.GetNodes(aabb, node.NorthWest, ref resultNodes);
+                    }
+
+                    if (aabb.Contains(node.SouthEast.AABB) != ContainmentType.Disjoint)
+                    {
+                        this.GetNodes(aabb, node.SouthEast, ref resultNodes);
+                    }
+
+                    if (aabb.Contains(node.SouthWest.AABB) != ContainmentType.Disjoint)
+                    {
+                        this.GetNodes(aabb, node.SouthWest, ref resultNodes);
+                    }
+                }
+                else
+                {
+                    if (node is SceneryTriangleNode)
+                    {
+                        resultNodes.Add((SceneryTriangleNode)node);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Obtiene si existe intersección entre el ray y el escenario
         /// </summary>
@@ -346,8 +405,8 @@ namespace GameComponents.Scenery
             device.VertexDeclaration = this.TerrainBufferDeclaration;
             // Establecer el buffer de vértices
             device.Vertices[0].SetSource(
-                this.TerrainBuffer, 
-                0, 
+                this.TerrainBuffer,
+                0,
                 this.TerrainBufferVertexStride);
 
             // Establecer los parámetros en el efecto
@@ -363,6 +422,10 @@ namespace GameComponents.Scenery
             this.LODDraw(device, gameTime, LOD.Medium);
             // Dibujar el nivel de menos detalle
             this.LODDraw(device, gameTime, LOD.Low);
+
+#if DEBUG
+            this.DrawDebug(device, gameTime);
+#endif
         }
         /// <summary>
         /// Dibuja el contenido gráfico del componente atendiendo al nivel de detalle

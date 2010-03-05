@@ -72,17 +72,18 @@
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Xml">
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalMatrices.cs" />
     <Compile Include="HeightMap.cs" />
+    <Compile Include="InputHelper.cs" />
     <Compile Include="LOD.cs" />
+    <Compile Include="Primitives\PrimitiveInfo.cs" />
+    <Compile Include="Primitives\Triangle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VertexMultitextured.cs" />
   </ItemGroup>

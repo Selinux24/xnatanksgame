@@ -31,7 +31,6 @@ namespace Physics
         /// </summary>
         float m_RestLength;
 
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -62,24 +61,26 @@ namespace Physics
         public override void UpdateForce(ref IPhysicObject obj, float duration)
         {
             // Obtener el cuerpo del objeto
-            RigidBody body = obj.GetPrimitive().Body;
+            CollisionPrimitive primitive = obj.GetPrimitive();
+            if (primitive != null)
+            {
+                // Calculate the two ends in world space
+                Vector3 lws = primitive.GetPointInWorldSpace(m_ConnectionPoint);
+                Vector3 ows = m_Other.GetPointInWorldSpace(m_OtherConnectionPoint);
 
-            // Calculate the two ends in world space
-            Vector3 lws = body.GetPointInWorldSpace(m_ConnectionPoint);
-            Vector3 ows = m_Other.GetPointInWorldSpace(m_OtherConnectionPoint);
+                // Calculate the vector of the spring
+                Vector3 force = lws - ows;
 
-            // Calculate the vector of the spring
-            Vector3 force = lws - ows;
+                // Calculate the magnitude of the force
+                float magnitude = force.Length();
+                magnitude = Math.Abs(magnitude - m_RestLength);
+                magnitude *= m_SpringConstant;
 
-            // Calculate the magnitude of the force
-            float magnitude = force.Length();
-            magnitude = Math.Abs(magnitude - m_RestLength);
-            magnitude *= m_SpringConstant;
-
-            // Calculate the final force and apply it
-            force.Normalize();
-            force *= -magnitude;
-            body.AddForceAtPoint(force, lws);
+                // Calculate the final force and apply it
+                force.Normalize();
+                force *= -magnitude;
+                primitive.AddForceAtPoint(force, lws);
+            }
         }
     }
 }

@@ -1,6 +1,4 @@
 using System;
-using Common.Format;
-using Common.Helpers;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Processors;
@@ -8,6 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ContentPipelineExtension
 {
+    using Common.Format;
+    using Common.Helpers;
+
     /// <summary>
     /// Procesador de contenidos de mapa de alturas
     /// </summary>
@@ -34,8 +35,8 @@ namespace ContentPipelineExtension
             vertexBuffer.Write<VertexMultitextured>(0, VertexMultitextured.SizeInBytes, vertList, context.TargetPlatform);
 
             // Generar los índices e inicializar los buffers de índices
-            double lowOrderLevels = Math.Sqrt(heightMap.DataLength) / 2.0f;
-            int levels = Convert.ToInt32(Math.Log(lowOrderLevels, 4.0d)) - 1;
+            double lowOrderLevels = (Math.Sqrt(heightMap.DataLength) - 1) / 2.0f;
+            int levels = Convert.ToInt32(Math.Log(lowOrderLevels, 4.0d));
             SceneryNodeInfo sceneryIndexInfo = SceneryNodeInfo.Build(vertList, heightMap.Width, heightMap.Deep, levels);
 
             // Efecto de renderización

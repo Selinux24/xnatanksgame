@@ -93,9 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PrimitiveInfoProcessor.cs" />
-    <Compile Include="PrimitiveInfoReader.cs" />
     <Compile Include="PrimitiveInfoWriter.cs" />
-    <Compile Include="PrimitiveListReader.cs" />
     <Compile Include="PrimitiveListWriter.cs" />
     <Compile Include="SceneryTriangleNodeContentTypeWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -105,8 +103,6 @@
     <Compile Include="SceneryContentProcessor.cs" />
     <Compile Include="SceneryContentTypeWriter.cs" />
     <Compile Include="SceneryFile.cs" />
-    <Compile Include="SceneryReader.cs" />
-    <Compile Include="SceneryTriangleNodeReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
@@ -116,10 +112,6 @@
     <ProjectReference Include="..\GameComponents\GameComponents.csproj">
       <Project>{E7AEEB7C-CE8A-4227-986B-FD3657076247}</Project>
       <Name>GameComponents</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Physics\Physics.csproj">
-      <Project>{F195B1D9-335D-493A-B74C-C7AA42E37A68}</Project>
-      <Name>Physics</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

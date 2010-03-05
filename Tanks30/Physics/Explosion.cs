@@ -91,93 +91,95 @@ namespace Physics
         public override void UpdateForce(ref IPhysicObject obj, float duration)
         {
             // Obtener el cuerpo del objeto
-            RigidBody body = obj.GetPrimitive().Body;
-
-            // Detectar la fase de la explosión en la que estamos
-            if (m_TimePassed <= ImplosionDuration)
+            CollisionPrimitive primitive = obj.GetPrimitive();
+            if (primitive != null)
             {
-                // Fase de implosión
-
-                float distance = Vector3.Distance(body.Position, this.DetonationCenter);
-                if (distance > this.ImplosionMinRadius && distance <= this.ImplosionMaxRadius)
+                // Detectar la fase de la explosión en la que estamos
+                if (m_TimePassed <= ImplosionDuration)
                 {
-                    // El cuerpo está en el área de implosión. Aplicar las fuerzas
-                    float max = this.ImplosionMaxRadius - this.ImplosionMinRadius;
-                    float curr = distance - this.ImplosionMinRadius;
-                    float forceMagnitude = curr / max;
+                    // Fase de implosión
 
-                    Vector3 force = Vector3.Normalize(this.DetonationCenter - body.Position) * this.ImplosionForce * forceMagnitude;
-
-                    body.AddForce(force);
-                }
-            }
-            else if (m_TimePassed <= (ImplosionDuration + ConcussionDuration))
-            {
-                // Honda expansiva
-
-                // Intervalo actual de máxima acción de la honda
-                float min = this.ShockwaveSpeed * m_TimePassed;
-                float max = this.ShockwaveSpeed * (m_TimePassed + duration);
-
-                // Distancia al centro del objeto
-                float distance = Vector3.Distance(body.Position, this.DetonationCenter);
-
-                float totalDuration = this.ConcussionDuration + this.ImplosionDuration;
-                float maxDuration = this.ConcussionDuration;
-                float maxDistance = (this.ShockwaveSpeed * maxDuration) + this.ShockwaveThickness;
-
-                float forceMagnitude = 0f;
-                if (distance >= min && distance <= max)
-                {
-                    // En plena honda expansiva. Se aplican las fuerzas atenuadas sólo por la duración
-                    float relativeTime = 0f;
-                    if (m_TimePassed < totalDuration)
+                    float distance = Vector3.Distance(primitive.Position, this.DetonationCenter);
+                    if (distance > this.ImplosionMinRadius && distance <= this.ImplosionMaxRadius)
                     {
-                        relativeTime = 1f - (m_TimePassed / totalDuration);
+                        // El cuerpo está en el área de implosión. Aplicar las fuerzas
+                        float max = this.ImplosionMaxRadius - this.ImplosionMinRadius;
+                        float curr = distance - this.ImplosionMinRadius;
+                        float forceMagnitude = curr / max;
+
+                        Vector3 force = Vector3.Normalize(this.DetonationCenter - primitive.Position) * this.ImplosionForce * forceMagnitude;
+
+                        primitive.AddForce(force);
+                    }
+                }
+                else if (m_TimePassed <= (ImplosionDuration + ConcussionDuration))
+                {
+                    // Honda expansiva
+
+                    // Intervalo actual de máxima acción de la honda
+                    float min = this.ShockwaveSpeed * m_TimePassed;
+                    float max = this.ShockwaveSpeed * (m_TimePassed + duration);
+
+                    // Distancia al centro del objeto
+                    float distance = Vector3.Distance(primitive.Position, this.DetonationCenter);
+
+                    float totalDuration = this.ConcussionDuration + this.ImplosionDuration;
+                    float maxDuration = this.ConcussionDuration;
+                    float maxDistance = (this.ShockwaveSpeed * maxDuration) + this.ShockwaveThickness;
+
+                    float forceMagnitude = 0f;
+                    if (distance >= min && distance <= max)
+                    {
+                        // En plena honda expansiva. Se aplican las fuerzas atenuadas sólo por la duración
+                        float relativeTime = 0f;
+                        if (m_TimePassed < totalDuration)
+                        {
+                            relativeTime = 1f - (m_TimePassed / totalDuration);
+                        }
+
+                        forceMagnitude = this.PeakConcussionForce * relativeTime;
+                    }
+                    else if (distance < min)
+                    {
+                        // El objeto ha sido sobrepasado por la honda expansiva. Fuerza mínimamente atenuada
+                        float relativeTime = 0f;
+                        if (m_TimePassed < totalDuration)
+                        {
+                            relativeTime = 1f - (m_TimePassed / totalDuration);
+                        }
+
+                        forceMagnitude = this.PeakConcussionForce * relativeTime;
+                    }
+                    else if (distance > max && distance <= maxDistance)
+                    {
+                        // El objeto no ha sido alcanzado por la honda expansiva. Fuerza atenuada por el tiempo y la distancia
+                        float relativeDistance = 0f;
+                        if (distance < maxDistance)
+                        {
+                            relativeDistance = 1f - (distance / maxDistance);
+                        }
+
+                        float relativeTime = 0f;
+                        if (m_TimePassed < totalDuration)
+                        {
+                            relativeTime = 1f - (m_TimePassed / totalDuration);
+                        }
+
+                        forceMagnitude = this.PeakConcussionForce * relativeDistance * relativeTime;
                     }
 
-                    forceMagnitude = this.PeakConcussionForce * relativeTime;
-                }
-                else if (distance < min)
-                {
-                    // El objeto ha sido sobrepasado por la honda expansiva. Fuerza mínimamente atenuada
-                    float relativeTime = 0f;
-                    if (m_TimePassed < totalDuration)
+                    if (forceMagnitude > 0f)
                     {
-                        relativeTime = 1f - (m_TimePassed / totalDuration);
-                    }
+                        Vector3 force = Vector3.Normalize(primitive.Position - this.DetonationCenter) * forceMagnitude;
 
-                    forceMagnitude = this.PeakConcussionForce * relativeTime;
+                        primitive.AddForce(force);
+                    }
                 }
-                else if (distance > max && distance <= maxDistance)
+                else
                 {
-                    // El objeto no ha sido alcanzado por la honda expansiva. Fuerza atenuada por el tiempo y la distancia
-                    float relativeDistance = 0f;
-                    if (distance < maxDistance)
-                    {
-                        relativeDistance = 1f - (distance / maxDistance);
-                    }
-
-                    float relativeTime = 0f;
-                    if (m_TimePassed < totalDuration)
-                    {
-                        relativeTime = 1f - (m_TimePassed / totalDuration);
-                    }
-
-                    forceMagnitude = this.PeakConcussionForce * relativeDistance * relativeTime;
+                    // Fin de la explosión
+                    m_ExplosionActive = false;
                 }
-
-                if (forceMagnitude > 0f)
-                {
-                    Vector3 force = Vector3.Normalize(body.Position - this.DetonationCenter) * forceMagnitude;
-
-                    body.AddForce(force);
-                }
-            }
-            else
-            {
-                // Fin de la explosión
-                m_ExplosionActive = false;
             }
 
             m_TimePassed += duration;

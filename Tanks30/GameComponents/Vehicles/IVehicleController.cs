@@ -49,21 +49,21 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Acelerar
         /// </summary>
-        void Accelerate();
+        void Accelerate(GameTime gameTime);
         /// <summary>
         /// Frenar
         /// </summary>
-        void Brake();
+        void Brake(GameTime gameTime);
         /// <summary>
         /// Acelerar un cantidad determinada
         /// </summary>
         /// <param name="amount">Cantidad</param>
-        void Accelerate(float amount);
+        void Accelerate(GameTime gameTime, float amount);
         /// <summary>
         /// Frenar una cantidad determinada
         /// </summary>
         /// <param name="amount">Cantidad</param>
-        void Brake(float amount);
+        void Brake(GameTime gameTime, float amount);
         /// <summary>
         /// Cambiar de sentido
         /// </summary>
@@ -71,20 +71,20 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Girar a la izquierda
         /// </summary>
-        void TurnLeft();
+        void TurnLeft(GameTime gameTime);
         /// <summary>
         /// Girar a la derecha
         /// </summary>
-        void TurnRight();
+        void TurnRight(GameTime gameTime);
         /// <summary>
         /// Girar a la izquierda un ángulo determinado
         /// </summary>
         /// <param name="angle">Angulo</param>
-        void TurnLeft(float angle);
+        void TurnLeft(GameTime gameTime, float angle);
         /// <summary>
         /// Girar a la derecha un ángulo determinado
         /// </summary>
         /// <param name="angle">Angulo</param>
-        void TurnRight(float angle);
+        void TurnRight(GameTime gameTime, float angle);
     }
 }

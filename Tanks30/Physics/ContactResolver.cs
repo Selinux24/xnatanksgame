@@ -170,7 +170,9 @@ namespace Physics
 
                 for (int i = 0; i < contacts.ContactCount; i++)
                 {
-                    for (uint b = 0; b < 2; b++) if (contacts.ContactArray[i].Bodies[b] != null)
+                    for (uint b = 0; b < 2; b++)
+                    {
+                        if (contacts.ContactArray[i].Bodies[b] != null)
                         {
                             for (uint d = 0; d < 2; d++)
                             {
@@ -182,6 +184,7 @@ namespace Physics
                                 }
                             }
                         }
+                    }
                 }
 
                 this.m_PositionIterationsUsed++;
@@ -227,7 +230,9 @@ namespace Physics
 
                 for (int i = 0; i < contacts.ContactCount; i++)
                 {
-                    for (int b = 0; b < 2; b++) if (contacts.ContactArray[i].Bodies[b] != null)
+                    for (int b = 0; b < 2; b++)
+                    {
+                        if (contacts.ContactArray[i].Bodies[b] != null)
                         {
                             for (int d = 0; d < 2; d++)
                             {
@@ -241,6 +246,7 @@ namespace Physics
                                 }
                             }
                         }
+                    }
                 }
 
                 this.m_VelocityIterationsUsed++;

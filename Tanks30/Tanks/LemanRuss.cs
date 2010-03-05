@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Tanks
 {
-    using GameComponents;
+    using Common;
     using GameComponents.Vehicles;
     using GameComponents.Vehicles.Animations;
 
@@ -106,11 +106,11 @@ namespace Tanks
 
                         if (this.IsAdvancing)
                         {
-                            this.Accelerate();
+                            this.Accelerate(gameTime);
                         }
                         else
                         {
-                            this.Brake();
+                            this.Brake(gameTime);
                         }
                     }
                     if (Keyboard.GetState().IsKeyDown(m_MoveBackwardKey))
@@ -119,11 +119,11 @@ namespace Tanks
 
                         if (this.IsAdvancing)
                         {
-                            this.Brake();
+                            this.Brake(gameTime);
                         }
                         else
                         {
-                            this.Accelerate();
+                            this.Accelerate(gameTime);
                         }
                     }
 
@@ -135,13 +135,13 @@ namespace Tanks
                     {
                         driving = true;
 
-                        this.TurnLeft();
+                        this.TurnLeft(gameTime);
                     }
                     if (Keyboard.GetState().IsKeyDown(m_RotateRightTankKey))
                     {
                         driving = true;
 
-                        this.TurnRight();
+                        this.TurnRight(gameTime);
                     }
 
                     #endregion

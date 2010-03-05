@@ -1,10 +1,12 @@
 using System.Collections.Generic;
-using Common.Components;
 using Microsoft.Xna.Framework;
-using Physics;
 
 namespace GameComponents.Scenery
 {
+    using Common.Components;
+    using Common.Primitives;
+    using Physics;
+
     /// <summary>
     /// Nodo de escenario con primitivas
     /// </summary>
@@ -18,7 +20,7 @@ namespace GameComponents.Scenery
         /// <summary>
         /// Lista de primitivas del nodo
         /// </summary>
-        public readonly CollisionTriangleSoup TriangleSoup;
+        public readonly Triangle[] TriangleList;
         /// <summary>
         /// Diccionario de índices base para renderizar según el nivel de detalle
         /// </summary>
@@ -35,17 +37,18 @@ namespace GameComponents.Scenery
         public SceneryTriangleNode(Triangle[] triangles, Dictionary<LOD, int> startIndexes, Dictionary<LOD, int> triangleCount)
             : base()
         {
-            this.TriangleSoup = new CollisionTriangleSoup(triangles);
+            this.TriangleList = triangles;
 
             this.StartIndexes = startIndexes;
 
             this.PrimitiveCount = triangleCount;
 
-            if ((this.TriangleSoup != null) && (this.TriangleSoup.Triangles.Length > 0))
+            if ((this.TriangleList != null) && (this.TriangleList.Length > 0))
             {
-                this.BoundingBox = this.TriangleSoup.AABB;
+                this.AABB = PhysicsMathHelper.CreateBoundingBoxFromTriangles(this.TriangleList);
+                this.SPH = PhysicsMathHelper.CreateBoundingSphereFromTriangles(this.TriangleList);
 
-                this.NodeCenter = Vector3.Divide(this.BoundingBox.Max + this.BoundingBox.Min, 2.0f);
+                this.NodeCenter = Vector3.Divide(this.AABB.Max + this.AABB.Min, 2.0f);
             }
         }
 
@@ -95,13 +98,13 @@ namespace GameComponents.Scenery
 
             if ((this.m_Lod == lod) && (this.m_Lod != LOD.None))
             {
-                if (this.TriangleSoup.Triangles.Length > 0)
+                if (this.TriangleList.Length > 0)
                 {
                     SceneryInfoNodeDrawn nodeDrawn = new SceneryInfoNodeDrawn(
-                        this.BoundingBox.Max.X,
-                        this.BoundingBox.Max.Z,
-                        this.BoundingBox.Min.X,
-                        this.BoundingBox.Min.Z);
+                        this.AABB.Max.X,
+                        this.AABB.Max.Z,
+                        this.AABB.Min.X,
+                        this.AABB.Min.Z);
 
                     nodesDrawn.Add(nodeDrawn);
                 }
@@ -124,13 +127,13 @@ namespace GameComponents.Scenery
             intersectionPoint = null;
             distanceToPoint = null;
 
-            if (this.TriangleSoup.Triangles.Length > 0)
+            if (this.TriangleList.Length > 0)
             {
                 Triangle? pTriangle = null;
                 Vector3? pIntersectionPoint = null;
                 float? pDistanceToPoint = null;
 
-                if (IntersectionTests.TriangleSoupAndRay(this.TriangleSoup, ray, out pTriangle, out pIntersectionPoint, out pDistanceToPoint))
+                if (IntersectionTests.TriangleListAndRay(this.TriangleList, ray, out pTriangle, out pIntersectionPoint, out pDistanceToPoint, false))
                 {
                     triangle = pTriangle;
                     intersectionPoint = pIntersectionPoint;
@@ -141,6 +144,26 @@ namespace GameComponents.Scenery
             }
 
             return false;
+        }
+        /// <summary>
+        /// Obtiene la lista de triángulos en intersección la esfera seleccionada
+        /// </summary>
+        /// <param name="sph">Esfera</param>
+        /// <returns>Devuelve una lista de triángulos en intersección o null si no hay intersección</returns>
+        public Triangle[] GetIntersectedTriangles(BoundingSphere sph)
+        {
+            List<Triangle> resultList = new List<Triangle>();
+
+            foreach (Triangle triangle in this.TriangleList)
+            {
+                // TODO: Demasiados resultados
+                if (sph.Intersects(triangle.Plane) == PlaneIntersectionType.Intersecting)
+                {
+                    resultList.Add(triangle);
+                }
+            }
+
+            return resultList.ToArray();
         }
     }
 }

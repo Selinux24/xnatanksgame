@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Scenery
 {
+    using Common;
     using GameComponents.Camera;
 
     /// <summary>
@@ -210,8 +211,8 @@ namespace GameComponents.Scenery
                 this.GraphicsDevice.Indices = m_Indices;
 
                 // Para dibujar el cielo es necesaria la matriz vista actual y la dirección
-                Vector3 vCameraDirection = BaseCameraGameComponent.gDirection;
-                Matrix viewMatrix = BaseCameraGameComponent.gViewMatrix;
+                Vector3 vCameraDirection = GlobalMatrices.gDirection;
+                Matrix viewMatrix = GlobalMatrices.gViewMatrix;
                 Matrix projectionMatrix = m_ProjectionMatrix;
                 Matrix worldMatrix = Matrix.Identity;
 

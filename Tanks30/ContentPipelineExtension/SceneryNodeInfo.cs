@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.Components;
-using Common.Format;
-using GameComponents.Scenery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
-using Physics;
 
 namespace ContentPipelineExtension
 {
+    using Common.Components;
+    using Common.Format;
+    using Common.Primitives;
+    using GameComponents.Scenery;
+
     /// <summary>
     /// Información de nodos del terreno
     /// </summary>
