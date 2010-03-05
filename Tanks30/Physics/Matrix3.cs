@@ -1,7 +1,4 @@
-using System;
 using Microsoft.Xna.Framework;
-using System.Globalization;
-
 
 namespace Physics
 {
@@ -185,6 +182,45 @@ namespace Physics
         }
 
         /// <summary>
+        /// Obtiene la matriz de coheficientes de tensor de inercia
+        /// </summary>
+        /// <param name="ix">Coheficiente en X</param>
+        /// <param name="iy">Coheficiente en Y</param>
+        /// <param name="iz">Coheficiente en Z</param>
+        /// <returns>Devuelve la matriz de coheficientes de tensor de inercia</returns>
+        public static Matrix3 CreateFromInertiaTensorCoeffs(float ix, float iy, float iz)
+        {
+            return Matrix3.CreateFromInertiaTensorCoeffs(ix, iy, iz, 0f, 0f, 0f);
+        }
+        /// <summary>
+        /// Obtiene la matriz de coheficientes de tensor de inercia
+        /// </summary>
+        /// <param name="ix">Coheficiente en X</param>
+        /// <param name="iy">Coheficiente en Y</param>
+        /// <param name="iz">Coheficiente en Z</param>
+        /// <param name="ixy"></param>
+        /// <param name="ixz"></param>
+        /// <param name="iyz"></param>
+        /// <returns>Devuelve la matriz de coheficientes de tensor de inercia</returns>
+        public static Matrix3 CreateFromInertiaTensorCoeffs(float ix, float iy, float iz, float ixy, float ixz, float iyz)
+        {
+            return new Matrix3()
+            {
+                M11 = ix,
+                M12 = -ixy,
+                M13 = -ixz,
+
+                M21 = -ixy,
+                M22 = iy,
+                M23 = -iyz,
+
+                M31 = -ixz,
+                M32 = -iyz,
+                M33 = iz,
+            };
+        }
+
+        /// <summary>
         /// Constructo éstático
         /// </summary>
         static Matrix3()
@@ -273,7 +309,7 @@ namespace Physics
             this.M32 = m.M32;
             this.M33 = m.M33;
         }
-
+        
         /// <summary>
         /// Establece los componentes de la matriz
         /// </summary>
@@ -298,12 +334,11 @@ namespace Physics
         /// <returns>Cadena que representa el objeto</returns>
         public override string ToString()
         {
-            CultureInfo currentCulture = CultureInfo.CurrentCulture;
             return (
                 "{ " +
-                string.Format(currentCulture, "{{M11:{0} M12:{1} M13:{2}}} ", new object[] { this.M11.ToString(currentCulture), this.M12.ToString(currentCulture), this.M13.ToString(currentCulture) }) +
-                string.Format(currentCulture, "{{M21:{0} M22:{1} M23:{2}}} ", new object[] { this.M21.ToString(currentCulture), this.M22.ToString(currentCulture), this.M23.ToString(currentCulture) }) +
-                string.Format(currentCulture, "{{M31:{0} M32:{1} M33:{2}}} ", new object[] { this.M31.ToString(currentCulture), this.M32.ToString(currentCulture), this.M33.ToString(currentCulture) }) +
+                string.Format("{{M11:{0} M12:{1} M13:{2}}} ", new object[] { this.M11.ToString(), this.M12.ToString(), this.M13.ToString() }) +
+                string.Format("{{M21:{0} M22:{1} M23:{2}}} ", new object[] { this.M21.ToString(), this.M22.ToString(), this.M23.ToString() }) +
+                string.Format("{{M31:{0} M32:{1} M33:{2}}} ", new object[] { this.M31.ToString(), this.M32.ToString(), this.M33.ToString() }) +
                 "}");
         }
         /// <summary>
@@ -474,6 +509,68 @@ namespace Physics
         public static void Transform(ref Matrix3 matrix, ref Vector3 vector, out Vector3 result)
         {
             result = matrix * vector;
+        }
+        /// <summary>
+        /// Transforma la matriz 3x3 especificada usando la matriz 4x4
+        /// </summary>
+        /// <param name="matrix">Matriz 3x3</param>
+        /// <param name="transfom">Matriz 4x4</param>
+        /// <returns>Devuelve la matriz 3x3 transformada</returns>
+        public static Matrix3 Transform(Matrix3 matrix, Matrix transfom)
+        {
+            Matrix3 tranformedMatrix = Matrix3.Identity;
+
+            float t4 = transfom.M11 * matrix.M11 + transfom.M12 * matrix.M21 + transfom.M13 * matrix.M31;
+            float t9 = transfom.M11 * matrix.M12 + transfom.M12 * matrix.M22 + transfom.M13 * matrix.M32;
+            float t14 = transfom.M11 * matrix.M13 + transfom.M12 * matrix.M23 + transfom.M13 * matrix.M33;
+            float t28 = transfom.M21 * matrix.M11 + transfom.M22 * matrix.M21 + transfom.M23 * matrix.M31;
+            float t33 = transfom.M21 * matrix.M12 + transfom.M22 * matrix.M22 + transfom.M23 * matrix.M32;
+            float t38 = transfom.M21 * matrix.M13 + transfom.M22 * matrix.M23 + transfom.M23 * matrix.M33;
+            float t52 = transfom.M31 * matrix.M11 + transfom.M32 * matrix.M21 + transfom.M33 * matrix.M31;
+            float t57 = transfom.M31 * matrix.M12 + transfom.M32 * matrix.M22 + transfom.M33 * matrix.M32;
+            float t62 = transfom.M31 * matrix.M13 + transfom.M32 * matrix.M23 + transfom.M33 * matrix.M33;
+
+            tranformedMatrix.M11 = t4 * transfom.M11 + t9 * transfom.M12 + t14 * transfom.M13;
+            tranformedMatrix.M12 = t4 * transfom.M21 + t9 * transfom.M22 + t14 * transfom.M23;
+            tranformedMatrix.M13 = t4 * transfom.M31 + t9 * transfom.M32 + t14 * transfom.M33;
+            tranformedMatrix.M21 = t28 * transfom.M11 + t33 * transfom.M12 + t38 * transfom.M13;
+            tranformedMatrix.M22 = t28 * transfom.M21 + t33 * transfom.M22 + t38 * transfom.M23;
+            tranformedMatrix.M23 = t28 * transfom.M31 + t33 * transfom.M32 + t38 * transfom.M33;
+            tranformedMatrix.M31 = t52 * transfom.M11 + t57 * transfom.M12 + t62 * transfom.M13;
+            tranformedMatrix.M32 = t52 * transfom.M21 + t57 * transfom.M22 + t62 * transfom.M23;
+            tranformedMatrix.M33 = t52 * transfom.M31 + t57 * transfom.M32 + t62 * transfom.M33;
+
+            return tranformedMatrix;
+        }
+        /// <summary>
+        /// Transforma la matriz 3x3 especificada usando la matriz 4x4
+        /// </summary>
+        /// <param name="matrix">Matriz 3x3</param>
+        /// <param name="transfom">Matriz 4x4</param>
+        /// <param name="tranformedMatrix">Devuelve la matriz 3x3 transformada</param>
+        public static void Transform(ref Matrix3 matrix, ref Matrix transfom, out Matrix3 tranformedMatrix)
+        {
+            tranformedMatrix = Transform(matrix, transfom);;
+
+            float t4 = transfom.M11 * matrix.M11 + transfom.M12 * matrix.M21 + transfom.M13 * matrix.M31;
+            float t9 = transfom.M11 * matrix.M12 + transfom.M12 * matrix.M22 + transfom.M13 * matrix.M32;
+            float t14 = transfom.M11 * matrix.M13 + transfom.M12 * matrix.M23 + transfom.M13 * matrix.M33;
+            float t28 = transfom.M21 * matrix.M11 + transfom.M22 * matrix.M21 + transfom.M23 * matrix.M31;
+            float t33 = transfom.M21 * matrix.M12 + transfom.M22 * matrix.M22 + transfom.M23 * matrix.M32;
+            float t38 = transfom.M21 * matrix.M13 + transfom.M22 * matrix.M23 + transfom.M23 * matrix.M33;
+            float t52 = transfom.M31 * matrix.M11 + transfom.M32 * matrix.M21 + transfom.M33 * matrix.M31;
+            float t57 = transfom.M31 * matrix.M12 + transfom.M32 * matrix.M22 + transfom.M33 * matrix.M32;
+            float t62 = transfom.M31 * matrix.M13 + transfom.M32 * matrix.M23 + transfom.M33 * matrix.M33;
+
+            tranformedMatrix.M11 = t4 * transfom.M11 + t9 * transfom.M12 + t14 * transfom.M13;
+            tranformedMatrix.M12 = t4 * transfom.M21 + t9 * transfom.M22 + t14 * transfom.M23;
+            tranformedMatrix.M13 = t4 * transfom.M31 + t9 * transfom.M32 + t14 * transfom.M33;
+            tranformedMatrix.M21 = t28 * transfom.M11 + t33 * transfom.M12 + t38 * transfom.M13;
+            tranformedMatrix.M22 = t28 * transfom.M21 + t33 * transfom.M22 + t38 * transfom.M23;
+            tranformedMatrix.M23 = t28 * transfom.M31 + t33 * transfom.M32 + t38 * transfom.M33;
+            tranformedMatrix.M31 = t52 * transfom.M11 + t57 * transfom.M12 + t62 * transfom.M13;
+            tranformedMatrix.M32 = t52 * transfom.M21 + t57 * transfom.M22 + t62 * transfom.M23;
+            tranformedMatrix.M33 = t52 * transfom.M31 + t57 * transfom.M32 + t62 * transfom.M33;
         }
         /// <summary>
         /// Transforma el vector al espacio que representa la traspuesta de la matriz

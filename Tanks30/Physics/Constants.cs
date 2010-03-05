@@ -1,8 +1,10 @@
-using System;
 using Microsoft.Xna.Framework;
 
 namespace Physics
 {
+    /// <summary>
+    /// Constantes para físicas
+    /// </summary>
     public abstract class Constants
     {
         /// <summary>
@@ -29,5 +31,13 @@ namespace Physics
                 return Vector3.Zero;
             }
         }
+        /// <summary>
+        /// Modificador aplicado al mínimo momento de inercia para que un cuerpo se quede en reposo
+        /// </summary>
+        public static float SleepEpsilon = 1f;
+        /// <summary>
+        /// Modificador aplicado a las modificaciones en la orientación tras las colisiones
+        /// </summary>
+        public static float OrientationContactFactor = 0.1f;
     }
 }

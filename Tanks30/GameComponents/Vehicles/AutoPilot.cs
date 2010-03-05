@@ -123,8 +123,9 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Actualiza el piloto automático
         /// </summary>
+        /// <param name="gameTime">Tiempo de juego</param>
         /// <param name="vehicle">Vehículo</param>
-        public void UpdateAutoPilot(IVehicleController vehicle)
+        public void UpdateAutoPilot(GameTime gameTime, IVehicleController vehicle)
         {
             if (this.m_Enabled)
             {
@@ -166,7 +167,7 @@ namespace GameComponents.Vehicles
                     // Obtener el ángulo de la rotación
                     Vector3 targetDirection = Vector3.Normalize(targetPosition - currentPosition);
                     Vector3 currentDirection = Vector3.Normalize(vehicle.Direction);
-                    float angle = PhysicsMathHelper.Angle(currentDirection, targetDirection);
+                    float angle = currentDirection.Angle(targetDirection);
 
                     // Aplicar la nueva rotación directamente a la rotación actual
                     if (angle >= 0.01f)
@@ -185,7 +186,7 @@ namespace GameComponents.Vehicles
                                 if (this.m_AutoVelocity > vehicle.Velocity)
                                 {
                                     // La velocidad actual es menor que la máxima que se puede usar
-                                    vehicle.Accelerate();
+                                    vehicle.Accelerate(gameTime);
                                 }
                             }
                         }
@@ -195,7 +196,7 @@ namespace GameComponents.Vehicles
                             if (this.m_AutoVelocity > vehicle.Velocity)
                             {
                                 // Si la velocidad a alcanzar no es suficiente se acelera
-                                vehicle.Accelerate();
+                                vehicle.Accelerate(gameTime);
                             }
                         }
                     }

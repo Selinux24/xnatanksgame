@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GameComponents.Vehicles;
-using Microsoft.Xna.Framework;
-using GameComponents.Vehicles.Animations;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using GameComponents;
 
 namespace Tanks.Vehicles
 {
+    using Common;
+    using GameComponents.Vehicles;
+    using GameComponents.Vehicles.Animations;
+
     public partial class LandRaider : Vehicle
     {
         #region Incialización del control de animación
@@ -144,11 +141,11 @@ namespace Tanks.Vehicles
 
                         if (this.IsAdvancing)
                         {
-                            this.Accelerate();
+                            this.Accelerate(gameTime);
                         }
                         else
                         {
-                            this.Brake();
+                            this.Brake(gameTime);
                         }
                     }
                     if (Keyboard.GetState().IsKeyDown(m_MoveBackwardKey))
@@ -157,11 +154,11 @@ namespace Tanks.Vehicles
 
                         if (this.IsAdvancing)
                         {
-                            this.Brake();
+                            this.Brake(gameTime);
                         }
                         else
                         {
-                            this.Accelerate();
+                            this.Accelerate(gameTime);
                         }
                     }
 
@@ -173,13 +170,13 @@ namespace Tanks.Vehicles
                     {
                         driving = true;
 
-                        this.TurnLeft();
+                        this.TurnLeft(gameTime);
                     }
                     if (Keyboard.GetState().IsKeyDown(m_RotateRightTankKey))
                     {
                         driving = true;
 
-                        this.TurnRight();
+                        this.TurnRight(gameTime);
                     }
 
                     #endregion
@@ -257,7 +254,7 @@ namespace Tanks.Vehicles
                         }
                     }
 
-                    #endregion   
+                    #endregion
                 }
             }
         }

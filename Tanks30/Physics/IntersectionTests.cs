@@ -3,7 +3,12 @@ using Microsoft.Xna.Framework;
 
 namespace Physics
 {
-    public class IntersectionTests
+    using Common.Primitives;
+
+    /// <summary>
+    /// Conjunto de test de detección de intersección
+    /// </summary>
+    public abstract class IntersectionTests
     {
         /// <summary>
         /// Detecta la intersección entre una esfera y un plano
@@ -202,37 +207,23 @@ namespace Physics
                 Vector3.Subtract(tri.Point2, box.Position),
                 Vector3.Subtract(tri.Point3, box.Position));
 
-            // Ejes del triángulo
-            Vector3 edge0 = Vector3.Subtract(trnTri.Point2, trnTri.Point1);
-            Vector3 edge1 = Vector3.Subtract(trnTri.Point3, trnTri.Point2);
-            Vector3 edge2 = Vector3.Subtract(trnTri.Point1, trnTri.Point3);
-
             // Eje 0
-            float fex = Math.Abs(edge0.X);
-            float fey = Math.Abs(edge0.Y);
-            float fez = Math.Abs(edge0.Z);
-
-            if (!AXISTEST_X01(trnTri.Point1, trnTri.Point3, box.HalfSize, edge0.Z, edge0.Y, fez, fey)) return false;
-            if (!AXISTEST_Y02(trnTri.Point1, trnTri.Point3, box.HalfSize, edge0.Z, edge0.X, fez, fex)) return false;
-            if (!AXISTEST_Z12(trnTri.Point2, trnTri.Point3, box.HalfSize, edge0.Y, edge0.X, fey, fex)) return false;
+            Vector3 edge0 = Vector3.Subtract(trnTri.Point2, trnTri.Point1);
+            if (!AxisTest_X(trnTri.Point1, trnTri.Point3, box.HalfSize, edge0.Z, edge0.Y)) return false;
+            if (!AxisTest_Y(trnTri.Point1, trnTri.Point3, box.HalfSize, edge0.Z, edge0.X)) return false;
+            if (!AxisTest_Z(trnTri.Point2, trnTri.Point3, box.HalfSize, edge0.Y, edge0.X)) return false;
 
             // Eje 1
-            fex = Math.Abs(edge1.X);
-            fey = Math.Abs(edge1.Y);
-            fez = Math.Abs(edge1.Z);
-
-            if (!AXISTEST_X01(trnTri.Point1, trnTri.Point3, box.HalfSize, edge1.Z, edge1.Y, fez, fey)) return false;
-            if (!AXISTEST_Y02(trnTri.Point1, trnTri.Point3, box.HalfSize, edge1.Z, edge1.X, fez, fex)) return false;
-            if (!AXISTEST_Z0(trnTri.Point1, trnTri.Point2, box.HalfSize, edge1.Y, edge1.X, fey, fex)) return false;
+            Vector3 edge1 = Vector3.Subtract(trnTri.Point3, trnTri.Point2);
+            if (!AxisTest_X(trnTri.Point1, trnTri.Point3, box.HalfSize, edge1.Z, edge1.Y)) return false;
+            if (!AxisTest_Y(trnTri.Point1, trnTri.Point3, box.HalfSize, edge1.Z, edge1.X)) return false;
+            if (!AxisTest_Z(trnTri.Point1, trnTri.Point2, box.HalfSize, edge1.Y, edge1.X)) return false;
 
             // Eje 2
-            fex = Math.Abs(edge2.X);
-            fey = Math.Abs(edge2.Y);
-            fez = Math.Abs(edge2.Z);
-
-            if (!AXISTEST_X2(trnTri.Point1, trnTri.Point2, box.HalfSize, edge2.Z, edge2.Y, fez, fey)) return false;
-            if (!AXISTEST_Y1(trnTri.Point1, trnTri.Point2, box.HalfSize, edge2.Z, edge2.X, fez, fex)) return false;
-            if (!AXISTEST_Z12(trnTri.Point2, trnTri.Point3, box.HalfSize, edge2.Y, edge2.X, fey, fex)) return false;
+            Vector3 edge2 = Vector3.Subtract(trnTri.Point1, trnTri.Point3);
+            if (!AxisTest_X(trnTri.Point1, trnTri.Point2, box.HalfSize, edge2.Z, edge2.Y)) return false;
+            if (!AxisTest_Y(trnTri.Point1, trnTri.Point2, box.HalfSize, edge2.Z, edge2.X)) return false;
+            if (!AxisTest_Z(trnTri.Point2, trnTri.Point3, box.HalfSize, edge2.Y, edge2.X)) return false;
 
             // Hay intersección
             return true;
@@ -308,7 +299,7 @@ namespace Physics
             distanceToPoint = null;
 
             float denom = Vector3.Dot(tri.Plane.Normal, ray.Direction);
-            if (PhysicsMathHelper.IsZero(denom))
+            if (denom.IsZero())
             {
                 return false;
             }
@@ -377,68 +368,94 @@ namespace Physics
             // Primero ver si hay contacto con el bbox
             if (ray.Intersects(triangleSoup.AABB).HasValue)
             {
-                // Indica si ha habido intersección
-                bool intersectionOccur = false;
+                return TriangleListAndRay(
+                    triangleSoup.Triangles, 
+                    ray, 
+                    out triangle, 
+                    out intersectionPoint, 
+                    out distanceToPoint, 
+                    findNearest);
+            }
 
-                // Variables para almacenar la interscción más cercana
-                Triangle? closestTriangle = null;
-                Vector3? closestIntersectionPoint = null;
-                float? closestDistanceToPoint = null;
+            return false;
+        }
+        /// <summary>
+        /// Obtiene si hay intersección entre el rayo y la lista de triángulos
+        /// </summary>
+        /// <param name="triangleList">Lista de triángulos</param>
+        /// <param name="ray">Rayo</param>
+        /// <param name="triangle">Devuelve el triángulo de intersección si existe</param>
+        /// <param name="intersectionPoint">Devuelve el punto de intersección con el triángulo</param>
+        /// <param name="distanceToPoint">Devuelve la distancia desde el origen del ray al punto de intersección</param>
+        /// <param name="findNearest">Indica si se debe testear la intersección hasta encontrar el más cercano</param>
+        /// <returns>Devuelve verdadero si hay intersección o falso en el resto de los casos</returns>
+        public static bool TriangleListAndRay(Triangle[] triangleList, Ray ray, out Triangle? triangle, out Vector3? intersectionPoint, out float? distanceToPoint, bool findNearest)
+        {
+            triangle = null;
+            intersectionPoint = null;
+            distanceToPoint = null;
 
-                // Recorremos todos los triángulos de la lista realizando el test de intersección
-                foreach (Triangle currentTriangle in triangleSoup.Triangles)
+            // Indica si ha habido intersección
+            bool intersectionOccur = false;
+
+            // Variables para almacenar la interscción más cercana
+            Triangle? closestTriangle = null;
+            Vector3? closestIntersectionPoint = null;
+            float? closestDistanceToPoint = null;
+
+            // Recorremos todos los triángulos de la lista realizando el test de intersección
+            foreach (Triangle currentTriangle in triangleList)
+            {
+                // Variables para almacener la intersección actual
+                Vector3? currentIntersectionPoint = null;
+                float? currentDistanceToPoint = null;
+
+                if (IntersectionTests.TriAndRay(currentTriangle, ray, out currentIntersectionPoint, out currentDistanceToPoint))
                 {
-                    // Variables para almacener la intersección actual
-                    Vector3? currentIntersectionPoint = null;
-                    float? currentDistanceToPoint = null;
+                    bool update = false;
 
-                    if (IntersectionTests.TriAndRay(currentTriangle, ray, out currentIntersectionPoint, out currentDistanceToPoint))
+                    if (closestDistanceToPoint.HasValue)
                     {
-                        bool update = false;
-
-                        if (closestDistanceToPoint.HasValue)
+                        // Comprobar si la distancia obtenida en la intersección es más cercana a la obtenida anteriormente
+                        if (closestDistanceToPoint.Value > currentDistanceToPoint.Value)
                         {
-                            // Comprobar si la distancia obtenida en la intersección es más cercana a la obtenida anteriormente
-                            if (closestDistanceToPoint.Value > currentDistanceToPoint.Value)
-                            {
-                                // Actualizar la intersección más cercana
-                                update = true;
-                            }
-                        }
-                        else
-                        {
-                            // No hay intersección todavía, se debe actualizar la intersección más cercana con la obtenida
+                            // Actualizar la intersección más cercana
                             update = true;
                         }
+                    }
+                    else
+                    {
+                        // No hay intersección todavía, se debe actualizar la intersección más cercana con la obtenida
+                        update = true;
+                    }
 
-                        if (update)
+                    if (update)
+                    {
+                        // Indicar que ha habido una intersección
+                        intersectionOccur = true;
+
+                        // Actualizar la información de intersección más cercana
+                        closestTriangle = currentTriangle;
+                        closestIntersectionPoint = currentIntersectionPoint;
+                        closestDistanceToPoint = currentDistanceToPoint;
+
+                        if (!findNearest)
                         {
-                            // Indicar que ha habido una intersección
-                            intersectionOccur = true;
-
-                            // Actualizar la información de intersección más cercana
-                            closestTriangle = currentTriangle;
-                            closestIntersectionPoint = currentIntersectionPoint;
-                            closestDistanceToPoint = currentDistanceToPoint;
-
-                            if (!findNearest)
-                            {
-                                // Salimos en la primera intersección
-                                break;
-                            }
+                            // Salimos en la primera intersección
+                            break;
                         }
                     }
                 }
+            }
 
-                if (intersectionOccur)
-                {
-                    // Si ha habido intersección se establece el resultado de la intersección más cercana
-                    triangle = closestTriangle;
-                    intersectionPoint = closestIntersectionPoint;
-                    distanceToPoint = closestDistanceToPoint;
+            if (intersectionOccur)
+            {
+                // Si ha habido intersección se establece el resultado de la intersección más cercana
+                triangle = closestTriangle;
+                intersectionPoint = closestIntersectionPoint;
+                distanceToPoint = closestDistanceToPoint;
 
-                    return true;
-                }
+                return true;
             }
 
             return false;
@@ -465,164 +482,97 @@ namespace Physics
             return (distance < oneProject + twoProject);
         }
 
-        private static bool AXISTEST_Z0(Vector3 v0, Vector3 v1, Vector3 boxhalfsize, float a, float b, float fa, float fb)
+        private static bool AxisTest_X(Vector3 v0, Vector3 v1, Vector3 boxhalfsize, float a, float b)
         {
-            float min, max;
-            float p0 = a * v0.X - b * v0.Y;
-            float p1 = a * v1.X - b * v1.Y;
-            if (p0 < p1)
+            if (a != 0f && b != 0f)
             {
-                min = p0;
-                max = p1;
-            }
-            else
-            {
-                min = p1;
-                max = p0;
-            }
+                float min, max;
+                float p0 = a * v0.Y - b * v0.Z;
+                float p1 = a * v1.Y - b * v1.Z;
+                if (p0 < p1)
+                {
+                    min = p0;
+                    max = p1;
+                }
+                else
+                {
+                    min = p1;
+                    max = p0;
+                }
 
-            float rad = fa * boxhalfsize.X + fb * boxhalfsize.Y;
-            if (min > rad || max < -rad)
-            {
-                return false;
+                float fa = Math.Abs(a);
+                float fb = Math.Abs(b);
+
+                float rad = fa * boxhalfsize.Y + fb * boxhalfsize.Z;
+                if (min > rad || max < -rad)
+                {
+                    return false;
+                }
             }
 
             return true;
         }
 
-        private static bool AXISTEST_Y1(Vector3 v0, Vector3 v1, Vector3 boxhalfsize, float a, float b, float fa, float fb)
+        private static bool AxisTest_Y(Vector3 v0, Vector3 v1, Vector3 boxhalfsize, float a, float b)
         {
-            float min, max;
-            float p0 = -a * v0.X + b * v0.Z;
-            float p1 = -a * v1.X + b * v1.Z;
-            if (p0 < p1)
+            if (a != 0f && b != 0f)
             {
-                min = p0;
-                max = p1;
-            }
-            else
-            {
-                min = p1;
-                max = p0;
-            }
+                float min, max;
+                float p0 = -a * v0.X + b * v0.Z;
+                float p1 = -a * v1.X + b * v1.Z;
+                if (p0 < p1)
+                {
+                    min = p0;
+                    max = p1;
+                }
+                else
+                {
+                    min = p1;
+                    max = p0;
+                }
 
-            float rad = fa * boxhalfsize.X + fb * boxhalfsize.Z;
-            if (min > rad || max < -rad)
-            {
-                return false;
+                float fa = Math.Abs(a);
+                float fb = Math.Abs(b);
+
+                float rad = fa * boxhalfsize.X + fb * boxhalfsize.Z;
+                if (min > rad || max < -rad)
+                {
+                    return false;
+                }
             }
 
             return true;
         }
 
-        private static bool AXISTEST_Z12(Vector3 v1, Vector3 v2, Vector3 boxhalfsize, float a, float b, float fa, float fb)
+        private static bool AxisTest_Z(Vector3 v0, Vector3 v1, Vector3 boxhalfsize, float a, float b)
         {
-            float min, max;
-            float p1 = a * v1.X - b * v1.Y;
-            float p2 = a * v2.X - b * v2.Y;
-            if (p2 < p1)
+            if (a != 0f && b != 0f)
             {
-                min = p2;
-                max = p1;
-            }
-            else
-            {
-                min = p1;
-                max = p2;
-            }
+                float min, max;
+                float p0 = a * v0.X - b * v0.Y;
+                float p1 = a * v1.X - b * v1.Y;
+                if (p0 < p1)
+                {
+                    min = p0;
+                    max = p1;
+                }
+                else
+                {
+                    min = p1;
+                    max = p0;
+                }
 
-            float rad = fa * boxhalfsize.X + fb * boxhalfsize.Y;
-            if (min > rad || max < -rad)
-            {
-                return false;
+                float fa = Math.Abs(a);
+                float fb = Math.Abs(b);
+
+                float rad = fa * boxhalfsize.X + fb * boxhalfsize.Y;
+                if (min > rad || max < -rad)
+                {
+                    return false;
+                }
             }
 
             return true;
-        }
-
-        private static bool AXISTEST_Y02(Vector3 v0, Vector3 v2, Vector3 boxhalfsize, float a, float b, float fa, float fb)
-        {
-            float min, max;
-            float p0 = -a * v0.X + b * v0.Z;
-            float p2 = -a * v2.X + b * v2.Z;
-            if (p0 < p2)
-            {
-                min = p0;
-                max = p2;
-            }
-            else
-            {
-                min = p2;
-                max = p0;
-            }
-
-            float rad = fa * boxhalfsize.X + fb * boxhalfsize.Z;
-            if (min > rad || max < -rad)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private static bool AXISTEST_X01(Vector3 v0, Vector3 v2, Vector3 boxhalfsize, float a, float b, float fa, float fb)
-        {
-            float min, max;
-            float p0 = a * v0.Y - b * v0.Z;
-            float p2 = a * v2.Y - b * v2.Z;
-            if (p0 < p2)
-            {
-                min = p0;
-                max = p2;
-            }
-            else
-            {
-                min = p2;
-                max = p0;
-            }
-
-            float rad = fa * boxhalfsize.Y + fb * boxhalfsize.Z;
-            if (min > rad || max < -rad)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private static bool AXISTEST_X2(Vector3 v0, Vector3 v1, Vector3 boxhalfsize, float a, float b, float fa, float fb)
-        {
-            float min, max;
-            float p0 = a * v0.Y - b * v0.Z;
-            float p1 = a * v1.Y - b * v1.Z;
-            if (p0 < p1)
-            {
-                min = p0;
-                max = p1;
-            }
-            else
-            {
-                min = p1;
-                max = p0;
-            }
-
-            float rad = fa * boxhalfsize.Y + fb * boxhalfsize.Z;
-            if (min > rad || max < -rad)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private static void FINDMINMAX(float x0, float x1, float x2, out float min, out float max)
-        {
-            min = max = x0;
-
-            if (x1 < min) min = x1;
-            if (x1 > max) max = x1;
-            if (x2 < min) min = x2;
-            if (x2 > max) max = x2;
         }
         /// <summary>
         /// Obtiene si el punto especificado está contenido en el triángulo
@@ -632,14 +582,14 @@ namespace Physics
         private static bool PointInTriangle(Triangle tri, Vector3 point)
         {
             Vector3 u = new Vector3(
-                Triangle.PointFromVector3(point, tri.I1) - Triangle.PointFromVector3(tri.Point1, tri.I1),
-                Triangle.PointFromVector3(tri.Point2, tri.I1) - Triangle.PointFromVector3(tri.Point1, tri.I1),
-                Triangle.PointFromVector3(tri.Point3, tri.I1) - Triangle.PointFromVector3(tri.Point1, tri.I1));
+                PhysicsMathHelper.PointFromVector(point, tri.I1) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I1),
+                PhysicsMathHelper.PointFromVector(tri.Point2, tri.I1) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I1),
+                PhysicsMathHelper.PointFromVector(tri.Point3, tri.I1) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I1));
 
             Vector3 v = new Vector3(
-                Triangle.PointFromVector3(point, tri.I2) - Triangle.PointFromVector3(tri.Point1, tri.I2),
-                Triangle.PointFromVector3(tri.Point2, tri.I2) - Triangle.PointFromVector3(tri.Point1, tri.I2),
-                Triangle.PointFromVector3(tri.Point3, tri.I2) - Triangle.PointFromVector3(tri.Point1, tri.I2));
+                PhysicsMathHelper.PointFromVector(point, tri.I2) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I2),
+                PhysicsMathHelper.PointFromVector(tri.Point2, tri.I2) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I2),
+                PhysicsMathHelper.PointFromVector(tri.Point3, tri.I2) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I2));
 
             float a, b;
             if (u.Y == 0.0f)

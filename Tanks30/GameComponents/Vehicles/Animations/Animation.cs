@@ -12,18 +12,30 @@ namespace GameComponents.Vehicles.Animations
         /// Nombre de la animación
         /// </summary>
         public readonly string Name = null;
-        // Indice del bone que se va a animar
+        /// <summary>
+        /// Indice del bone que se va a animar
+        /// </summary>
         public readonly int Index = -1;
-        // Nombre del bone que se va a animar
+        /// <summary>
+        /// Nombre del bone que se va a animar
+        /// </summary>
         public readonly string BoneName = null;
 
-        // Bone que se va a animar
+        /// <summary>
+        /// Bone que se va a animar
+        /// </summary>
         private ModelBone m_Bone = null;
-        // Transformación a aplicar al bone
+        /// <summary>
+        /// Transformación a aplicar al bone
+        /// </summary>
         private Matrix m_Transform = Matrix.Identity;
-        // Eje de sobre el que se realiza la rotación
+        /// <summary>
+        /// Eje de sobre el que se realiza la rotación
+        /// </summary>
         private Vector3 m_Axis = Vector3.Up;
-        // Rotación
+        /// <summary>
+        /// Rotación
+        /// </summary>
         private Quaternion m_Rotation = Quaternion.Identity;
 
         /// <summary>

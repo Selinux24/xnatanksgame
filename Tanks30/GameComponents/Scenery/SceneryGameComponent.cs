@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Scenery
 {
-    using GameComponents.Camera;
+    using Common;
 
     /// <summary>
     /// Escenario
@@ -70,8 +70,8 @@ namespace GameComponents.Scenery
 
             this.Scenery.SetWorldViewProjection(
                 Matrix.Identity,
-                BaseCameraGameComponent.gViewMatrix,
-                BaseCameraGameComponent.gGlobalProjectionMatrix);
+                GlobalMatrices.gViewMatrix,
+                GlobalMatrices.gGlobalProjectionMatrix);
 
             this.Scenery.SetLights(
                 SceneryEnvironment.Ambient.Light0Enable,

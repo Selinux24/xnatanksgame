@@ -4,7 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Vehicles
 {
-    using GameComponents.Camera;
+    using Common;
+    using Common.Primitives;
     using GameComponents.Components.Particles;
     using GameComponents.Scenery;
     using Physics;
@@ -22,10 +23,6 @@ namespace GameComponents.Vehicles
         /// Administrador de contenidos
         /// </summary>
         protected ContentManager Content;
-        /// <summary>
-        /// Escenario
-        /// </summary>
-        protected SceneryGameComponent Scenery = null;
 
         /// <summary>
         /// Modelo
@@ -51,22 +48,18 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                //return this.m_Position;
-                if (this.OBB != null)
+                if (this.m_OBB != null)
                 {
-                    return this.OBB.Body.Position;
+                    return this.m_OBB.Position;
                 }
 
                 return Vector3.Zero;
             }
             set
             {
-                //this.m_Position = value;
-                if (this.OBB != null)
+                if (this.m_OBB != null)
                 {
-                    this.OBB.Body.Position = value;
-
-                    this.OBB.Body.CalculateDerivedData();
+                    this.m_OBB.SetPosition(value);
                 }
             }
         }
@@ -77,25 +70,18 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                //return this.m_Rotation;
-                if (this.OBB != null)
+                if (this.m_OBB != null)
                 {
-                    return this.OBB.Body.Orientation;
+                    return this.m_OBB.Orientation;
                 }
 
                 return Quaternion.Identity;
             }
             set
             {
-                //this.m_Rotation = value;
-
-                //this.m_Direction = Vector3.Transform(Vector3.Forward, this.m_Rotation);
-
-                if (this.OBB != null)
+                if (this.m_OBB != null)
                 {
-                    this.OBB.Body.Orientation = value;
-
-                    this.OBB.Body.CalculateDerivedData();
+                    this.m_OBB.SetOrientation(value);
                 }
 
                 this.RotationHasChanged = true;
@@ -145,16 +131,9 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                //Matrix world = Matrix.CreateScale(this.Scale);
-                //world *= Matrix.CreateFromQuaternion(this.Rotation);
-                //world *= Matrix.CreateFromQuaternion(this.m_Inclination);
-                //world *= Matrix.CreateTranslation(this.Position);
-
-                //return world;
-
-                if (this.OBB != null)
+                if (this.m_OBB != null)
                 {
-                    return this.OBB.Transform;
+                    return this.m_OBB.Transform;
                 }
 
                 return Matrix.Identity;
@@ -163,11 +142,13 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Obtiene la vista actual desde el modelo
         /// </summary>
-        public virtual Matrix CurrentView
+        public virtual Matrix CurrentPlayerControlTransform
         {
             get
             {
-                return this.m_CurrentPlayerControl.GetViewMatrix(this.m_AnimationController, this.CurrentTransform);
+                return this.m_CurrentPlayerControl.GetModelMatrix(
+                    this.m_AnimationController, 
+                    this.CurrentTransform);
             }
         }
 
@@ -179,7 +160,6 @@ namespace GameComponents.Vehicles
             : base(game)
         {
             this.Content = game.Content;
-            this.Scenery = (SceneryGameComponent)game.Services.GetService(typeof(SceneryGameComponent));
 
             this.m_SmokePlumeParticles = new SmokePlumeParticleSystem(game);
             this.m_SmokePlumeParticles.DrawOrder = 100;
@@ -200,15 +180,13 @@ namespace GameComponents.Vehicles
             // Modelo
             this.m_Model = Content.Load<Model>("Content/" + componentInfo.Model);
             this.m_TriangleInfo = this.m_Model.Tag as PrimitiveInfo;
-            this.m_Bsph = new BoundingSphere()
+            BoundingBox aabb = new BoundingBox()
             {
-                Center = this.m_TriangleInfo.BSph.Center,
-                Radius = this.m_TriangleInfo.BSph.Radius,
+                Min = this.m_TriangleInfo.AABB.Min,
+                Max = this.m_TriangleInfo.AABB.Max,
             };
 
-            this.m_OBB = CollisionBox.CreateFromBoundingBox(this.m_TriangleInfo.AABB);
-            this.m_OBB.Body.Mass = 100f;
-            this.m_OBB.Body.SetDamping(0.8f, 0.8f);
+            this.m_OBB = new CollisionBox(aabb, 1000f);
 
             // Velocidad máxima que puede alcanzar el tanque hacia delante
             this.MaxForwardVelocity = componentInfo.MaxForwardVelocity;
@@ -251,7 +229,7 @@ namespace GameComponents.Vehicles
                 if (this.m_Autopilot.Enabled)
                 {
                     // Piloto automático
-                    this.m_Autopilot.UpdateAutoPilot(this);
+                    this.m_Autopilot.UpdateAutoPilot(gameTime, this);
                 }
             }
 
@@ -265,7 +243,8 @@ namespace GameComponents.Vehicles
             //this.UpdatePosition(gameTime);
 
             // Establecer la visibilidad del vehículo
-            this.Visible = this.TransformedBSph.Intersects(BaseCameraGameComponent.gLODHighFrustum);
+            BoundingSphere sph = this.GetSPH();
+            this.Visible = sph.Intersects(GlobalMatrices.gLODHighFrustum);
 
             // Actualizar con el terreno
             //this.UpdateWithScenery(gameTime);
@@ -305,8 +284,8 @@ namespace GameComponents.Vehicles
                         SceneryEnvironment.Fog.SetFogToEffect(effect);
                         //SceneryEnvironment.Ambient.SetAmbientToEffect(effect);
 
-                        effect.View = BaseCameraGameComponent.gViewMatrix;
-                        effect.Projection = BaseCameraGameComponent.gGlobalProjectionMatrix;
+                        effect.View = GlobalMatrices.gViewMatrix;
+                        effect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
                         effect.World = this.m_BoneTransforms[mesh.ParentBone.Index] * modelTransform;
                     }
 
@@ -317,9 +296,13 @@ namespace GameComponents.Vehicles
             if (this.Damaged)
             {
                 this.m_SmokePlumeParticles.SetCamera(
-                    BaseCameraGameComponent.gViewMatrix,
-                    BaseCameraGameComponent.gGlobalProjectionMatrix);
+                    GlobalMatrices.gViewMatrix,
+                    GlobalMatrices.gGlobalProjectionMatrix);
             }
+
+#if DEBUG
+            this.DrawDebug(gameTime);
+#endif
         }
     }
 }

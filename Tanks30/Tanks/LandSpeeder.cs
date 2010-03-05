@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Tanks
 {
-    using GameComponents;
+    using Common;
     using GameComponents.Vehicles;
     using GameComponents.Vehicles.Animations;
 
@@ -108,11 +108,11 @@ namespace Tanks
 
                         if (this.IsAdvancing)
                         {
-                            this.Accelerate();
+                            this.Accelerate(gameTime);
                         }
                         else
                         {
-                            this.Brake();
+                            this.Brake(gameTime);
                         }
                     }
                     if (Keyboard.GetState().IsKeyDown(m_MoveBackwardKey))
@@ -121,24 +121,24 @@ namespace Tanks
 
                         if (this.IsAdvancing)
                         {
-                            this.Brake();
+                            this.Brake(gameTime);
                         }
                         else
                         {
-                            this.Accelerate();
+                            this.Accelerate(gameTime);
                         }
                     }
                     if (Keyboard.GetState().IsKeyDown(m_MoveUpKey))
                     {
                         driving = true;
 
-                        this.GoUp();
+                        this.GoUp(gameTime);
                     }
                     if (Keyboard.GetState().IsKeyDown(m_MoveDownKey))
                     {
                         driving = true;
 
-                        this.GoDown();
+                        this.GoDown(gameTime);
                     }
 
                     #endregion
@@ -149,13 +149,13 @@ namespace Tanks
                     {
                         driving = true;
 
-                        this.TurnLeft();
+                        this.TurnLeft(gameTime);
                     }
                     if (Keyboard.GetState().IsKeyDown(m_RotateRightTankKey))
                     {
                         driving = true;
 
-                        this.TurnRight();
+                        this.TurnRight(gameTime);
                     }
 
                     #endregion

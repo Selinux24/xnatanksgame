@@ -8,17 +8,29 @@ namespace GameComponents.Vehicles.Animations
     /// </summary>
     public class AnimationAxis : Animation
     {
-        // Ángulo inicial de la rotación en radianes
+        /// <summary>
+        /// Ángulo inicial de la rotación en radianes
+        /// </summary>
         private float m_RotationFrom = 0f;
-        // Ángulo final de la rotación en radianes
+        /// <summary>
+        /// Ángulo final de la rotación en radianes
+        /// </summary>
         private float m_RotationTo = 0f;
-        // Ángulo actual en radianes
+        /// <summary>
+        /// Ángulo actual en radianes
+        /// </summary>
         private float m_CurrentAngle = 0f;
-        // Velocidad angular de la animación
+        /// <summary>
+        /// Velocidad angular de la animación
+        /// </summary>
         private float m_AngularVelocity = 0f;
-        // Velocidad angular en radianes
+        /// <summary>
+        /// Velocidad angular en radianes
+        /// </summary>
         private float m_CurrentAngularVelocity = 0f;
-        // Indica si se realizará el giro de la animación en sentido inverso
+        /// <summary>
+        /// Indica si se realizará el giro de la animación en sentido inverso
+        /// </summary>
         private bool m_InverseAngle = false;
 
         /// <summary>

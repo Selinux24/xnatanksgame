@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 
 namespace Physics
 {
+    using Common.Primitives;
+
     /// <summary>
     /// Colección de triángulos
     /// </summary>
@@ -26,23 +28,12 @@ namespace Physics
         /// <summary>
         /// Obtiene el AABB circundante
         /// </summary>
-        public BoundingBox AABB { get; protected set; }
+        public override BoundingBox AABB { get; protected set; }
         /// <summary>
         /// Obtiene la esfera circundante
         /// </summary>
-        public BoundingSphere BSph { get; protected set; }
+        public override BoundingSphere SPH { get; protected set; }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="triangles">Lista de triángulos de la colección</param>
-        public CollisionTriangleSoup(Triangle[] triangles)
-        {
-            // Establecer la lista de triángulos
-            this.m_TriangleList = new List<Triangle>(triangles);
-
-            this.Update();
-        }
         /// <summary>
         /// Añade la lista de triángulos especificada
         /// </summary>
@@ -75,7 +66,21 @@ namespace Physics
             this.AABB = BoundingBox.CreateFromPoints(vertexList.ToArray());
 
             // Crear la esfera usando los vértices
-            this.BSph = BoundingSphere.CreateFromPoints(vertexList.ToArray());
+            this.SPH = BoundingSphere.CreateFromPoints(vertexList.ToArray());
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="triangles">Lista de triángulos de la colección</param>
+        /// <param name="mass">Masa</param>
+        public CollisionTriangleSoup(Triangle[] triangles, float mass)
+            : base(mass)
+        {
+            // Establecer la lista de triángulos
+            this.m_TriangleList = new List<Triangle>(triangles);
+
+            this.Update();
         }
     }
 }

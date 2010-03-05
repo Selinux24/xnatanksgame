@@ -6,68 +6,16 @@ namespace Physics
     /// <summary>
     /// Primitiva
     /// </summary>
-    public class CollisionPrimitive
+    public abstract class CollisionPrimitive : RigidBody
     {
         /// <summary>
-        /// Cuerpo representado por esta primitiva
+        /// Obtiene el AABB del cuerpo
         /// </summary>
-        public RigidBody Body = new RigidBody();
-
+        public abstract BoundingBox AABB { get; protected set; }
         /// <summary>
-        /// Obtiene la transformación resultante del cuerpo
+        /// Obtiene la esfera circundate de la primitiva
         /// </summary>
-        public Matrix Transform
-        {
-            get
-            {
-                if (this.Body != null)
-                {
-                    return this.Body.Transform;
-                }
-
-                return Matrix.Identity;
-            }
-        }
-        /// <summary>
-        /// Obtiene el eje X de la transformación
-        /// </summary>
-        public Vector3 XAxis
-        {
-            get
-            {
-                return this.Transform.Right;
-            }
-        }
-        /// <summary>
-        /// Obtiene el eje Y de la transformación
-        /// </summary>
-        public Vector3 YAxis
-        {
-            get
-            {
-                return this.Transform.Up;
-            }
-        }
-        /// <summary>
-        /// Obtiene el eje Z de la transformación
-        /// </summary>
-        public Vector3 ZAxis
-        {
-            get
-            {
-                return this.Transform.Backward;
-            }
-        }
-        /// <summary>
-        /// Obtiene la posición de la primitiva
-        /// </summary>
-        public Vector3 Position
-        {
-            get
-            {
-                return this.Transform.Translation;
-            }
-        }
+        public abstract BoundingSphere SPH { get; protected set; }
 
         /// <summary>
         /// Obtiene los ejes de transformación de la primitiva.
@@ -88,7 +36,17 @@ namespace Physics
                 return this.ZAxis;
             }
 
-            throw new NotImplementedException();
+            throw new NotSupportedException("Tipo de eje no soportado: " + axis.ToString());
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="mass">Masa</param>
+        public CollisionPrimitive(float mass)
+            : base(mass)
+        {
+
         }
     }
 }
