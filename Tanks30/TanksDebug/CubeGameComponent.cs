@@ -6,6 +6,7 @@ namespace TanksDebug
     using Common;
     using DrawingComponents;
     using Physics;
+    using Physics.CollideCoarse;
 
     /// <summary>
     /// Componente que dibuja geometría
@@ -147,14 +148,6 @@ namespace TanksDebug
             // Dibujar el AABB
             GameComponents.Debug.DebugDrawer.DrawDebugAABB(this.GraphicsDevice, this.GetAABB());
 #endif
-        }
-        /// <summary>
-        /// Registra el componente en el controlador de físicas
-        /// </summary>
-        /// <param name="controller">Controlador de físicas</param>
-        internal void Register(DemoPhysicsController controller)
-        {
-            controller.RegisterBox(this.m_Box);
         }
         /// <summary>
         /// Establece el estado inicial de posición y orientación del componente

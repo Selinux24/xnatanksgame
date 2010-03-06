@@ -57,11 +57,11 @@ namespace Physics
         /// <summary>
         /// Vector de aceleración
         /// </summary>
-        private Vector3 m_Acceleration = Vector3.Zero;
+        private Vector3 m_ConstantAcceleration = Vector3.Zero;
         /// <summary>
         /// Vector de aceleración del último frame
         /// </summary>
-        private Vector3 m_LastFrameAcceleration = Vector3.Zero;
+        private Vector3 m_CurrentAcceleration = Vector3.Zero;
 
         /// <summary>
         /// Tensor inverso de inercia
@@ -182,11 +182,11 @@ namespace Physics
         {
             get
             {
-                return this.m_Acceleration;
+                return this.m_ConstantAcceleration;
             }
             internal set
             {
-                this.m_Acceleration = value;
+                this.m_ConstantAcceleration = value;
             }
         }
         /// <summary>
@@ -196,7 +196,7 @@ namespace Physics
         {
             get
             {
-                return this.m_LastFrameAcceleration;
+                return this.m_CurrentAcceleration;
             }
         }
 
@@ -411,9 +411,12 @@ namespace Physics
                 float angularDampingOnTime = PhysicsMathHelper.Pow(this.m_AngularDamping, duration);
 
                 // Calcular la aceleración lineal desde las fuerzas
-                Vector3 acceleration = this.m_Acceleration;
-                this.m_LastFrameAcceleration = acceleration;
-                this.m_LastFrameAcceleration += Vector3.Multiply(this.m_ForceAccum, this.m_InverseMass);
+                this.m_CurrentAcceleration = this.m_ConstantAcceleration;
+                
+                if (this.m_ForceAccum != Vector3.Zero && this.m_InverseMass != 0f)
+                {
+                    this.m_CurrentAcceleration += Vector3.Multiply(this.m_ForceAccum, this.m_InverseMass);
+                }
 
                 // Calcular la aceleración angular desde los pares de torsión
                 Vector3 angularAcceleration = Matrix3.Transform(this.m_InverseInertiaTensorWorld, this.m_TorqueAccum);
@@ -421,7 +424,7 @@ namespace Physics
                 // Ajustar velocidades
                 
                 // Actualizar la velocidad lineal usando aceleración lineal
-                this.m_LinearVelocity += Vector3.Multiply(acceleration, duration);
+                this.m_LinearVelocity += Vector3.Multiply(this.m_CurrentAcceleration, duration);
 
                 // Actualizar la velocidad angular usando aceleración angular
                 this.m_AngularVelocity += Vector3.Multiply(angularAcceleration, duration);

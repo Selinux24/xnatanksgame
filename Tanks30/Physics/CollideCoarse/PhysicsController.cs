@@ -115,6 +115,12 @@ namespace Physics.CollideCoarse
         /// </summary>
         public void Reset()
         {
+            // Desactivar todas las balas
+            foreach (AmmoRound shot in this.m_ProyectileData)
+            {
+                shot.Deactivate();
+            }
+
             // Finalizar todas las explosiones
             m_ExplosionData.Clear();
         }
@@ -128,24 +134,31 @@ namespace Physics.CollideCoarse
             // Actualizar los proyectiles
             for (int i = 0; i < this.m_ProyectileData.Count; i++)
             {
-                this.m_ProyectileData[i].Integrate(time);
+                // Si está activo
+                if (this.m_ProyectileData[i].IsActive())
+                {
+                    this.m_ProyectileData[i].Integrate(time);
+                }
             }
 
             // Actualizar los vehículos
             for (int i = 0; i < this.m_VehicleData.Count; i++)
             {
-                IPhysicObject vehicle = this.m_VehicleData[i];
+                // Si está activo
+                if (this.m_VehicleData[i].IsActive())
+                {
+                    // Integrar y actualizar las variables
+                    this.m_VehicleData[i].Integrate(time);
+                }
 
-                // Integrar y actualizar las variables
-                vehicle.Integrate(time);
-
-                // Actualizar las explosiones
+                // Actualizar las explosiones contra el vehículo actual
                 Explosion[] explosions = this.m_ExplosionData.ToArray();
                 for (int e = 0; e < explosions.Length; e++)
                 {
                     if (explosions[e].IsActive)
                     {
-                        explosions[e].UpdateForce(ref vehicle, time);
+                        IPhysicObject pObj = this.m_VehicleData[i];
+                        explosions[e].UpdateForce(ref pObj, time);
                     }
                     else
                     {
@@ -168,99 +181,163 @@ namespace Physics.CollideCoarse
             // Generadores de contactos
             foreach (ContactGenerator contactGenerator in this.m_ContactGenerators)
             {
-                contactGenerator.AddContact(ref this.m_ContactData, 0);
-            }
-
-            // Chequear colisiones de los vehículos
-            foreach (IPhysicObject pObj in this.m_VehicleData)
-            {
-                CollisionPrimitive pObjPrimitive = pObj.GetPrimitive();
-
-                // Comprobar si se pueden almacenar más contactos
                 if (this.m_ContactData.HasFreeContacts())
                 {
-                    // Colisión contra el suelo de cada vehículo
-                    if (this.m_EsceneryPrimitive != null)
+                    contactGenerator.AddContact(ref this.m_ContactData, 0);
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            // Colisiones de cada proyectil y cada vehículo contra el suelo
+            if (this.m_EsceneryPrimitive != null)
+            {
+                // Recorrer los proyectiles
+                foreach (IPhysicObject sObj in this.m_ProyectileData)
+                {
+                    // Si hay contactos libres
+                    if (this.m_ContactData.HasFreeContacts())
                     {
+                        // Comprobar si el proyectil está activo
+                        if (sObj.IsActive())
+                        {
+                            // Obtener las primitivas del proyectil y del terreno
+                            CollisionPrimitive sObjPrimitive = sObj.GetPrimitive();
+                            CollisionPrimitive sceneryPrimitive = this.m_EsceneryPrimitive.GetContactedPrimitive(sObj);
+                            if (CollisionDetector.BetweenObjects(ref sObjPrimitive, ref sceneryPrimitive, ref m_ContactData))
+                            {
+                                // Generar la explosión
+                                if (sObj is AmmoRound)
+                                {
+                                    if (((AmmoRound)sObj).GenerateExplosion)
+                                    {
+                                        // Explosión
+                                        this.m_ExplosionData.Add(Explosion.CreateArtilleryExplosion(sObjPrimitive.Position));
+                                    }
+                                }
+
+                                // Informar de la colisión entre la bala y el suelo
+                                sObj.Contacted(this.m_EsceneryPrimitive);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Fin de la detección
+                        return;
+                    }
+                }
+
+                // Recorrer los vehículos
+                foreach (IPhysicObject pObj in this.m_VehicleData)
+                {
+                    // Si hay contactos libres
+                    if (this.m_ContactData.HasFreeContacts())
+                    {
+                        // Comprobar si el vehículo está activo
                         if (pObj.IsActive())
                         {
+                            // Obtener las primitivas del vehículo y del terreno
+                            CollisionPrimitive pObjPrimitive = pObj.GetPrimitive();
                             CollisionPrimitive sceneryPrimitive = this.m_EsceneryPrimitive.GetContactedPrimitive(pObj);
                             if (CollisionDetector.BetweenObjects(ref pObjPrimitive, ref sceneryPrimitive, ref this.m_ContactData))
                             {
-                                // Informar de la colisión entre la caja y el suelo
+                                // Informar de la colisión entre el vehículo y el terreno
                                 pObj.Contacted(this.m_EsceneryPrimitive);
                             }
                         }
                     }
+                    else
+                    {
+                        // Fin de la detección
+                        return;
+                    }
+                }
+            }
 
-                    // Colisiones contra cada proyectil
-                    foreach (IPhysicObject sObj in this.m_ProyectileData)
+            // Chequear colisiones de los vehículos y los proyectiles
+            foreach (IPhysicObject sObj in this.m_ProyectileData)
+            {
+                // Si hay contactos libres
+                if (this.m_ContactData.HasFreeContacts())
+                {
+                    if (sObj.IsActive())
                     {
                         CollisionPrimitive sObjPrimitive = sObj.GetPrimitive();
 
-                        //if (shot.ShotType != ShotType.UnUsed)
+                        // Recorrer los vehículos
+                        foreach (IPhysicObject pObj in this.m_VehicleData)
                         {
-                            // Colisión de bala y suelo
-                            if (this.m_EsceneryPrimitive != null)
+                            // Si hay contactos libres
+                            if (this.m_ContactData.HasFreeContacts())
                             {
-                                if (m_ContactData.HasFreeContacts())
-                                {
-                                    CollisionPrimitive sceneryPrimitive = this.m_EsceneryPrimitive.GetContactedPrimitive(sObj);
-                                    if (CollisionDetector.BetweenObjects(ref sObjPrimitive, ref sceneryPrimitive, ref m_ContactData))
-                                    {
-                                        //if (shot.ShotType == ShotType.Artillery)
-                                        //{
-                                        //    // Explosión
-                                        //    m_ExplosionData.Add(Explosion.CreateArtilleryExplosion(shot.Position));
-                                        //}
-
-                                        // Informar de la colisión entre la bala y el suelo
-                                        sObj.Contacted(this.m_EsceneryPrimitive);
-
-                                        // Bala anulada
-                                        break;
-                                    }
-                                }
-                            }
-
-                            // Comprobar si se pueden almacenar más colisiones
-                            if (m_ContactData.HasFreeContacts())
-                            {
+                                CollisionPrimitive pObjPrimitive = pObj.GetContactedPrimitive(sObj);
                                 if (CollisionDetector.BetweenObjects(ref pObjPrimitive, ref sObjPrimitive, ref m_ContactData))
                                 {
-                                    //if (shot.ShotType == ShotType.Artillery)
-                                    //{
-                                    //    // Explosión
-                                    //    m_ExplosionData.Add(Explosion.CreateArtilleryExplosion(shot.Position));
-                                    //}
+                                    if (sObj is AmmoRound)
+                                    {
+                                        if (((AmmoRound)sObj).GenerateExplosion)
+                                        {
+                                            // Explosión
+                                            this.m_ExplosionData.Add(Explosion.CreateArtilleryExplosion(sObjPrimitive.Position));
+                                        }
+                                    }
 
                                     // Informar de la colisión entre la caja y la bala
                                     pObj.Contacted(sObj);
                                     sObj.Contacted(pObj);
                                 }
                             }
+                            else
+                            {
+                                // Fin de la detección
+                                return;
+                            }
                         }
                     }
+                }
+                else
+                {
+                    // Fin de la detección
+                    return;
                 }
             }
 
             // Chequear colisiones entre vehículos
-            for (int i = 0; i < m_VehicleData.Count; i++)
+            for (int i = 0; i < this.m_VehicleData.Count; i++)
             {
-                for (int x = i + 1; x < m_VehicleData.Count; x++)
+                if (this.m_ContactData.HasFreeContacts())
                 {
-                    if (m_VehicleData[i].IsActive() || m_VehicleData[x].IsActive())
-                    {
-                        CollisionPrimitive primitive1 = m_VehicleData[i].GetPrimitive();
-                        CollisionPrimitive primitive2 = m_VehicleData[x].GetContactedPrimitive(m_VehicleData[i]);
+                    // Obtener la primitiva de colisión
+                    CollisionPrimitive primitive1 = this.m_VehicleData[i].GetPrimitive();
 
-                        if (CollisionDetector.BetweenObjects(ref primitive1, ref primitive2, ref m_ContactData))
+                    for (int x = i + 1; x < this.m_VehicleData.Count; x++)
+                    {
+                        if (this.m_ContactData.HasFreeContacts())
                         {
-                            // Informar de la colisión entre cajas
-                            m_VehicleData[i].Contacted(m_VehicleData[x]);
-                            m_VehicleData[x].Contacted(m_VehicleData[i]);
+                            if (this.m_VehicleData[i].IsActive() || this.m_VehicleData[x].IsActive())
+                            {
+                                // Obtener la segunda primitiva de colisión
+                                CollisionPrimitive primitive2 = this.m_VehicleData[x].GetContactedPrimitive(this.m_VehicleData[i]);
+                                if (CollisionDetector.BetweenObjects(ref primitive1, ref primitive2, ref this.m_ContactData))
+                                {
+                                    // Informar de la colisión entre cajas
+                                    this.m_VehicleData[i].Contacted(this.m_VehicleData[x]);
+                                    this.m_VehicleData[x].Contacted(this.m_VehicleData[i]);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            return;
                         }
                     }
+                }
+                else
+                {
+                    return;
                 }
             }
         }
@@ -273,6 +350,32 @@ namespace Physics.CollideCoarse
             if (this.m_ContactData.ContactCount > 0)
             {
                 this.m_ContactResolver.ResolveContacts(ref this.m_ContactData, time);
+            }
+        }
+
+        /// <summary>
+        /// Dispara un proyectil
+        /// </summary>
+        /// <param name="mass">Masa del proyectil</param>
+        /// <param name="range">Rango de disparo</param>
+        /// <param name="position">Posición de origen del disparo</param>
+        /// <param name="direction">Dirección del disparo</param>
+        /// <param name="appliedGravity">Gravedad aplicada</param>
+        /// <param name="radius">Radio</param>
+        /// <param name="generateExplosion">Indica si la colisión generará una explosión</param>
+        public void Fire(float mass, float range, Vector3 position, Vector3 direction, Vector3 appliedGravity, float radius, bool generateExplosion)
+        {
+            // Buscar la primera bala disponible
+            for (int i = 0; i < m_ProyectileData.Count; i++)
+            {
+                AmmoRound round = m_ProyectileData[i] as AmmoRound;
+                if (round != null && !round.IsActive())
+                {
+                    // Establecer el estado inicial de la bala con el tipo de munición actual y la posición por defecto
+                    round.Fire(mass, range, position, direction, appliedGravity, radius, generateExplosion);
+
+                    break;
+                }
             }
         }
     }

@@ -8,7 +8,6 @@ namespace ContentPipelineExtension
     using Common.Components;
     using Common.Format;
     using Common.Primitives;
-    using GameComponents.Scenery;
 
     /// <summary>
     /// Información de nodos del terreno

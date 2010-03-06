@@ -5,7 +5,6 @@ namespace ContentPipelineExtension
 {
     using Common.Components;
     using Common.Primitives;
-    using GameComponents.Scenery;
 
     /// <summary>
     /// 

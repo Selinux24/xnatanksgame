@@ -34,10 +34,10 @@ namespace Physics
         /// <summary>
         /// Modificador aplicado al mínimo momento de inercia para que un cuerpo se quede en reposo
         /// </summary>
-        public static float SleepEpsilon = 1f;
+        public static float SleepEpsilon = 0.5f;
         /// <summary>
         /// Modificador aplicado a las modificaciones en la orientación tras las colisiones
         /// </summary>
-        public static float OrientationContactFactor = 0.1f;
+        public static float OrientationContactFactor = 0.0f;
     }
 }

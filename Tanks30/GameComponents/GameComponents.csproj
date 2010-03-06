@@ -143,9 +143,6 @@
     <Compile Include="Scenery\SceneryEnvironmet.cs" />
     <Compile Include="Scenery\SceneryGameComponent.cs" />
     <Compile Include="Scenery\SceneryInfoGameComponent.cs" />
-    <Compile Include="Scenery\SceneryInfoNodeDrawn.cs" />
-    <Compile Include="Scenery\SceneryNode.cs" />
-    <Compile Include="Scenery\SceneryTriangleNode.cs" />
     <Compile Include="Scenery\SkyBoxGameComponent.cs" />
     <Compile Include="Text\TextDrawerComponent.cs" />
     <Compile Include="Vehicles\Animations\Animation.cs" />

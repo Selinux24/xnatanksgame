@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AmmoRound.cs" />
     <Compile Include="CollideCoarse\BVHNode.cs" />
     <Compile Include="CollideCoarse\PhysicsController.cs" />
     <Compile Include="CollisionBox.cs" />

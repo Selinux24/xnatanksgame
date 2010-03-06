@@ -109,10 +109,6 @@
       <Project>{2645CF09-370C-4539-8214-308F1C5A388E}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameComponents\GameComponents.csproj">
-      <Project>{E7AEEB7C-CE8A-4227-986B-FD3657076247}</Project>
-      <Name>GameComponents</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.ContentPipelineExtensions.targets" />
