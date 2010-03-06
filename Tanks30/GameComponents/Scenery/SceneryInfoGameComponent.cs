@@ -1,9 +1,11 @@
-using Common.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Scenery
 {
+    using Common.Components;
+    using Common.Primitives;
+
     /// <summary>
     /// Información en 2D del terreno
     /// </summary>
@@ -233,11 +235,11 @@ namespace GameComponents.Scenery
                     this.GraphicsDevice.Indices = m_NodesIndexBuffer;
 
                     this.GraphicsDevice.DrawIndexedPrimitives(
-                        PrimitiveType.LineList, 
-                        0, 
-                        0, 
-                        numVerts, 
-                        0, 
+                        PrimitiveType.LineList,
+                        0,
+                        0,
+                        numVerts,
+                        0,
                         numLines);
 
                     pass.End();

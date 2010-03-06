@@ -53,6 +53,23 @@ namespace Common
         public static bool InvertMouse = false;
 
         /// <summary>
+        /// Obtiene si el botón izquierdo del ratón está siendo presionado
+        /// </summary>
+        /// <returns>Devuelve verdadero si el botón izquierdo del ratón está siendo presionado</returns>
+        public static bool LeftMouseButtonPressed()
+        {
+            return (g_CurrentMouseState.LeftButton == ButtonState.Pressed);
+        }
+        /// <summary>
+        /// Obtiene si el botón izquierdo del ratón acaba de soltarse
+        /// </summary>
+        /// <returns>Devuelve verdadero si el botón izquierdo del ratón acaba de soltarse</returns>
+        public static bool LeftMouseButtonEvent()
+        {
+            return (g_CurrentMouseState.LeftButton == ButtonState.Pressed && g_LastMouseState.LeftButton == ButtonState.Released);
+        }
+
+        /// <summary>
         /// Inicializa el componente
         /// </summary>
         /// <param name="device">Dispositivo gráfico</param>

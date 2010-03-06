@@ -227,40 +227,6 @@ namespace Physics
             return 1.333333f * MathHelper.Pi * sphere.Radius * sphere.Radius * sphere.Radius;
         }
 
-        public static BoundingSphere CreateBoundingSphereFromTriangles(Triangle[] triangles)
-        {
-            List<Vector3> vertices = new List<Vector3>();
-
-            if (triangles != null && triangles.Length > 0)
-            {
-                for (int i = 0; i < triangles.Length; i++)
-                {
-                    vertices.Add(triangles[i].Point1);
-                    vertices.Add(triangles[i].Point2);
-                    vertices.Add(triangles[i].Point3);
-                }
-            }
-
-            return BoundingSphere.CreateFromPoints(vertices);
-        }
-
-        public static BoundingBox CreateBoundingBoxFromTriangles(Triangle[] triangles)
-        {
-            List<Vector3> vertices = new List<Vector3>();
-
-            if (triangles != null && triangles.Length > 0)
-            {
-                for (int i = 0; i < triangles.Length; i++)
-                {
-                    vertices.Add(triangles[i].Point1);
-                    vertices.Add(triangles[i].Point2);
-                    vertices.Add(triangles[i].Point3);
-                }
-            }
-
-            return BoundingBox.CreateFromPoints(vertices);
-        }
-
         public static void SaveToFile(Quaternion q, string filename)
         {
             StreamWriter wr = new StreamWriter(filename);

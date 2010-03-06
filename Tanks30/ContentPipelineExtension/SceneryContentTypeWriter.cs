@@ -1,6 +1,3 @@
-using Common.Components;
-using Common.Format;
-using GameComponents.Scenery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Processors;
@@ -9,6 +6,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ContentPipelineExtension
 {
+    using Common.Components;
+    using Common.Format;
+    using Common.Primitives;
+
     /// <summary>
     /// Generador del fichero binario con la información del terreno
     /// </summary>

@@ -6,6 +6,7 @@ namespace TanksDebug
 {
     using Common;
     using Physics;
+    using Physics.CollideCoarse;
 
     class TestTank : Microsoft.Xna.Framework.DrawableGameComponent
     {
@@ -143,10 +144,10 @@ namespace TanksDebug
             {
                 AmmoRound ammo = (AmmoRound)primitive;
 
-                this.TakeDamage(ammo.ShotType, ammo.Position);
+                this.TakeDamage(ammo.Mass, ammo.Velocity, ammo.Position);
             }
         }
-        void TakeDamage(ShotType shotType, Vector3 point)
+        void TakeDamage(float mass, Vector3 velocity, Vector3 point)
         {
             Vector3 pointTrn = Vector3.Transform(point, Matrix.Invert(this.Transform));
 
@@ -181,7 +182,7 @@ namespace TanksDebug
             }
 
             Random rnd = new Random(DateTime.Now.Millisecond);
-            int force = (int)shotType + rnd.Next(1, 6);
+            int force = rnd.Next(1, 6);
             if (force == armor)
             {
                 //Impacto superficial
@@ -192,11 +193,6 @@ namespace TanksDebug
                 //Impacto interno
                 this.m_Hull -= (force * 2);
             }
-        }
-
-        internal void Register(DemoPhysicsController physicsController)
-        {
-            physicsController.RegisterBox(m_Box);
         }
     }
 }

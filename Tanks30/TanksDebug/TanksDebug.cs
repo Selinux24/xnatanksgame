@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Input;
 namespace TanksDebug
 {
     using Common;
-    using DrawingComponents;
     using GameComponents.Camera;
     using GameComponents.Vehicles;
     using Physics;
@@ -105,28 +104,31 @@ namespace TanksDebug
             GameComponents.Debug.DebugDrawer.Initialize(this.GraphicsDevice);
 #endif
 
+            // Suelo
+            DemoScenery scn = new DemoScenery(this, _TerrainSize, GlobalTraslation, @"Content/dharma");
+            scn.UpdateOrder = 0;
+            this.Components.Add(scn);
+            this.Physics.RegisterEscenery(scn);
+
             // Cámara
             this.m_Camera = new CameraGameComponent(this);
             this.m_Camera.UseMouse = true;
             this.m_Camera.Mode = CameraGameComponent.CameraModes.FirstPerson;
+            this.m_Camera.UpdateOrder = 99;
             this.Components.Add(this.m_Camera);
-
-            // Suelo
-            DemoScenery scn = new DemoScenery(this, _TerrainSize, GlobalTraslation, @"Content/dharma");
-            this.Components.Add(scn);
-            this.Physics.RegisterEscenery(scn);
 
             // Inicializa las balas
             List<AmmoRound> roundList = new List<AmmoRound>();
             for (int i = 0; i < _AmmoRounds; i++)
             {
-                AmmoRound round = new AmmoRound(ShotType.UnUsed, 0f, 0f);
-                //this.Physics.RegisterProyectile(round);
+                AmmoRound round = new AmmoRound();
+                this.Physics.RegisterProyectile(round);
                 roundList.Add(round);
             }
 
             AmmoDrawer ammoDrawer = new AmmoDrawer(this);
             ammoDrawer.Rounds = roundList.ToArray();
+            ammoDrawer.UpdateOrder = 3;
             this.Components.Add(ammoDrawer);
 
             // Inicializa las cajas
@@ -143,26 +145,31 @@ namespace TanksDebug
                 CubeGameComponent cube = new CubeGameComponent(this, min, max);
                 this.Physics.RegisterVehicle(cube);
                 this.m_Cubes.Add(cube);
+                cube.UpdateOrder = 4;
                 this.Components.Add(cube);
             }
 
             // El tanque del jugador 1
             this.m_Rhino_1 = new Rhino(this);
+            this.m_Rhino_1.UpdateOrder = 5;
             this.Components.Add(this.m_Rhino_1);
             this.Physics.RegisterVehicle(m_Rhino_1);
 
             // El tanque del jugador 2
             this.m_Rhino_2 = new Rhino(this);
+            this.m_Rhino_2.UpdateOrder = 5;
             this.Components.Add(this.m_Rhino_2);
             this.Physics.RegisterVehicle(m_Rhino_2);
 
             // Land speeder 1
             this.m_LandSpeeder_1 = new LandSpeeder(this);
+            this.m_LandSpeeder_1.UpdateOrder = 5;
             this.Components.Add(this.m_LandSpeeder_1);
             this.Physics.RegisterVehicle(m_LandSpeeder_1);
 
             // Land speeder 2
             this.m_LandSpeeder_2 = new LandSpeeder(this);
+            this.m_LandSpeeder_2.UpdateOrder = 5;
             this.Components.Add(this.m_LandSpeeder_2);
             this.Physics.RegisterVehicle(m_LandSpeeder_2);
 
@@ -298,7 +305,7 @@ namespace TanksDebug
             #region Tanque 1
 
             // Captura de disparo del tanque 1
-            if (InputHelper.KeyDownEvent(Keys.Enter))
+            if (InputHelper.LeftMouseButtonEvent())
             {
                 this.Fire(gameTime, this.m_Rhino_1, this.m_CurrentShotType_1);
             }
@@ -412,14 +419,61 @@ namespace TanksDebug
         /// <summary>
         /// Disparar una bala
         /// </summary>
+        /// <param name="gameTime">Tiempo de juego</param>
+        /// <param name="vehicle">Vehículo que dispara</param>
+        /// <param name="shotType">Tipo de disparo</param>
         private void Fire(GameTime gameTime, Vehicle vehicle, ShotType shotType)
         {
-            //if (vehicle.CanFire(gameTime, shotType))
+            if (shotType != ShotType.UnUsed)
             {
-                //Vector3 direction = vehicle.Transform.Forward;
-                //Vector3 position = vehicle.CollisionPrimitive.Transform.Translation + ((direction * 3f) + Vector3.Up);
+                Vector3 direction = vehicle.CurrentPlayerControlTransform.Forward;
+                Vector3 position = vehicle.CurrentPlayerControlTransform.Translation + (direction * 3f);
 
-                //this.Physics.Fire(position, direction, shotType);
+                // Establece las propiedades de la bala según el tipo especificado
+                if (shotType == ShotType.HeavyBolter)
+                {
+                    this.Physics.Fire(
+                        1f,
+                        100f,
+                        position,
+                        Vector3.Normalize(direction) * 50.0f,
+                        Constants.FastProyectileGravityForce,
+                        0.2f,
+                        false);
+                }
+                else if (shotType == ShotType.Artillery)
+                {
+                    this.Physics.Fire(
+                        500f,
+                        1000f,
+                        position,
+                        Vector3.Normalize(direction + Vector3.Up) * 50.0f,
+                        Constants.GravityForce,
+                        0.4f,
+                        true);
+                }
+                else if (shotType == ShotType.FlameThrower)
+                {
+                    this.Physics.Fire(
+                        0.1f,
+                        50f,
+                        position,
+                        Vector3.Normalize(direction + (Vector3.Up * 0.5f)) * 30.0f,
+                        Constants.GravityForce,
+                        0.6f,
+                        false);
+                }
+                else if (shotType == ShotType.Laser)
+                {
+                    this.Physics.Fire(
+                        0.1f,
+                        2000f,
+                        position,
+                        Vector3.Normalize(direction) * 100.0f,
+                        Constants.ZeroMassGravityForce,
+                        0.2f,
+                        true);
+                }
             }
         }
     }

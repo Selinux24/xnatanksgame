@@ -76,13 +76,20 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BoundingBoxEx.cs" />
+    <Compile Include="BoundingSphereEx.cs" />
     <Compile Include="GlobalMatrices.cs" />
     <Compile Include="HeightMap.cs" />
     <Compile Include="InputHelper.cs" />
     <Compile Include="LOD.cs" />
     <Compile Include="Primitives\PrimitiveInfo.cs" />
+    <Compile Include="Primitives\SceneryInfoNodeDrawn.cs" />
+    <Compile Include="Primitives\SceneryNode.cs" />
+    <Compile Include="Primitives\SceneryTriangleNode.cs" />
     <Compile Include="Primitives\Triangle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VertexMultitextured.cs" />
@@ -113,6 +120,9 @@
       <ProductName>Microsoft XNA Framework Redistributable 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

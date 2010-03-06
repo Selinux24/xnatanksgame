@@ -5,6 +5,7 @@ namespace TanksDebug
 {
     using Common;
     using DrawingComponents;
+    using Physics;
 
     /// <summary>
     /// Componente que dibuja las balas
@@ -77,7 +78,7 @@ namespace TanksDebug
 
             foreach (AmmoRound round in Rounds)
             {
-                if (round.ShotType != ShotType.UnUsed)
+                if (round.IsActive())
                 {
                     float radius = round.Radius;
 

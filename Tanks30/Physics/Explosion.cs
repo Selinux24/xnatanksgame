@@ -95,7 +95,7 @@ namespace Physics
             if (primitive != null)
             {
                 // Detectar la fase de la explosión en la que estamos
-                if (m_TimePassed <= ImplosionDuration)
+                if (this.m_TimePassed <= this.ImplosionDuration)
                 {
                     // Fase de implosión
 
@@ -112,13 +112,13 @@ namespace Physics
                         primitive.AddForce(force);
                     }
                 }
-                else if (m_TimePassed <= (ImplosionDuration + ConcussionDuration))
+                else if (this.m_TimePassed <= (this.ImplosionDuration + this.ConcussionDuration))
                 {
                     // Honda expansiva
 
                     // Intervalo actual de máxima acción de la honda
-                    float min = this.ShockwaveSpeed * m_TimePassed;
-                    float max = this.ShockwaveSpeed * (m_TimePassed + duration);
+                    float min = this.ShockwaveSpeed * this.m_TimePassed;
+                    float max = this.ShockwaveSpeed * (this.m_TimePassed + duration);
 
                     // Distancia al centro del objeto
                     float distance = Vector3.Distance(primitive.Position, this.DetonationCenter);
@@ -134,7 +134,7 @@ namespace Physics
                         float relativeTime = 0f;
                         if (m_TimePassed < totalDuration)
                         {
-                            relativeTime = 1f - (m_TimePassed / totalDuration);
+                            relativeTime = 1f - (this.m_TimePassed / totalDuration);
                         }
 
                         forceMagnitude = this.PeakConcussionForce * relativeTime;
@@ -143,9 +143,9 @@ namespace Physics
                     {
                         // El objeto ha sido sobrepasado por la honda expansiva. Fuerza mínimamente atenuada
                         float relativeTime = 0f;
-                        if (m_TimePassed < totalDuration)
+                        if (this.m_TimePassed < totalDuration)
                         {
-                            relativeTime = 1f - (m_TimePassed / totalDuration);
+                            relativeTime = 1f - (this.m_TimePassed / totalDuration);
                         }
 
                         forceMagnitude = this.PeakConcussionForce * relativeTime;
@@ -160,9 +160,9 @@ namespace Physics
                         }
 
                         float relativeTime = 0f;
-                        if (m_TimePassed < totalDuration)
+                        if (this.m_TimePassed < totalDuration)
                         {
-                            relativeTime = 1f - (m_TimePassed / totalDuration);
+                            relativeTime = 1f - (this.m_TimePassed / totalDuration);
                         }
 
                         forceMagnitude = this.PeakConcussionForce * relativeDistance * relativeTime;
@@ -178,11 +178,11 @@ namespace Physics
                 else
                 {
                     // Fin de la explosión
-                    m_ExplosionActive = false;
+                    this.m_ExplosionActive = false;
                 }
             }
 
-            m_TimePassed += duration;
+            this.m_TimePassed += duration;
         }
 
         /// <summary>
