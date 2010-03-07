@@ -160,9 +160,7 @@
     <Compile Include="Vehicles\Vehicle.Physics.cs" />
     <Compile Include="Vehicles\Vehicle.Status.cs" />
     <Compile Include="Vehicles\VehicleComponentInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Physics\" />
+    <Compile Include="Weapons\Weapon.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

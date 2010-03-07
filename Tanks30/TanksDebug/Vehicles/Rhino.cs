@@ -6,6 +6,8 @@ namespace TanksDebug
     using Common;
     using GameComponents.Vehicles;
     using GameComponents.Vehicles.Animations;
+    using GameComponents.Weapons;
+    using Physics;
 
     /// <summary>
     /// Un rhino
@@ -14,15 +16,15 @@ namespace TanksDebug
     {
         #region Incialización del control de animación
 
-        AnimationAxis m_BOLTER; string _BOLTER = "Bolter";
-        Animation m_BOLTER_BASE; string _BOLTER_BASE = "BolterBase";
-        AnimationAxis m_BOLTER_HATCH; string _BOLTER_HATCH = "BolterHatch";
-        AnimationAxis m_DRIVER_HATCH; string _DRIVER_HATCH = "DriverHatch";
-        AnimationAxis m_RIGHT_HATCH; string _RIGHT_HATCH = "RightHatch";
-        AnimationAxis m_LEFT_HATCH; string _LEFT_HATCH = "LeftHatch";
-        AnimationAxis m_RIGHT_DOOR; string _RIGHT_DOOR = "RightDoor";
-        AnimationAxis m_LEFT_DOOR; string _LEFT_DOOR = "LeftDoor";
-        AnimationAxis m_BACK_DOOR; string _BACK_DOOR = "BackDoor";
+        private AnimationAxis m_BOLTER; string _BOLTER = "Bolter";
+        private Animation m_BOLTER_BASE; string _BOLTER_BASE = "BolterBase";
+        private AnimationAxis m_BOLTER_HATCH; string _BOLTER_HATCH = "BolterHatch";
+        private AnimationAxis m_DRIVER_HATCH; string _DRIVER_HATCH = "DriverHatch";
+        private AnimationAxis m_RIGHT_HATCH; string _RIGHT_HATCH = "RightHatch";
+        private AnimationAxis m_LEFT_HATCH; string _LEFT_HATCH = "LeftHatch";
+        private AnimationAxis m_RIGHT_DOOR; string _RIGHT_DOOR = "RightDoor";
+        private AnimationAxis m_LEFT_DOOR; string _LEFT_DOOR = "LeftDoor";
+        private AnimationAxis m_BACK_DOOR; string _BACK_DOOR = "BackDoor";
 
         #endregion
 
@@ -51,33 +53,48 @@ namespace TanksDebug
             CoveredBolter
         }
 
-        PlayerPosition m_DRIVER_POSITION; string _DRIVER_POSITION = "Driver";
-        PlayerPosition m_GUNNER_POSITION; string _GUNNER_POSITION = "Gunner";
-        PlayerPosition m_GUNNER_COVERED_POSITION; string _GUNNER_COVERED_POSITION = "CoveredGunner";
+        private PlayerPosition m_DRIVER_POSITION; string _DRIVER_POSITION = "Driver";
+        private PlayerPosition m_GUNNER_POSITION; string _GUNNER_POSITION = "Gunner";
+        private PlayerPosition m_GUNNER_COVERED_POSITION; string _GUNNER_COVERED_POSITION = "CoveredGunner";
+
+        #endregion
+
+        #region Armas
+
+        private Weapon m_Bolter = new Weapon()
+        {
+            Name = "Bolter de asalto",
+            Mass = 1f,
+            Range = 60f,
+            Velocity = 50f,
+            AppliedGravity = Constants.FastProyectileGravityForce,
+            Radius = 0.1f,
+            GenerateExplosion = false,
+        };
 
         #endregion
 
         #region Teclas
 
-        Keys m_MoveForwardKey = Keys.W;
-        Keys m_MoveBackwardKey = Keys.S;
-        Keys m_RotateLeftTankKey = Keys.A;
-        Keys m_RotateRightTankKey = Keys.D;
-        Keys m_ChangeDirectionKey = Keys.R;
-        Keys m_AutoPilotKey = Keys.P;
+        private Keys m_MoveForwardKey = Keys.W;
+        private Keys m_MoveBackwardKey = Keys.S;
+        private Keys m_RotateLeftTankKey = Keys.A;
+        private Keys m_RotateRightTankKey = Keys.D;
+        private Keys m_ChangeDirectionKey = Keys.R;
+        private Keys m_AutoPilotKey = Keys.P;
 
-        Keys m_BolterHatchKey = Keys.NumPad7;
-        bool m_BolterHatchAction = false;
-        Keys m_DriverHatchKey = Keys.NumPad9;
-        bool m_DriverHatchAction = false;
-        Keys m_BackDoorKey = Keys.NumPad2;
-        bool m_BackDoorAction = false;
-        Keys m_HatchDoorKey = Keys.NumPad5;
-        bool m_HatchDoorAction = false;
-        Keys m_RightDoorKey = Keys.NumPad6;
-        bool m_RightDoorAction = false;
-        Keys m_LeftDoorKey = Keys.NumPad4;
-        bool m_LeftDoorAction = false;
+        private Keys m_BolterHatchKey = Keys.NumPad7;
+        private bool m_BolterHatchAction = false;
+        private Keys m_DriverHatchKey = Keys.NumPad9;
+        private bool m_DriverHatchAction = false;
+        private Keys m_BackDoorKey = Keys.NumPad2;
+        private bool m_BackDoorAction = false;
+        private Keys m_HatchDoorKey = Keys.NumPad5;
+        private bool m_HatchDoorAction = false;
+        private Keys m_RightDoorKey = Keys.NumPad6;
+        private bool m_RightDoorAction = false;
+        private Keys m_LeftDoorKey = Keys.NumPad4;
+        private bool m_LeftDoorAction = false;
 
         #endregion
 
@@ -126,7 +143,7 @@ namespace TanksDebug
 
             #endregion
 
-            m_CurrentPlayerControl = m_GUNNER_POSITION;
+            this.SetPlayerPosition(Player.Bolter);
         }
         /// <summary>
         /// Actualiza el estado del componente
@@ -138,7 +155,7 @@ namespace TanksDebug
 
             if (this.HasFocus)
             {
-                if (m_CurrentPlayerControl == m_DRIVER_POSITION)
+                if (this.m_CurrentPlayerControl == this.m_DRIVER_POSITION)
                 {
                     bool driving = false;
 
@@ -236,15 +253,21 @@ namespace TanksDebug
 
                     #endregion
                 }
-                else if (m_CurrentPlayerControl == m_GUNNER_POSITION)
+                else if (this.m_CurrentPlayerControl == this.m_GUNNER_POSITION)
                 {
                     #region Bolter
 
                     // Apuntar el bolter
                     this.AimBolter(InputHelper.PitchDelta, InputHelper.YawDelta);
 
-                    #endregion
+                    //Disparar el bolter
+                    if (InputHelper.LeftMouseButtonEvent())
+                    {
+                        this.Fire();
+                    }
 
+                    #endregion
+                    
                     #region Bolter Hatch
 
                     if (InputHelper.KeyUpEvent(m_BolterHatchKey))
@@ -263,7 +286,7 @@ namespace TanksDebug
 
                     #endregion
                 }
-                else if (m_CurrentPlayerControl == m_GUNNER_COVERED_POSITION)
+                else if (this.m_CurrentPlayerControl == this.m_GUNNER_COVERED_POSITION)
                 {
                     #region Back Door
 
@@ -451,19 +474,27 @@ namespace TanksDebug
         {
             if (position == Player.Driver)
             {
-                m_CurrentPlayerControl = m_DRIVER_POSITION;
+                this.m_CurrentPlayerControl = this.m_DRIVER_POSITION;
+
+                this.SelectWeapon(null);
             }
             else if (position == Player.CoveredDriver)
             {
-                m_CurrentPlayerControl = m_DRIVER_POSITION;
+                this.m_CurrentPlayerControl = this.m_DRIVER_POSITION;
+
+                this.SelectWeapon(null);
             }
             else if (position == Player.Bolter)
             {
-                m_CurrentPlayerControl = m_GUNNER_POSITION;
+                this.m_CurrentPlayerControl = this.m_GUNNER_POSITION;
+
+                this.SelectWeapon(this.m_Bolter);
             }
             else if (position == Player.CoveredBolter)
             {
-                m_CurrentPlayerControl = m_GUNNER_COVERED_POSITION;
+                this.m_CurrentPlayerControl = this.m_GUNNER_COVERED_POSITION;
+
+                this.SelectWeapon(this.m_Bolter);
             }
         }
     }

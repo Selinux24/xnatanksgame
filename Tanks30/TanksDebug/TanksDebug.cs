@@ -70,15 +70,6 @@ namespace TanksDebug
         private LandSpeeder m_LandSpeeder_2 = null;
 
         /// <summary>
-        /// Tipo actual de munición
-        /// </summary>
-        private ShotType m_CurrentShotType_1 = ShotType.Laser;
-        /// <summary>
-        /// Tipo actual de munición
-        /// </summary>
-        private ShotType m_CurrentShotType_2 = ShotType.Laser;
-
-        /// <summary>
         /// Constructor
         /// </summary>
         public BigBallisticDemo()
@@ -87,6 +78,8 @@ namespace TanksDebug
             this.Graphics = new GraphicsDeviceManager(this);
             this.Content.RootDirectory = "";
             this.Physics = new PhysicsController();
+            
+            this.Services.AddService(typeof(PhysicsController), this.Physics);
         }
 
         /// <summary>
@@ -213,11 +206,11 @@ namespace TanksDebug
             // Físicas
             this.Physics.Update(gameTime);
 
-            // Fin de captura de entrada de usuario
-            InputHelper.End();
-
             // Actualización base
             base.Update(gameTime);
+
+            // Fin de captura de entrada de usuario
+            InputHelper.End();
         }
         /// <summary>
         /// Dibujado
@@ -302,119 +295,42 @@ namespace TanksDebug
         /// <param name="gameTime">Tiempo de juego</param>
         private void UpdateVehicles(GameTime gameTime)
         {
-            #region Tanque 1
-
-            // Captura de disparo del tanque 1
-            if (InputHelper.LeftMouseButtonEvent())
+            if (InputHelper.KeyUpEvent(Keys.D1))
             {
-                this.Fire(gameTime, this.m_Rhino_1, this.m_CurrentShotType_1);
-            }
+                this.m_Rhino_1.HasFocus = true;
+                this.m_Rhino_2.HasFocus = false;
+                this.m_LandSpeeder_1.HasFocus = false;
+                this.m_LandSpeeder_2.HasFocus = false;
 
-            if (InputHelper.KeyDownEvent(Keys.Divide))
+                this.m_Camera.ModelToFollow = this.m_Rhino_1;
+            }
+            else if (InputHelper.KeyUpEvent(Keys.D2))
             {
-                m_Rhino_1.SetNextPlayerPosition();
-            }
+                this.m_Rhino_1.HasFocus = false;
+                this.m_Rhino_2.HasFocus = true;
+                this.m_LandSpeeder_1.HasFocus = false;
+                this.m_LandSpeeder_2.HasFocus = false;
 
-            // Cambios de munición del tanque 1
-            if (InputHelper.KeyDownEvent(Keys.D1))
+                this.m_Camera.ModelToFollow = this.m_Rhino_2;
+            }
+            else if (InputHelper.KeyUpEvent(Keys.D3))
             {
-                m_CurrentShotType_1 = ShotType.HeavyBolter;
-            }
+                this.m_Rhino_1.HasFocus = false;
+                this.m_Rhino_2.HasFocus = false;
+                this.m_LandSpeeder_1.HasFocus = true;
+                this.m_LandSpeeder_2.HasFocus = false;
 
-            if (InputHelper.KeyDownEvent(Keys.D2))
+                this.m_Camera.ModelToFollow = this.m_LandSpeeder_1;
+            }
+            else if (InputHelper.KeyUpEvent(Keys.D4))
             {
-                m_CurrentShotType_1 = ShotType.FlameThrower;
+                this.m_Rhino_1.HasFocus = false;
+                this.m_Rhino_2.HasFocus = false;
+                this.m_LandSpeeder_1.HasFocus = false;
+                this.m_LandSpeeder_2.HasFocus = true;
+
+                this.m_Camera.ModelToFollow = this.m_LandSpeeder_2;
             }
-
-            if (InputHelper.KeyDownEvent(Keys.D3))
-            {
-                m_CurrentShotType_1 = ShotType.Artillery;
-            }
-
-            if (InputHelper.KeyDownEvent(Keys.D4))
-            {
-                m_CurrentShotType_1 = ShotType.Laser;
-            }
-
-            // Movimiento del tanque 1
-            if (InputHelper.IsKeyDown(Keys.Up))
-            {
-                m_Rhino_1.Accelerate(gameTime, 50f);
-            }
-
-            if (InputHelper.IsKeyDown(Keys.Down))
-            {
-                m_Rhino_1.Brake(gameTime, 50f);
-            }
-
-            if (InputHelper.IsKeyDown(Keys.Left))
-            {
-                m_Rhino_1.TurnLeft(gameTime, 0.1f);
-            }
-
-            if (InputHelper.IsKeyDown(Keys.Right))
-            {
-                m_Rhino_1.TurnRight(gameTime, 0.1f);
-            }
-
-            #endregion
-
-            #region Tanque 2
-
-            // Captura de disparo del tanque 2
-            if (InputHelper.KeyDownEvent(Keys.Space))
-            {
-                this.Fire(gameTime, this.m_Rhino_2, this.m_CurrentShotType_2);
-            }
-
-            if (InputHelper.KeyDownEvent(Keys.Tab))
-            {
-                m_Rhino_1.SetNextPlayerPosition();
-            }
-
-            // Cambios de munición del tanque 2
-            if (InputHelper.KeyDownEvent(Keys.D7))
-            {
-                m_CurrentShotType_2 = ShotType.HeavyBolter;
-            }
-
-            if (InputHelper.KeyDownEvent(Keys.D8))
-            {
-                m_CurrentShotType_2 = ShotType.FlameThrower;
-            }
-
-            if (InputHelper.KeyDownEvent(Keys.D9))
-            {
-                m_CurrentShotType_2 = ShotType.Artillery;
-            }
-
-            if (InputHelper.KeyDownEvent(Keys.D0))
-            {
-                m_CurrentShotType_2 = ShotType.Laser;
-            }
-
-            // Movimiento del tanque 2
-            if (InputHelper.IsKeyDown(Keys.I))
-            {
-                m_Rhino_2.Accelerate(gameTime, 50f);
-            }
-
-            if (InputHelper.IsKeyDown(Keys.K))
-            {
-                m_Rhino_2.Brake(gameTime, 50f);
-            }
-
-            if (InputHelper.IsKeyDown(Keys.J))
-            {
-                m_Rhino_2.TurnLeft(gameTime, 0.1f);
-            }
-
-            if (InputHelper.IsKeyDown(Keys.L))
-            {
-                m_Rhino_2.TurnRight(gameTime, 0.1f);
-            }
-
-            #endregion
         }
         /// <summary>
         /// Disparar una bala

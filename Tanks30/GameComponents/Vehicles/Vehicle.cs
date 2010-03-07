@@ -9,6 +9,7 @@ namespace GameComponents.Vehicles
     using GameComponents.Components.Particles;
     using GameComponents.Scenery;
     using Physics;
+    using Physics.CollideCoarse;
 
     /// <summary>
     /// Componente tanque
@@ -23,12 +24,19 @@ namespace GameComponents.Vehicles
         /// Administrador de contenidos
         /// </summary>
         protected ContentManager Content;
+        /// <summary>
+        /// Controlador de físicas
+        /// </summary>
+        protected PhysicsController PhysicsController;
 
         /// <summary>
         /// Modelo
         /// </summary>
         private Model m_Model;
-
+        /// <summary>
+        /// Matriz relativa para posicionar el vehículo sobre el terreno
+        /// </summary>
+        private Matrix m_Offset = Matrix.Identity;
         // Posición
         //private Vector3 m_Position = Vector3.Zero;
         // Rotación
@@ -133,10 +141,10 @@ namespace GameComponents.Vehicles
             {
                 if (this.m_OBB != null)
                 {
-                    return this.m_OBB.Transform;
+                    return this.m_OBB.Transform * this.m_Offset;
                 }
 
-                return Matrix.Identity;
+                return Matrix.Identity * this.m_Offset;
             }
         }
         /// <summary>
@@ -146,9 +154,14 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                return this.m_CurrentPlayerControl.GetModelMatrix(
-                    this.m_AnimationController, 
-                    this.CurrentTransform);
+                if (this.m_CurrentPlayerControl != null)
+                {
+                    return this.m_CurrentPlayerControl.GetModelMatrix(
+                        this.m_AnimationController,
+                        this.CurrentTransform);
+                }
+
+                return this.CurrentTransform;
             }
         }
 
@@ -160,6 +173,7 @@ namespace GameComponents.Vehicles
             : base(game)
         {
             this.Content = game.Content;
+            this.PhysicsController = (PhysicsController)game.Services.GetService(typeof(PhysicsController));
 
             this.m_SmokePlumeParticles = new SmokePlumeParticleSystem(game);
             this.m_SmokePlumeParticles.DrawOrder = 100;
@@ -180,22 +194,17 @@ namespace GameComponents.Vehicles
             // Modelo
             this.m_Model = Content.Load<Model>("Content/" + componentInfo.Model);
             this.m_TriangleInfo = this.m_Model.Tag as PrimitiveInfo;
-            BoundingBox aabb = new BoundingBox()
-            {
-                Min = this.m_TriangleInfo.AABB.Min,
-                Max = this.m_TriangleInfo.AABB.Max,
-            };
-
-            this.m_OBB = new CollisionBox(aabb, 1000f);
+            this.m_OBB = new CollisionBox(this.m_TriangleInfo.AABB, 1000f);
+            this.m_Offset = Matrix.CreateTranslation(new Vector3(0f, -this.m_OBB.HalfSize.Y, 0f));
 
             // Velocidad máxima que puede alcanzar el tanque hacia delante
             this.MaxForwardVelocity = componentInfo.MaxForwardVelocity;
             // Velocidad máxima que puede alcanzar el tanque marcha atrás
             this.MaxBackwardVelocity = componentInfo.MaxBackwardVelocity;
             // Modificador de aceleración
-            this.AccelerationModifier = MaxForwardVelocity / componentInfo.AccelerationModifier;
+            this.AccelerationModifier = this.MaxForwardVelocity / componentInfo.AccelerationModifier;
             // Modificador de frenado
-            this.BrakeModifier = AccelerationModifier * componentInfo.BrakeModifier;
+            this.BrakeModifier = this.AccelerationModifier * componentInfo.BrakeModifier;
             // Velocidad angular
             this.AngularVelocityModifier = MathHelper.ToRadians(componentInfo.AngularVelocityModifier);
             // Vehículo volador

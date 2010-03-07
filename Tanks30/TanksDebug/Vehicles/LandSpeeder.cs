@@ -6,13 +6,15 @@ namespace TanksDebug
     using Common;
     using GameComponents.Vehicles;
     using GameComponents.Vehicles.Animations;
+    using GameComponents.Weapons;
+    using Physics;
 
     public partial class LandSpeeder : Vehicle
     {
         #region Incialización del control de animación
 
-        AnimationAxis m_FusionCannon;
-        AnimationAxis m_FusionCannonBase;
+        private AnimationAxis m_FusionCannon;
+        private AnimationAxis m_FusionCannonBase;
 
         #endregion
 
@@ -33,21 +35,36 @@ namespace TanksDebug
             Gunner,
         }
 
-        PlayerPosition m_Driver;
-        PlayerPosition m_Gunner;
+        private PlayerPosition m_Driver;
+        private PlayerPosition m_Gunner;
+
+        #endregion
+
+        #region Armas
+
+        private Weapon m_MainWeapon = new Weapon()
+        {
+            Name = "Cañón de Fusión",
+            Mass = 5f,
+            Range = 90f,
+            Velocity = 50f,
+            AppliedGravity = Constants.ZeroMassGravityForce,
+            Radius = 0.3f,
+            GenerateExplosion = true,
+        };
 
         #endregion
 
         #region Teclas
 
-        Keys m_MoveForwardKey = Keys.W;
-        Keys m_MoveBackwardKey = Keys.S;
-        Keys m_MoveUpKey = Keys.U;
-        Keys m_MoveDownKey = Keys.I;
-        Keys m_RotateLeftTankKey = Keys.A;
-        Keys m_RotateRightTankKey = Keys.D;
-        Keys m_ChangeDirectionKey = Keys.R;
-        Keys m_AutoPilotKey = Keys.P;
+        private Keys m_MoveForwardKey = Keys.W;
+        private Keys m_MoveBackwardKey = Keys.S;
+        private Keys m_MoveUpKey = Keys.U;
+        private Keys m_MoveDownKey = Keys.I;
+        private Keys m_RotateLeftTankKey = Keys.A;
+        private Keys m_RotateRightTankKey = Keys.D;
+        private Keys m_ChangeDirectionKey = Keys.R;
+        private Keys m_AutoPilotKey = Keys.P;
 
         #endregion
 
@@ -190,10 +207,15 @@ namespace TanksDebug
                 }
                 if (m_CurrentPlayerControl == m_Gunner)
                 {
-                    #region Heavy Bolter
+                    #region Fusion Cannon
 
                     // Apuntar el bolter
                     this.AimFusionCannon(InputHelper.PitchDelta, InputHelper.YawDelta);
+
+                    if (InputHelper.LeftMouseButtonEvent())
+                    {
+                        this.Fire();
+                    }
 
                     #endregion
                 }
@@ -219,11 +241,15 @@ namespace TanksDebug
         {
             if (position == Player.Driver)
             {
-                m_CurrentPlayerControl = m_Driver;
+                this.m_CurrentPlayerControl = this.m_Driver;
+
+                this.SelectWeapon(null);
             }
             if (position == Player.Gunner)
             {
-                m_CurrentPlayerControl = m_Gunner;
+                this.m_CurrentPlayerControl = this.m_Gunner;
+
+                this.SelectWeapon(this.m_MainWeapon);
             }
         }
     }
