@@ -66,7 +66,7 @@ namespace Common
         /// <returns>Devuelve verdadero si el botón izquierdo del ratón acaba de soltarse</returns>
         public static bool LeftMouseButtonEvent()
         {
-            return (g_CurrentMouseState.LeftButton == ButtonState.Pressed && g_LastMouseState.LeftButton == ButtonState.Released);
+            return (g_CurrentMouseState.LeftButton == ButtonState.Released && g_LastMouseState.LeftButton == ButtonState.Pressed);
         }
 
         /// <summary>

@@ -34,6 +34,8 @@ namespace GameComponents.Readers
                 primitiveInfo.AddTriangles(currentIndex, primitiveList);
             }
 
+            primitiveInfo.Update();
+
             return primitiveInfo;
         }
     }

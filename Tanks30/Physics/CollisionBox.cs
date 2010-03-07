@@ -57,9 +57,20 @@ namespace Physics
         /// <param name="aabb">AABB</param>
         /// <param name="mass">Masa</param>
         public CollisionBox(BoundingBox aabb, float mass)
+            : this(aabb.Max, aabb.Min, mass)
+        {
+            
+        }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="max">Punto máximo de un AABB</param>
+        /// <param name="min">Punto mínimo de un AABB</param>
+        /// <param name="mass">Masa</param>
+        public CollisionBox(Vector3 max, Vector3 min, float mass)
             : base(mass)
         {
-            this.HalfSize = (aabb.Max - aabb.Min) * 0.5f;
+            this.HalfSize = (max - min) * 0.5f;
 
             this.m_SPH = BoundingSphere.CreateFromPoints(this.GetCorners());
         }
@@ -104,7 +115,7 @@ namespace Physics
 
             return corners;
         }
-        
+
         /// <summary>
         /// Establece el estado inicial de la caja en la posición y orientación indicadas
         /// </summary>

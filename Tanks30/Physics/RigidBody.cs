@@ -75,6 +75,10 @@ namespace Physics
         /// Matriz de transformación
         /// </summary>
         private Matrix m_TransformMatrix = Matrix.Identity;
+        /// <summary>
+        /// 
+        /// </summary>
+        protected Matrix Offset { get; set; }
 
         /// <summary>
         /// Indicador de estado del cuerpo
@@ -256,7 +260,7 @@ namespace Physics
         {
             get
             {
-                return this.m_TransformMatrix;
+                return this.m_TransformMatrix * this.Offset;
             }
         }
         /// <summary>
@@ -341,6 +345,8 @@ namespace Physics
         /// </summary>
         public RigidBody(float mass)
         {
+            this.Offset = Matrix.Identity;
+
             this.SetMass(mass);
 
             this.SetDamping(0.99f, 0.8f);
