@@ -4,9 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 namespace TanksDebug
 {
     using Common;
-    using DrawingComponents;
+    using Common.Drawing;
     using Physics;
-    using Physics.CollideCoarse;
 
     /// <summary>
     /// Componente que dibuja geometría

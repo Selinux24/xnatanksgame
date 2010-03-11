@@ -13,6 +13,7 @@ namespace Tanks
     using GameComponents.Scenery;
     using GameComponents.Text;
     using GameComponents.Vehicles;
+    using GameComponents.Weapons;
     using Physics.CollideCoarse;
     using Tanks.Services;
 
@@ -28,7 +29,7 @@ namespace Tanks
         /// <summary>
         /// Controlador de físicas
         /// </summary>
-        protected PhysicsController Physics = new PhysicsController();
+        protected PhysicsController Physics = null;
         /// <summary>
         /// Componente de texto
         /// </summary>
@@ -123,6 +124,10 @@ namespace Tanks
         public TanksGame()
         {
             this.Graphics = new GraphicsDeviceManager(this);
+
+            this.Physics = new PhysicsController();
+            this.Physics.InitializeProyectiles(100);
+            this.Services.AddService(typeof(PhysicsController), this.Physics);
         }
 
         /// <summary>
@@ -161,27 +166,13 @@ namespace Tanks
             this.m_VehicleContainer.UpdateOrder = 1;
             this.Services.AddService(typeof(VehicleContainerService), this.m_VehicleContainer);
 
-            this.m_Camera = new CameraGameComponent(this);
-            this.m_Camera.UseMouse = true;
-            this.m_Camera.UpdateOrder = 3;
-            this.Components.Add(this.m_Camera);
+            AmmoDrawer ammoDrawer = new AmmoDrawer(this);
+            ammoDrawer.Rounds = this.Physics.Proyectiles;
+            ammoDrawer.UpdateOrder = 2;
+            ammoDrawer.DrawOrder = 2;
+            this.Components.Add(ammoDrawer);
 
-            this.m_SkyBox = new SkyBoxGameComponent(this);
-            this.m_SkyBox.UpdateOrder = 4;
-            this.m_SkyBox.DrawOrder = 4;
-            this.Components.Add(this.m_SkyBox);
-
-            this.m_Info = new SceneryInfoGameComponent(this);
-            this.m_Info.UpdateOrder = 5;
-            this.m_Info.DrawOrder = 5;
-            this.Components.Add(this.m_Info);
-
-            this.m_TextDrawer = new TextDrawerComponent(this);
-            this.m_TextDrawer.UpdateOrder = 100;
-            this.m_TextDrawer.DrawOrder = 100;
-            this.Components.Add(this.m_TextDrawer);
-
-            Vehicle[] squad01 = AddSquadron(VehicleTypes.LandSpeeder, 2);
+            Vehicle[] squad01 = AddSquadron(VehicleTypes.LandSpeeder, 3);
             //Vehicle[] squad02 = AddSquadron(VehicleTypes.LandSpeeder, 3);
             //Vehicle[] squad03 = AddSquadron(VehicleTypes.LandSpeeder, 3);
             //Vehicle[] squad04 = AddSquadron(VehicleTypes.LandSpeeder, 3);
@@ -190,13 +181,34 @@ namespace Tanks
             //Vehicle[] squad04 = AddSquadron(VehicleTypes.LandRaider, 2);
             //Vehicle[] squad05 = AddSquadron(VehicleTypes.LemanRuss, 3);
             //Vehicle[] squad06 = AddSquadron(VehicleTypes.LemanRuss, 3);
-            //Vehicle[] squad07 = AddSquadron(VehicleTypes.Rhino, 3);
+            Vehicle[] squad07 = AddSquadron(VehicleTypes.Rhino, 3);
             //Vehicle[] squad08 = AddSquadron(VehicleTypes.Rhino, 3);
             //Vehicle[] squad09 = AddSquadron(VehicleTypes.Rhino, 3);
 
+            this.m_SkyBox = new SkyBoxGameComponent(this);
+            this.m_SkyBox.UpdateOrder = 97;
+            this.m_SkyBox.DrawOrder = 97;
+            this.Components.Add(this.m_SkyBox);
+
+            this.m_Camera = new CameraGameComponent(this);
+            this.m_Camera.UseMouse = true;
+            this.m_Camera.Mode = CameraGameComponent.CameraModes.FirstPerson;
+            this.m_Camera.UpdateOrder = 98;
+            this.Components.Add(this.m_Camera);
+
+            this.m_Info = new SceneryInfoGameComponent(this);
+            this.m_Info.UpdateOrder = 99;
+            this.m_Info.DrawOrder = 99;
+            this.Components.Add(this.m_Info);
+
+            this.m_TextDrawer = new TextDrawerComponent(this);
+            this.m_TextDrawer.UpdateOrder = 100;
+            this.m_TextDrawer.DrawOrder = 100;
+            this.Components.Add(this.m_TextDrawer);
+
             base.Initialize();
 
-            this.Physics.RegisterEscenery(this.m_Scenery.Scenery);
+            this.Physics.RegisterScenery(this.m_Scenery.Scenery);
 
             this.InitializeSquadron(squad01);
             //this.InitializeSquadron(squad02);
@@ -204,11 +216,13 @@ namespace Tanks
             //this.InitializeSquadron(squad04);
             //this.InitializeSquadron(squad05);
             //this.InitializeSquadron(squad06);
-            //this.InitializeSquadron(squad07);
+            this.InitializeSquadron(squad07);
             //this.InitializeSquadron(squad08);
             //this.InitializeSquadron(squad09);
 
-            squad01[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
+            this.SetFocus(squad01[1]);
+
+            //squad01[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
             //squad02[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
             //squad03[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
             //squad04[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
@@ -217,8 +231,6 @@ namespace Tanks
             //squad07[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
             //squad08[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
             //squad09[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 40f);
-
-            this.SetFocus(squad01[1]);
         }
         /// <summary>
         /// Actualizar los componentes del juego
@@ -350,7 +362,7 @@ namespace Tanks
                 // Posición de cada vehículo relativa al anterior
                 squadron[i].SetInitialState(squadron[i - 1].Position - Vector3.Multiply(Vector3.One, 10f), Quaternion.Identity);
                 // Indicar a cada vehículo que siga al anterior
-                squadron[i].AutoPilot.Follow(squadron[i - 1], 150f);
+                //squadron[i].AutoPilot.Follow(squadron[i - 1], 150f);
 
                 this.Physics.RegisterVehicle(squadron[i]);
             }

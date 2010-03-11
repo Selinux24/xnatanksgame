@@ -141,10 +141,10 @@ namespace GameComponents.Vehicles
             {
                 if (this.m_OBB != null)
                 {
-                    return this.m_OBB.Transform * this.m_Offset;
+                    return this.m_Offset * this.m_OBB.Transform;
                 }
 
-                return Matrix.Identity * this.m_Offset;
+                return this.m_Offset * Matrix.Identity;
             }
         }
         /// <summary>

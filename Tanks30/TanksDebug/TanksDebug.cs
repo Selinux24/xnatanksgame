@@ -8,9 +8,9 @@ namespace TanksDebug
 {
     using Common;
     using GameComponents.Camera;
-    using GameComponents.Vehicles;
-    using Physics;
+    using GameComponents.Weapons;
     using Physics.CollideCoarse;
+    using Vehicles;
 
     /// <summary>
     /// Demostración de disparos
@@ -77,8 +77,9 @@ namespace TanksDebug
         {
             this.Graphics = new GraphicsDeviceManager(this);
             this.Content.RootDirectory = "";
+
             this.Physics = new PhysicsController();
-            
+            this.Physics.InitializeProyectiles(_AmmoRounds);
             this.Services.AddService(typeof(PhysicsController), this.Physics);
         }
 
@@ -101,7 +102,7 @@ namespace TanksDebug
             DemoScenery scn = new DemoScenery(this, _TerrainSize, GlobalTraslation, @"Content/dharma");
             scn.UpdateOrder = 0;
             this.Components.Add(scn);
-            this.Physics.RegisterEscenery(scn);
+            this.Physics.RegisterScenery(scn);
 
             // Cámara
             this.m_Camera = new CameraGameComponent(this);
@@ -110,17 +111,8 @@ namespace TanksDebug
             this.m_Camera.UpdateOrder = 99;
             this.Components.Add(this.m_Camera);
 
-            // Inicializa las balas
-            List<AmmoRound> roundList = new List<AmmoRound>();
-            for (int i = 0; i < _AmmoRounds; i++)
-            {
-                AmmoRound round = new AmmoRound();
-                this.Physics.RegisterProyectile(round);
-                roundList.Add(round);
-            }
-
             AmmoDrawer ammoDrawer = new AmmoDrawer(this);
-            ammoDrawer.Rounds = roundList.ToArray();
+            ammoDrawer.Rounds = this.Physics.Proyectiles;
             ammoDrawer.UpdateOrder = 3;
             this.Components.Add(ammoDrawer);
 
@@ -330,66 +322,6 @@ namespace TanksDebug
                 this.m_LandSpeeder_2.HasFocus = true;
 
                 this.m_Camera.ModelToFollow = this.m_LandSpeeder_2;
-            }
-        }
-        /// <summary>
-        /// Disparar una bala
-        /// </summary>
-        /// <param name="gameTime">Tiempo de juego</param>
-        /// <param name="vehicle">Vehículo que dispara</param>
-        /// <param name="shotType">Tipo de disparo</param>
-        private void Fire(GameTime gameTime, Vehicle vehicle, ShotType shotType)
-        {
-            if (shotType != ShotType.UnUsed)
-            {
-                Vector3 direction = vehicle.CurrentPlayerControlTransform.Forward;
-                Vector3 position = vehicle.CurrentPlayerControlTransform.Translation + (direction * 3f);
-
-                // Establece las propiedades de la bala según el tipo especificado
-                if (shotType == ShotType.HeavyBolter)
-                {
-                    this.Physics.Fire(
-                        1f,
-                        100f,
-                        position,
-                        Vector3.Normalize(direction) * 50.0f,
-                        Constants.FastProyectileGravityForce,
-                        0.2f,
-                        false);
-                }
-                else if (shotType == ShotType.Artillery)
-                {
-                    this.Physics.Fire(
-                        500f,
-                        1000f,
-                        position,
-                        Vector3.Normalize(direction + Vector3.Up) * 50.0f,
-                        Constants.GravityForce,
-                        0.4f,
-                        true);
-                }
-                else if (shotType == ShotType.FlameThrower)
-                {
-                    this.Physics.Fire(
-                        0.1f,
-                        50f,
-                        position,
-                        Vector3.Normalize(direction + (Vector3.Up * 0.5f)) * 30.0f,
-                        Constants.GravityForce,
-                        0.6f,
-                        false);
-                }
-                else if (shotType == ShotType.Laser)
-                {
-                    this.Physics.Fire(
-                        0.1f,
-                        2000f,
-                        position,
-                        Vector3.Normalize(direction) * 100.0f,
-                        Constants.ZeroMassGravityForce,
-                        0.2f,
-                        true);
-                }
             }
         }
     }

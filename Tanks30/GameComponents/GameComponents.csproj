@@ -160,6 +160,7 @@
     <Compile Include="Vehicles\Vehicle.Physics.cs" />
     <Compile Include="Vehicles\Vehicle.Status.cs" />
     <Compile Include="Vehicles\VehicleComponentInfo.cs" />
+    <Compile Include="Weapons\AmmoDrawer.cs" />
     <Compile Include="Weapons\Weapon.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

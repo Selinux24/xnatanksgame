@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Tanks.Vehicles
+namespace Vehicles
 {
     using Common;
     using GameComponents.Vehicles;

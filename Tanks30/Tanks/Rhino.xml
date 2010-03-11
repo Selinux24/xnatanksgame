@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <VehicleComponentInfo>
   <Model>Rhino</Model>
-  <MaxForwardVelocity>5</MaxForwardVelocity>
-  <MaxBackwardVelocity>5</MaxBackwardVelocity>
-  <AccelerationModifier>15</AccelerationModifier>
-  <BrakeModifier>2</BrakeModifier>
-  <AngularVelocityModifier>15</AngularVelocityModifier>
+  <MaxForwardVelocity>120</MaxForwardVelocity>
+  <MaxBackwardVelocity>120</MaxBackwardVelocity>
+  <AccelerationModifier>25</AccelerationModifier>
+  <BrakeModifier>20</BrakeModifier>
+  <AngularVelocityModifier>10</AngularVelocityModifier>
   <AnimationControlers>
     <AnimationInfo>
       <Name>Bolter</Name>

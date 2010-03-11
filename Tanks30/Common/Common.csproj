@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="BoundingBoxEx.cs" />
     <Compile Include="BoundingSphereEx.cs" />
+    <Compile Include="Drawing\PolyGenerator.cs" />
     <Compile Include="GlobalMatrices.cs" />
     <Compile Include="HeightMap.cs" />
     <Compile Include="InputHelper.cs" />
@@ -120,9 +121,6 @@
       <ProductName>Microsoft XNA Framework Redistributable 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
