@@ -1,16 +1,16 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace TanksDebug
+namespace GameComponents.Weapons
 {
     using Common;
-    using DrawingComponents;
+    using Common.Drawing;
     using Physics;
 
     /// <summary>
     /// Componente que dibuja las balas
     /// </summary>
-    class AmmoDrawer : DrawableGameComponent
+    public class AmmoDrawer : DrawableGameComponent
     {
         /// <summary>
         /// Efecto

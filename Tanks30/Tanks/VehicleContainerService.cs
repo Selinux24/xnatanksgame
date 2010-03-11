@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Tanks.Services
 {
-    using Tanks.Vehicles;
+    using Vehicles;
 
     public class VehicleContainerService : GameComponent
     {

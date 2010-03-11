@@ -87,9 +87,6 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LandRaider.cs" />
-    <Compile Include="LandSpeeder.cs" />
-    <Compile Include="LemanRuss.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs">
       <Name>Program</Name>
@@ -98,9 +95,6 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="Rhino.cs">
-      <Name>Rhino</Name>
     </Compile>
     <Compile Include="VehicleContainerService.cs">
       <Name>TankContainerService</Name>
@@ -159,6 +153,10 @@
     <ProjectReference Include="..\Physics\Physics.csproj">
       <Project>{F195B1D9-335D-493A-B74C-C7AA42E37A68}</Project>
       <Name>Physics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Vehicles\Vehicles.csproj">
+      <Project>{E260AE3C-DA41-456D-8B3D-A8CD088BD0C1}</Project>
+      <Name>Vehicles</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

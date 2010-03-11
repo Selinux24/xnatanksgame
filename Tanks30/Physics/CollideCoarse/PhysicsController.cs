@@ -25,7 +25,7 @@ namespace Physics.CollideCoarse
         /// <summary>
         /// Terreno
         /// </summary>
-        private IPhysicObject m_EsceneryPrimitive = null;
+        private IPhysicObject m_SceneryPrimitive = null;
         /// <summary>
         /// Colección de vehículos
         /// </summary>
@@ -33,7 +33,7 @@ namespace Physics.CollideCoarse
         /// <summary>
         /// Colección de proyectiles
         /// </summary>
-        private List<IPhysicObject> m_ProyectileData = new List<IPhysicObject>();
+        private List<AmmoRound> m_ProyectileData = new List<AmmoRound>();
         /// <summary>
         /// Colección de explosiones
         /// </summary>
@@ -44,12 +44,53 @@ namespace Physics.CollideCoarse
         private List<ContactGenerator> m_ContactGenerators = new List<ContactGenerator>();
 
         /// <summary>
+        /// Obtiene el escenario registrado
+        /// </summary>
+        public IPhysicObject Scenery
+        {
+            get
+            {
+                return this.m_SceneryPrimitive;
+            }
+        }
+        /// <summary>
+        /// Obtiene la lista de vehículos registrados
+        /// </summary>
+        public IPhysicObject[] Vehicles
+        {
+            get
+            {
+                return this.m_VehicleData.ToArray();
+            }
+        }
+        /// <summary>
+        /// Obtiene la lista de proyectiles registrados
+        /// </summary>
+        public AmmoRound[] Proyectiles
+        {
+            get
+            {
+                return this.m_ProyectileData.ToArray();
+            }
+        }
+        /// <summary>
+        /// Obtiene la lista de explosiones registradas
+        /// </summary>
+        public Explosion[] Explosions
+        {
+            get
+            {
+                return this.m_ExplosionData.ToArray();
+            }
+        }
+
+        /// <summary>
         /// Registra la primitiva que actúa como suelo
         /// </summary>
-        /// <param name="escenery">Primitiva</param>
-        public void RegisterEscenery(IPhysicObject escenery)
+        /// <param name="scenery">Primitiva</param>
+        public void RegisterScenery(IPhysicObject scenery)
         {
-            this.m_EsceneryPrimitive = escenery;
+            this.m_SceneryPrimitive = scenery;
         }
         /// <summary>
         /// Registra una primitiva de colisión que actuará como vehículo
@@ -63,7 +104,7 @@ namespace Physics.CollideCoarse
         /// Registra una primitiva de colisión que actuará como disparo
         /// </summary>
         /// <param name="proyectile">Primitiva de colisión</param>
-        public void RegisterProyectile(IPhysicObject proyectile)
+        public void RegisterProyectile(AmmoRound proyectile)
         {
             this.m_ProyectileData.Add(proyectile);
         }
@@ -192,10 +233,10 @@ namespace Physics.CollideCoarse
             }
 
             // Colisiones de cada proyectil y cada vehículo contra el suelo
-            if (this.m_EsceneryPrimitive != null)
+            if (this.m_SceneryPrimitive != null)
             {
                 // Recorrer los proyectiles
-                foreach (IPhysicObject sObj in this.m_ProyectileData)
+                foreach (AmmoRound sObj in this.m_ProyectileData)
                 {
                     // Si hay contactos libres
                     if (this.m_ContactData.HasFreeContacts())
@@ -205,21 +246,18 @@ namespace Physics.CollideCoarse
                         {
                             // Obtener las primitivas del proyectil y del terreno
                             CollisionPrimitive sObjPrimitive = sObj.GetPrimitive();
-                            CollisionPrimitive sceneryPrimitive = this.m_EsceneryPrimitive.GetContactedPrimitive(sObj);
+                            CollisionPrimitive sceneryPrimitive = this.m_SceneryPrimitive.GetContactedPrimitive(sObj);
                             if (CollisionDetector.BetweenObjects(ref sObjPrimitive, ref sceneryPrimitive, ref m_ContactData))
                             {
                                 // Generar la explosión
-                                if (sObj is AmmoRound)
+                                if (sObj.GenerateExplosion)
                                 {
-                                    if (((AmmoRound)sObj).GenerateExplosion)
-                                    {
-                                        // Explosión
-                                        this.m_ExplosionData.Add(Explosion.CreateArtilleryExplosion(sObjPrimitive.Position));
-                                    }
+                                    // Explosión
+                                    this.m_ExplosionData.Add(Explosion.CreateArtilleryExplosion(sObjPrimitive.Position));
                                 }
 
                                 // Informar de la colisión entre la bala y el suelo
-                                sObj.Contacted(this.m_EsceneryPrimitive);
+                                sObj.Contacted(this.m_SceneryPrimitive);
                             }
                         }
                     }
@@ -241,11 +279,11 @@ namespace Physics.CollideCoarse
                         {
                             // Obtener las primitivas del vehículo y del terreno
                             CollisionPrimitive pObjPrimitive = pObj.GetPrimitive();
-                            CollisionPrimitive sceneryPrimitive = this.m_EsceneryPrimitive.GetContactedPrimitive(pObj);
+                            CollisionPrimitive sceneryPrimitive = this.m_SceneryPrimitive.GetContactedPrimitive(pObj);
                             if (CollisionDetector.BetweenObjects(ref pObjPrimitive, ref sceneryPrimitive, ref this.m_ContactData))
                             {
                                 // Informar de la colisión entre el vehículo y el terreno
-                                pObj.Contacted(this.m_EsceneryPrimitive);
+                                pObj.Contacted(this.m_SceneryPrimitive);
                             }
                         }
                     }
@@ -258,7 +296,7 @@ namespace Physics.CollideCoarse
             }
 
             // Chequear colisiones de los vehículos y los proyectiles
-            foreach (IPhysicObject sObj in this.m_ProyectileData)
+            foreach (AmmoRound sObj in this.m_ProyectileData)
             {
                 // Si hay contactos libres
                 if (this.m_ContactData.HasFreeContacts())
@@ -276,13 +314,10 @@ namespace Physics.CollideCoarse
                                 CollisionPrimitive pObjPrimitive = pObj.GetContactedPrimitive(sObj);
                                 if (CollisionDetector.BetweenObjects(ref pObjPrimitive, ref sObjPrimitive, ref m_ContactData))
                                 {
-                                    if (sObj is AmmoRound)
+                                    if (sObj.GenerateExplosion)
                                     {
-                                        if (((AmmoRound)sObj).GenerateExplosion)
-                                        {
-                                            // Explosión
-                                            this.m_ExplosionData.Add(Explosion.CreateArtilleryExplosion(sObjPrimitive.Position));
-                                        }
+                                        // Explosión
+                                        this.m_ExplosionData.Add(Explosion.CreateArtilleryExplosion(sObjPrimitive.Position));
                                     }
 
                                     // Informar de la colisión entre la caja y la bala
@@ -353,6 +388,20 @@ namespace Physics.CollideCoarse
             }
         }
 
+        /// <summary>
+        /// Inicializar los proyectiles
+        /// </summary>
+        /// <param name="quantity">Cantidad de proyectiles</param>
+        public void InitializeProyectiles(int quantity)
+        {
+            List<AmmoRound> roundList = new List<AmmoRound>();
+            for (int i = 0; i < quantity; i++)
+            {
+                AmmoRound round = new AmmoRound();
+                this.RegisterProyectile(round);
+                roundList.Add(round);
+            }
+        }
         /// <summary>
         /// Dispara un proyectil
         /// </summary>
