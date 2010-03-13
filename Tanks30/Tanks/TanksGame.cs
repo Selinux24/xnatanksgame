@@ -166,7 +166,7 @@ namespace Tanks
             this.m_VehicleContainer.UpdateOrder = 1;
             this.Services.AddService(typeof(VehicleContainerService), this.m_VehicleContainer);
 
-            AmmoDrawer ammoDrawer = new AmmoDrawer(this);
+            AmmoDrawer ammoDrawer = new AmmoDrawer(this, @"Content/Steel 1");
             ammoDrawer.Rounds = this.Physics.Proyectiles;
             ammoDrawer.UpdateOrder = 2;
             ammoDrawer.DrawOrder = 2;

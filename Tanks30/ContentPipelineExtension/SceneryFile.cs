@@ -19,6 +19,18 @@ namespace ContentPipelineExtension
         /// </summary>
         public float HeightMapCellScale;
         /// <summary>
+        /// Proporción de textura 1
+        /// </summary>
+        public float ProportionTexture1;
+        /// <summary>
+        /// Proporción de textura 2
+        /// </summary>
+        public float ProportionTexture2;
+        /// <summary>
+        /// Proporción de textura 3
+        /// </summary>
+        public float ProportionTexture3;
+        /// <summary>
         /// Fichero de efecto de renderizado
         /// </summary>
         public string EffectFile;

@@ -12,7 +12,7 @@ namespace GameComponents.Scenery
     public partial class SceneryInfoGameComponent : Microsoft.Xna.Framework.DrawableGameComponent
     {
         // Número máximo de vértices de nodo
-        private const int _MaxNodeVertexes = 2048;
+        private const int _MaxNodeVertexes = 4096;
         // Número máximo de índices de nodo
         private const int _MaxNodeIndexes = _MaxNodeVertexes * 2;
         // Vértices de nodo

@@ -30,17 +30,30 @@ namespace ContentPipelineExtension
             HeightMap heightMap = this.BuildHeightMap(terrain, input.HeightMapCellScale, context);
 
             // Generar los vértices e inicializar el buffer de vértices
-            VertexMultitextured[] vertList = heightMap.BuildVertices(input.HeightMapCellSize);
+            VertexMultitextured[] vertList = heightMap.BuildVertices(
+                input.HeightMapCellSize,
+                input.ProportionTexture1,
+                input.ProportionTexture2,
+                input.ProportionTexture3);
             VertexBufferContent vertexBuffer = new VertexBufferContent(VertexMultitextured.SizeInBytes * vertList.Length);
             vertexBuffer.Write<VertexMultitextured>(0, VertexMultitextured.SizeInBytes, vertList, context.TargetPlatform);
 
             // Generar los índices e inicializar los buffers de índices
-            double lowOrderLevels = (Math.Sqrt(heightMap.DataLength) - 1) / 2.0f;
-            int levels = Convert.ToInt32(Math.Log(lowOrderLevels, 4.0d));
-            SceneryNodeInfo sceneryIndexInfo = SceneryNodeInfo.Build(vertList, heightMap.Width, heightMap.Deep, levels);
+            double lowOrderLevels = (Math.Sqrt(heightMap.DataLength) - 1) * 0.5f;
+            int levelCount = Convert.ToInt32(Math.Log(lowOrderLevels, 4.0d));
+            SceneryNodeInfo sceneryIndexInfo = SceneryNodeInfo.Build(
+                vertList, 
+                heightMap.Width, 
+                heightMap.Deep, 
+                levelCount);
 
             // Efecto de renderización
-            CompiledEffect effect = Effect.CompileEffectFromFile(input.EffectFile, null, null, CompilerOptions.None, context.TargetPlatform);
+            CompiledEffect effect = Effect.CompileEffectFromFile(
+                input.EffectFile, 
+                null, 
+                null,
+                CompilerOptions.None,
+                context.TargetPlatform);
 
             // Texturas del terreno
             Texture2DContent texture1 = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.Texture1File), null);
