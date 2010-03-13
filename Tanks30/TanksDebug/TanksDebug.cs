@@ -111,7 +111,7 @@ namespace TanksDebug
             this.m_Camera.UpdateOrder = 99;
             this.Components.Add(this.m_Camera);
 
-            AmmoDrawer ammoDrawer = new AmmoDrawer(this);
+            AmmoDrawer ammoDrawer = new AmmoDrawer(this, @"Content/dharma");
             ammoDrawer.Rounds = this.Physics.Proyectiles;
             ammoDrawer.UpdateOrder = 3;
             this.Components.Add(ammoDrawer);

@@ -118,8 +118,8 @@ technique Textured
  {
      MultiTexPixelToFrame Output = (MultiTexPixelToFrame)0;
 
-     float blendDistance = 30;
-     float blendWidth = 50;
+     float blendDistance = 250;
+     float blendWidth = 10;
      float blendFactor = clamp((PSIn.Depth-blendDistance)/blendWidth, 0, 1);
      
      float lightingFactor = 1;

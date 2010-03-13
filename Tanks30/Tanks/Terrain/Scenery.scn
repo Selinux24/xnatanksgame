@@ -2,12 +2,15 @@
 <XnaContent>
   <Asset Type="ContentPipelineExtension.SceneryFile">
     <HeightMapFile>HM2.jpg</HeightMapFile>
-    <HeightMapCellSize>32</HeightMapCellSize>
-    <HeightMapCellScale>2.5</HeightMapCellScale>
+    <HeightMapCellSize>50</HeightMapCellSize>
+    <HeightMapCellScale>5</HeightMapCellScale>
+    <ProportionTexture1>0.25</ProportionTexture1>
+    <ProportionTexture2>0.5</ProportionTexture2>
+    <ProportionTexture3>0.8</ProportionTexture3>
     <EffectFile>Terrain.fx</EffectFile>
-    <Texture1File>snow.dds</Texture1File>
-    <Texture2File>rock.dds</Texture2File>
-    <Texture3File>sand.dds</Texture3File>
-    <Texture4File>grass.dds</Texture4File>
+    <Texture1File>snow.jpg</Texture1File>
+    <Texture2File>rock.jpg</Texture2File>
+    <Texture3File>sand.jpg</Texture3File>
+    <Texture4File>grass.png</Texture4File>
   </Asset>
 </XnaContent>

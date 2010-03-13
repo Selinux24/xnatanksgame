@@ -142,8 +142,11 @@ namespace Common.Helpers
         /// Construye los vértices a partir del mapa de alturas especificado
         /// </summary>
         /// <param name="cellSize">Tamaño de la celda</param>
+        /// <param name="pLevel1">Proporción de textura del nivel 1</param>
+        /// <param name="pLevel1">Proporción de textura del nivel 2</param>
+        /// <param name="pLevel1">Proporción de textura del nivel 3</param>
         /// <returns>Devuelve la colección de vértices</returns>
-        public VertexMultitextured[] BuildVertices(float cellSize)
+        public VertexMultitextured[] BuildVertices(float cellSize, float pLevel1, float pLevel2, float pLevel3)
         {
             // Contador de vértices
             int vertexCountX = this.Width;
@@ -151,9 +154,9 @@ namespace Common.Helpers
             int vertexCount = vertexCountX * vertexCountZ;
 
             float level0 = this.Min;
-            float level1 = this.Max * 0.1f;
-            float level2 = this.Max * 0.4f;
-            float level3 = this.Max * 0.5f;
+            float level1 = this.Max * pLevel1;
+            float level2 = this.Max * pLevel2;
+            float level3 = this.Max * pLevel3;
             float level4 = this.Max;
 
             // Crear los vértices

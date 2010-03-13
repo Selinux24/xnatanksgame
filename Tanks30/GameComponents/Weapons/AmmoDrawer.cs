@@ -29,6 +29,10 @@ namespace GameComponents.Weapons
         /// </summary>
         private short[] m_Indices = null;
         /// <summary>
+        /// Nombre de la textura
+        /// </summary>
+        private string m_TextureAsset = null;
+        /// <summary>
         /// Textura
         /// </summary>
         private Texture2D m_Texture = null;
@@ -41,10 +45,12 @@ namespace GameComponents.Weapons
         /// <summary>
         /// Constructor
         /// </summary>
-        public AmmoDrawer(Game game)
+        /// <param name="game">Juego</param>
+        /// <param name="textureAsset">Nombre de la textura</param>
+        public AmmoDrawer(Game game, string textureAsset)
             : base(game)
         {
-
+            this.m_TextureAsset = textureAsset;
         }
 
         /// <summary>
@@ -56,7 +62,7 @@ namespace GameComponents.Weapons
 
             this.m_VertexDeclaration = new VertexDeclaration(this.GraphicsDevice, VertexPositionNormalTexture.VertexElements);
             this.m_BasicEffect = new BasicEffect(this.GraphicsDevice, null);
-            this.m_Texture = this.Game.Content.Load<Texture2D>(@"Content/dharma");
+            this.m_Texture = this.Game.Content.Load<Texture2D>(this.m_TextureAsset);
 
             base.LoadContent();
         }
