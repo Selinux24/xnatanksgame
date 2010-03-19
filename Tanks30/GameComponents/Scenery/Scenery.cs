@@ -6,7 +6,7 @@ namespace GameComponents.Scenery
 {
     using Common.Components;
     using Common.Primitives;
-    
+
     /// <summary>
     /// Escenario
     /// </summary>
@@ -225,53 +225,21 @@ namespace GameComponents.Scenery
         }
 
         /// <summary>
-        /// Obtiene el nodo bajo las coordenadas especificadas
+        /// Obtiene la altura en el punto especificado
         /// </summary>
-        /// <param name="x">Componente x</param>
-        /// <param name="z">Componente z</param>
-        /// <returns>Devuelve el nodo bajo las coordenadas especificadas o null si no existe</returns>
-        private SceneryTriangleNode GetNode(float x, float z)
+        /// <param name="x">Coordenada X</param>
+        /// <param name="z">Coordenada Y</param>
+        /// <returns>Devuelve la componente Y en las coordenadas X y Z dadas</returns>
+        public float? GetHeigthAtPoint(float x, float z)
         {
-            return GetNode(x, z, this.Root);
-        }
-        /// <summary>
-        /// Obtiene el subnodo bajo las coordenadas especificadas en el nodo especificado
-        /// </summary>
-        /// <param name="x">Coordenada x</param>
-        /// <param name="z">Coordenada z</param>
-        /// <param name="node">Nodo en el que buscar el subnodo</param>
-        /// <returns>Devuelve el subnodo del nodo especificado bajo las coordenadas x, z o null si no existe</returns>
-        private SceneryTriangleNode GetNode(float x, float z, SceneryNode node)
-        {
-            if (node != null)
+            if (this.Root != null)
             {
-                if (node.HasChilds)
-                {
-                    if (node.NorthEast.Contains(x, z) != ContainmentType.Disjoint)
-                    {
-                        return GetNode(x, z, node.NorthEast);
-                    }
-                    else if (node.NorthWest.Contains(x, z) != ContainmentType.Disjoint)
-                    {
-                        return GetNode(x, z, node.NorthWest);
-                    }
-                    else if (node.SouthEast.Contains(x, z) != ContainmentType.Disjoint)
-                    {
-                        return GetNode(x, z, node.SouthEast);
-                    }
-                    else if (node.SouthWest.Contains(x, z) != ContainmentType.Disjoint)
-                    {
-                        return GetNode(x, z, node.SouthWest);
-                    }
-                }
-                else
-                {
-                    return node as SceneryTriangleNode;
-                }
+                return this.Root.GetHeigthAtPoint(x, z);
             }
 
             return null;
         }
+
         /// <summary>
         /// Obtiene la lista de nodos que tienen intersección con el AABB
         /// </summary>
@@ -328,46 +296,6 @@ namespace GameComponents.Scenery
         }
 
         /// <summary>
-        /// Obtiene si existe intersección entre el ray y el escenario
-        /// </summary>
-        /// <param name="x">Componente x</param>
-        /// <param name="z">Componente z</param>
-        /// <param name="triangle">Devuelve el triángulo de intersección si existe</param>
-        /// <param name="intersectionPoint">Devuelve el punto de intersección en el triángulo</param>
-        /// <param name="distanceToPoint">Devuelve la distancia entre el punto de intersección y el origen del rayo</param>
-        /// <returns>Devuelve verdadero si existe intersección o falso en el resto de los casos</returns>
-        public bool Intersects(float x, float z, out Triangle? triangle, out Vector3? intersectionPoint, out float? distanceToPoint)
-        {
-            Vector3 point = new Vector3(x, this.MinHeight, z);
-
-            Ray ray = new Ray(point, Vector3.Up);
-
-            return Intersects(ray, out triangle, out intersectionPoint, out distanceToPoint);
-        }
-        /// <summary>
-        /// Obtiene si existe intersección entre el ray y el escenario
-        /// </summary>
-        /// <param name="ray">Rayo</param>
-        /// <param name="triangle">Devuelve el triángulo de intersección si existe</param>
-        /// <param name="intersectionPoint">Devuelve el punto de intersección en el triángulo</param>
-        /// <param name="distanceToPoint">Devuelve la distancia entre el punto de intersección y el origen del rayo</param>
-        /// <returns>Devuelve verdadero si existe intersección o falso en el resto de los casos</returns>
-        public bool Intersects(Ray ray, out Triangle? triangle, out Vector3? intersectionPoint, out float? distanceToPoint)
-        {
-            triangle = null;
-            intersectionPoint = null;
-            distanceToPoint = null;
-
-            SceneryTriangleNode node = this.GetNode(ray.Position.X, ray.Position.Z);
-            if (node != null)
-            {
-                return node.Intersects(ray, out triangle, out intersectionPoint, out distanceToPoint);
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Establecer las matrices
         /// </summary>
         /// <param name="world">Martriz mundo</param>
@@ -415,13 +343,31 @@ namespace GameComponents.Scenery
             this.Effect.Parameters["xRockTexture"].SetValue(this.Texture2);
             this.Effect.Parameters["xGrassTexture"].SetValue(this.Texture3);
             this.Effect.Parameters["xSandTexture"].SetValue(this.Texture4);
+            this.Effect.Parameters["xBlendDistance"].SetValue(SceneryEnvironment.LevelOfDetail.HighZoneDistance);
+            this.Effect.Parameters["xBlendWidth"].SetValue(24f);
 
-            // Dibujar el nivel de detall máximo
-            this.LODDraw(device, gameTime, LOD.High);
-            // Dibujar el nivel de detalle medio
-            this.LODDraw(device, gameTime, LOD.Medium);
-            // Dibujar el nivel de menos detalle
-            this.LODDraw(device, gameTime, LOD.Low);
+            // Obtener los nodos visibles
+            SceneryNode[] lowLODnodes = this.Root.GetNodesToDraw(LOD.Low);
+            SceneryNode[] mediumLODnodes = this.Root.GetNodesToDraw(LOD.Medium);
+            SceneryNode[] highLODnodes = this.Root.GetNodesToDraw(LOD.High);
+
+            if (lowLODnodes != null && lowLODnodes.Length > 0)
+            {
+                // Dibujar el nivel de menos detalle
+                this.LODDraw(device, gameTime, lowLODnodes, LOD.Low);
+            }
+            
+            if (mediumLODnodes != null && mediumLODnodes.Length > 0)
+            {
+                // Dibujar el nivel de detalle medio
+                this.LODDraw(device, gameTime, mediumLODnodes, LOD.Medium);
+            }
+            
+            if (highLODnodes != null && highLODnodes.Length > 0)
+            {
+                // Dibujar el nivel de detall máximo
+                this.LODDraw(device, gameTime, highLODnodes, LOD.High);
+            }
 
 #if DEBUG
             this.DrawDebug(device, gameTime);
@@ -432,12 +378,11 @@ namespace GameComponents.Scenery
         /// </summary>
         /// <param name="device">Dispositivo gráfico</param>
         /// <param name="gameTime">Tiempo de juego</param>
+        /// <param name="nodesToDraw">Lista de nodos a dibujar</param>
         /// <param name="lod">Nivel de detalle</param>
-        private void LODDraw(GraphicsDevice device, GameTime gameTime, LOD lod)
+        private void LODDraw(GraphicsDevice device, GameTime gameTime, SceneryNode[] nodesToDraw, LOD lod)
         {
-            // Obtener los nodos visibles
-            SceneryNode[] nodesToDraw = this.Root.GetNodesToDraw(lod);
-            if (nodesToDraw.Length > 0)
+            if (nodesToDraw != null && nodesToDraw.Length > 0)
             {
                 // Comprobar si el nodo se debe dibujar
                 if ((this.LevelOfDetail != LOD.None) && (this.LevelOfDetail != lod))
@@ -445,8 +390,11 @@ namespace GameComponents.Scenery
                     return;
                 }
 
-                // Establecer los índices
+                // Establecer los índices según el nivel de detalle
                 device.Indices = this.TerrainIndexBuffers[lod];
+
+                // Cantidad de vértices del buffer
+                int vertexCount = this.TerrainBufferVertexCount;
 
                 this.Effect.Begin();
 
@@ -459,18 +407,96 @@ namespace GameComponents.Scenery
                         SceneryTriangleNode triNode = node as SceneryTriangleNode;
                         if (triNode != null)
                         {
-                            int vertexCount = this.TerrainBufferVertexCount;
-                            int startIndex = triNode.StartIndexes[lod];
-                            int primitivesToDraw = triNode.PrimitiveCount[lod];
+                            int centerPrimitiveCount = triNode.IndexInfo[lod].CenterPrimitiveCount;
+                            int borderConnectionPrimitiveCount = triNode.IndexInfo[lod].BorderConnectionPrimitiveCount;
+                            int borderPrimitiveCount = triNode.IndexInfo[lod].BorderPrimitiveCount;
 
-                            // Dibujar el nodo
-                            device.DrawIndexedPrimitives(
-                                PrimitiveType.TriangleList,
-                                0,
-                                0,
+                            // Dibujar el centro
+                            this.DrawNodePart(
+                                device,
+                                triNode.IndexInfo[lod].CenterOffset,
                                 vertexCount,
-                                startIndex,
-                                primitivesToDraw);
+                                centerPrimitiveCount);
+
+                            // Dibujar los bordes si es necesario
+                            if (borderPrimitiveCount > 0 || borderConnectionPrimitiveCount > 0)
+                            {
+                                if (triNode.IsNorthBorder)
+                                {
+                                    // Dibujar la conexión norte
+                                    this.DrawNodePart(
+                                        device,
+                                        triNode.IndexInfo[lod].NorthConnectionOffset,
+                                        vertexCount,
+                                        borderConnectionPrimitiveCount);
+                                }
+                                else
+                                {
+                                    // Dibujar el norte
+                                    this.DrawNodePart(
+                                        device,
+                                        triNode.IndexInfo[lod].NorthOffset,
+                                        vertexCount,
+                                        borderPrimitiveCount);
+                                }
+
+                                if (triNode.IsSouthBorder)
+                                {
+                                    // Dibujar la conexión norte
+                                    this.DrawNodePart(
+                                        device,
+                                        triNode.IndexInfo[lod].SouthConnectionOffset,
+                                        vertexCount,
+                                        borderConnectionPrimitiveCount);
+                                }
+                                else
+                                {
+                                    // Dibujar el norte
+                                    this.DrawNodePart(
+                                        device,
+                                        triNode.IndexInfo[lod].SouthOffset,
+                                        vertexCount,
+                                        borderPrimitiveCount);
+                                }
+
+                                if (triNode.IsWestBorder)
+                                {
+                                    // Dibujar la conexión norte
+                                    this.DrawNodePart(
+                                        device,
+                                        triNode.IndexInfo[lod].WestConnectionOffset,
+                                        vertexCount,
+                                        borderConnectionPrimitiveCount);
+                                }
+                                else
+                                {
+                                    // Dibujar el norte
+                                    this.DrawNodePart(
+                                        device,
+                                        triNode.IndexInfo[lod].WestOffset,
+                                        vertexCount,
+                                        borderPrimitiveCount);
+                                }
+
+                                if (triNode.IsEastBorder)
+                                {
+                                    // Dibujar la conexión norte
+                                    this.DrawNodePart(
+                                        device,
+                                        triNode.IndexInfo[lod].EastConnectionOffset,
+                                        vertexCount,
+                                        borderConnectionPrimitiveCount);
+                                }
+                                else
+                                {
+                                    // Dibujar el norte
+                                    this.DrawNodePart(
+                                        device,
+                                        triNode.IndexInfo[lod].EastOffset,
+                                        vertexCount,
+                                        borderPrimitiveCount);
+                                }
+                            }
                         }
                     }
 
@@ -478,6 +504,26 @@ namespace GameComponents.Scenery
                 }
 
                 this.Effect.End();
+            }
+        }
+        /// <summary>
+        /// Dibuja la parte del nodo especificada
+        /// </summary>
+        /// <param name="device">Dispositivo</param>
+        /// <param name="offset">Indice de inicio de la parte</param>
+        /// <param name="vertexCount">Número total de vértices</param>
+        /// <param name="primitiveCount">Número de primitivas a dibujar</param>
+        private void DrawNodePart(GraphicsDevice device, int offset, int vertexCount, int primitiveCount)
+        {
+            if (primitiveCount > 0)
+            {
+                device.DrawIndexedPrimitives(
+                    PrimitiveType.TriangleList,
+                    0,
+                    0,
+                    vertexCount,
+                    offset,
+                    primitiveCount);
             }
         }
 

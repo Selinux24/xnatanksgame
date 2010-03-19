@@ -56,9 +56,9 @@ namespace Common.Primitives
         /// </summary>
         protected Vector3 NodeCenter = Vector3.Zero;
         /// <summary>
-        /// Indica si el nodo ha sido dibujado
+        /// Indica si el nodo debe ser dibujado
         /// </summary>
-        protected bool Drawn = false;
+        protected bool ToDraw = false;
 
         /// <summary>
         /// Indica si el nodo tiene nodos hijo
@@ -173,6 +173,59 @@ namespace Common.Primitives
         }
 
         /// <summary>
+        /// Obtiene la altura en el punto especificado
+        /// </summary>
+        /// <param name="x">Coordenada X</param>
+        /// <param name="z">Coordenada Y</param>
+        /// <returns>Devuelve la componente Y en las coordenadas X y Z dadas</returns>
+        public virtual float? GetHeigthAtPoint(float x, float z)
+        {
+            float maxX = this.AABB.Max.X;
+            float maxZ = this.AABB.Max.Z;
+
+            float minX = this.AABB.Min.X;
+            float minZ = this.AABB.Min.Z;
+
+            if (x >= minX && x <= maxX && z >= minZ && z <= maxZ)
+            {
+                if (this.HasChilds)
+                {
+                    float? height = null;
+
+                    height = this.Childs[NodeHeads.NorthEast].GetHeigthAtPoint(x, z);
+                    if (height.HasValue)
+                    {
+                        return height;
+                    }
+
+                    height = this.Childs[NodeHeads.NorthWest].GetHeigthAtPoint(x, z);
+                    if (height.HasValue)
+                    {
+                        return height;
+                    }
+
+                    height = this.Childs[NodeHeads.SouthEast].GetHeigthAtPoint(x, z);
+                    if (height.HasValue)
+                    {
+                        return height;
+                    }
+
+                    height = this.Childs[NodeHeads.SouthWest].GetHeigthAtPoint(x, z);
+                    if (height.HasValue)
+                    {
+                        return height;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Construye la jerarquía del nodo actual
         /// </summary>
         /// <param name="northWest">Nodo al noroeste</param>
@@ -208,7 +261,7 @@ namespace Common.Primitives
         /// </summary>
         public virtual void PrepareForDrawing()
         {
-            Drawn = false;
+            ToDraw = false;
 
             foreach (SceneryNode node in Childs.Values)
             {
@@ -234,7 +287,7 @@ namespace Common.Primitives
                 }
 
                 // Marcar este nodo para dibujar
-                Drawn = true;
+                ToDraw = true;
 
                 // Devolver los nodos obtenidos para dibujar
                 return resultNodes.ToArray();
@@ -275,7 +328,7 @@ namespace Common.Primitives
         {
             List<SceneryInfoNodeDrawn> nodesDrawn = new List<SceneryInfoNodeDrawn>();
 
-            if (Drawn)
+            if (ToDraw)
             {
                 foreach (SceneryNode node in Childs.Values)
                 {
@@ -287,101 +340,154 @@ namespace Common.Primitives
         }
 
         /// <summary>
-        /// Obtiene si las coordenadas especificadas están sobre el nodo actual
+        /// Obtener el nodo del mismo nivel a norte
         /// </summary>
-        /// <param name="x">Coordenada x</param>
-        /// <param name="z">Coordenada z</param>
-        /// <returns>Devuelve si el punto está contenido en el nodo actual</returns>
-        public ContainmentType Contains(float x, float z)
+        /// <returns>Devuelve el nodo del mismo nivel al norte</returns>
+        public virtual SceneryNode GetNorthNode()
         {
-            Vector3 point = new Vector3(x, NodeCenter.Y, z);
-
-            return Contains(point);
-        }
-        /// <summary>
-        /// Obtiene si las coordenadas especificadas están sobre el nodo actual
-        /// </summary>
-        /// <param name="point">Punto</param>
-        /// <returns>Devuelve si el punto está contenido en el nodo actual</returns>
-        public ContainmentType Contains(Vector3 point)
-        {
-            return m_AABB.Contains(point);
-        }
-
-        /// <summary>
-        /// Obtiene existe intersección entre el rayo y el nodo actual
-        /// </summary>
-        /// <param name="ray">Rayo</param>
-        /// <returns>Devuelve verdadero si hay intersección o falso en el resto de los casos</returns>
-        public virtual bool Intersects(Ray ray)
-        {
-            Triangle? triangle = null;
-            Vector3? intersectionPoint = null;
-            float? distanceToPoint = null;
-
-            return Intersects(ray, out triangle, out intersectionPoint, out distanceToPoint);
-        }
-        /// <summary>
-        /// Obtiene existe intersección entre el rayo y el nodo actual
-        /// </summary>
-        /// <param name="ray">Rayo</param>
-        /// <param name="triangle">Devuelve el triángulo de corte si existe</param>
-        /// <returns>Devuelve verdadero si hay intersección o falso en el resto de los casos</returns>
-        public virtual bool Intersects(Ray ray, out Triangle? triangle)
-        {
-            Vector3? intersectionPoint = null;
-            float? distanceToPoint = null;
-
-            return Intersects(ray, out triangle, out intersectionPoint, out distanceToPoint);
-        }
-        /// <summary>
-        /// Obtiene existe intersección entre el rayo y el nodo actual
-        /// </summary>
-        /// <param name="ray">Rayo</param>
-        /// <param name="triangle">Devuelve el triángulo de corte si existe</param>
-        /// <param name="intersectionPoint">Devuelve el punto de corte con el triángulo si existe</param>
-        /// <returns>Devuelve verdadero si hay intersección o falso en el resto de los casos</returns>
-        public virtual bool Intersects(Ray ray, out Triangle? triangle, out Vector3? intersectionPoint)
-        {
-            float? distanceToPoint = null;
-
-            return Intersects(ray, out triangle, out intersectionPoint, out distanceToPoint);
-        }
-        /// <summary>
-        /// Obtiene existe intersección entre el rayo y el nodo actual
-        /// </summary>
-        /// <param name="ray">Rayo</param>
-        /// <param name="triangle">Devuelve el triángulo de corte si existe</param>
-        /// <param name="intersectionPoint">Devuelve el punto de corte con el triángulo si existe</param>
-        /// <param name="distanceToPoint">Devuelve la distancia desde el origen del rayo al punto de corte si existe</param>
-        /// <returns>Devuelve verdadero si hay intersección o falso en el resto de los casos</returns>
-        public virtual bool Intersects(Ray ray, out Triangle? triangle, out Vector3? intersectionPoint, out float? distanceToPoint)
-        {
-            triangle = null;
-            intersectionPoint = null;
-            distanceToPoint = null;
-
-            float? distance = m_AABB.Intersects(ray);
-            if (distance.HasValue)
+            if (this.Parent != null)
             {
-                foreach (SceneryNode node in Childs.Values)
+                if (this == this.Parent.NorthWest)
                 {
-                    Triangle? nodeTriangle = null;
-                    Vector3? nodeIntersectionPoint = null;
-                    float? nodeDistanceToPoint = null;
-
-                    if (node.Intersects(ray, out nodeTriangle, out nodeIntersectionPoint, out nodeDistanceToPoint))
+                    // Obtener el nodo al norte
+                    SceneryNode node = this.Parent.GetNorthNode();
+                    if (node != null)
                     {
-                        triangle = nodeTriangle;
-                        intersectionPoint = nodeIntersectionPoint;
-                        distanceToPoint = nodeDistanceToPoint;
+                        // Obtener el nodo al suroeste del nodo al norte
+                        return node.SouthWest;
+                    }
+                }
+                else if (this == this.Parent.NorthEast)
+                {
+                    // Obtener el nodo al norte
+                    SceneryNode node = this.Parent.GetNorthNode();
+                    if (node != null)
+                    {
+                        // Obtener el nodo al sureste del nodo al norte
+                        return node.SouthEast;
+                    }
+                }
+                else if (this == this.Parent.SouthWest)
+                {
+                    // Obtener el nodo al noroeste del nodo actual
+                    return this.Parent.NorthWest;
+                }
+                else if (this == this.Parent.SouthEast)
+                {
+                    // Obtener el nodo al noreste del nodo actual
+                    return this.Parent.NorthEast;
+                }
+            }
 
-                        return true;
+            return null;
+        }
+        /// <summary>
+        /// Obtener el nodo del mismo nivel a sur
+        /// </summary>
+        /// <returns>Devuelve el nodo del mismo nivel al sur</returns>
+        public virtual SceneryNode GetSouthNode()
+        {
+            if (this.Parent != null)
+            {
+                if (this == this.Parent.SouthEast)
+                {
+                    SceneryNode node = this.Parent.GetSouthNode();
+                    if (node != null)
+                    {
+                        return node.NorthEast;
+                    }
+                }
+                else if (this == this.Parent.SouthWest)
+                {
+                    SceneryNode node = this.Parent.GetSouthNode();
+                    if (node != null)
+                    {
+                        return node.NorthWest;
+                    }
+                }
+                else if (this == this.Parent.NorthEast)
+                {
+                    return this.Parent.SouthEast;
+                }
+                else if (this == this.Parent.NorthWest)
+                {
+                    return this.Parent.SouthWest;
+                }
+            }
+
+            return null;
+        }
+        /// <summary>
+        /// Obtener el nodo del mismo nivel a oeste
+        /// </summary>
+        /// <returns>Devuelve el nodo del mismo nivel al oeste</returns>
+        public virtual SceneryNode GetWestNode()
+        {
+            if (this.Parent != null)
+            {
+                if (this == this.Parent.SouthEast)
+                {
+                    return this.Parent.SouthWest;
+                }
+                else if (this == this.Parent.SouthWest)
+                {
+                    SceneryNode node = this.Parent.GetWestNode();
+                    if (node != null)
+                    {
+                        return node.SouthEast;
+                    }
+                }
+                else if (this == this.Parent.NorthEast)
+                {
+                    return this.Parent.NorthWest;
+                }
+                else if (this == this.Parent.NorthWest)
+                {
+                    SceneryNode node = this.Parent.GetWestNode();
+                    if (node != null)
+                    {
+                        return node.NorthEast;
                     }
                 }
             }
 
-            return false;
+            return null;
+        }
+        /// <summary>
+        /// Obtener el nodo del mismo nivel a este
+        /// </summary>
+        /// <returns>Devuelve el nodo del mismo nivel al este</returns>
+        public virtual SceneryNode GetEastNode()
+        {
+            if (this.Parent != null)
+            {
+                if (this == this.Parent.SouthEast)
+                {
+                    SceneryNode node = this.Parent.GetEastNode();
+                    if (node != null)
+                    {
+                        return node.SouthWest;
+                    }
+                }
+                else if (this == this.Parent.SouthWest)
+                {
+                    return this.Parent.SouthEast;
+                }
+                else if (this == this.Parent.NorthEast)
+                {
+                    SceneryNode node = this.Parent.GetEastNode();
+                    if (node != null)
+                    {
+                        return node.NorthWest;
+                    }
+                }
+                else if (this == this.Parent.NorthWest)
+                {
+                    return this.Parent.NorthEast;
+                }
+            }
+
+            return null;
         }
     }
 }

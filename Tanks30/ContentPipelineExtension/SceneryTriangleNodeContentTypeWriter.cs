@@ -18,8 +18,8 @@ namespace ContentPipelineExtension
             output.WriteObject<Triangle[]>(value.TriangleList);
 
             //Indices
-            LOD[] indexKeys = new LOD[value.StartIndexes.Keys.Count];
-            value.StartIndexes.Keys.CopyTo(indexKeys, 0);
+            LOD[] indexKeys = new LOD[value.IndexInfo.Keys.Count];
+            value.IndexInfo.Keys.CopyTo(indexKeys, 0);
 
             int indexKeyCount = indexKeys.Length;
             output.Write(indexKeyCount);
@@ -29,22 +29,7 @@ namespace ContentPipelineExtension
                 LOD key = indexKeys[k];
 
                 output.Write((int)key);
-                output.Write(value.StartIndexes[key]);
-            }
-
-            //Número de primitivas
-            LOD[] primitiveKeys = new LOD[value.PrimitiveCount.Keys.Count];
-            value.PrimitiveCount.Keys.CopyTo(primitiveKeys, 0);
-
-            int primitiveKeyCount = primitiveKeys.Length;
-            output.Write(primitiveKeyCount);
-
-            for (int k = 0; k < primitiveKeyCount; k++)
-            {
-                LOD key = primitiveKeys[k];
-
-                output.Write((int)key);
-                output.Write(value.PrimitiveCount[key]);
+                output.WriteObject<SceneryNodeIndexInfo>(value.IndexInfo[key]);
             }
         }
 

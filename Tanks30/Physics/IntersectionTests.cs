@@ -311,7 +311,7 @@ namespace Physics
             }
 
             Vector3 intersection = ray.Position + (t * ray.Direction);
-            if (PointInTriangle(tri, intersection))
+            if (Triangle.PointInTriangle(tri, intersection))
             {
                 float distance = Vector3.Distance(ray.Position, intersection);
 
@@ -573,51 +573,6 @@ namespace Physics
             }
 
             return true;
-        }
-        /// <summary>
-        /// Obtiene si el punto especificado está contenido en el triángulo
-        /// </summary>
-        /// <param name="point">Punto</param>
-        /// <returns>Devuelve verdadero si el punto está contenido en el triángulo, o falso en el resto de los casos</returns>
-        private static bool PointInTriangle(Triangle tri, Vector3 point)
-        {
-            Vector3 u = new Vector3(
-                PhysicsMathHelper.PointFromVector(point, tri.I1) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I1),
-                PhysicsMathHelper.PointFromVector(tri.Point2, tri.I1) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I1),
-                PhysicsMathHelper.PointFromVector(tri.Point3, tri.I1) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I1));
-
-            Vector3 v = new Vector3(
-                PhysicsMathHelper.PointFromVector(point, tri.I2) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I2),
-                PhysicsMathHelper.PointFromVector(tri.Point2, tri.I2) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I2),
-                PhysicsMathHelper.PointFromVector(tri.Point3, tri.I2) - PhysicsMathHelper.PointFromVector(tri.Point1, tri.I2));
-
-            float a, b;
-            if (u.Y == 0.0f)
-            {
-                b = u.X / u.Z;
-                if (b >= 0.0f && b <= 1.0f)
-                {
-                    a = (v.X - b * v.Z) / v.Y;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                b = (v.X * u.Y - u.X * v.Y) / (v.Z * u.Y - u.Z * v.Y);
-                if (b >= 0.0f && b <= 1.0f)
-                {
-                    a = (u.X - b * u.Z) / u.Y;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            return (a >= 0 && (a + b) <= 1);
         }
     }
 }

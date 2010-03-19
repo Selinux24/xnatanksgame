@@ -101,7 +101,7 @@ namespace Common
         /// <summary>
         /// Plano cercano
         /// </summary>
-        public static float FarClipPlane = 1000000f;
+        public static float FarClipPlane = 7500.0f;
 
         /// <summary>
         /// Actualiza la matriz de proyección

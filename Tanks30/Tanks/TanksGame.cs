@@ -220,7 +220,7 @@ namespace Tanks
             //this.InitializeSquadron(squad08);
             //this.InitializeSquadron(squad09);
 
-            this.SetFocus(squad01[1]);
+            this.SetFocus(squad01[0]);
 
             //squad01[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
             //squad02[0].AutoPilot.GoTo(new Vector3(RandomComponent.Next(10000), 0, RandomComponent.Next(10000)), 60f);
@@ -353,6 +353,12 @@ namespace Tanks
             // Punto de posición del escuadrón
             Vector3 where = new Vector3(RandomComponent.Next(5000) + 5000, 600, RandomComponent.Next(5000) + 5000);
 
+            float? h = this.m_Scenery.Scenery.GetHeigthAtPoint(where.X, where.Z);
+            if (h.HasValue)
+            {
+                where.Y = h.Value + 1f;
+            }
+
             squadron[0].SetInitialState(where, Quaternion.Identity);
 
             this.Physics.RegisterVehicle(squadron[0]);
@@ -360,7 +366,15 @@ namespace Tanks
             for (int i = 1; i < squadron.Length; i++)
             {
                 // Posición de cada vehículo relativa al anterior
-                squadron[i].SetInitialState(squadron[i - 1].Position - Vector3.Multiply(Vector3.One, 10f), Quaternion.Identity);
+                Vector3 rWhere = squadron[i - 1].Position - Vector3.Multiply(Vector3.One, 10f);
+
+                float? rh = this.m_Scenery.Scenery.GetHeigthAtPoint(rWhere.X, rWhere.Z);
+                if (rh.HasValue)
+                {
+                    rWhere.Y = rh.Value + 1f;
+                }
+
+                squadron[i].SetInitialState(rWhere, Quaternion.Identity);
                 // Indicar a cada vehículo que siga al anterior
                 //squadron[i].AutoPilot.Follow(squadron[i - 1], 150f);
 
