@@ -90,6 +90,7 @@
     <Compile Include="Primitives\PrimitiveInfo.cs" />
     <Compile Include="Primitives\SceneryInfoNodeDrawn.cs" />
     <Compile Include="Primitives\SceneryNode.cs" />
+    <Compile Include="Primitives\SceneryNodeIndexInfo.cs" />
     <Compile Include="Primitives\SceneryTriangleNode.cs" />
     <Compile Include="Primitives\Triangle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

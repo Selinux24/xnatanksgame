@@ -17,30 +17,17 @@ namespace GameComponents.Readers
             //Indices
             int indexKeyCount = input.ReadInt32();
 
-            Dictionary<LOD, int> startIndexes = new Dictionary<LOD, int>();
+            Dictionary<LOD, SceneryNodeIndexInfo> indexesInfo = new Dictionary<LOD, SceneryNodeIndexInfo>();
 
             for (int k = 0; k < indexKeyCount; k++)
             {
                 LOD key = (LOD)input.ReadInt32();
-                int index = input.ReadInt32();
+                SceneryNodeIndexInfo indexInfo = input.ReadObject<SceneryNodeIndexInfo>();
 
-                startIndexes.Add(key, index);
+                indexesInfo.Add(key, indexInfo);
             }
 
-            //Número de primitivas
-            int primitiveKeyCount = input.ReadInt32();
-
-            Dictionary<LOD, int> primitiveCount = new Dictionary<LOD, int>();
-
-            for (int k = 0; k < primitiveKeyCount; k++)
-            {
-                LOD key = (LOD)input.ReadInt32();
-                int index = input.ReadInt32();
-
-                primitiveCount.Add(key, index);
-            }
-
-            return new SceneryTriangleNode(triangles, startIndexes, primitiveCount);
+            return new SceneryTriangleNode(triangles, indexesInfo);
         }
     }
 }

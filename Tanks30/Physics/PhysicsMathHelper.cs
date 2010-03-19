@@ -152,31 +152,6 @@ namespace Physics
             return Vector3.Dot(point, plane.Normal) + plane.D;
         }
         /// <summary>
-        /// Obtiene el valor de la componente del vector especificado por índice
-        /// </summary>
-        /// <param name="vector">Vector</param>
-        /// <param name="index">Indice 0, 1 o 2 para obtener las componentes x, y o z</param>
-        /// <returns>Devuelve la componente del vector especificada por el índice</returns>
-        public static float PointFromVector(Vector3 vector, int index)
-        {
-            if (index == 0)
-            {
-                return vector.X;
-            }
-            else if (index == 1)
-            {
-                return vector.Y;
-            }
-            else if (index == 2)
-            {
-                return vector.Z;
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-        }
-        /// <summary>
         /// Obtiene los valores máximo y mínimo de los tres valores pasados
         /// </summary>
         /// <param name="x0">Valor 1</param>

@@ -5,6 +5,8 @@ float4x4 xWorld;
 float3 xLightDirection;
 float xAmbient;
 bool xEnableLighting;
+float xBlendDistance;
+float xBlendWidth;
 
 //------- Texture Samplers --------
 
@@ -118,8 +120,8 @@ technique Textured
  {
      MultiTexPixelToFrame Output = (MultiTexPixelToFrame)0;
 
-     float blendDistance = 250;
-     float blendWidth = 10;
+     float blendDistance = xBlendDistance;
+     float blendWidth = xBlendWidth;
      float blendFactor = clamp((PSIn.Depth-blendDistance)/blendWidth, 0, 1);
      
      float lightingFactor = 1;

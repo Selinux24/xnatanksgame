@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Scenery
 {
+    using Common;
+
     /// <summary>
     /// Variables de entorno global
     /// </summary>
@@ -11,11 +13,11 @@ namespace GameComponents.Scenery
         /// <summary>
         /// Plano de corte cercano
         /// </summary>
-        public static float GlobalNearClip = 0.1f;
+        public static float GlobalNearClip = GlobalMatrices.NearClipPlane;
         /// <summary>
         /// Plano de corte lejano
         /// </summary>
-        public static float GlobalFarClip = 5000.0f;
+        public static float GlobalFarClip = GlobalMatrices.FarClipPlane;
         /// <summary>
         /// Obtiene la distancia desde el punto de vista al plano lejano global
         /// </summary>
@@ -27,11 +29,11 @@ namespace GameComponents.Scenery
         public abstract class LevelOfDetail
         {
             public static float HighNearClip = GlobalNearClip;
-            public static float HighFarClip = (GlobalFarClip - GlobalNearClip) / 7.0f * 1.0f;
+            public static float HighFarClip = (GlobalFarClip - GlobalNearClip) * 0.20f;
             public static float HighZoneDistance = HighFarClip - GlobalNearClip;
 
             public static float MediumNearClip = HighFarClip;
-            public static float MediumFarClip = (GlobalFarClip - GlobalNearClip) / 7.0f * 3.0f;
+            public static float MediumFarClip = (GlobalFarClip - GlobalNearClip) * 0.40f;
             public static float MediumZoneDistance = MediumFarClip - GlobalNearClip;
 
             public static float LowNearClip = MediumFarClip;

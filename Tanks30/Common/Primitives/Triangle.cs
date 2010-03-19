@@ -82,5 +82,76 @@ namespace Common.Primitives
                 }
             }
         }
+
+        /// <summary>
+        /// Obtiene si el punto especificado está contenido en el triángulo
+        /// </summary>
+        /// <param name="point">Punto</param>
+        /// <returns>Devuelve verdadero si el punto está contenido en el triángulo, o falso en el resto de los casos</returns>
+        public static bool PointInTriangle(Triangle tri, Vector3 point)
+        {
+            Vector3 u = new Vector3(
+                Triangle.PointFromVector(point, tri.I1) - Triangle.PointFromVector(tri.Point1, tri.I1),
+                Triangle.PointFromVector(tri.Point2, tri.I1) - Triangle.PointFromVector(tri.Point1, tri.I1),
+                Triangle.PointFromVector(tri.Point3, tri.I1) - Triangle.PointFromVector(tri.Point1, tri.I1));
+
+            Vector3 v = new Vector3(
+                Triangle.PointFromVector(point, tri.I2) - Triangle.PointFromVector(tri.Point1, tri.I2),
+                Triangle.PointFromVector(tri.Point2, tri.I2) - Triangle.PointFromVector(tri.Point1, tri.I2),
+                Triangle.PointFromVector(tri.Point3, tri.I2) - Triangle.PointFromVector(tri.Point1, tri.I2));
+
+            float a, b;
+            if (u.Y == 0.0f)
+            {
+                b = u.X / u.Z;
+                if (b >= 0.0f && b <= 1.0f)
+                {
+                    a = (v.X - b * v.Z) / v.Y;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                b = (v.X * u.Y - u.X * v.Y) / (v.Z * u.Y - u.Z * v.Y);
+                if (b >= 0.0f && b <= 1.0f)
+                {
+                    a = (u.X - b * u.Z) / u.Y;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return (a >= 0 && (a + b) <= 1);
+        }
+        /// <summary>
+        /// Obtiene el valor de la componente del vector especificado por índice
+        /// </summary>
+        /// <param name="vector">Vector</param>
+        /// <param name="index">Indice 0, 1 o 2 para obtener las componentes x, y o z</param>
+        /// <returns>Devuelve la componente del vector especificada por el índice</returns>
+        public static float PointFromVector(Vector3 vector, int index)
+        {
+            if (index == 0)
+            {
+                return vector.X;
+            }
+            else if (index == 1)
+            {
+                return vector.Y;
+            }
+            else if (index == 2)
+            {
+                return vector.Z;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }
