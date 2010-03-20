@@ -2,6 +2,8 @@ using Microsoft.Xna.Framework;
 
 namespace Physics
 {
+    using Common.Math;
+
     /// <summary>
     /// Clase de resolución de contactos
     /// </summary>

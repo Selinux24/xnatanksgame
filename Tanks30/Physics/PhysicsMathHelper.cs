@@ -1,8 +1,6 @@
 using System;
 using System.IO;
 using Microsoft.Xna.Framework;
-using Common.Primitives;
-using System.Collections.Generic;
 
 namespace Physics
 {
@@ -200,104 +198,6 @@ namespace Physics
         {
             // 4/3 de PI por el radio al cubo
             return 1.333333f * MathHelper.Pi * sphere.Radius * sphere.Radius * sphere.Radius;
-        }
-
-        public static void SaveToFile(Quaternion q, string filename)
-        {
-            StreamWriter wr = new StreamWriter(filename);
-            try
-            {
-                wr.WriteLine(q.X);
-                wr.WriteLine(q.Y);
-                wr.WriteLine(q.Z);
-                wr.WriteLine(q.W);
-            }
-            finally
-            {
-                wr.Close();
-            }
-        }
-
-        public static void SaveToFile(Matrix m, string filename)
-        {
-            StreamWriter wr = new StreamWriter(filename);
-            try
-            {
-                wr.WriteLine(m.M11);
-                wr.WriteLine(m.M12);
-                wr.WriteLine(m.M13);
-                wr.WriteLine(m.M14);
-
-                wr.WriteLine(m.M21);
-                wr.WriteLine(m.M22);
-                wr.WriteLine(m.M23);
-                wr.WriteLine(m.M24);
-
-                wr.WriteLine(m.M31);
-                wr.WriteLine(m.M32);
-                wr.WriteLine(m.M33);
-                wr.WriteLine(m.M34);
-
-                wr.WriteLine(m.M41);
-                wr.WriteLine(m.M42);
-                wr.WriteLine(m.M43);
-                wr.WriteLine(m.M44);
-            }
-            finally
-            {
-                wr.Close();
-            }
-        }
-
-        public static void LoadFromFile(string filename, out Quaternion q)
-        {
-            q = new Quaternion();
-
-            StreamReader rd = new StreamReader(filename);
-            try
-            {
-                q.X = Convert.ToSingle(rd.ReadLine());
-                q.Y = Convert.ToSingle(rd.ReadLine());
-                q.Z = Convert.ToSingle(rd.ReadLine());
-                q.W = Convert.ToSingle(rd.ReadLine());
-            }
-            finally
-            {
-                rd.Close();
-            }
-        }
-
-        public static void LoadFromFile(string filename, out Matrix m)
-        {
-            m = new Matrix();
-
-            StreamReader rd = new StreamReader(filename);
-            try
-            {
-                m.M11 = Convert.ToSingle(rd.ReadLine());
-                m.M12 = Convert.ToSingle(rd.ReadLine());
-                m.M13 = Convert.ToSingle(rd.ReadLine());
-                m.M14 = Convert.ToSingle(rd.ReadLine());
-
-                m.M21 = Convert.ToSingle(rd.ReadLine());
-                m.M22 = Convert.ToSingle(rd.ReadLine());
-                m.M23 = Convert.ToSingle(rd.ReadLine());
-                m.M24 = Convert.ToSingle(rd.ReadLine());
-
-                m.M31 = Convert.ToSingle(rd.ReadLine());
-                m.M32 = Convert.ToSingle(rd.ReadLine());
-                m.M33 = Convert.ToSingle(rd.ReadLine());
-                m.M34 = Convert.ToSingle(rd.ReadLine());
-
-                m.M41 = Convert.ToSingle(rd.ReadLine());
-                m.M42 = Convert.ToSingle(rd.ReadLine());
-                m.M43 = Convert.ToSingle(rd.ReadLine());
-                m.M44 = Convert.ToSingle(rd.ReadLine());
-            }
-            finally
-            {
-                rd.Close();
-            }
         }
     }
 }

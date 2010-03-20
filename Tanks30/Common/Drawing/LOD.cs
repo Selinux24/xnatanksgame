@@ -1,5 +1,5 @@
 
-namespace Common.Components
+namespace Common.Drawing
 {
     /// <summary>
     /// Niveles de detalle

@@ -2,9 +2,12 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Common.Drawing
+namespace Common.Helpers
 {
-    public abstract class PolyGenerator
+    /// <summary>
+    /// Funciones de generación de polígonos
+    /// </summary>
+    public static class PolyGenerator
     {
         /// <summary>
         /// Obtiene los vértices que representan una esfera

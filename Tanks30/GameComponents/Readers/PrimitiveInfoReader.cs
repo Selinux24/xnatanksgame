@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace GameComponents.Readers
 {
+    using Common.Helpers;
     using Common.Primitives;
 
     public class PrimitiveInfoReader : ContentTypeReader<PrimitiveInfo>

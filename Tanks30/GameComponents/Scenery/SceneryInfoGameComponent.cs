@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace GameComponents.Scenery
 {
     using Common.Components;
-    using Common.Primitives;
+    using Common.Drawing;
 
     /// <summary>
     /// Información en 2D del terreno
@@ -31,7 +31,9 @@ namespace GameComponents.Scenery
         // Escenario al que pertenece el objeto de información
         private SceneryGameComponent m_Scenery;
 
-        // LOD
+        /// <summary>
+        /// Nivel de detalle
+        /// </summary>
         private LOD m_Lod = LOD.None;
         /// <summary>
         /// Obtiene o establece el nivel de detalle a mostrar

@@ -4,8 +4,9 @@ using Microsoft.Xna.Framework.Content;
 namespace GameComponents.Readers
 {
     using Common.Components;
+    using Common.Drawing;
+    using Common.Helpers;
     using Common.Primitives;
-    using GameComponents.Scenery;
 
     class SceneryTriangleNodeReader : ContentTypeReader<SceneryTriangleNode>
     {

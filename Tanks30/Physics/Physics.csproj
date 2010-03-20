@@ -98,7 +98,6 @@
     <Compile Include="IntersectionTests.cs" />
     <Compile Include="IPhysicObject.cs" />
     <Compile Include="Joint.cs" />
-    <Compile Include="Matrix3.cs" />
     <Compile Include="PhysicsMathHelper.cs" />
     <Compile Include="RigidBody.cs" />
     <Compile Include="Rod.cs" />

@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace Common.Primitives
+namespace Common.Components
 {
     /// <summary>
     /// Información de nodo dibujado

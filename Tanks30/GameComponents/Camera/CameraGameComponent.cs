@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 namespace GameComponents.Camera
 {
     using Common;
+    using Common.Helpers;
     using GameComponents.Scenery;
     using GameComponents.Vehicles;
     using Physics;

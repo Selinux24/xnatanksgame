@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 
 namespace Physics
 {
+    using Common.Math;
+
     /// <summary>
     /// A rigid body is the basic simulation object in the physics
     /// core.

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace GameComponents.Vehicles
 {
     using Common;
-    using Common.Primitives;
+    using Common.Helpers;
     using GameComponents.Components.Particles;
     using GameComponents.Scenery;
     using Physics;

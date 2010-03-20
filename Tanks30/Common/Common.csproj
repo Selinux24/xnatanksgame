@@ -82,19 +82,21 @@
   <ItemGroup>
     <Compile Include="BoundingBoxEx.cs" />
     <Compile Include="BoundingSphereEx.cs" />
-    <Compile Include="Drawing\PolyGenerator.cs" />
+    <Compile Include="Helpers\PolyGenerator.cs" />
     <Compile Include="GlobalMatrices.cs" />
-    <Compile Include="HeightMap.cs" />
-    <Compile Include="InputHelper.cs" />
-    <Compile Include="LOD.cs" />
-    <Compile Include="Primitives\PrimitiveInfo.cs" />
-    <Compile Include="Primitives\SceneryInfoNodeDrawn.cs" />
-    <Compile Include="Primitives\SceneryNode.cs" />
-    <Compile Include="Primitives\SceneryNodeIndexInfo.cs" />
-    <Compile Include="Primitives\SceneryTriangleNode.cs" />
+    <Compile Include="Helpers\HeightMap.cs" />
+    <Compile Include="Helpers\IO.cs" />
+    <Compile Include="Helpers\InputHelper.cs" />
+    <Compile Include="Drawing\LOD.cs" />
+    <Compile Include="Math\Matrix3.cs" />
+    <Compile Include="Helpers\PrimitiveInfo.cs" />
+    <Compile Include="Components\SceneryInfoNodeDrawn.cs" />
+    <Compile Include="Components\SceneryNode.cs" />
+    <Compile Include="Helpers\SceneryNodeIndexInfo.cs" />
+    <Compile Include="Components\SceneryTriangleNode.cs" />
     <Compile Include="Primitives\Triangle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VertexMultitextured.cs" />
+    <Compile Include="Drawing\VertexMultitextured.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

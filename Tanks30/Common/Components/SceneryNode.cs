@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Common.Primitives
+namespace Common.Components
 {
     using Common;
-    using Common.Components;
+    using Common.Drawing;
 
     /// <summary>
     /// Nodo del escenario

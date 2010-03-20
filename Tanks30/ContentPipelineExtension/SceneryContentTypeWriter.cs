@@ -7,8 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace ContentPipelineExtension
 {
     using Common.Components;
-    using Common.Format;
-    using Common.Primitives;
+    using Common.Drawing;
 
     /// <summary>
     /// Generador del fichero binario con la información del terreno
@@ -16,11 +15,6 @@ namespace ContentPipelineExtension
     [ContentTypeWriter]
     public class SceneryContentTypeWriter : ContentTypeWriter<SceneryInfo>
     {
-        /// <summary>
-        /// Escribe el fichero de recurso con la información del terreno
-        /// </summary>
-        /// <param name="output">Salida</param>
-        /// <param name="sceneryInfo">Información del terreno</param>
         protected override void Write(ContentWriter output, SceneryInfo sceneryInfo)
         {
             // Escribir la textura del mapa de alturas

@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
 namespace ContentPipelineExtension
 {
+    using Common.Helpers;
     using Common.Primitives;
 
     [ContentProcessor(DisplayName = "Model - TriangleInfo")]

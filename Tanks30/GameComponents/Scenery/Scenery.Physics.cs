@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace GameComponents.Scenery
 {
+    using Common.Components;
     using Common.Primitives;
     using Physics;
 

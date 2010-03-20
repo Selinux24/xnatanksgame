@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace GameComponents.Weapons
 {
     using Common;
-    using Common.Drawing;
+    using Common.Helpers;
     using Physics;
 
     /// <summary>

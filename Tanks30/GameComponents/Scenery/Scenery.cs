@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace GameComponents.Scenery
 {
     using Common.Components;
-    using Common.Primitives;
+    using Common.Drawing;
 
     /// <summary>
     /// Escenario

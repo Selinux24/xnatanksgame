@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Common
+namespace Common.Helpers
 {
     /// <summary>
     /// Captura de entrada del usuario

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Common.Helpers
 {
-    using Common.Format;
+    using Common.Drawing;
 
     /// <summary>
     /// Mapa de alturas

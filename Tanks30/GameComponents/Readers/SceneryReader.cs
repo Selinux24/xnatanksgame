@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace GameComponents.Readers
 {
     using Common.Components;
-    using Common.Primitives;
+    using Common.Drawing;
     using GameComponents.Scenery;
 
     class SceneryReader : ContentTypeReader<Scenery>

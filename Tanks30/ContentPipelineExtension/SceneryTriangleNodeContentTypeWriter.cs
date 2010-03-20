@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 namespace ContentPipelineExtension
 {
     using Common.Components;
+    using Common.Drawing;
+    using Common.Helpers;
     using Common.Primitives;
 
     /// <summary>

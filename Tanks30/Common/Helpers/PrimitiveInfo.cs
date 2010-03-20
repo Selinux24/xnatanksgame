@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Common.Primitives
+namespace Common.Helpers
 {
+    using Common.Primitives;
+
     /// <summary>
     /// Información de triángulos de un modelo
     /// </summary>
@@ -20,7 +22,7 @@ namespace Common.Primitives
         /// <summary>
         /// BoundingSphere de todo el modelo
         /// </summary>
-        public BoundingSphere BSph { get; protected set; }
+        public BoundingSphere SPH { get; protected set; }
         /// <summary>
         /// Obtiene los nombres de grupos de triángulos (meshes)
         /// </summary>
@@ -100,7 +102,7 @@ namespace Common.Primitives
 
             // Crear los objetos circundantes
             this.AABB = BoundingBox.CreateFromPoints(vertices);
-            this.BSph = BoundingSphere.CreateFromPoints(vertices);
+            this.SPH = BoundingSphere.CreateFromPoints(vertices);
         }
     }
 }
