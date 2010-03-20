@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Common.Format
+namespace Common.Drawing
 {
     /// <summary>
     /// Vértice para multitextura

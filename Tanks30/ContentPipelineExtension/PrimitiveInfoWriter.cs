@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ContentPipelineExtension
 {
+    using Common.Helpers;
     using Common.Primitives;
 
     [ContentTypeWriter]

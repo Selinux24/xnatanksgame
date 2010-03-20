@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Vehicles
 {
-    using Common;
+    using Common.Helpers;
     using GameComponents.Vehicles;
     using GameComponents.Vehicles.Animations;
 

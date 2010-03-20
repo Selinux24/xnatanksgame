@@ -5,9 +5,17 @@ namespace Common
 {
     using Common.Primitives;
 
+    /// <summary>
+    /// Extensión de la esfera
+    /// </summary>
     public static class BoundingSphereEx
     {
-        public static BoundingSphere CreateBoundingSphereFromTriangles(Triangle[] triangles)
+        /// <summary>
+        /// Obtiene la esfera que contiene a todos los triángulos
+        /// </summary>
+        /// <param name="triangles">Lista de triángulos</param>
+        /// <returns>Devuelve una esfera a partir de todos los vértices de los triángulos</returns>
+        public static BoundingSphere CreateFromTriangles(Triangle[] triangles)
         {
             List<Vector3> vertices = new List<Vector3>();
 

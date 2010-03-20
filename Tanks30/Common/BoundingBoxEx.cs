@@ -5,8 +5,16 @@ namespace Common
 {
     using Common.Primitives;
 
+    /// <summary>
+    /// Extensión de la caja alineada con los ejes
+    /// </summary>
     public static class BoundingBoxEx
     {
+        /// <summary>
+        /// Obtiene la caja alineada con los ejes que contiene a todos los triángulos
+        /// </summary>
+        /// <param name="triangles">Lista de triángulos</param>
+        /// <returns>Devuelve una caja alineada con los ejes a partir de todos los vértices de los triángulos</returns>
         public static BoundingBox CreateFromTriangles(Triangle[] triangles)
         {
             List<Vector3> vertices = new List<Vector3>();

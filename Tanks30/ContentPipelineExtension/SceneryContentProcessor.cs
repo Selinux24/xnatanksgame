@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ContentPipelineExtension
 {
-    using Common.Format;
+    using Common.Drawing;
     using Common.Helpers;
 
     /// <summary>

@@ -2,7 +2,7 @@
 
 namespace GameComponents.Vehicles
 {
-    using Common.Primitives;
+    using Common.Helpers;
     using Physics;
 
     /// <summary>

@@ -6,8 +6,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Tanks
 {
-    using Common;
-    using Common.Components;
+    using Common.Drawing;
+    using Common.Helpers;
     using GameComponents.Camera;
     using GameComponents.MathComponents;
     using GameComponents.Scenery;

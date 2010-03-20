@@ -1,5 +1,5 @@
 ﻿
-namespace Common.Primitives
+namespace Common.Helpers
 {
     /// <summary>
     /// Información de índices de nodo

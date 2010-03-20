@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DrawingComponents
 {
     using Common;
-    using Common.Drawing;
+    using Common.Helpers;
 
     /// <summary>
     /// Componente que dibuja geometría

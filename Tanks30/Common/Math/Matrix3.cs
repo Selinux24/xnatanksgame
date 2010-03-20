@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace Physics
+namespace Common.Math
 {
     /// <summary>
     /// Matriz de 3x3

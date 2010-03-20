@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 
 namespace Physics
 {
+    using Common.Math;
+
     /// <summary>
     /// Información de un contacto
     /// </summary>

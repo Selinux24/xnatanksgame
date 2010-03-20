@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Common.Primitives
+namespace Common.Components
 {
-    using Common.Components;
+    using Common.Drawing;
+    using Common.Helpers;
+    using Common.Primitives;
 
     /// <summary>
     /// Nodo de escenario con primitivas
@@ -118,7 +120,7 @@ namespace Common.Primitives
             if ((this.TriangleList != null) && (this.TriangleList.Length > 0))
             {
                 this.AABB = BoundingBoxEx.CreateFromTriangles(this.TriangleList);
-                this.SPH = BoundingSphereEx.CreateBoundingSphereFromTriangles(this.TriangleList);
+                this.SPH = BoundingSphereEx.CreateFromTriangles(this.TriangleList);
 
                 this.NodeCenter = Vector3.Divide(this.AABB.Max + this.AABB.Min, 2.0f);
             }

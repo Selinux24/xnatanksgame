@@ -50,9 +50,9 @@ namespace Common.Primitives
             this.Plane = new Plane(this.Point2, this.Point1, this.Point3);
 
             Vector3 n = this.Plane.Normal;
-            float absX = (float)Math.Abs(n.X);
-            float absY = (float)Math.Abs(n.Y);
-            float absZ = (float)Math.Abs(n.Z);
+            float absX = (float)System.Math.Abs(n.X);
+            float absY = (float)System.Math.Abs(n.Y);
+            float absZ = (float)System.Math.Abs(n.Z);
 
             Vector3 a = new Vector3(absX, absY, absZ);
             if (a.X > a.Y)
