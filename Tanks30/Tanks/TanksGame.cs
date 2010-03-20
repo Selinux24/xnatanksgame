@@ -263,10 +263,8 @@ namespace Tanks
             {
                 text += "Terreno   " + this.m_Scenery.Scenery.Center.ToString() + Environment.NewLine;
             }
-            if (this.m_Camera.ModelToFollow != null)
-            {
-                text += "Camara    " + this.m_Camera.Position.ToString() + Environment.NewLine;
-            }
+
+            text += "Camara    " + this.m_Camera.GetStatus() + Environment.NewLine;
 
             this.m_TextDrawer.WriteText(text, 5, 5);
 
@@ -489,11 +487,15 @@ namespace Tanks
                 {
                     this.m_Camera.Mode = CameraGameComponent.CameraModes.Free;
 
+                    CameraGameComponent.KeyBoardSensibility = 1000f;
+
                     this.SetFocus(null);
                 }
                 else
                 {
                     this.m_Camera.Mode = CameraGameComponent.CameraModes.FirstPerson;
+
+                    CameraGameComponent.KeyBoardSensibility = 100f;
 
                     this.SetFocus(this.m_PreviousVehicle);
                 }
