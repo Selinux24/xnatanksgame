@@ -383,6 +383,20 @@ namespace GameComponents.Camera
         public void Pitch(float angle)
         {
             this.m_Pitch *= Quaternion.Slerp(this.m_Pitch, Quaternion.CreateFromAxisAngle(Vector3.Right, angle), 1f);
+
+            if (this.m_Pitch.X > 0.65f)
+            {
+                this.m_Pitch.X = 0.65f;
+
+                this.m_Pitch.Normalize();
+            }
+
+            if (this.m_Pitch.X < -0.65f)
+            {
+                this.m_Pitch.X = -0.65f;
+
+                this.m_Pitch.Normalize();
+            }
         }
 
         /// <summary>
@@ -477,6 +491,15 @@ namespace GameComponents.Camera
         {
             //La cámara mira al modelo
             return this.ModelToFollow.Position - currentPosition;
+        }
+
+        /// <summary>
+        /// Obtiene la información del estado de la cámara
+        /// </summary>
+        /// <returns>Devuelve una cadena de texto con la información de estado de la cámara</returns>
+        public string GetStatus()
+        {
+            return string.Format("Mode:{0}\nPosition:{1}\nPitch:{2}\nYaw:{3}\n", this.m_Mode, this.m_Position, this.m_Pitch, this.m_Yaw);
         }
     }
 }
