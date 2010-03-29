@@ -1,30 +1,31 @@
+using System;
 using Microsoft.Xna.Framework;
 
 namespace Physics
 {
     /// <summary>
-    /// Barra de unión
+    /// Enlace de unión entre dos cuerpos
     /// </summary>
-    public class Rod : ContactGenerator
+    public class Joint2 : ContactGenerator
     {
         /// <summary>
-        /// Cuerpo uno
+        /// Primer cuerpo rígido que forma parte de la unión
         /// </summary>
-        private IPhysicObject m_BodyOne = null;
+        private readonly IPhysicObject m_BodyOne;
         /// <summary>
-        /// Cuerpo dos
+        /// Segundo cuerpo rígido que forma parte de la unión
         /// </summary>
-        private IPhysicObject m_BodyTwo = null;
+        private readonly IPhysicObject m_BodyTwo;
 
         /// <summary>
-        /// Posición de unión relativa al cuerpo uno
+        /// Posición relativa de la unión del primer cuerpo
         /// </summary>
-        private Vector3 m_RelativePointOne = Vector3.Zero;
+        private readonly Vector3 m_RelativePointOne = Vector3.Zero;
         /// <summary>
-        /// Posición de unión relativa al cuerpo dos
+        /// Posición relativa de la unión del primer cuerpo
         /// </summary>
-        private Vector3 m_RelativePointTwo = Vector3.Zero;
-     
+        private readonly Vector3 m_RelativePointTwo = Vector3.Zero;
+
         /// <summary>
         /// Punto uno en coordenadas del mundo
         /// </summary>
@@ -67,9 +68,13 @@ namespace Physics
         }
 
         /// <summary>
-        /// Longitud de la barra
+        /// Máxima distancia de la unión antes de considerar que la unión haya sido violada y haya que actuar
         /// </summary>
-        private float m_Length = 0f;
+        /// <remarks>
+        /// Normalmente es un pequeño valor epsilon. Puede ser mayor, en cuyo caso se comporta como si una
+        /// cuerda inelástica juntara los cuerpos por sus posiciones de unión
+        /// </remarks>
+        private readonly float m_Length;
 
         /// <summary>
         /// Constructor
@@ -78,8 +83,8 @@ namespace Physics
         /// <param name="relativePointOne">Posición de unión relativa al cuerpo uno</param>
         /// <param name="bodyTwo">Cuerpo dos</param>
         /// <param name="relativePointTwo">Posición de unión relativa al cuerpo dos</param>
-        /// <param name="length">Longitud de la barra</param>
-        public Rod(
+        /// <param name="length">Longitud de la unión</param>
+        public Joint2(
             IPhysicObject bodyOne, Vector3 relativePointOne,
             IPhysicObject bodyTwo, Vector3 relativePointTwo,
             float length)
@@ -95,12 +100,12 @@ namespace Physics
         }
 
         /// <summary>
-        /// Añade los contactos necesarios para mantener unidos mediante la barra a los cuerpos
+        /// Genera los contactos requeridos para restaurar la unión si ha sido violada
         /// </summary>
-        /// <param name="contactData">Datos de colisión</param>
-        /// <param name="limit">Límite de contactos a añadir</param>
-        /// <returns>Devuelve el número de contacos añadidos</returns>
-        /// <remarks>Sólo añade un contacto o ninguno</remarks>
+        /// <param name="contactData">Información de contactos</param>
+        /// <param name="limit">Límite de contactos a generar</param>
+        /// <returns>Devuelve el número de contactos generados</returns>
+        /// <remarks>Tan solo generará un contacto o ninguno</remarks>
         public override int AddContact(ref CollisionData contactData, int limit)
         {
             if (contactData.HasFreeContacts())
@@ -117,7 +122,6 @@ namespace Physics
                     objectTwo = this.m_BodyTwo.GetPrimitive();
                 }
 
-                // Encontrar la longitud actual
                 Vector3 positionOne = this.m_RelativePointOne;
                 Vector3 positionOneWorld = this.m_RelativePointOne;
                 if (objectOne != null)
@@ -136,33 +140,17 @@ namespace Physics
 
                 float currentLen = Vector3.Distance(positionOneWorld, positionTwoWorld);
 
-                // Comprobar si estamos en extensión correcta
-                if (currentLen != m_Length)
+                if (Math.Abs(currentLen) > this.m_Length)
                 {
-                    // Rellenar el contacto
                     Contact contact = contactData.CurrentContact;
 
                     contact.Bodies[0] = objectOne;
                     contact.Bodies[1] = objectTwo;
+                    contact.ContactNormal = Vector3.Normalize(positionTwoWorld - positionOneWorld);
                     contact.ContactPoint = (positionOneWorld + positionTwoWorld) * 0.5f;
-
-                    // Calcular la normal
-                    Vector3 normal = Vector3.Normalize(positionTwo - positionOne);
-
-                    // La normal de contacto depende de si hay que extender o contraer para conservar la longitud
-                    if (currentLen > m_Length)
-                    {
-                        contact.ContactNormal = normal;
-                        contact.Penetration = currentLen - m_Length;
-                    }
-                    else
-                    {
-                        contact.ContactNormal = Vector3.Negate(normal);
-                        contact.Penetration = this.m_Length - currentLen;
-                    }
-
-                    // Siempre restitución 0
-                    contact.Restitution = 0f;
+                    contact.Penetration = currentLen - this.m_Length;
+                    contact.Friction = 1.0f;
+                    contact.Restitution = 0;
 
                     contactData.AddContact();
 

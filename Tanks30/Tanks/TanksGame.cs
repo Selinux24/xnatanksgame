@@ -278,6 +278,13 @@ namespace Tanks
         {
             this.Graphics.GraphicsDevice.Clear(SceneryEnvironment.Ambient.AmbientColor);
 
+            this.Graphics.GraphicsDevice.RenderState.FogColor = Color.White;
+            this.Graphics.GraphicsDevice.RenderState.FogTableMode = FogMode.Linear;
+            this.Graphics.GraphicsDevice.RenderState.FogStart = SceneryEnvironment.LevelOfDetail.HighFarClip;
+            this.Graphics.GraphicsDevice.RenderState.FogEnd = SceneryEnvironment.LevelOfDetail.LowFarClip;
+            this.Graphics.GraphicsDevice.RenderState.FogDensity = 0.5f;
+            this.Graphics.GraphicsDevice.RenderState.FogEnable = true;
+
             base.Draw(gameTime);
         }
 

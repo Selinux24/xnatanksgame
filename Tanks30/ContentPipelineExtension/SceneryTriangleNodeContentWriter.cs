@@ -8,11 +8,8 @@ namespace ContentPipelineExtension
     using Common.Helpers;
     using Common.Primitives;
 
-    /// <summary>
-    /// 
-    /// </summary>
     [ContentTypeWriter]
-    public class SceneryTriangleNodeContentTypeWriter : ContentTypeWriter<SceneryTriangleNode>
+    public class SceneryTriangleNodeContentWriter : ContentTypeWriter<SceneryTriangleNode>
     {
         protected override void Write(ContentWriter output, SceneryTriangleNode value)
         {

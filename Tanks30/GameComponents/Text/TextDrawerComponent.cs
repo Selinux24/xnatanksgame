@@ -26,6 +26,10 @@ namespace GameComponents.Text
         /// </summary>
         protected string OutputText;
         /// <summary>
+        /// Color
+        /// </summary>
+        protected Color OutputColor = Color.White;
+        /// <summary>
         /// Gestor de contenidos
         /// </summary>
         protected ContentManager Content;
@@ -73,7 +77,7 @@ namespace GameComponents.Text
                     this.Font,
                     this.OutputText,
                     this.OutputPosition,
-                    Color.White,
+                    this.OutputColor,
                     0,
                     Vector2.Zero,
                     1.0f,
@@ -101,6 +105,19 @@ namespace GameComponents.Text
             this.OutputText = text;
             this.OutputPosition.X = x;
             this.OutputPosition.Y = y;
+        }
+        /// <summary>
+        /// Escribe el texto especificado en la posición especificada
+        /// </summary>
+        /// <param name="text">Texto</param>
+        /// <param name="x">Posición X</param>
+        /// <param name="y">Posición Y</param>
+        /// <param name="color">Color</param>
+        public void WriteText(string text, int x, int y, Color color)
+        {
+            this.OutputColor = color;
+
+            this.WriteText(text, x, y);
         }
     }
 }

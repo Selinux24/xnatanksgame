@@ -104,15 +104,15 @@ namespace TanksDebug
             : base(game)
         {
             float size = terrainSize * 0.5f;
-            Vector3 A = new Vector3(size, 10, size) + position;
+            Vector3 A = new Vector3(size, 15, size) + position;
             Vector3 B = new Vector3(size, 15, 0) + position;
-            Vector3 C = new Vector3(size, 20, -size) + position;
+            Vector3 C = new Vector3(size, 15, -size) + position;
             Vector3 D = new Vector3(0, 15, size) + position;
             Vector3 E = new Vector3(0, -10, 0) + position;
             Vector3 F = new Vector3(0, 15, -size) + position;
-            Vector3 G = new Vector3(-size, 20, size) + position;
+            Vector3 G = new Vector3(-size, 15, size) + position;
             Vector3 H = new Vector3(-size, 15, 0) + position;
-            Vector3 I = new Vector3(-size, 10, -size) + position;
+            Vector3 I = new Vector3(-size, 15, -size) + position;
 
             Triangle tr1 = new Triangle(A, D, B);
             Triangle tr2 = new Triangle(B, D, E);
@@ -178,7 +178,12 @@ namespace TanksDebug
         {
             base.Draw(gameTime);
 
+            //FillMode previous = this.GraphicsDevice.RenderState.FillMode;
+            //this.GraphicsDevice.RenderState.FillMode = FillMode.WireFrame;
+
             this.DrawFloor();
+
+            //this.GraphicsDevice.RenderState.FillMode = previous;
         }
 
         /// <summary>
@@ -276,9 +281,13 @@ namespace TanksDebug
             {
                 pass.Begin();
 
-                this.GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
-                this.GraphicsDevice.RenderState.FillMode = FillMode.Solid;
-                this.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, this.m_Geometry.Length, 0, this.m_PrimitiveCount);
+                this.GraphicsDevice.DrawIndexedPrimitives(
+                    PrimitiveType.TriangleList, 
+                    0, 
+                    0, 
+                    this.m_Geometry.Length, 
+                    0, 
+                    this.m_PrimitiveCount);
 
                 pass.End();
             }
