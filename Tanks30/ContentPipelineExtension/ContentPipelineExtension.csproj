@@ -95,13 +95,13 @@
     <Compile Include="PrimitiveInfoProcessor.cs" />
     <Compile Include="PrimitiveInfoWriter.cs" />
     <Compile Include="PrimitiveListWriter.cs" />
-    <Compile Include="SceneryTriangleNodeContentTypeWriter.cs" />
+    <Compile Include="SceneryTriangleNodeContentWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneryNodeInfo.cs" />
     <Compile Include="SceneryInfo.cs" />
     <Compile Include="SceneryContentImporter.cs" />
     <Compile Include="SceneryContentProcessor.cs" />
-    <Compile Include="SceneryContentTypeWriter.cs" />
+    <Compile Include="SceneryContentWriter.cs" />
     <Compile Include="SceneryFile.cs" />
   </ItemGroup>
   <ItemGroup>

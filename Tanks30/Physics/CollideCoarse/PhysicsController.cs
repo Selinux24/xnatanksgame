@@ -85,6 +85,22 @@ namespace Physics.CollideCoarse
         }
 
         /// <summary>
+        /// Obtiene la cantidad de contactos en uso
+        /// </summary>
+        public int UsedContacts
+        {
+            get
+            {
+                if (this.m_ContactData != null)
+                {
+                    return this.m_ContactData.ContactCount - 1;
+                }
+
+                return 0;
+            }
+        }
+
+        /// <summary>
         /// Registra la primitiva que actúa como suelo
         /// </summary>
         /// <param name="scenery">Primitiva</param>
@@ -215,8 +231,8 @@ namespace Physics.CollideCoarse
         {
             // Preparar datos de colisión
             this.m_ContactData.Reset();
-            this.m_ContactData.Friction = 0.9f;
-            this.m_ContactData.Restitution = 0.2f;
+            this.m_ContactData.Friction = 0.75f;
+            this.m_ContactData.Restitution = 0.1f;
             this.m_ContactData.Tolerance = 0.1f;
 
             // Generadores de contactos

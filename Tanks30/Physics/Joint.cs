@@ -11,20 +11,61 @@ namespace Physics
         /// <summary>
         /// Primer cuerpo rígido que forma parte de la unión
         /// </summary>
-        private readonly RigidBody m_BodyOne;
+        private readonly IPhysicObject m_BodyOne;
         /// <summary>
         /// Segundo cuerpo rígido que forma parte de la unión
         /// </summary>
-        private readonly RigidBody m_BodyTwo;
+        private readonly IPhysicObject m_BodyTwo;
 
         /// <summary>
         /// Posición relativa de la unión del primer cuerpo
         /// </summary>
-        private readonly Vector3 m_PositionOne;
+        private readonly Vector3 m_RelativePointOne = Vector3.Zero;
         /// <summary>
         /// Posición relativa de la unión del primer cuerpo
         /// </summary>
-        private readonly Vector3 m_PositionTwo;
+        private readonly Vector3 m_RelativePointTwo = Vector3.Zero;
+
+        /// <summary>
+        /// Punto uno en coordenadas del mundo
+        /// </summary>
+        public Vector3 PointOneWorld
+        {
+            get
+            {
+                CollisionPrimitive objectOne = null;
+                if (this.m_BodyOne != null)
+                {
+                    objectOne = this.m_BodyOne.GetPrimitive();
+                    if (objectOne != null)
+                    {
+                        return objectOne.GetPointInWorldSpace(this.m_RelativePointOne);
+                    }
+                }
+
+                return this.m_RelativePointOne;
+            }
+        }
+        /// <summary>
+        /// Punto dos en coordenadas del mundo
+        /// </summary>
+        public Vector3 PointTwoWorld
+        {
+            get
+            {
+                CollisionPrimitive objectTwo = null;
+                if (this.m_BodyTwo != null)
+                {
+                    objectTwo = this.m_BodyTwo.GetPrimitive();
+                    if (objectTwo != null)
+                    {
+                        return objectTwo.GetPointInWorldSpace(this.m_RelativePointTwo);
+                    }
+                }
+
+                return this.m_RelativePointTwo;
+            }
+        }
 
         /// <summary>
         /// Máxima distancia de la unión antes de considerar que la unión haya sido violada y haya que actuar
@@ -33,29 +74,29 @@ namespace Physics
         /// Normalmente es un pequeño valor epsilon. Puede ser mayor, en cuyo caso se comporta como si una
         /// cuerda inelástica juntara los cuerpos por sus posiciones de unión
         /// </remarks>
-        private readonly float m_Error;
+        private readonly float m_Length;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="a">Cuerpo primero</param>
-        /// <param name="a_pos">Posición de la unión en ccordenadas del cuerpo primero</param>
-        /// <param name="b">Cuerpo segundo</param>
-        /// <param name="b_pos">Posición de la unión en ccordenadas del cuerpo segundo</param>
-        /// <param name="error">Distancia máxima de la unión</param>
+        /// <param name="bodyOne">Cuerpo uno</param>
+        /// <param name="relativePointOne">Posición de unión relativa al cuerpo uno</param>
+        /// <param name="bodyTwo">Cuerpo dos</param>
+        /// <param name="relativePointTwo">Posición de unión relativa al cuerpo dos</param>
+        /// <param name="length">Longitud de la unión</param>
         public Joint(
-            ref RigidBody a, Vector3 a_pos,
-            ref RigidBody b, Vector3 b_pos,
-            float error)
+            IPhysicObject bodyOne, Vector3 relativePointOne,
+            IPhysicObject bodyTwo, Vector3 relativePointTwo,
+            float length)
             : base()
         {
-            this.m_BodyOne = a;
-            this.m_BodyTwo = b;
+            this.m_BodyOne = bodyOne;
+            this.m_BodyTwo = bodyTwo;
 
-            this.m_PositionOne = a_pos;
-            this.m_PositionTwo = b_pos;
+            this.m_RelativePointOne = relativePointOne;
+            this.m_RelativePointTwo = relativePointTwo;
 
-            this.m_Error = error;
+            this.m_Length = length;
         }
 
         /// <summary>
@@ -69,23 +110,45 @@ namespace Physics
         {
             if (contactData.HasFreeContacts())
             {
-                // Calcular las posiciones de los puntos de conexión en coordenadas del mundo
-                Vector3 positionOneWorld = this.m_BodyOne.GetPointInWorldSpace(this.m_PositionOne);
-                Vector3 positionTwoWorld = this.m_BodyTwo.GetPointInWorldSpace(this.m_PositionTwo);
+                CollisionPrimitive objectOne = null;
+                if (this.m_BodyOne != null)
+                {
+                    objectOne = this.m_BodyOne.GetPrimitive();
+                }
 
-                // Calcular la longitud de la unión
-                float length = Vector3.Distance(positionTwoWorld, positionOneWorld);
+                CollisionPrimitive objectTwo = null;
+                if (this.m_BodyTwo != null)
+                {
+                    objectTwo = this.m_BodyTwo.GetPrimitive();
+                }
 
-                // Check if it is violated
-                if (Math.Abs(length) > m_Error)
+                Vector3 positionOne = this.m_RelativePointOne;
+                Vector3 positionOneWorld = this.m_RelativePointOne;
+                if (objectOne != null)
+                {
+                    positionOne = objectOne.Position;
+                    positionOneWorld = objectOne.GetPointInWorldSpace(this.m_RelativePointOne);
+                }
+
+                Vector3 positionTwo = this.m_RelativePointTwo;
+                Vector3 positionTwoWorld = this.m_RelativePointTwo;
+                if (objectTwo != null)
+                {
+                    positionTwo = objectTwo.Position;
+                    positionTwoWorld = objectTwo.GetPointInWorldSpace(this.m_RelativePointTwo);
+                }
+
+                float currentLen = Vector3.Distance(positionOneWorld, positionTwoWorld);
+
+                if (Math.Abs(currentLen) > this.m_Length)
                 {
                     Contact contact = contactData.CurrentContact;
 
-                    contact.Bodies[0] = this.m_BodyOne;
-                    contact.Bodies[1] = this.m_BodyTwo;
+                    contact.Bodies[0] = objectOne;
+                    contact.Bodies[1] = objectTwo;
                     contact.ContactNormal = Vector3.Normalize(positionTwoWorld - positionOneWorld);
                     contact.ContactPoint = (positionOneWorld + positionTwoWorld) * 0.5f;
-                    contact.Penetration = length - m_Error;
+                    contact.Penetration = currentLen - this.m_Length;
                     contact.Friction = 1.0f;
                     contact.Restitution = 0;
 

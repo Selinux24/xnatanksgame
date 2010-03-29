@@ -13,7 +13,7 @@ namespace ContentPipelineExtension
     /// Generador del fichero binario con la información del terreno
     /// </summary>
     [ContentTypeWriter]
-    public class SceneryContentTypeWriter : ContentTypeWriter<SceneryInfo>
+    public class SceneryContentWriter : ContentTypeWriter<SceneryInfo>
     {
         protected override void Write(ContentWriter output, SceneryInfo sceneryInfo)
         {

@@ -18,7 +18,7 @@ namespace Physics
         /// <returns>Devuelve verdadero si hay intersección</returns>
         public static bool SphereAndPlane(CollisionSphere sphere, CollisionPlane plane)
         {
-            return SphereAndPlane(sphere, plane.Normal, plane.D);
+            return SphereAndPlane(sphere, plane.Normal, plane.D) == 0;
         }
         /// <summary>
         /// Detecta la intersección entre una esfera y un plano
@@ -28,7 +28,7 @@ namespace Physics
         /// <returns>Devuelve verdadero si hay intersección</returns>
         public static bool SphereAndPlane(CollisionSphere sphere, Plane plane)
         {
-            return SphereAndPlane(sphere, plane.Normal, plane.D);
+            return SphereAndPlane(sphere, plane.Normal, plane.D) == 0;
         }
         /// <summary>
         /// Detecta la intersección entre una esfera y un plano
@@ -37,13 +37,27 @@ namespace Physics
         /// <param name="normal">Normal del plano</param>
         /// <param name="d">Distancia</param>
         /// <returns>Devuelve verdadero si hay intersección</returns>
-        public static bool SphereAndPlane(CollisionSphere sphere, Vector3 normal, float d)
+        public static int SphereAndPlane(CollisionSphere sphere, Vector3 normal, float d)
         {
             // Buscar la distancia al origen
-            float ballDistance = Vector3.Dot(normal, sphere.Position) - sphere.Radius;
+            float distance = Vector3.Dot(normal, sphere.Position) + d;
 
             // Si la distancia es menor hay intersección
-            return ballDistance <= d;
+            if (distance > sphere.Radius)
+            {
+                // La esfera está sobre el plano
+                return 1;
+            }
+            else if (distance < -sphere.Radius)
+            {
+                // La esfera está bajo el plano
+                return -1;
+            }
+            else
+            {
+                // La esfera intersecta con el plano
+                return 0;
+            }
         }
         /// <summary>
         /// Detecta la intersección entre dos esferas
@@ -66,60 +80,21 @@ namespace Physics
         /// <param name="triangle">Triángulo</param>
         /// <param name="halfSpace">Indica si toma el triángulo como un HalfSpace, para tener en cuenta la dirección de la normal</param>
         /// <returns>Devuelve verdadero si hay intersección</returns>
-        public static bool SphereAndTri(CollisionSphere sphere, Triangle triangle, bool halfSpace)
+        public static bool SphereAndTri(CollisionSphere sphere, Triangle triangle)
         {
-            bool axisTest = true;
+            // Obtener el punto más cercano al triángulo desde el centro
+            Vector3 point = Triangle.ClosestPointInTriangle(triangle, sphere.Position);
 
-            if (!halfSpace)
+            float distance = Vector3.Distance(point, sphere.Position);
+
+            if (distance > sphere.Radius)
             {
-                // Find the distance from the origin
-                float ballDistance = Math.Abs(Vector3.Dot(triangle.Plane.Normal, sphere.Position)) - sphere.Radius;
-
-                // Check for the intersection
-                if (ballDistance > triangle.Plane.D)
-                {
-                    axisTest = false;
-                }
+                return false;
             }
-
-            if (axisTest)
+            else
             {
-                // Obtener los ejes del triángulo
-                Vector3 edge0 = Vector3.Subtract(triangle.Point2, triangle.Point1);
-                Vector3 edge1 = Vector3.Subtract(triangle.Point3, triangle.Point2);
-                Vector3 edge2 = Vector3.Subtract(triangle.Point1, triangle.Point3);
-
-                // Proyectar desde el punto 1
-                Vector3 toPoint1 = sphere.Position - triangle.Point1;
-                float distanceTo1 = toPoint1.Length();
-                toPoint1.Normalize();
-                float f1a = Math.Abs(Vector3.Dot(edge0, toPoint1));
-                float f1b = Math.Abs(Vector3.Dot(edge2, toPoint1));
-                if (distanceTo1 > f1a + sphere.Radius) return false;
-                if (distanceTo1 > f1a + sphere.Radius) return false;
-
-                // Proyectar desde el punto 2
-                Vector3 toPoint2 = sphere.Position - triangle.Point2;
-                float distanceTo2 = toPoint2.Length();
-                toPoint2.Normalize();
-                float f2a = Math.Abs(Vector3.Dot(edge0, toPoint2));
-                float f2b = Math.Abs(Vector3.Dot(edge1, toPoint2));
-                if (distanceTo2 > f2a + sphere.Radius) return false;
-                if (distanceTo2 > f2a + sphere.Radius) return false;
-
-                // Proyectar desde el punto 3
-                Vector3 toPoint3 = sphere.Position - triangle.Point3;
-                float distanceTo3 = toPoint3.Length();
-                toPoint3.Normalize();
-                float f3a = Math.Abs(Vector3.Dot(edge1, toPoint3));
-                float f3b = Math.Abs(Vector3.Dot(edge2, toPoint3));
-                if (distanceTo3 > f3a + sphere.Radius) return false;
-                if (distanceTo3 > f3a + sphere.Radius) return false;
-
                 return true;
             }
-
-            return false;
         }
         /// <summary>
         /// Detecta la intersección entre dos cajas

@@ -46,13 +46,13 @@ namespace Common.Helpers
 
                         // triangulo con 1, 2 y 3
                         indicesList.Add((short)index0);
-                        indicesList.Add((short)index2);
                         indicesList.Add((short)index1);
+                        indicesList.Add((short)index2);
 
                         // triangulo con 2, 3 y 4
                         indicesList.Add((short)index1);
-                        indicesList.Add((short)index2);
                         indicesList.Add((short)index3);
+                        indicesList.Add((short)index2);
                     }
 
                     // coordenadas para 1
@@ -164,6 +164,22 @@ namespace Common.Helpers
             vertices[33] = new VertexPositionNormalTexture(topRightBack, rightNormal, textureTopRight);
             vertices[35] = new VertexPositionNormalTexture(topRightFront, rightNormal, textureTopLeft);
             vertices[34] = new VertexPositionNormalTexture(bottomRightBack, rightNormal, textureBottomRight);
+        }
+        /// <summary>
+        /// Obtiene los vértices que representan una línea
+        /// </summary>
+        /// <param name="vertices">Lista de vértices</param>
+        /// <param name="point1">Punto primero</param>
+        /// <param name="point2">Punto segundo</param>
+        /// <param name="color">Color de la línea</param>
+        public static void InitializeLine(out VertexPositionColor[] vertices, Vector3 point1, Vector3 point2, Color color)
+        {
+            vertices = new VertexPositionColor[2];
+
+            vertices[0].Position = point1;
+            vertices[0].Color = color;
+            vertices[1].Position = point2;
+            vertices[1].Color = color;
         }
     }
 }

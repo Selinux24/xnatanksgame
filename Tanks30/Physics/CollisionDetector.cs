@@ -81,12 +81,12 @@ namespace Physics
                 return false;
             }
 
-            // Almacenar la posición de la esfera
-            Vector3 position = sphere.Position;
+            // Distancia del centro al plano
+            float centerToPlane = Math.Abs(Vector3.Dot(plane.Normal, sphere.Position) + plane.D);
 
-            // Obtener la distancia al plano.
-            float ballDistance = Vector3.Dot(plane.Normal, position) - sphere.Radius - plane.D;
-            if (ballDistance >= 0)
+            // Obtener la penetración de la esfera en el plano.
+            float penetration = centerToPlane - sphere.Radius;
+            if (penetration >= 0)
             {
                 return false;
             }
@@ -94,8 +94,8 @@ namespace Physics
             // Crear el contacto. Tiene una normal en la dirección del plano.
             Contact contact = data.CurrentContact;
             contact.ContactNormal = plane.Normal;
-            contact.Penetration = -ballDistance;
-            contact.ContactPoint = position - plane.Normal * (ballDistance + sphere.Radius);
+            contact.Penetration = -penetration;
+            contact.ContactPoint = sphere.Position - plane.Normal * centerToPlane;
 
             // No hay cuerpo para el plano. Se considera escenario.
             RigidBody one = sphere;
@@ -108,13 +108,13 @@ namespace Physics
             return true;
         }
         /// <summary>
-        /// Detecta la colisión entre una esfera y un plano
+        /// Detecta la colisión entre una esfera y un triángulo
         /// </summary>
         /// <param name="sphere">Esfera</param>
-        /// <param name="plane">Plano</param>
+        /// <param name="tri">Triángulo</param>
         /// <param name="data">Rellena los datos de colisión</param>
         /// <returns>Devuelve verdadero si hay colisión o falso en el resto de los casos</returns>
-        private static bool SphereAndTruePlane(CollisionSphere sphere, CollisionPlane plane, ref CollisionData data)
+        private static bool SphereAndTriangle(CollisionSphere sphere, Triangle tri, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
             {
@@ -122,40 +122,32 @@ namespace Physics
                 return false;
             }
 
-            // Almacenar la posición de la esfera
-            Vector3 position = sphere.Position;
+            // Obtener el punto del triángulo más cercano al centro de la esfera
+            Vector3 closestPoint = Triangle.ClosestPointInTriangle(tri, sphere.Position);
 
-            // Encontrar la distancia al plano
-            float centreDistance = Vector3.Dot(plane.Normal, position) - plane.D;
+            // Obtener la distancia del punto obtenido al centro de la esfera
+            float distance = Vector3.Distance(closestPoint, sphere.Position);
 
-            if (centreDistance * centreDistance > sphere.Radius * sphere.Radius)
+            if (distance <= sphere.Radius)
+            {
+                // Crear el contacto. Tiene una normal en la dirección del plano.
+                Contact contact = data.CurrentContact;
+                contact.ContactNormal = tri.Normal;
+                contact.Penetration = sphere.Radius - distance;
+                contact.ContactPoint = closestPoint;
+
+                RigidBody one = sphere;
+                RigidBody two = null;
+                contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
+
+                data.AddContact();
+
+                return true;
+            }
+            else
             {
                 return false;
             }
-
-            // Chequear la cara del plano en la que estamos para calcular normal y penetración
-            Vector3 normal = plane.Normal;
-            float penetration = -centreDistance;
-            if (centreDistance < 0)
-            {
-                normal *= -1;
-                penetration = -penetration;
-            }
-            penetration += sphere.Radius;
-
-            // Crear el contacto. Tiene una normal en la dirección del plano.
-            Contact contact = data.CurrentContact;
-            contact.ContactNormal = normal;
-            contact.Penetration = penetration;
-            contact.ContactPoint = position - plane.Normal * centreDistance;
-
-            RigidBody one = sphere;
-            RigidBody two = null;
-            contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
-
-            data.AddContact();
-
-            return true;
         }
         /// <summary>
         /// Detecta la colisión entre dos esferas
@@ -209,27 +201,42 @@ namespace Physics
         /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
         private static bool SphereAndTriangleSoup(CollisionSphere sphere, CollisionTriangleSoup triangleSoup, ref CollisionData data)
         {
-            if (data.ContactsLeft <= 0)
-            {
-                // Si no hay más contactos disponibles se sale de la función.
-                return false;
-            }
+            return SphereAndTriangleList(sphere, triangleSoup.Triangles, ref data);
+        }
+        /// <summary>
+        /// Detecta la colisión entre una esfera y una lista de triángulos
+        /// </summary>
+        /// <param name="sphere">Esfera</param>
+        /// <param name="triangleList">Lista de triángulos</param>
+        /// <param name="data">Datos de la colisión</param>
+        /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
+        private static bool SphereAndTriangleList(CollisionSphere sphere, Triangle[] triangleList, ref CollisionData data)
+        {
+            bool contact = false;
 
-            foreach (Triangle triangle in triangleSoup.Triangles)
+            if (data.ContactsLeft > 0)
             {
-                // Comprobar la intersección
-                if (IntersectionTests.SphereAndTri(sphere, triangle, true))
+                if (triangleList != null && triangleList.Length > 0)
                 {
-                    // Informar la colisión
-                    if (CollisionDetector.SphereAndHalfSpace(sphere, new CollisionPlane(triangle.Plane, float.PositiveInfinity), ref data))
+                    foreach (Triangle triangle in triangleList)
                     {
-                        return true;
+                        if (data.ContactsLeft > 0)
+                        {
+                            // Comprobar la intersección
+                            if (CollisionDetector.SphereAndTriangle(sphere, triangle, ref data))
+                            {
+                                contact = true;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                 }
             }
 
-            return false;
-
+            return contact;
         }
         /// <summary>
         /// Detecta la colisión entre caja y plano
@@ -294,6 +301,71 @@ namespace Physics
             }
 
             return true;
+        }
+        /// <summary>
+        /// Detecta la colisión entre caja y triángulo
+        /// </summary>
+        /// <param name="box">Caja</param>
+        /// <param name="tri">Triángulo</param>
+        /// <param name="data">Datos de la colisión</param>
+        /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
+        private static bool BoxAndTriangle(CollisionBox box, Triangle tri, ref CollisionData data)
+        {
+            if (data.ContactsLeft <= 0)
+            {
+                // Si no hay más contactos disponibles se sale de la función.
+                return false;
+            }
+
+            // Obtener si la posición está bajo el plano
+            Plane plane = tri.Plane;
+            float posDistanceToPlane = plane.Distance(box.Position);
+
+            // Hay intersección, ahora hay que encontrar los puntos de intersección.
+            // Podemos hacerlo únicamente chequeando los vértices.
+            // Si la caja está descansando sobre el plano o un eje, se reportarán cuatro o dos puntos de contacto.
+            for (int i = 0; i < 8; i++)
+            {
+                // Calcular la positición de cada vértice
+                Vector3 vertexPos = box.GetCorner(i);
+
+                // Calcular la distancia al plano
+                float distanceToPlane = plane.Distance(vertexPos);
+                if (distanceToPlane <= 0f)
+                {
+                    // Si la distancia es negativa está tras el plano. Si es 0, está en el plano
+
+                    // Intersección entre línea y triángulo
+                    Vector3 direction = Vector3.Normalize(box.Position - vertexPos);
+                    Ray r = new Ray(vertexPos, direction);
+                    if (IntersectionTests.TriAndRay(tri, r))
+                    {
+                        // Crear la información del contacto.
+
+                        // El punto de contacto está a medio camino entre el vértice y el plano.
+                        // Se obtiene multiplicando la dirección por la mitad de la distancia de separación, y añadiendo la posición del vértice.
+                        Contact contact = data.CurrentContact;
+                        contact.ContactPoint = vertexPos;
+                        contact.ContactNormal = plane.Normal;
+                        contact.Penetration = -distanceToPlane;
+
+                        // Establecer los datos del contacto
+                        RigidBody one = box;
+                        RigidBody two = null;
+                        contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
+
+                        // Añadir contacto
+                        data.AddContact();
+
+                        if (data.ContactsLeft <= 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
         /// <summary>
         /// Detecta la colisión entre cajas
@@ -522,59 +594,30 @@ namespace Physics
                 return false;
             }
 
-            // Transformar el cetro de la esfera
-            Vector3 centre = sphere.Position;
-            Vector3 relCentre = Vector3.Transform(centre, Matrix.Invert(box.Transform));
+            // Obtener el punto de la caja más cercano al centro de la esfera
+            Vector3 closestPoint = CollisionBox.ClosestPointInBox(box, sphere.Position);
 
-            // Comprobar si se puede excluir el contacto
-            if (Math.Abs(relCentre.X) - sphere.Radius > box.HalfSize.X ||
-                Math.Abs(relCentre.Y) - sphere.Radius > box.HalfSize.Y ||
-                Math.Abs(relCentre.Z) - sphere.Radius > box.HalfSize.Z)
+            // Obtener la distancia entre los puntos
+            float distance = Vector3.Distance(sphere.Position, closestPoint);
+            if (distance <= sphere.Radius)
             {
-                return false;
+                Vector3 normal = Vector3.Normalize(box.Position - closestPoint);
+
+                Contact contact = data.CurrentContact;
+                contact.ContactNormal = normal;
+                contact.ContactPoint = closestPoint;
+                contact.Penetration = sphere.Radius - distance;
+
+                RigidBody one = box;
+                RigidBody two = sphere;
+                contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
+
+                data.AddContact();
+
+                return true;
             }
 
-            Vector3 closestPt = Vector3.Zero;
-
-            float dist = relCentre.X;
-            if (dist > box.HalfSize.X) dist = box.HalfSize.X;
-            if (dist < -box.HalfSize.X) dist = -box.HalfSize.X;
-            closestPt.X = dist;
-
-            dist = relCentre.Y;
-            if (dist > box.HalfSize.Y) dist = box.HalfSize.Y;
-            if (dist < -box.HalfSize.Y) dist = -box.HalfSize.Y;
-            closestPt.Y = dist;
-
-            dist = relCentre.Z;
-            if (dist > box.HalfSize.Z) dist = box.HalfSize.Z;
-            if (dist < -box.HalfSize.Z) dist = -box.HalfSize.Z;
-            closestPt.Z = dist;
-
-            // Comprobar si estamos en contacto.
-            dist = (closestPt - relCentre).LengthSquared();
-            if (dist > sphere.Radius * sphere.Radius)
-            {
-                return false;
-            }
-
-            Vector3 closestPtWorld = Vector3.Transform(closestPt, box.Transform);
-
-            //HACKBYME: Añadimos la velocidad de la esfera para calcular la normal
-            Vector3 relativeVelocity = sphere.Velocity + box.Velocity;
-            Vector3 normal = Vector3.Normalize(closestPtWorld - centre + relativeVelocity);
-
-            Contact contact = data.CurrentContact;
-            contact.ContactNormal = normal;
-            contact.ContactPoint = closestPtWorld;
-            contact.Penetration = sphere.Radius - (float)Math.Sqrt(dist);
-            RigidBody one = box;
-            RigidBody two = sphere;
-            contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
-
-            data.AddContact();
-
-            return true;
+            return false;
         }
         /// <summary>
         /// Detecta la colisión entre una caja y una colección de triángulos
@@ -587,7 +630,13 @@ namespace Physics
         {
             return BoxAndTriangleList(box, triangleSoup.Triangles, ref data);
         }
-
+        /// <summary>
+        /// Detecta la colisión entre una caja y una lista de triángulos
+        /// </summary>
+        /// <param name="box">Caja</param>
+        /// <param name="triangleList">Lista de triángulos</param>
+        /// <param name="data">Datos de colisión a llenar</param>
+        /// <returns>Devuelve verdadero si existe colisión, falso en el resto de los casos</returns>
         private static bool BoxAndTriangleList(CollisionBox box, Triangle[] triangleList, ref CollisionData data)
         {
             if (data.ContactsLeft <= 0)
@@ -597,66 +646,24 @@ namespace Physics
             }
 
             bool intersection = false;
-            int contacts = 0;
 
-            foreach (Triangle triangle in triangleList)
+            if (data.ContactsLeft > 0)
             {
-                // Comprobar la intersección con el triángulo
-                if (IntersectionTests.BoxAndTri(box, triangle))
+                foreach (Triangle triangle in triangleList)
                 {
-                    // Obtener si la posición está bajo el plano
-                    Plane plane = triangle.Plane;
-                    float posDistanceToPlane = plane.Distance(box.Position);
-
-                    // Hay intersección, ahora hay que encontrar los puntos de intersección.
-                    // Podemos hacerlo únicamente chequeando los vértices.
-                    // Si la caja está descansando sobre el plano o un eje, se reportarán cuatro o dos puntos de contacto.
-                    for (int i = 0; i < 8; i++)
+                    // Comprobar la intersección con el triángulo
+                    if (IntersectionTests.BoxAndTri(box, triangle))
                     {
-                        // Calcular la positición de cada vértice
-                        Vector3 vertexPos = box.GetCorner(i);
-
-                        // Calcular la distancia al plano
-                        float distanceToPlane = plane.Distance(vertexPos);
-                        if (distanceToPlane <= 0f)
+                        if (data.ContactsLeft > 0)
                         {
-                            // Si la distancia es negativa está tras el plano. Si es 0, está en el plano
-
-                            // Intersección entre línea y triángulo
-                            Vector3 direction = Vector3.Normalize(box.Position - vertexPos);
-                            Ray r = new Ray(vertexPos, direction);
-                            if (IntersectionTests.TriAndRay(triangle, r))
+                            if (CollisionDetector.BoxAndTriangle(box, triangle, ref data))
                             {
                                 intersection = true;
-                                contacts++;
-
-                                // Crear la información del contacto.
-
-                                // El punto de contacto está a medio camino entre el vértice y el plano.
-                                // Se obtiene multiplicando la dirección por la mitad de la distancia de separación, y añadiendo la posición del vértice.
-                                Contact contact = data.CurrentContact;
-                                contact.ContactPoint = vertexPos;
-                                contact.ContactNormal = plane.Normal;
-                                contact.Penetration = -distanceToPlane;
-
-                                // Establecer los datos del contacto
-                                RigidBody one = box;
-                                RigidBody two = null;
-                                contact.SetBodyData(ref one, ref two, data.Friction, data.Restitution);
-
-                                // Añadir contacto
-                                data.AddContact();
-
-                                if (data.ContactsLeft <= 0)
-                                {
-                                    return true;
-                                }
-
-                                //if (contacts > 4)
-                                //{
-                                //    return true;
-                                //}
                             }
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
                 }

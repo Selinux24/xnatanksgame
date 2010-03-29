@@ -9,9 +9,11 @@ namespace TanksDebug
     using Common;
     using Common.Helpers;
     using GameComponents.Camera;
+    using GameComponents.Vehicles;
     using GameComponents.Weapons;
     using Physics.CollideCoarse;
     using Vehicles;
+    using GameComponents.Text;
 
     /// <summary>
     /// Demostración de disparos
@@ -32,6 +34,10 @@ namespace TanksDebug
         /// </summary>
         private const int _Boxes = 20;
         /// <summary>
+        /// Número de bolas en la simulación
+        /// </summary>
+        private const int _Balls = 10;
+        /// <summary>
         /// Tamaño del terreno
         /// </summary>
         private const float _TerrainSize = 300f;
@@ -50,9 +56,17 @@ namespace TanksDebug
         /// </summary>
         private CameraGameComponent m_Camera;
         /// <summary>
+        /// Componente de texto
+        /// </summary>
+        private TextDrawerComponent m_Text;
+        /// <summary>
         /// Colección de cajas para dibujar
         /// </summary>
         private List<CubeGameComponent> m_Cubes = new List<CubeGameComponent>();
+        /// <summary>
+        /// Colección de esferas para dibujar
+        /// </summary>
+        private List<BallGameComponent> m_Balls = new List<BallGameComponent>();
         /// <summary>
         /// El tanque 1
         /// </summary>
@@ -69,6 +83,15 @@ namespace TanksDebug
         /// Land speeder 2
         /// </summary>
         private LandSpeeder m_LandSpeeder_2 = null;
+
+        /// <summary>
+        /// Vehículo actual
+        /// </summary>
+        private Vehicle m_CurrentVehicle = null;
+
+        private BallGameComponent ball1 = null;
+        //private BallGameComponent ball2 = null;
+        //private BallGameComponent ball3 = null;
 
         /// <summary>
         /// Constructor
@@ -112,13 +135,19 @@ namespace TanksDebug
             this.m_Camera.UpdateOrder = 99;
             this.Components.Add(this.m_Camera);
 
+            // Texto
+            this.m_Text = new TextDrawerComponent(this);
+            this.m_Text.DrawOrder = 99;
+            this.Components.Add(this.m_Text);
+
             AmmoDrawer ammoDrawer = new AmmoDrawer(this, @"Content/dharma");
             ammoDrawer.Rounds = this.Physics.Proyectiles;
             ammoDrawer.UpdateOrder = 3;
             this.Components.Add(ammoDrawer);
 
-            // Inicializa las cajas
             Random rnd = new Random(DateTime.Now.Millisecond);
+
+            // Inicializa las cajas
             for (int i = 0; i < _Boxes; i++)
             {
                 // Inicializa los componentes gráficos de las cajas
@@ -133,6 +162,19 @@ namespace TanksDebug
                 this.m_Cubes.Add(cube);
                 cube.UpdateOrder = 4;
                 this.Components.Add(cube);
+            }
+
+            // Inicializa las esferas
+            for (int i = 0; i < _Balls; i++)
+            {
+                // Inicializa los componentes gráficos de las esferas
+                float radius = 0.5f + ((float)rnd.NextDouble() * 1.5f);
+
+                BallGameComponent ball = new BallGameComponent(this, radius, radius);
+                this.Physics.RegisterVehicle(ball);
+                this.m_Balls.Add(ball);
+                ball.UpdateOrder = 4;
+                this.Components.Add(ball);
             }
 
             // El tanque del jugador 1
@@ -159,11 +201,41 @@ namespace TanksDebug
             this.Components.Add(this.m_LandSpeeder_2);
             this.Physics.RegisterVehicle(m_LandSpeeder_2);
 
-            // Indicar que la cámara debe seguir al tanque seleccionado
-            this.m_Camera.ModelToFollow = this.m_Rhino_1;
+            // Prueba
+            this.ball1 = new BallGameComponent(this, 1f, 1f);
+            this.Components.Add(ball1);
+            this.Physics.RegisterVehicle(ball1);
 
-            // Establecer el foco en el tanque
-            this.m_Rhino_1.HasFocus = true;
+            //this.ball2 = new BallGameComponent(this, 1.5f, 2f);
+            //this.Components.Add(ball2);
+            //this.Physics.RegisterVehicle(ball2);
+
+            //this.ball3 = new BallGameComponent(this, 2f, 4f);
+            //this.Components.Add(ball3);
+            //this.Physics.RegisterVehicle(ball3);
+
+            //RodComponent rod1 = new RodComponent(this, this.ball1, Vector3.Up * this.ball1.Sphere.Radius, null, new Vector3(0, 40, 0), 10f);
+            //this.Components.Add(rod1);
+            //this.Physics.RegisterContactGenerator(rod1.Rod);
+
+            //RodComponent rod2 = new RodComponent(this, this.ball2, Vector3.Up * this.ball2.Sphere.Radius, null, new Vector3(0, 40, 0), 10f);
+            //this.Components.Add(rod2);
+            //this.Physics.RegisterContactGenerator(rod2.Rod);
+
+            //JointComponent joint1 = new JointComponent(this, this.ball1, Vector3.Down * this.ball1.Sphere.Radius, this.ball3, Vector3.Left * this.ball3.Sphere.Radius, 5f);
+            //this.Components.Add(joint1);
+            //this.Physics.RegisterContactGenerator(joint1.Joint);
+
+            //JointComponent joint2 = new JointComponent(this, this.ball2, Vector3.Down * this.ball2.Sphere.Radius, this.ball3, Vector3.Right * this.ball3.Sphere.Radius, 5f);
+            //this.Components.Add(joint2);
+            //this.Physics.RegisterContactGenerator(joint2.Joint);
+
+            Joint2Component rod24 = new Joint2Component(this, this.ball1, Vector3.Up * this.ball1.Sphere.Radius, null, new Vector3(0, 40, 0), 10f);
+            this.Components.Add(rod24);
+            this.Physics.RegisterContactGenerator(rod24.Rod);
+
+            // Establecer el foco en el vehículo
+            this.SetFocus(this.m_Rhino_1);
 
             base.Initialize();
 
@@ -199,6 +271,8 @@ namespace TanksDebug
             // Físicas
             this.Physics.Update(gameTime);
 
+            //this.car.Integrate(gameTime);
+
             // Actualización base
             base.Update(gameTime);
 
@@ -212,6 +286,18 @@ namespace TanksDebug
         protected override void Draw(GameTime gameTime)
         {
             this.Graphics.GraphicsDevice.Clear(Color.White);
+
+            this.GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
+            this.GraphicsDevice.RenderState.FillMode = FillMode.Solid;
+
+            this.GraphicsDevice.RenderState.FogColor = Color.White;
+            this.GraphicsDevice.RenderState.FogTableMode = FogMode.Linear;
+            this.GraphicsDevice.RenderState.FogStart = 75;
+            this.GraphicsDevice.RenderState.FogEnd = 500;
+            this.GraphicsDevice.RenderState.FogDensity = 0.25f;
+            this.GraphicsDevice.RenderState.FogEnable = true;
+
+            this.m_Text.WriteText("Contactos en uso: " + this.Physics.UsedContacts.ToString(), 5, 5, Color.Red);
 
             base.Draw(gameTime);
         }
@@ -236,20 +322,36 @@ namespace TanksDebug
             // Land Speeder 2
             m_LandSpeeder_2.SetInitialState(new Vector3(10, 60f, -10) + GlobalTraslation, Quaternion.Identity);
 
-            // Inicializar las cajas
-            float boxArea = _TerrainSize * 0.8f * 0.5f;
+            float objectArea = _TerrainSize * 0.8f * 0.5f;
             Random rnd = new Random(DateTime.Now.Millisecond);
+
+            // Inicializar las cajas
             foreach (CubeGameComponent box in this.m_Cubes)
             {
-                float x = ((float)rnd.NextDouble() * boxArea * 2f) - boxArea;
+                float x = ((float)rnd.NextDouble() * objectArea * 2f) - objectArea;
                 float y = 50f;
-                float z = ((float)rnd.NextDouble() * boxArea * 2f) - boxArea;
+                float z = ((float)rnd.NextDouble() * objectArea * 2f) - objectArea;
                 float yaw = (float)rnd.NextDouble() * 0.5f;
                 float pitch = (float)rnd.NextDouble() * 0.5f;
                 float roll = (float)rnd.NextDouble() * 0.5f;
 
                 box.SetState(new Vector3(x, y, z) + GlobalTraslation, Quaternion.CreateFromYawPitchRoll(yaw, pitch, roll));
             }
+
+            // Inicializar las esferas
+            foreach (BallGameComponent ball in this.m_Balls)
+            {
+                float x = ((float)rnd.NextDouble() * objectArea * 2f) - objectArea;
+                float y = 50f;
+                float z = ((float)rnd.NextDouble() * objectArea * 2f) - objectArea;
+
+                ball.SetPosition(new Vector3(x, y, z) + GlobalTraslation);
+            }
+
+            //this.ball1.SetPosition(new Vector3(120, 30, 120));
+            this.ball1.SetPosition(new Vector3(5, 35, 5));
+            //this.ball2.SetPosition(new Vector3(-15, 39, -20));
+            //this.ball3.SetPosition(new Vector3(5, 20, -10));
         }
         /// <summary>
         /// Actualiza la cámara
@@ -290,39 +392,49 @@ namespace TanksDebug
         {
             if (InputHelper.KeyUpEvent(Keys.D1))
             {
-                this.m_Rhino_1.HasFocus = true;
-                this.m_Rhino_2.HasFocus = false;
-                this.m_LandSpeeder_1.HasFocus = false;
-                this.m_LandSpeeder_2.HasFocus = false;
-
-                this.m_Camera.ModelToFollow = this.m_Rhino_1;
+                this.SetFocus(this.m_Rhino_1);
             }
             else if (InputHelper.KeyUpEvent(Keys.D2))
             {
-                this.m_Rhino_1.HasFocus = false;
-                this.m_Rhino_2.HasFocus = true;
-                this.m_LandSpeeder_1.HasFocus = false;
-                this.m_LandSpeeder_2.HasFocus = false;
-
-                this.m_Camera.ModelToFollow = this.m_Rhino_2;
+                this.SetFocus(this.m_Rhino_2);
             }
             else if (InputHelper.KeyUpEvent(Keys.D3))
             {
-                this.m_Rhino_1.HasFocus = false;
-                this.m_Rhino_2.HasFocus = false;
-                this.m_LandSpeeder_1.HasFocus = true;
-                this.m_LandSpeeder_2.HasFocus = false;
-
-                this.m_Camera.ModelToFollow = this.m_LandSpeeder_1;
+                this.SetFocus(this.m_LandSpeeder_1);
             }
             else if (InputHelper.KeyUpEvent(Keys.D4))
             {
-                this.m_Rhino_1.HasFocus = false;
-                this.m_Rhino_2.HasFocus = false;
-                this.m_LandSpeeder_1.HasFocus = false;
-                this.m_LandSpeeder_2.HasFocus = true;
+                this.SetFocus(this.m_LandSpeeder_2);
+            }
 
-                this.m_Camera.ModelToFollow = this.m_LandSpeeder_2;
+            if (InputHelper.KeyUpEvent(Keys.Tab))
+            {
+                if (this.m_CurrentVehicle != null)
+                {
+                    this.m_CurrentVehicle.SetNextPlayerPosition();
+                }
+            }
+        }
+        /// <summary>
+        /// Establece el foco en el vehículo especificado
+        /// </summary>
+        /// <param name="vehicle">Vehículo</param>
+        private void SetFocus(Vehicle vehicle)
+        {
+            if (this.m_CurrentVehicle != null)
+            {
+                this.m_CurrentVehicle.HasFocus = false;
+            }
+
+            this.m_CurrentVehicle = vehicle;
+
+            if (vehicle != null)
+            {
+                // Indicar que la cámara debe seguir al tanque seleccionado
+                this.m_Camera.ModelToFollow = vehicle;
+
+                // Establecer el foco en el tanque
+                vehicle.HasFocus = true;
             }
         }
     }

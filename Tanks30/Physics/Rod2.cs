@@ -5,7 +5,7 @@ namespace Physics
     /// <summary>
     /// Barra de unión
     /// </summary>
-    public class Rod : ContactGenerator
+    public class Rod2 : ContactGenerator
     {
         /// <summary>
         /// Cuerpo uno
@@ -79,7 +79,7 @@ namespace Physics
         /// <param name="bodyTwo">Cuerpo dos</param>
         /// <param name="relativePointTwo">Posición de unión relativa al cuerpo dos</param>
         /// <param name="length">Longitud de la barra</param>
-        public Rod(
+        public Rod2(
             IPhysicObject bodyOne, Vector3 relativePointOne,
             IPhysicObject bodyTwo, Vector3 relativePointTwo,
             float length)

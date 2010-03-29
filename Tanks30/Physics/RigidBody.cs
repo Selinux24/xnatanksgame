@@ -571,7 +571,7 @@ namespace Physics
         /// </summary>
         /// <param name="point">Punto</param>
         /// <returns>Devuelve el punto especificado en coordenadas locales</returns>
-        internal Vector3 GetPointInLocalSpace(Vector3 point)
+        public Vector3 GetPointInLocalSpace(Vector3 point)
         {
             Matrix inverse = Matrix.Invert(this.m_TransformMatrix);
 
@@ -582,7 +582,7 @@ namespace Physics
         /// </summary>
         /// <param name="point">Punto</param>
         /// <returns>Devuelve el punto especificado en coordenadas del mundo</returns>
-        internal Vector3 GetPointInWorldSpace(Vector3 point)
+        public Vector3 GetPointInWorldSpace(Vector3 point)
         {
             return Vector3.Transform(point, this.m_TransformMatrix);
         }
@@ -591,7 +591,7 @@ namespace Physics
         /// </summary>
         /// <param name="direction">Vector de dirección</param>
         /// <returns>Devuelve el vector de dirección especificado en coordenadas locales</returns>
-        internal Vector3 GetDirectionInLocalSpace(Vector3 direction)
+        public Vector3 GetDirectionInLocalSpace(Vector3 direction)
         {
             Matrix inverse = Matrix.Invert(this.m_TransformMatrix);
 
@@ -602,7 +602,7 @@ namespace Physics
         /// </summary>
         /// <param name="direction">Vector de dirección</param>
         /// <returns>Devuelve el vector de dirección especificado en coordenadas del mundo</returns>
-        internal Vector3 GetDirectionInWorldSpace(Vector3 direction)
+        public Vector3 GetDirectionInWorldSpace(Vector3 direction)
         {
             return Vector3.Transform(direction, this.m_TransformMatrix);
         }

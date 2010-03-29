@@ -82,11 +82,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BallGameComponent.cs" />
+    <Compile Include="Joint2Component.cs" />
     <Compile Include="DemoScenery.cs" />
     <Compile Include="CubeGameComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="RodComponent.cs" />
     <Compile Include="TanksDebug.cs" />
+    <Compile Include="JointComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
