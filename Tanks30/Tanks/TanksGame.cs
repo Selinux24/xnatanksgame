@@ -16,6 +16,8 @@ namespace Tanks
     using GameComponents.Weapons;
     using Physics.CollideCoarse;
     using Tanks.Services;
+    using Buildings;
+    using GameComponents.Buildings;
 
     /// <summary>
     /// Juego
@@ -54,6 +56,10 @@ namespace Tanks
         /// Servicio contenedor de vehículos
         /// </summary>
         private VehicleContainerService m_VehicleContainer;
+        /// <summary>
+        /// Servicio contenedor de edificios
+        /// </summary>
+        private BuildingContainerService m_BuilngContainer;
 
         /// <summary>
         /// Vehículo actual
@@ -155,7 +161,6 @@ namespace Tanks
 #if DEBUG
             GameComponents.Debug.DebugDrawer.Initialize(this.GraphicsDevice);
 #endif
-
             this.m_Scenery = new SceneryGameComponent(this);
             this.m_Scenery.UpdateOrder = 0;
             this.m_Scenery.DrawOrder = 0;
@@ -166,11 +171,17 @@ namespace Tanks
             this.m_VehicleContainer.UpdateOrder = 1;
             this.Services.AddService(typeof(VehicleContainerService), this.m_VehicleContainer);
 
+            this.m_BuilngContainer = new BuildingContainerService(this);
+            this.m_BuilngContainer.UpdateOrder = 2;
+            this.Services.AddService(typeof(BuildingContainerService), this.m_BuilngContainer);
+
             AmmoDrawer ammoDrawer = new AmmoDrawer(this, @"Content/Steel 1");
             ammoDrawer.Rounds = this.Physics.Proyectiles;
-            ammoDrawer.UpdateOrder = 2;
-            ammoDrawer.DrawOrder = 2;
+            ammoDrawer.UpdateOrder = 3;
+            ammoDrawer.DrawOrder = 3;
             this.Components.Add(ammoDrawer);
+
+            Building[] buildings = AddBuildings(BuildingTypes.Type0, 10);
 
             Vehicle[] squad01 = AddSquadron(VehicleTypes.LandSpeeder, 3);
             //Vehicle[] squad02 = AddSquadron(VehicleTypes.LandSpeeder, 3);
@@ -209,6 +220,8 @@ namespace Tanks
             base.Initialize();
 
             this.Physics.RegisterScenery(this.m_Scenery.Scenery);
+
+            this.InitializeBuildings(buildings);
 
             this.InitializeSquadron(squad01);
             //this.InitializeSquadron(squad02);
@@ -286,6 +299,41 @@ namespace Tanks
             this.Graphics.GraphicsDevice.RenderState.FogEnable = true;
 
             base.Draw(gameTime);
+        }
+
+        private Building[] AddBuildings(BuildingTypes type, int count)
+        {
+            // Lista de componentes creados
+            List<Building> buildingList = new List<Building>();
+
+            for (int i = 0; i < count; i++)
+            {
+                if (type == BuildingTypes.Type0)
+                {
+                    buildingList.Add(m_BuilngContainer.AddType0(Point.Zero));
+                }
+            }
+
+            return buildingList.ToArray();
+        }
+
+        private void InitializeBuildings(Building[] buildings)
+        {
+            // Punto de posición del edificio
+            foreach (Building building in buildings)
+            {
+                Vector3 where = new Vector3(RandomComponent.Next(5000) + 5000, 600, RandomComponent.Next(5000) + 5000);
+
+                float? h = this.m_Scenery.Scenery.GetHeigthAtPoint(where.X, where.Z);
+                if (h.HasValue)
+                {
+                    where.Y = h.Value + 1f;
+                }
+
+                building.SetInitialState(where, Quaternion.Identity);
+
+                this.Physics.RegisterVehicle(building);
+            }
         }
 
         /// <summary>

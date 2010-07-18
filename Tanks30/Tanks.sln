@@ -25,9 +25,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Test.vsmdi = Test.vsmdi
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Buildings", "Buildings\Buildings.csproj", "{879AF4CF-C159-4FFF-A291-200DEA00EFA9}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 15
+		SccNumberOfProjects = 17
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs02.codeplex.com/
 		SccLocalPath0 = .
@@ -78,9 +80,13 @@ Global
 		SccProjectUniqueName14 = PhysicsUnitTests\\PhysicsUnitTests.csproj
 		SccProjectName14 = PhysicsUnitTests
 		SccLocalPath14 = PhysicsUnitTests
-	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = Test.vsmdi
+		SccProjectUniqueName15 = Buildings\\Buildings.csproj
+		SccProjectName15 = Buildings
+		SccLocalPath15 = Buildings
+		SccProjectUniqueName16 = Buildings\\Content\\Content.contentproj
+		SccProjectTopLevelParentUniqueName16 = Buildings\\Buildings.csproj
+		SccProjectName16 = Buildings/Content
+		SccLocalPath16 = Buildings\\Content
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -255,6 +261,30 @@ Global
 		{CC47F8C0-EAF1-4E3A-B633-4633C2537B48}.Release|x86.ActiveCfg = Release|x86
 		{CC47F8C0-EAF1-4E3A-B633-4633C2537B48}.Release|Xbox 360.ActiveCfg = Release|x86
 		{CC47F8C0-EAF1-4E3A-B633-4633C2537B48}.Release|Zune.ActiveCfg = Release|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Debug|x86.ActiveCfg = Debug|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Debug|x86.Build.0 = Debug|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Debug|Zune.ActiveCfg = Debug|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Release|Any CPU.ActiveCfg = Release|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Release|Mixed Platforms.Build.0 = Release|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Release|x86.ActiveCfg = Release|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Release|x86.Build.0 = Release|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Release|Xbox 360.ActiveCfg = Release|x86
+		{879AF4CF-C159-4FFF-A291-200DEA00EFA9}.Release|Zune.ActiveCfg = Release|x86
+		{C01041F1-0141-416F-8F36-44F003AF1EBD}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{C01041F1-0141-416F-8F36-44F003AF1EBD}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{C01041F1-0141-416F-8F36-44F003AF1EBD}.Debug|x86.ActiveCfg = Debug|x86
+		{C01041F1-0141-416F-8F36-44F003AF1EBD}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{C01041F1-0141-416F-8F36-44F003AF1EBD}.Debug|Zune.ActiveCfg = Debug|x86
+		{C01041F1-0141-416F-8F36-44F003AF1EBD}.Release|Any CPU.ActiveCfg = Release|x86
+		{C01041F1-0141-416F-8F36-44F003AF1EBD}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{C01041F1-0141-416F-8F36-44F003AF1EBD}.Release|x86.ActiveCfg = Release|x86
+		{C01041F1-0141-416F-8F36-44F003AF1EBD}.Release|Xbox 360.ActiveCfg = Release|x86
+		{C01041F1-0141-416F-8F36-44F003AF1EBD}.Release|Zune.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

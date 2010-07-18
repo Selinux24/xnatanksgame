@@ -4,8 +4,8 @@ using Microsoft.Xna.Framework.Input;
 namespace Vehicles
 {
     using Common.Helpers;
+    using GameComponents.Animation;
     using GameComponents.Vehicles;
-    using GameComponents.Vehicles.Animations;
 
     public partial class LandRaider : Vehicle
     {

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace GameComponents.Vehicles
 {
-    using GameComponents.Vehicles.Animations;
+    using GameComponents.Animation;
 
     /// <summary>
     /// Información de animación de un vehículo

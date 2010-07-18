@@ -14,6 +14,7 @@ namespace TanksDebug
     using Physics.CollideCoarse;
     using Vehicles;
     using GameComponents.Text;
+    using Buildings;
 
     /// <summary>
     /// Demostración de disparos
@@ -67,6 +68,10 @@ namespace TanksDebug
         /// Colección de esferas para dibujar
         /// </summary>
         private List<BallGameComponent> m_Balls = new List<BallGameComponent>();
+        /// <summary>
+        /// Edificio
+        /// </summary>
+        private BuildingType0 m_Building = null;
         /// <summary>
         /// El tanque 1
         /// </summary>
@@ -139,6 +144,12 @@ namespace TanksDebug
             this.m_Text = new TextDrawerComponent(this);
             this.m_Text.DrawOrder = 99;
             this.Components.Add(this.m_Text);
+
+            // Un edificio
+            this.m_Building = new BuildingType0(this);
+            this.m_Building.UpdateOrder = 3;
+            this.Components.Add(this.m_Building);
+            this.Physics.RegisterVehicle(this.m_Building);
 
             AmmoDrawer ammoDrawer = new AmmoDrawer(this, @"Content/dharma");
             ammoDrawer.Rounds = this.Physics.Proyectiles;
@@ -309,6 +320,9 @@ namespace TanksDebug
             this.Physics.Reset();
 
             float tankArea = _TerrainSize * 0.9f * 0.5f;
+
+            // Edificio
+            m_Building.SetInitialState(new Vector3(tankArea * 0.75f, 30f, tankArea * 0.75f) + GlobalTraslation, Quaternion.Identity);
 
             // Tanque 1
             m_Rhino_1.SetInitialState(new Vector3(tankArea, 20f, tankArea) + GlobalTraslation, Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(45f)));

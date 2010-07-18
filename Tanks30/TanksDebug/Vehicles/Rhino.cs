@@ -1,11 +1,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Vehicles
+namespace TanksDebug
 {
-    using Common.Helpers;
-    using GameComponents.Animation;
+    using Common;
     using GameComponents.Vehicles;
+    using GameComponents.Vehicles.Animations;
     using GameComponents.Weapons;
     using Physics;
 

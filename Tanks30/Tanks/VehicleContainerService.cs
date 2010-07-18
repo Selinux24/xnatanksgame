@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using GameComponents.Vehicles;
 using Microsoft.Xna.Framework;
 
 namespace Tanks.Services
 {
+    using GameComponents.Vehicles;
     using Vehicles;
 
     public class VehicleContainerService : GameComponent
