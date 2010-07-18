@@ -66,7 +66,7 @@ namespace Tanks
 
             if (type == BuildingTypes.Type0)
             {
-                newBuilding = new BuildingType0(this.Game);
+                newBuilding = new BuildingType0(this.Game, @"Content/Buildings/", @"WHBuilding01.xml");
             }
 
             if (newBuilding != null)
