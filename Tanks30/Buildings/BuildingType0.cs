@@ -13,10 +13,11 @@ namespace Buildings
         /// Constructor
         /// </summary>
         /// <param name="game">Juego</param>
-        public BuildingType0(Game game)
+        public BuildingType0(Game game, string contentDirectory, string assetName)
             : base(game)
         {
-
+            this.ComponentsDirectory = contentDirectory;
+            this.ComponentInfoName = assetName;
         }
 
         /// <summary>
@@ -24,9 +25,6 @@ namespace Buildings
         /// </summary>
         protected override void LoadContent()
         {
-            this.ComponentsDirectory = "Content/Buildings/";
-            this.ComponentInfoName = "WHBuilding01.xml";
-
             base.LoadContent();
         }
         /// <summary>

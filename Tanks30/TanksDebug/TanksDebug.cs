@@ -71,7 +71,9 @@ namespace TanksDebug
         /// <summary>
         /// Edificio
         /// </summary>
-        private BuildingType0 m_Building = null;
+        private BuildingType0 m_Building_1 = null;
+
+        private BuildingType0 m_Building_2 = null;
         /// <summary>
         /// El tanque 1
         /// </summary>
@@ -146,10 +148,15 @@ namespace TanksDebug
             this.Components.Add(this.m_Text);
 
             // Un edificio
-            this.m_Building = new BuildingType0(this);
-            this.m_Building.UpdateOrder = 3;
-            this.Components.Add(this.m_Building);
-            this.Physics.RegisterVehicle(this.m_Building);
+            this.m_Building_1 = new BuildingType0(this, @"Content/Buildings/", @"WHBuilding01.xml");
+            this.m_Building_1.UpdateOrder = 3;
+            this.Components.Add(this.m_Building_1);
+            this.Physics.RegisterVehicle(this.m_Building_1);
+
+            this.m_Building_2 = new BuildingType0(this, @"Content/Buildings/", @"WHBuilding02.xml");
+            this.m_Building_2.UpdateOrder = 3;
+            this.Components.Add(this.m_Building_2);
+            this.Physics.RegisterVehicle(this.m_Building_2);
 
             AmmoDrawer ammoDrawer = new AmmoDrawer(this, @"Content/dharma");
             ammoDrawer.Rounds = this.Physics.Proyectiles;
@@ -322,7 +329,10 @@ namespace TanksDebug
             float tankArea = _TerrainSize * 0.9f * 0.5f;
 
             // Edificio
-            m_Building.SetInitialState(new Vector3(tankArea * 0.75f, 30f, tankArea * 0.75f) + GlobalTraslation, Quaternion.Identity);
+            m_Building_1.SetInitialState(new Vector3(tankArea * 0.75f, 30f, tankArea * 0.75f) + GlobalTraslation, Quaternion.Identity);
+
+            // Edificio
+            m_Building_2.SetInitialState(new Vector3(-tankArea * 0.75f, 30f, -tankArea * 0.75f) + GlobalTraslation, Quaternion.Identity);
 
             // Tanque 1
             m_Rhino_1.SetInitialState(new Vector3(tankArea, 20f, tankArea) + GlobalTraslation, Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(45f)));
