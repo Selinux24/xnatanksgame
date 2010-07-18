@@ -190,6 +190,11 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
+    <Compile Include="Buildings\WHBuilding01.x">
+      <Name>WHBuilding01</Name>
+      <Importer>XImporter</Importer>
+      <Processor>PrimitiveInfoProcessor</Processor>
+    </Compile>
     <None Include="LemanRuss.xml">
       <Name>LemanRuss</Name>
       <Importer>XmlImporter</Importer>
@@ -246,6 +251,14 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Buildings\WHBuilding01.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WHBuilding01</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+    </None>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

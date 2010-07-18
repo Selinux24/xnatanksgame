@@ -84,9 +84,12 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildingContainerService.cs" />
+    <Compile Include="BuildingTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs">
       <Name>Program</Name>
@@ -138,6 +141,10 @@
     </NestedContentProject>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Buildings\Buildings.csproj">
+      <Project>{879AF4CF-C159-4FFF-A291-200DEA00EFA9}</Project>
+      <Name>Buildings</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{2645CF09-370C-4539-8214-308F1C5A388E}</Project>
       <Name>Common</Name>

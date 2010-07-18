@@ -1,35 +1,25 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
-    <ProjectGuid>{E7AEEB7C-CE8A-4227-986B-FD3657076247}</ProjectGuid>
+    <ProjectGuid>{879AF4CF-C159-4FFF-A291-200DEA00EFA9}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GameComponents</RootNamespace>
-    <AssemblyName>GameComponents</AssemblyName>
+    <RootNamespace>Buildings</RootNamespace>
+    <AssemblyName>Buildings</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <XnaFrameworkVersion>v3.1</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
-    <Thumbnail>
-    </Thumbnail>
-    <XnaCrossPlatformGroupID>{2104df30-52a6-4564-b91a-09ec9cf2396e}</XnaCrossPlatformGroupID>
-    <XnaUpgrade>
-    </XnaUpgrade>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <XnaCrossPlatformGroupID>08950064-1b54-4039-824a-86bd934d0bf7</XnaCrossPlatformGroupID>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <PublishUrl>http://localhost/GameComponents/</PublishUrl>
+    <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
@@ -38,6 +28,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -52,23 +43,29 @@
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <XnaCompressContent>false</XnaCompressContent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\x86\Release</OutputPath>
-    <DefineConstants>TRACE%3bWINDOWS</DefineConstants>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>True</XnaCompressContent>
+    <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d" />
-    <Reference Include="Microsoft.Xna.Framework.Game, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d" />
+    <Reference Include="Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86">
+      <Private>False</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
@@ -76,23 +73,36 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.XML" />
+    <Reference Include="System.Xml">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Camera\CameraGameComponent.cs">
-      <Name>BaseCameraGameComponent</Name>
-    </Compile>
-    <Compile Include="Debug\LineDrawerGameComponent.cs">
-      <Name>LineDrawerGameComponent</Name>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <Name>AssemblyInfo</Name>
-    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BuildingType0.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <NestedContentProject Include="Content\Content.contentproj">
+      <Project>c01041f1-0141-416f-8f36-44f003af1ebd</Project>
+      <Visible>False</Visible>
+    </NestedContentProject>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{2645CF09-370C-4539-8214-308F1C5A388E}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameComponents\GameComponents.csproj">
+      <Project>{E7AEEB7C-CE8A-4227-986B-FD3657076247}</Project>
+      <Name>GameComponents</Name>
     </ProjectReference>
     <ProjectReference Include="..\Physics\Physics.csproj">
       <Project>{F195B1D9-335D-493A-B74C-C7AA42E37A68}</Project>
@@ -126,49 +136,8 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Buildings\Building.Animation.cs" />
-    <Compile Include="Buildings\Building.cs" />
-    <Compile Include="Buildings\Building.Debug.cs" />
-    <Compile Include="Buildings\Building.Physics.cs" />
-    <Compile Include="Buildings\BuildingComponentInfo.cs" />
-    <Compile Include="Debug\DebugDrawer.cs" />
-    <Compile Include="MathComponents\RandomComponent.cs" />
-    <Compile Include="Particles\ParticleSettings.cs" />
-    <Compile Include="Particles\ParticleSystem.cs" />
-    <Compile Include="Particles\ParticleVertex.cs" />
-    <Compile Include="Particles\SmokePlumeParticleSystem.cs" />
-    <Compile Include="Readers\PrimitiveInfoReader.cs" />
-    <Compile Include="Readers\PrimitiveListReader.cs" />
-    <Compile Include="Readers\SceneryReader.cs" />
-    <Compile Include="Readers\SceneryTriangleNodeReader.cs" />
-    <Compile Include="Scenery\Scenery.cs" />
-    <Compile Include="Scenery\Scenery.Debug.cs" />
-    <Compile Include="Scenery\Scenery.Physics.cs" />
-    <Compile Include="Scenery\SceneryEnvironmet.cs" />
-    <Compile Include="Scenery\SceneryGameComponent.cs" />
-    <Compile Include="Scenery\SceneryInfoGameComponent.cs" />
-    <Compile Include="Scenery\SkyBoxGameComponent.cs" />
-    <Compile Include="Text\TextDrawerComponent.cs" />
-    <Compile Include="Animation\Animation.cs" />
-    <Compile Include="Animation\AnimationAxis.cs" />
-    <Compile Include="Animation\AnimationController.cs" />
-    <Compile Include="Animation\AnimationInfo.cs" />
-    <Compile Include="Animation\PlayerPosition.cs" />
-    <Compile Include="Animation\PlayerPositionInfo.cs" />
-    <Compile Include="Vehicles\AutoPilot.cs" />
-    <Compile Include="Vehicles\IVehicleController.cs" />
-    <Compile Include="Vehicles\MovingDirections.cs" />
-    <Compile Include="Vehicles\Vehicle.Animation.cs" />
-    <Compile Include="Vehicles\Vehicle.cs" />
-    <Compile Include="Vehicles\Vehicle.Debug.cs" />
-    <Compile Include="Vehicles\Vehicle.Physics.cs" />
-    <Compile Include="Vehicles\Vehicle.Status.cs" />
-    <Compile Include="Vehicles\VehicleComponentInfo.cs" />
-    <Compile Include="Weapons\AmmoDrawer.cs" />
-    <Compile Include="Weapons\Weapon.cs" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -176,5 +145,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" Condition="" />
 </Project>

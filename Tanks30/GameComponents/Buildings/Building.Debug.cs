@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace GameComponents.Vehicles
+namespace GameComponents.Buildings
 {
-    public partial class Vehicle
+    public partial class Building
     {
 #if DEBUG
         private void DrawDebug(GameTime gameTime)

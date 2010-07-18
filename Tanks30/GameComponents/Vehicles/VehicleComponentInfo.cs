@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Vehicles
 {
-    using GameComponents.Vehicles.Animations;
+    using GameComponents.Animation;
 
     /// <summary>
     /// Información de animación de un vehículo
@@ -98,54 +96,6 @@ namespace GameComponents.Vehicles
         public VehicleComponentInfo()
         {
 
-        }
-
-        /// <summary>
-        /// Crea la lista de animaciones usable por los componentes
-        /// </summary>
-        /// <param name="model">Modelo a animar</param>
-        /// <returns>Devuelve una lista de animaciones</returns>
-        public Animation[] CreateAnimationList(Model model)
-        {
-            List<Animation> animationList = new List<Animation>();
-
-            foreach (AnimationInfo animationInfo in this.AnimationControlers)
-            {
-                if (animationInfo.Type == typeof(Animation).ToString())
-                {
-                    Animation animation = new Animation(animationInfo.Name, model.Bones[animationInfo.BoneName]);
-                    animation.Initialize(animationInfo.Axis);
-
-                    animationList.Add(animation);
-                }
-                else if (animationInfo.Type == typeof(AnimationAxis).ToString())
-                {
-                    AnimationAxis animation = new AnimationAxis(animationInfo.Name, model.Bones[animationInfo.BoneName]);
-                    animation.Initialize(animationInfo.Axis, animationInfo.AngleFrom, animationInfo.AngleTo, animationInfo.Velocity, animationInfo.Inverse);
-
-                    animationList.Add(animation);
-                }
-            }
-
-            return animationList.ToArray();
-        }
-        /// <summary>
-        /// Crea la lista de posiciones de jugador usable por los componentes
-        /// </summary>
-        /// <param name="model">Modelo que contiene las posiciones</param>
-        /// <returns>Devuelve una lista de posiciones de jugador</returns>
-        public PlayerPosition[] CreatePlayerPositionList(Model model)
-        {
-            List<PlayerPosition> m_PlayerControlList = new List<PlayerPosition>();
-
-            foreach (PlayerPositionInfo positionInfo in this.PlayerPositions)
-            {
-                PlayerPosition position = new PlayerPosition(positionInfo.Name, model.Bones[positionInfo.BoneName], positionInfo.Translation);
-
-                m_PlayerControlList.Add(position);
-            }
-
-            return m_PlayerControlList.ToArray();
         }
     }
 }

@@ -2,20 +2,21 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GameComponents.Vehicles
+namespace GameComponents.Buildings
 {
     using Common;
     using Common.Helpers;
+    using GameComponents.Animation;
     using GameComponents.Components.Particles;
     using GameComponents.Scenery;
     using Physics;
-    using Physics.CollideCoarse;
 
-    /// <summary>
-    /// Componente tanque
-    /// </summary>
-    public partial class Vehicle : DrawableGameComponent
+    public abstract partial class Building : DrawableGameComponent
     {
+        /// <summary>
+        /// Ruta de los componentes
+        /// </summary>
+        protected string ComponentsDirectory;
         /// <summary>
         /// Nombre del componente
         /// </summary>
@@ -24,24 +25,18 @@ namespace GameComponents.Vehicles
         /// Administrador de contenidos
         /// </summary>
         protected ContentManager Content;
-        /// <summary>
-        /// Controlador de físicas
-        /// </summary>
-        protected PhysicsController PhysicsController;
 
         /// <summary>
         /// Modelo
         /// </summary>
         private Model m_Model;
         /// <summary>
-        /// Matriz relativa para posicionar el vehículo sobre el terreno
+        /// Matriz relativa para posicionar el modelo sobre el terreno
         /// </summary>
         private Matrix m_Offset = Matrix.Identity;
-        // Posición
-        //private Vector3 m_Position = Vector3.Zero;
-        // Rotación
-        //private Quaternion m_Rotation = Quaternion.Identity;
-        // Escala
+        /// <summary>
+        /// Escala
+        /// </summary>
         private float m_Scale = 1f;
 
         /// <summary>
@@ -91,8 +86,6 @@ namespace GameComponents.Vehicles
                 {
                     this.m_OBB.SetOrientation(value);
                 }
-
-                this.RotationHasChanged = true;
             }
         }
         /// <summary>
@@ -111,26 +104,9 @@ namespace GameComponents.Vehicles
         }
 
         /// <summary>
-        /// Indica que el vehículo se ha inicializado
+        /// Indica que el componente se ha inicializado
         /// </summary>
         protected bool Initialized = false;
-        /// <summary>
-        /// Indica si la posición ha sido modificada desde la última actualización
-        /// </summary>
-        protected bool PositionHasChanged = false;
-        /// <summary>
-        /// Indica si la rotación ha sido modificada desde la última actualización
-        /// </summary>
-        protected bool RotationHasChanged = false;
-        /// <summary>
-        /// Indica si la escala ha sido modificada desde la último actualización
-        /// </summary>
-        protected bool ScaleHasChanged = false;
-
-        /// <summary>
-        /// Indica si el tanque tiene el foco
-        /// </summary>
-        public bool HasFocus = false;
 
         /// <summary>
         /// Obtiene la matriz mundo actual del modelo
@@ -147,33 +123,15 @@ namespace GameComponents.Vehicles
                 return this.m_Offset * Matrix.Identity;
             }
         }
-        /// <summary>
-        /// Obtiene la vista actual desde el modelo
-        /// </summary>
-        public virtual Matrix CurrentPlayerControlTransform
-        {
-            get
-            {
-                if (this.m_CurrentPlayerControl != null)
-                {
-                    return this.m_CurrentPlayerControl.GetModelMatrix(
-                        this.m_AnimationController,
-                        this.CurrentTransform);
-                }
-
-                return this.CurrentTransform;
-            }
-        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="game">Juego</param>
-        public Vehicle(Game game)
+        public Building(Game game)
             : base(game)
         {
             this.Content = game.Content;
-            this.PhysicsController = (PhysicsController)game.Services.GetService(typeof(PhysicsController));
 
             this.m_SmokePlumeParticles = new SmokePlumeParticleSystem(game);
             this.m_SmokePlumeParticles.DrawOrder = 100;
@@ -189,38 +147,16 @@ namespace GameComponents.Vehicles
             base.LoadContent();
 
             // Información del componente
-            VehicleComponentInfo componentInfo = VehicleComponentInfo.Load("Content/" + this.ComponentInfoName);
+            BuildingComponentInfo componentInfo = BuildingComponentInfo.Load(this.ComponentsDirectory + this.ComponentInfoName);
 
             // Modelo
-            this.m_Model = Content.Load<Model>("Content/" + componentInfo.Model);
+            this.m_Model = Content.Load<Model>(this.ComponentsDirectory + componentInfo.Model);
             this.m_TriangleInfo = this.m_Model.Tag as PrimitiveInfo;
-            this.m_OBB = new CollisionBox(this.m_TriangleInfo.AABB, 1000f);
+            this.m_OBB = new CollisionBox(this.m_TriangleInfo.AABB, 1000000f);
             this.m_Offset = Matrix.CreateTranslation(new Vector3(0f, -this.m_OBB.HalfSize.Y, 0f));
-
-            // Velocidad máxima que puede alcanzar el tanque hacia delante
-            this.MaxForwardVelocity = componentInfo.MaxForwardVelocity;
-            // Velocidad máxima que puede alcanzar el tanque marcha atrás
-            this.MaxBackwardVelocity = componentInfo.MaxBackwardVelocity;
-            // Modificador de aceleración
-            this.AccelerationModifier = this.MaxForwardVelocity / componentInfo.AccelerationModifier;
-            // Modificador de frenado
-            this.BrakeModifier = this.AccelerationModifier * componentInfo.BrakeModifier;
-            // Velocidad angular
-            this.AngularVelocityModifier = MathHelper.ToRadians(componentInfo.AngularVelocityModifier);
-            // Vehículo volador
-            this.Skimmer = componentInfo.Skimmer;
-            // Altura máxima
-            this.MaxFlightHeight = componentInfo.MaxFlightHeight;
-            // Altura mínima
-            this.MinFlightHeight = componentInfo.MinFlightHeight;
-            // Rotación ascendente del morro
-            this.AscendingAngle = MathHelper.ToRadians(componentInfo.AscendingAngle);
-            // Rotación descendente del morro
-            this.DescendingAngle = MathHelper.ToRadians(componentInfo.DescendingAngle);
+         
             // Controles de animación
-            this.m_AnimationController.AddRange(Animation.Animation.CreateAnimationList(this.m_Model, componentInfo.AnimationControlers));
-            // Posiciones
-            this.m_PlayerControlList.AddRange(Animation.PlayerPosition.CreatePlayerPositionList(this.m_Model, componentInfo.PlayerPositions));
+            this.m_AnimationController.AddRange(Animation.CreateAnimationList(this.m_Model, componentInfo.AnimationControlers));
 
             // Transformaciones iniciales
             this.m_BoneTransforms = new Matrix[m_Model.Bones.Count];
@@ -233,43 +169,15 @@ namespace GameComponents.Vehicles
         {
             base.Update(gameTime);
 
-            if (!this.Destroyed)
-            {
-                if (this.m_Autopilot.Enabled)
-                {
-                    // Piloto automático
-                    this.m_Autopilot.UpdateAutoPilot(gameTime, this);
-                }
-            }
-
-            // Controlador de animación
-            this.m_AnimationController.Update(gameTime);
-
-            // Actualizar la rotación
-            //this.UpdateRotation(gameTime);
-
-            // Actualizar la posición
-            //this.UpdatePosition(gameTime);
-
-            // Establecer la visibilidad del vehículo
+            // Establecer la visibilidad
             BoundingSphere sph = this.GetSPH();
             this.Visible = sph.Intersects(GlobalMatrices.gLODHighFrustum);
 
-            // Actualizar con el terreno
-            //this.UpdateWithScenery(gameTime);
+            // Mostrar humo
+            this.m_SmokePlumeParticles.Visible = true;
 
-            if (this.Damaged && this.Visible)
-            {
-                // Si el vehículo ha sido dañado mostrar humo
-                this.m_SmokePlumeParticles.Visible = true;
-
-                // Añadiendo humo
-                this.m_SmokePlumeParticles.AddParticle(this.Position, Vector3.Zero);
-            }
-
-            this.PositionHasChanged = false;
-            this.RotationHasChanged = false;
-            this.ScaleHasChanged = false;
+            // Añadiendo humo
+            this.m_SmokePlumeParticles.AddParticle(this.Position, Vector3.Zero);
         }
         /// <summary>
         /// Dibujar
@@ -302,12 +210,9 @@ namespace GameComponents.Vehicles
                 }
             }
 
-            if (this.Damaged)
-            {
-                this.m_SmokePlumeParticles.SetCamera(
-                    GlobalMatrices.gViewMatrix,
-                    GlobalMatrices.gGlobalProjectionMatrix);
-            }
+            this.m_SmokePlumeParticles.SetCamera(
+                GlobalMatrices.gViewMatrix,
+                GlobalMatrices.gGlobalProjectionMatrix);
 
 #if DEBUG
             this.DrawDebug(gameTime);
