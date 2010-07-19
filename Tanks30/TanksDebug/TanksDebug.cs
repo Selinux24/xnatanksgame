@@ -72,8 +72,14 @@ namespace TanksDebug
         /// Edificio
         /// </summary>
         private BuildingType0 m_Building_1 = null;
-
+        /// <summary>
+        /// Edificio
+        /// </summary>
         private BuildingType0 m_Building_2 = null;
+        /// <summary>
+        /// Edificio
+        /// </summary>
+        private BuildingType0 m_Building_3 = null;
         /// <summary>
         /// El tanque 1
         /// </summary>
@@ -153,10 +159,17 @@ namespace TanksDebug
             this.Components.Add(this.m_Building_1);
             this.Physics.RegisterVehicle(this.m_Building_1);
 
+            // Otro edificio
             this.m_Building_2 = new BuildingType0(this, @"Content/Buildings/", @"WHBuilding02.xml");
             this.m_Building_2.UpdateOrder = 3;
             this.Components.Add(this.m_Building_2);
             this.Physics.RegisterVehicle(this.m_Building_2);
+
+            // Otro edificio
+            this.m_Building_3 = new BuildingType0(this, @"Content/Buildings/", @"WHBuilding03.xml");
+            this.m_Building_3.UpdateOrder = 3;
+            this.Components.Add(this.m_Building_3);
+            this.Physics.RegisterVehicle(this.m_Building_3);
 
             AmmoDrawer ammoDrawer = new AmmoDrawer(this, @"Content/dharma");
             ammoDrawer.Rounds = this.Physics.Proyectiles;
@@ -333,6 +346,9 @@ namespace TanksDebug
 
             // Edificio
             m_Building_2.SetInitialState(new Vector3(-tankArea * 0.75f, 30f, -tankArea * 0.75f) + GlobalTraslation, Quaternion.Identity);
+
+            // Edificio
+            m_Building_3.SetInitialState(new Vector3(-tankArea * 0.65f, 30f, -tankArea * 0.85f) + GlobalTraslation, Quaternion.Identity);
 
             // Tanque 1
             m_Rhino_1.SetInitialState(new Vector3(tankArea, 20f, tankArea) + GlobalTraslation, Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(45f)));
