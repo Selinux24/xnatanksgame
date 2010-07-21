@@ -5,6 +5,7 @@ namespace TanksDebug
 {
     using Common;
     using Common.Helpers;
+    using GameComponents.Geometry;
     using Physics;
 
     /// <summary>
@@ -13,52 +14,43 @@ namespace TanksDebug
     public class CubeGameComponent : DrawableGameComponent, IPhysicObject
     {
         /// <summary>
-        /// Efecto
+        /// Esquina menor
         /// </summary>
-        private BasicEffect m_BasicEffect = null;
+        public readonly Vector3 Min;
         /// <summary>
-        /// Declaración de formato de vértices
+        /// Esquina mayor
         /// </summary>
-        private VertexDeclaration m_VertexDeclaration = null;
+        public readonly Vector3 Max;
         /// <summary>
-        /// Vértices
+        /// Masa
         /// </summary>
-        private VertexPositionNormalTexture[] m_Vertices = null;
-        /// <summary>
-        /// Tipo de primitivas a dibujar
-        /// </summary>
-        private PrimitiveType m_PrimitiveType = PrimitiveType.TriangleList;
-        /// <summary>
-        /// Número de primitivas
-        /// </summary>
-        private int m_PrimitiveCount = -1;
-        /// <summary>
-        /// Textura
-        /// </summary>
-        private Texture2D m_Texture = null;
+        public readonly float Mass;
         /// <summary>
         /// Caja que representa este componente
         /// </summary>
         private CollisionBox m_Box = null;
-
         /// <summary>
-        /// Método de relleno de la geometría
+        /// Información de geometría
         /// </summary>
-        public FillMode FillMode = FillMode.Solid;
+        private BufferedGeometryInfo m_Geometry;
+        /// <summary>
+        /// Efecto
+        /// </summary>
+        private BasicEffect m_BasicEffect = null;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public CubeGameComponent(Game game, Vector3 min, Vector3 max)
+        /// <param name="game">Juego</param>
+        /// <param name="min">Esquina mínima</param>
+        /// <param name="max">Esquina máxima</param>
+        /// <param name="mass">Masa</param>
+        public CubeGameComponent(Game game, Vector3 min, Vector3 max, float mass)
             : base(game)
         {
-            Vector3 halfSize = (max - min) / 2f;
-
-            this.m_Box = new CollisionBox(halfSize, halfSize.X * halfSize.Y * halfSize.Z * 20f);
-
-            PolyGenerator.InitializeCube(out this.m_Vertices, min, max);
-
-            this.m_PrimitiveCount = this.m_Vertices.Length / 3;
+            this.Min = min;
+            this.Max = max;
+            this.Mass = mass;
         }
 
         /// <summary>
@@ -66,40 +58,39 @@ namespace TanksDebug
         /// </summary>
         protected override void LoadContent()
         {
-            this.m_VertexDeclaration = new VertexDeclaration(this.GraphicsDevice, VertexPositionNormalTexture.VertexElements);
+            Vector3 halfSize = (this.Max - this.Min) / 2f;
+
+            this.m_Box = new CollisionBox(halfSize, this.Mass);
+
+            VertexPositionNormalTexture[] buffer = null;
+
+            PolyGenerator.InitializeCube(out buffer, this.Min, this.Max);
+
+            int primitiveCount = buffer.Length / 3;
+
+            this.m_Geometry = new BufferedGeometryInfo()
+            {
+                FillMode = FillMode.Solid,
+                Indexed = false,
+                PrimitiveType = PrimitiveType.TriangleList,
+                PrimitiveCount = primitiveCount,
+                Vertices = buffer,
+                VertexDeclaration = new VertexDeclaration(this.GraphicsDevice, VertexPositionNormalTexture.VertexElements),
+                Texture = this.Game.Content.Load<Texture2D>(@"Content/crate"),
+            };
+            
             this.m_BasicEffect = new BasicEffect(this.GraphicsDevice, null);
             this.m_BasicEffect.EnableDefaultLighting();
-            this.m_Texture = this.Game.Content.Load<Texture2D>(@"Content/crate");
 
             base.LoadContent();
         }
         /// <summary>
-        /// Allows the game component to update itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
-        /// <summary>
         /// Dibuja la geometría
         /// </summary>
-        /// <param name="device">Dispositivo gráfico</param>
-        /// <param name="world">Matriz mundo del objeto</param>
-        /// <param name="view">Matriz vista</param>
-        /// <param name="projection">Matriz proyección</param>
+        /// <param name="gameTime">Tiempo de juego</param>
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
-
-            this.GraphicsDevice.VertexDeclaration = this.m_VertexDeclaration;
-
-            FillMode prev = this.GraphicsDevice.RenderState.FillMode;
-            this.GraphicsDevice.RenderState.FillMode = this.FillMode;
-
-            this.m_BasicEffect.Texture = this.m_Texture;
-            this.m_BasicEffect.TextureEnabled = (this.m_Texture != null);
-            this.m_BasicEffect.VertexColorEnabled = (this.m_Texture == null);
 
             this.m_BasicEffect.World = this.m_Box.Transform * GlobalMatrices.gWorldMatrix;
             this.m_BasicEffect.View = GlobalMatrices.gViewMatrix;
@@ -120,28 +111,7 @@ namespace TanksDebug
                 this.m_BasicEffect.SpecularPower = 0f;
             }
 
-            this.m_BasicEffect.PreferPerPixelLighting = true;
-
-            this.m_BasicEffect.Begin();
-
-            foreach (EffectPass pass in this.m_BasicEffect.CurrentTechnique.Passes)
-            {
-                pass.Begin();
-
-                this.GraphicsDevice.DrawUserPrimitives<VertexPositionNormalTexture>(
-                    this.m_PrimitiveType,
-                    this.m_Vertices,
-                    0,
-                    this.m_PrimitiveCount);
-
-                pass.End();
-            }
-
-            this.m_BasicEffect.End();
-
-            this.GraphicsDevice.RenderState.FillMode = prev;
-
-            this.GraphicsDevice.VertexDeclaration = null;
+            this.m_Geometry.Draw(gameTime, this.GraphicsDevice, this.m_BasicEffect);
 
 #if DEBUG
             // Dibujar el AABB
@@ -162,7 +132,6 @@ namespace TanksDebug
         {
             return this.m_Box;
         }
-
         public CollisionPrimitive GetContactedPrimitive(IPhysicObject physicObject)
         {
             if (physicObject != null)
@@ -178,22 +147,18 @@ namespace TanksDebug
 
             return null;
         }
-
         public BoundingBox GetAABB()
         {
             return this.m_Box.AABB;
         }
-
         public BoundingSphere GetSPH()
         {
             return this.m_Box.SPH;
         }
-
         public bool IsActive()
         {
             return this.m_Box.IsAwake;
         }
-
         public void Integrate(float time)
         {
             if (this.m_Box != null)
@@ -201,9 +166,7 @@ namespace TanksDebug
                 this.m_Box.Integrate(time);
             }
         }
-
         public event ObjectInContactDelegate OnObjectContacted;
-
         public void Contacted(IPhysicObject obj)
         {
             if (this.OnObjectContacted != null)
