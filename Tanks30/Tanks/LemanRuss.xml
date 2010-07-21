@@ -9,7 +9,7 @@
   <AnimationControlers>
     <AnimationInfo>
       <Name>BattleCannon</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>TURRET_CANNON</BoneName>
       <Axis>
         <X>1</X>
@@ -22,7 +22,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>BattleCannonBase</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>TURRET</BoneName>
       <Axis>
         <X>0</X>
@@ -33,7 +33,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>TurretHatch</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>TURRET_HATCH</BoneName>
       <Axis>
         <X>1</X>
