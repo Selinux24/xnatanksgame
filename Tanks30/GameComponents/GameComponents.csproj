@@ -133,6 +133,7 @@
     <Compile Include="Buildings\Building.Physics.cs" />
     <Compile Include="Buildings\BuildingComponentInfo.cs" />
     <Compile Include="Debug\DebugDrawer.cs" />
+    <Compile Include="Geometry\GeometryInfo.cs" />
     <Compile Include="MathComponents\RandomComponent.cs" />
     <Compile Include="Particles\ParticleSettings.cs" />
     <Compile Include="Particles\ParticleSystem.cs" />
