@@ -188,7 +188,7 @@ namespace TanksDebug
                 Vector3 min = new Vector3(-hsX, -hsY, -hsZ);
                 Vector3 max = new Vector3(hsX, hsY, hsZ);
 
-                CubeGameComponent cube = new CubeGameComponent(this, min, max);
+                CubeGameComponent cube = new CubeGameComponent(this, min, max, (max - min).Length() * 20f);
                 this.Physics.RegisterVehicle(cube);
                 this.m_Cubes.Add(cube);
                 cube.UpdateOrder = 4;
@@ -261,7 +261,7 @@ namespace TanksDebug
             //this.Components.Add(joint2);
             //this.Physics.RegisterContactGenerator(joint2.Joint);
 
-            Joint2Component rod24 = new Joint2Component(this, this.ball1, Vector3.Up * this.ball1.Sphere.Radius, null, new Vector3(0, 40, 0), 10f);
+            Joint2Component rod24 = new Joint2Component(this, this.ball1, Vector3.Up * this.ball1.Radius, null, new Vector3(0, 40, 0), 10f);
             this.Components.Add(rod24);
             this.Physics.RegisterContactGenerator(rod24.Rod);
 

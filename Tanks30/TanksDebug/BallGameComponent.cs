@@ -6,65 +6,87 @@ namespace TanksDebug
 {
     using Common;
     using Common.Helpers;
+    using GameComponents.Geometry;
     using Physics;
 
     public class BallGameComponent : DrawableGameComponent, IPhysicObject
     {
-        public readonly CollisionSphere Sphere;
-
+        /// <summary>
+        /// Radio
+        /// </summary>
+        public readonly float Radius;
+        /// <summary>
+        /// Masa
+        /// </summary>
+        public readonly float Mass;
+        /// <summary>
+        /// Esfera que representa este componente
+        /// </summary>
+        private CollisionSphere m_Sphere;
+        /// <summary>
+        /// Efecto
+        /// </summary>
         private BasicEffect m_BasicEffect = null;
-        private VertexDeclaration m_VertexDeclaration = null;
+        /// <summary>
+        /// Información de geometría
+        /// </summary>
+        private BufferedGeometryInfo m_Geometry = null;
 
-        private VertexPositionNormalTexture[] m_SphereVertices = null;
-        private Int16[] m_SphereIndices = null;
-        private PrimitiveType m_SpherePrimitiveType = PrimitiveType.TriangleList;
-        private Texture2D m_SphereTexture = null;
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="game">Juego</param>
+        /// <param name="radius">Radio</param>
+        /// <param name="mass">Masa</param>
         public BallGameComponent(Game game, float radius, float mass)
             : base(game)
         {
-            this.Sphere = new CollisionSphere(radius, mass);
-
-            PolyGenerator.InitializeSphere(out this.m_SphereVertices, out this.m_SphereIndices, radius);
+            this.Radius = radius;
+            this.Mass = mass;
         }
 
+        /// <summary>
+        /// Carga el contenido gráfico del componente
+        /// </summary>
         protected override void LoadContent()
         {
             this.m_BasicEffect = new BasicEffect(this.GraphicsDevice, null);
             this.m_BasicEffect.EnableDefaultLighting();
 
-            this.m_VertexDeclaration = new VertexDeclaration(this.GraphicsDevice, VertexPositionNormalTexture.VertexElements);
+            this.m_Sphere = new CollisionSphere(this.Radius, this.Mass);
 
-            this.m_SphereTexture = this.Game.Content.Load<Texture2D>(@"Content/dharma");
+            VertexPositionNormalTexture[] buffer = null;
+            Int16[] indices = null;
+
+            PolyGenerator.InitializeSphere(out buffer, out indices, this.Radius);
+
+            this.m_Geometry = new BufferedGeometryInfo()
+            {
+                FillMode = FillMode.Solid,
+                PrimitiveType = PrimitiveType.TriangleList,
+                Indexed = true,
+                Vertices = buffer,
+                Indices = indices,
+                VertexDeclaration = new VertexDeclaration(this.GraphicsDevice, VertexPositionNormalTexture.VertexElements),
+                Texture = this.Game.Content.Load<Texture2D>(@"Content/dharma"),
+                PrimitiveCount = indices.Length / 3,
+            };
 
             base.LoadContent();
         }
+        /// <summary>
+        /// Dibuja la geometría
+        /// </summary>
+        /// <param name="gameTime">Tiempo de juego</param>
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
 
-            this.GraphicsDevice.VertexDeclaration = this.m_VertexDeclaration;
-
-            this.DrawSphere(this.Sphere);
-
-            this.GraphicsDevice.VertexDeclaration = null;
-
-#if DEBUG
-            // Dibujar el AABB
-            GameComponents.Debug.DebugDrawer.DrawDebugAABB(this.GraphicsDevice, this.Sphere.AABB);
-#endif
-        }
-        private void DrawSphere(CollisionSphere sphere)
-        {
-            this.m_BasicEffect.Texture = this.m_SphereTexture;
-            this.m_BasicEffect.TextureEnabled = (this.m_SphereTexture != null);
-            this.m_BasicEffect.VertexColorEnabled = (this.m_SphereTexture == null);
-
-            this.m_BasicEffect.World = sphere.Transform * GlobalMatrices.gWorldMatrix;
+            this.m_BasicEffect.World = this.m_Sphere.Transform * GlobalMatrices.gWorldMatrix;
             this.m_BasicEffect.View = GlobalMatrices.gViewMatrix;
             this.m_BasicEffect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
 
-            if (sphere.IsAwake)
+            if (this.m_Sphere.IsAwake)
             {
                 this.m_BasicEffect.DiffuseColor = Color.BurlyWood.ToVector3();
                 this.m_BasicEffect.EmissiveColor = Color.Black.ToVector3();
@@ -79,57 +101,45 @@ namespace TanksDebug
                 this.m_BasicEffect.SpecularPower = 0f;
             }
 
-            this.m_BasicEffect.PreferPerPixelLighting = true;
+            this.m_Geometry.Draw(gameTime, this.GraphicsDevice, this.m_BasicEffect);
 
-            this.m_BasicEffect.Begin();
-
-            foreach (EffectPass pass in this.m_BasicEffect.CurrentTechnique.Passes)
-            {
-                pass.Begin();
-
-                this.GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(
-                    this.m_SpherePrimitiveType,
-                    m_SphereVertices,
-                    0,
-                    m_SphereVertices.Length,
-                    m_SphereIndices,
-                    0,
-                    m_SphereIndices.Length / 3);
-
-                pass.End();
-            }
-
-            this.m_BasicEffect.End();
+#if DEBUG
+            // Dibujar el AABB
+            GameComponents.Debug.DebugDrawer.DrawDebugAABB(this.GraphicsDevice, this.m_Sphere.AABB);
+#endif
         }
-
+        /// <summary>
+        /// Establece el estado inicial de posición del componente
+        /// </summary>
+        /// <param name="position">Posición</param>
         public void SetPosition(Vector3 position)
         {
-            this.Sphere.SetInitialState(position, Quaternion.Identity);
+            this.m_Sphere.SetInitialState(position, Quaternion.Identity);
         }
-
-        public void Integrate(float duration)
-        {
-            this.Sphere.Integrate(duration);
-        }
+   
         public CollisionPrimitive GetPrimitive()
         {
-            return this.Sphere;
+            return this.m_Sphere;
         }
         public CollisionPrimitive GetContactedPrimitive(IPhysicObject physicObject)
         {
-            return this.Sphere;
+            return this.m_Sphere;
         }
         public BoundingBox GetAABB()
         {
-            return this.Sphere.AABB;
+            return this.m_Sphere.AABB;
         }
         public BoundingSphere GetSPH()
         {
-            return this.Sphere.SPH;
+            return this.m_Sphere.SPH;
         }
         public bool IsActive()
         {
-            return this.Sphere.IsAwake;
+            return this.m_Sphere.IsAwake;
+        }
+        public void Integrate(float duration)
+        {
+            this.m_Sphere.Integrate(duration);
         }
         public event ObjectInContactDelegate OnObjectContacted;
         public void Contacted(IPhysicObject obj)
