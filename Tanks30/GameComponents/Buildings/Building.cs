@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,11 +9,17 @@ namespace GameComponents.Buildings
     using Common.Helpers;
     using GameComponents.Animation;
     using GameComponents.Components.Particles;
+    using GameComponents.Geometry;
     using GameComponents.Scenery;
     using Physics;
 
     public abstract partial class Building : DrawableGameComponent
     {
+        /// <summary>
+        /// Diccionario de modelos de vehículos
+        /// </summary>
+        private static Dictionary<string, GeometryInfo> g_ModelDictionary = new Dictionary<string, GeometryInfo>();
+
         /// <summary>
         /// Ruta de los componentes
         /// </summary>
@@ -27,9 +34,29 @@ namespace GameComponents.Buildings
         protected ContentManager Content;
 
         /// <summary>
+        /// Nombre del modelo
+        /// </summary>
+        private string m_ModelName = null;
+        /// <summary>
         /// Modelo
         /// </summary>
-        private Model m_Model;
+        public Model Model
+        {
+            get
+            {
+                return g_ModelDictionary[this.m_ModelName].Model;
+            }
+        }
+        /// <summary>
+        /// Colección de triángulos del modelo
+        /// </summary>
+        private PrimitiveInfo TriangleInfo
+        {
+            get
+            {
+                return g_ModelDictionary[this.m_ModelName].Primitives;
+            }
+        }
         /// <summary>
         /// Matriz relativa para posicionar el modelo sobre el terreno
         /// </summary>
@@ -150,16 +177,30 @@ namespace GameComponents.Buildings
             BuildingComponentInfo componentInfo = BuildingComponentInfo.Load(this.ComponentsDirectory + this.ComponentInfoName);
 
             // Modelo
-            this.m_Model = Content.Load<Model>(this.ComponentsDirectory + componentInfo.Model);
-            this.m_TriangleInfo = this.m_Model.Tag as PrimitiveInfo;
-            this.m_OBB = new CollisionBox(this.m_TriangleInfo.AABB, 1000000f);
+            this.m_ModelName = componentInfo.Model;
+
+            if (!g_ModelDictionary.ContainsKey(componentInfo.Model))
+            {
+                Model model = Content.Load<Model>(this.ComponentsDirectory + this.m_ModelName);
+                PrimitiveInfo primitives = model.Tag as PrimitiveInfo;
+
+                GeometryInfo geometry = new GeometryInfo()
+                {
+                    Model = model,
+                    Primitives = primitives,
+                };
+
+                g_ModelDictionary.Add(this.m_ModelName, geometry);
+            }
+
+            this.m_OBB = new CollisionBox(this.TriangleInfo.AABB, 1000000f);
             this.m_Offset = Matrix.CreateTranslation(new Vector3(0f, -this.m_OBB.HalfSize.Y, 0f));
          
             // Controles de animación
-            this.m_AnimationController.AddRange(Animation.CreateAnimationList(this.m_Model, componentInfo.AnimationControlers));
+            this.m_AnimationController.AddRange(Animation.CreateAnimationList(this.Model, componentInfo.AnimationControlers));
 
             // Transformaciones iniciales
-            this.m_BoneTransforms = new Matrix[m_Model.Bones.Count];
+            this.m_BoneTransforms = new Matrix[Model.Bones.Count];
         }
         /// <summary>
         /// Actualiza el estado del componente
@@ -187,13 +228,13 @@ namespace GameComponents.Buildings
         {
             base.Draw(gameTime);
 
-            if (this.m_Model != null)
+            if (this.Model != null)
             {
                 Matrix modelTransform = this.CurrentTransform;
 
-                this.m_AnimationController.CopyAbsoluteBoneTransformsTo(this.m_Model, this.m_BoneTransforms);
+                this.m_AnimationController.CopyAbsoluteBoneTransformsTo(this.Model, this.m_BoneTransforms);
 
-                foreach (ModelMesh mesh in this.m_Model.Meshes)
+                foreach (ModelMesh mesh in this.Model.Meshes)
                 {
                     foreach (BasicEffect effect in mesh.Effects)
                     {

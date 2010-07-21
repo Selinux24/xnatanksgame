@@ -8,10 +8,6 @@ namespace GameComponents.Buildings
     public partial class Building: IPhysicObject
     {
         /// <summary>
-        /// Colección de triángulos del modelo
-        /// </summary>
-        private PrimitiveInfo m_TriangleInfo = null;
-        /// <summary>
         /// Primitiva de colisión
         /// </summary>
         private CollisionBox m_OBB = null;
