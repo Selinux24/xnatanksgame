@@ -14,7 +14,7 @@
   <AnimationControlers>
     <AnimationInfo>
       <Name>FusionCannon</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>FUSION_CANNON</BoneName>
       <Axis>
         <X>1</X>
@@ -27,7 +27,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>FusionCannonBase</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>FUSION_CANNON_BASE</BoneName>
       <Axis>
         <X>0</X>

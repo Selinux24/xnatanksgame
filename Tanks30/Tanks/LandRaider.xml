@@ -9,7 +9,7 @@
   <AnimationControlers>
     <AnimationInfo>
       <Name>HeavyBolter</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>HULL_HEAVYBOLTER</BoneName>
       <Axis>
         <X>1</X>
@@ -22,7 +22,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>HeavyBolterBase</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>HULL_HEAVYBOLTERBASE</BoneName>
       <Axis>
         <X>0</X>
@@ -35,7 +35,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>LeftLassCannon</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>HULL_LEFT_LASSCANNON</BoneName>
       <Axis>
         <X>1</X>
@@ -48,7 +48,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>LeftLassCannonBase</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>HULL_LEFT_LASSCANNONBASE</BoneName>
       <Axis>
         <X>0</X>
@@ -61,7 +61,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>RightLassCannon</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>HULL_RIGHT_LASSCANNON</BoneName>
       <Axis>
         <X>1</X>
@@ -74,7 +74,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>RightLassCannonBase</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>HULL_RIGHT_LASSCANNONBASE</BoneName>
       <Axis>
         <X>0</X>
@@ -88,7 +88,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>UpperFrontDoor</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>HULL_FRONT_DOOR_UPPER</BoneName>
       <Axis>
         <X>1</X>
@@ -101,7 +101,7 @@
     </AnimationInfo>
     <AnimationInfo>
       <Name>LowerFrontDoor</Name>
-      <Type>GameComponents.Vehicles.Animations.AnimationAxis</Type>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
       <BoneName>HULL_FRONT_DOOR_LOWER</BoneName>
       <Axis>
         <X>-1</X>
