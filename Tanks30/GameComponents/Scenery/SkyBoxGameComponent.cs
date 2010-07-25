@@ -73,12 +73,12 @@ namespace GameComponents.Scenery
         {
             base.LoadContent();
 
-            m_Textures[0] = Content.Load<Texture2D>(@"Content\Skybox\back");
-            m_Textures[1] = Content.Load<Texture2D>(@"Content\Skybox\front");
-            m_Textures[2] = Content.Load<Texture2D>(@"Content\Skybox\bottom");
-            m_Textures[3] = Content.Load<Texture2D>(@"Content\Skybox\top");
-            m_Textures[4] = Content.Load<Texture2D>(@"Content\Skybox\left");
-            m_Textures[5] = Content.Load<Texture2D>(@"Content\Skybox\right");
+            m_Textures[0] = this.Content.Load<Texture2D>(@"Content\Skybox\back");
+            m_Textures[1] = this.Content.Load<Texture2D>(@"Content\Skybox\front");
+            m_Textures[2] = this.Content.Load<Texture2D>(@"Content\Skybox\bottom");
+            m_Textures[3] = this.Content.Load<Texture2D>(@"Content\Skybox\top");
+            m_Textures[4] = this.Content.Load<Texture2D>(@"Content\Skybox\left");
+            m_Textures[5] = this.Content.Load<Texture2D>(@"Content\Skybox\right");
 
             m_Effect = Content.Load<Effect>(@"Content\Skybox\skybox");
 
@@ -157,11 +157,6 @@ namespace GameComponents.Scenery
             data[23].Position = new Vector3(vExtents.X, vExtents.Y, -vExtents.Z);
             data[23].TextureCoordinate.X = 0.0f; data[23].TextureCoordinate.Y = 0.0f;
 
-            //m_Vertices = new VertexBuffer(
-            //    this.GraphicsDevice,
-            //    typeof(VertexPositionTexture),
-            //    4 * 6,
-            //    ResourceUsage.WriteOnly);
             m_Vertices = new VertexBuffer(
                 this.GraphicsDevice,
                 typeof(VertexPositionTexture),
@@ -183,11 +178,6 @@ namespace GameComponents.Scenery
                 ib[x * 6 + 4] = (short)(x * 4 + 0);
             }
 
-            //m_Indices = new IndexBuffer(
-            //    this.GraphicsDevice,
-            //    typeof(short),
-            //    6 * 6,
-            //    ResourceUsage.WriteOnly);
             m_Indices = new IndexBuffer(
                 this.GraphicsDevice,
                 typeof(short),

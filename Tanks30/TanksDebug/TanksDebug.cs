@@ -15,6 +15,7 @@ namespace TanksDebug
     using Vehicles;
     using GameComponents.Text;
     using Buildings;
+using GameComponents.Scenery;
 
     /// <summary>
     /// Demostración de disparos
@@ -68,6 +69,10 @@ namespace TanksDebug
         /// Colección de esferas para dibujar
         /// </summary>
         private List<BallGameComponent> m_Balls = new List<BallGameComponent>();
+        /// <summary>
+        /// Lentes
+        /// </summary>
+        private LensFlareComponent m_LensFlare = null;
         /// <summary>
         /// Edificio
         /// </summary>
@@ -141,17 +146,22 @@ namespace TanksDebug
             this.Components.Add(scn);
             this.Physics.RegisterScenery(scn);
 
+            // Reflejo solar
+            this.m_LensFlare = new LensFlareComponent(this);
+            this.m_LensFlare.DrawOrder = 98;
+            this.Components.Add(this.m_LensFlare);
+
+            // Texto
+            this.m_Text = new TextDrawerComponent(this);
+            this.m_Text.DrawOrder = 99;
+            this.Components.Add(this.m_Text);
+
             // Cámara
             this.m_Camera = new CameraGameComponent(this);
             this.m_Camera.UseMouse = true;
             this.m_Camera.Mode = CameraGameComponent.CameraModes.FirstPerson;
             this.m_Camera.UpdateOrder = 99;
             this.Components.Add(this.m_Camera);
-
-            // Texto
-            this.m_Text = new TextDrawerComponent(this);
-            this.m_Text.DrawOrder = 99;
-            this.Components.Add(this.m_Text);
 
             // Un edificio
             this.m_Building_1 = new BuildingType0(this, @"Content/Buildings/", @"WHBuilding01.xml");
