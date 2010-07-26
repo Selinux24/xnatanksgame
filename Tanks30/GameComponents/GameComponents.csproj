@@ -144,6 +144,7 @@
     <Compile Include="Readers\PrimitiveListReader.cs" />
     <Compile Include="Readers\SceneryReader.cs" />
     <Compile Include="Readers\SceneryTriangleNodeReader.cs" />
+    <Compile Include="Scenery\Flare.cs" />
     <Compile Include="Scenery\LensFlareComponent.cs" />
     <Compile Include="Scenery\Scenery.cs" />
     <Compile Include="Scenery\Scenery.Debug.cs" />

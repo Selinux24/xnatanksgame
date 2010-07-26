@@ -44,6 +44,8 @@ using GameComponents.Scenery;
         /// </summary>
         private const float _TerrainSize = 300f;
 
+        private Color _AmbientColor = SceneryEnvironment.Ambient.AmbientColor;
+
         /// <summary>
         /// Dispositivo gráfico
         /// </summary>
@@ -326,12 +328,12 @@ using GameComponents.Scenery;
         /// <param name="gameTime">Tiempo de juego</param>
         protected override void Draw(GameTime gameTime)
         {
-            this.Graphics.GraphicsDevice.Clear(Color.White);
+            this.Graphics.GraphicsDevice.Clear(_AmbientColor);
 
             this.GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
             this.GraphicsDevice.RenderState.FillMode = FillMode.Solid;
 
-            this.GraphicsDevice.RenderState.FogColor = Color.White;
+            this.GraphicsDevice.RenderState.FogColor = _AmbientColor;
             this.GraphicsDevice.RenderState.FogTableMode = FogMode.Linear;
             this.GraphicsDevice.RenderState.FogStart = 75;
             this.GraphicsDevice.RenderState.FogEnd = 500;
