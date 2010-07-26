@@ -1,102 +1,115 @@
-#region Using Statements
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-#endregion
 
-namespace GameComponents.Components.Particles
+namespace GameComponents.Particles
 {
     /// <summary>
-    /// Settings class describes all the tweakable options used
-    /// to control the appearance of a particle system.
+    /// Propiedades de una partícula
     /// </summary>
     public class ParticleSettings
     {
-        // Name of the texture used by this particle system.
+        /// <summary>
+        /// Nombre de la textura a usar
+        /// </summary>
         public string TextureName = null;
 
-
-        // Maximum number of particles that can be displayed at one time.
+        /// <summary>
+        /// Número máximo de partículas
+        /// </summary>
         public int MaxParticles = 100;
-
-
-        // How long these particles will last.
+        
+        /// <summary>
+        /// Duración de la partículas
+        /// </summary>
         public TimeSpan Duration = TimeSpan.FromSeconds(1);
-
-
-        // If greater than zero, some particles will last a shorter time than others.
+        /// <summary>
+        /// Si es mayor que 0, algunas partículas durarán más que otras
+        /// </summary>
         public float DurationRandomness = 0;
 
-
-        // Controls how much particles are influenced by the velocity of the object
-        // which created them. You can see this in action with the explosion effect,
-        // where the flames continue to move in the same direction as the source
-        // projectile. The projectile trail particles, on the other hand, set this
-        // value very low so they are less affected by the velocity of the projectile.
+        /// <summary>
+        /// Indica cuanto se ven las partículas influenciadas por la velocidad del objeto que las creó
+        /// </summary>
         public float EmitterVelocitySensitivity = 1;
 
-
-        // Range of values controlling how much X and Z axis velocity to give each
-        // particle. Values for individual particles are randomly chosen from somewhere
-        // between these limits.
+        /// <summary>
+        /// Mínimo valor que se aplica para variar la velocidad horizontal de cada partícula
+        /// </summary>
         public float MinHorizontalVelocity = 0;
+        /// <summary>
+        /// Máximo valor que se aplica para variar la velocidad horizontal de cada partícula
+        /// </summary>
         public float MaxHorizontalVelocity = 0;
 
-
-        // Range of values controlling how much Y axis velocity to give each particle.
-        // Values for individual particles are randomly chosen from somewhere between
-        // these limits.
+        /// <summary>
+        /// Mínimo valor que se aplica para variar la velocidad vertical de cada partícula
+        /// </summary>
         public float MinVerticalVelocity = 0;
+        /// <summary>
+        /// Máximo valor que se aplica para variar la velocidad vertical de cada partícula
+        /// </summary>
         public float MaxVerticalVelocity = 0;
 
-
-        // Direction and strength of the gravity effect. Note that this can point in any
-        // direction, not just down! The fire effect points it upward to make the flames
-        // rise, and the smoke plume points it sideways to simulate wind.
+        /// <summary>
+        /// Dirección y magnitud de la fuerza de gravedad aplicada a cada partícula
+        /// </summary>
         public Vector3 Gravity = Vector3.Zero;
 
-
-        // Controls how the particle velocity will change over their lifetime. If set
-        // to 1, particles will keep going at the same speed as when they were created.
-        // If set to 0, particles will come to a complete stop right before they die.
-        // Values greater than 1 make the particles speed up over time.
+        /// <summary>
+        /// Efecto en la velocidad de cada partícula durante su existencia
+        /// </summary>
+        /// <remarks>
+        ///  0 - Las partículas se congelan justo antes de desaparecer
+        ///  1 - No hay variación de velocidad
+        /// >1 - Las partículas se aceleran
+        /// </remarks>
         public float EndVelocity = 1;
 
-
-        // Range of values controlling the particle color and alpha. Values for
-        // individual particles are randomly chosen from somewhere between these limits.
+        /// <summary>
+        /// Magnitud mínima de color y transparencia de cada partícula
+        /// </summary>
         public Color MinColor = Color.White;
+        /// <summary>
+        /// Magnitud máxima de color y transparencia de cada partícula
+        /// </summary>
         public Color MaxColor = Color.White;
 
-
-        // Range of values controlling how fast the particles rotate. Values for
-        // individual particles are randomly chosen from somewhere between these
-        // limits. If both these values are set to 0, the particle system will
-        // automatically switch to an alternative shader technique that does not
-        // support rotation, and thus requires significantly less GPU power. This
-        // means if you don't need the rotation effect, you may get a performance
-        // boost from leaving these values at 0.
+        /// <summary>
+        /// Velocidad mínima de rotación de cada partícula
+        /// </summary>
         public float MinRotateSpeed = 0;
+        /// <summary>
+        /// Velocidad maxima de rotación de cada partícula
+        /// </summary>
         public float MaxRotateSpeed = 0;
 
-
-        // Range of values controlling how big the particles are when first created.
-        // Values for individual particles are randomly chosen from somewhere between
-        // these limits.
+        /// <summary>
+        /// Tamaño mínimo inicial de cada partícula
+        /// </summary>
         public float MinStartSize = 100;
+        /// <summary>
+        /// Tamaño maximo inicial de cada partícula
+        /// </summary>
         public float MaxStartSize = 100;
 
-
-        // Range of values controlling how big particles become at the end of their
-        // life. Values for individual particles are randomly chosen from somewhere
-        // between these limits.
+        /// <summary>
+        /// Tamaño mínimo final de cada partícula
+        /// </summary>
         public float MinEndSize = 100;
+        /// <summary>
+        /// Tamaño maximo final de cada partícula
+        /// </summary>
         public float MaxEndSize = 100;
 
 
-        // Alpha blending settings.
+        /// <summary>
+        /// Transparencia origen
+        /// </summary>
         public Blend SourceBlend = Blend.SourceAlpha;
+        /// <summary>
+        /// Transparencia destino
+        /// </summary>
         public Blend DestinationBlend = Blend.InverseSourceAlpha;
     }
 }

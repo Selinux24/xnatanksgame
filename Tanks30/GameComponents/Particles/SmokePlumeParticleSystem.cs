@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 
-namespace GameComponents.Components.Particles
+namespace GameComponents.Particles
 {
     /// <summary>
     /// Humo
@@ -12,7 +12,6 @@ namespace GameComponents.Components.Particles
         /// Constructor
         /// </summary>
         /// <param name="game">Juego</param>
-        /// <param name="content">Gestor de Contenido</param>
         public SmokePlumeParticleSystem(Game game)
             : base(game)
         {
@@ -32,7 +31,7 @@ namespace GameComponents.Components.Particles
             settings.Duration = TimeSpan.FromSeconds(10);
 
             settings.MinHorizontalVelocity = 0;
-            settings.MaxHorizontalVelocity = 15;
+            settings.MaxHorizontalVelocity = 5;
 
             settings.MinVerticalVelocity = 10;
             settings.MaxVerticalVelocity = 20;

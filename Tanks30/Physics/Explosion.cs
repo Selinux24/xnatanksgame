@@ -221,13 +221,13 @@ namespace Physics
 
             explosion.ImplosionMaxRadius = 3f;
             explosion.ImplosionMinRadius = 1f;
-            explosion.ImplosionDuration = 0.2f;
+            explosion.ImplosionDuration = 1f;
             explosion.ImplosionForce = 1000f;
 
             explosion.ShockwaveSpeed = 50f;
             explosion.ShockwaveThickness = 2f;
             explosion.PeakConcussionForce = 100000f;
-            explosion.ConcussionDuration = 0.5f;
+            explosion.ConcussionDuration = 2f;
 
             return explosion;
         }
