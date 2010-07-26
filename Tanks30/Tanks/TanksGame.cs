@@ -180,7 +180,7 @@ namespace Tanks
             this.Services.AddService(typeof(BuildingContainerService), this.m_BuilngContainer);
 
             AmmoDrawer ammoDrawer = new AmmoDrawer(this, @"Content/Steel 1");
-            ammoDrawer.Rounds = this.Physics.Proyectiles;
+            ammoDrawer.Rounds = this.Physics.Projectiles;
             ammoDrawer.UpdateOrder = 3;
             ammoDrawer.DrawOrder = 3;
             this.Components.Add(ammoDrawer);

@@ -8,7 +8,7 @@ namespace GameComponents.Buildings
     using Common;
     using Common.Helpers;
     using GameComponents.Animation;
-    using GameComponents.Components.Particles;
+    using GameComponents.Particles;
     using GameComponents.Geometry;
     using GameComponents.Scenery;
     using Physics;
@@ -240,7 +240,6 @@ namespace GameComponents.Buildings
                     {
                         effect.EnableDefaultLighting();
                         SceneryEnvironment.Fog.SetFogToEffect(effect);
-                        //SceneryEnvironment.Ambient.SetAmbientToEffect(effect);
 
                         effect.View = GlobalMatrices.gViewMatrix;
                         effect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
@@ -250,10 +249,6 @@ namespace GameComponents.Buildings
                     mesh.Draw();
                 }
             }
-
-            this.m_SmokePlumeParticles.SetCamera(
-                GlobalMatrices.gViewMatrix,
-                GlobalMatrices.gGlobalProjectionMatrix);
 
 #if DEBUG
             this.DrawDebug(gameTime);

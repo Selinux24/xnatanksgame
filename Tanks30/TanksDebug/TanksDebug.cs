@@ -16,6 +16,8 @@ namespace TanksDebug
     using GameComponents.Text;
     using Buildings;
 using GameComponents.Scenery;
+    using Physics;
+using GameComponents.Particles;
 
     /// <summary>
     /// Demostración de disparos
@@ -109,6 +111,25 @@ using GameComponents.Scenery;
         /// </summary>
         private Vehicle m_CurrentVehicle = null;
 
+        /// <summary>
+        /// Explosión
+        /// </summary>
+        private ExplosionParticleSystem m_Explosion;
+        /// <summary>
+        /// Humo de la explosión
+        /// </summary>
+        private ExplosionSmokeParticleSystem m_ExplosionSmoke;
+        /// <summary>
+        /// Explosión activa
+        /// </summary>
+        private bool m_ExplosionActive = false;
+        /// <summary>
+        /// Posición de la explosión
+        /// </summary>
+        private Vector3 m_ExplosionPosition = Vector3.Zero;
+
+        private ProjectileTrailParticleSystem m_Trail;
+
         private BallGameComponent ball1 = null;
         //private BallGameComponent ball2 = null;
         //private BallGameComponent ball3 = null;
@@ -125,6 +146,26 @@ using GameComponents.Scenery;
             this.Physics = new PhysicsController();
             this.Physics.InitializeProyectiles(_AmmoRounds);
             this.Services.AddService(typeof(PhysicsController), this.Physics);
+
+            this.Physics.OnExplosionStarts += new ExplosionHandler(Physics_OnExplosionStarts);
+            this.Physics.OnExplosionEnds += new ExplosionHandler(Physics_OnExplosionEnds);
+            this.Physics.OnProjectileMoved += new ObjectMovedHandler(Physics_OnProjectileMoved);
+        }
+
+        void Physics_OnProjectileMoved(IPhysicObject obj, Vector3 position, Vector3 velocity)
+        {
+            this.m_Trail.AddParticle(position, velocity);
+        }
+
+        void Physics_OnExplosionEnds(Explosion explosion)
+        {
+            this.m_ExplosionActive = false;
+        }
+
+        void Physics_OnExplosionStarts(Explosion explosion)
+        {
+            this.m_ExplosionActive = true;
+            this.m_ExplosionPosition = explosion.DetonationCenter;
         }
 
         /// <summary>
@@ -165,6 +206,22 @@ using GameComponents.Scenery;
             this.m_Camera.UpdateOrder = 99;
             this.Components.Add(this.m_Camera);
 
+            // Explosión
+            this.m_Explosion = new ExplosionParticleSystem(this);
+            this.m_Explosion.UpdateOrder = 100;
+            this.m_Explosion.DrawOrder = 100;
+            this.Components.Add(this.m_Explosion);
+
+            this.m_ExplosionSmoke = new ExplosionSmokeParticleSystem(this);
+            this.m_ExplosionSmoke.UpdateOrder = 100;
+            this.m_ExplosionSmoke.DrawOrder = 100;
+            this.Components.Add(this.m_ExplosionSmoke);
+
+            this.m_Trail = new ProjectileTrailParticleSystem(this);
+            this.m_Trail.UpdateOrder = 100;
+            this.m_Trail.DrawOrder = 100;
+            this.Components.Add(this.m_Trail);
+            
             // Un edificio
             this.m_Building_1 = new BuildingType0(this, @"Content/Buildings/", @"WHBuilding01.xml");
             this.m_Building_1.UpdateOrder = 3;
@@ -184,7 +241,7 @@ using GameComponents.Scenery;
             this.Physics.RegisterVehicle(this.m_Building_3);
 
             AmmoDrawer ammoDrawer = new AmmoDrawer(this, @"Content/dharma");
-            ammoDrawer.Rounds = this.Physics.Proyectiles;
+            ammoDrawer.Rounds = this.Physics.Projectiles;
             ammoDrawer.UpdateOrder = 3;
             this.Components.Add(ammoDrawer);
 
@@ -321,6 +378,12 @@ using GameComponents.Scenery;
 
             // Fin de captura de entrada de usuario
             InputHelper.End();
+
+            if (this.m_ExplosionActive)
+            {
+                this.m_Explosion.AddParticle(this.m_ExplosionPosition, Vector3.Up);
+                this.m_ExplosionSmoke.AddParticle(this.m_ExplosionPosition, Vector3.Up);
+            }
         }
         /// <summary>
         /// Dibujado

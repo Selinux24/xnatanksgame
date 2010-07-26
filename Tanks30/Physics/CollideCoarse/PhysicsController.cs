@@ -3,6 +3,10 @@ using Microsoft.Xna.Framework;
 
 namespace Physics.CollideCoarse
 {
+    public delegate void ExplosionHandler(Explosion explosion);
+
+    public delegate void ObjectMovedHandler(IPhysicObject obj, Vector3 position, Vector3 velocity);
+
     /// <summary>
     /// Controlador de físicas
     /// </summary>
@@ -33,7 +37,7 @@ namespace Physics.CollideCoarse
         /// <summary>
         /// Colección de proyectiles
         /// </summary>
-        private List<AmmoRound> m_ProyectileData = new List<AmmoRound>();
+        private List<AmmoRound> m_ProjectileData = new List<AmmoRound>();
         /// <summary>
         /// Colección de explosiones
         /// </summary>
@@ -66,11 +70,11 @@ namespace Physics.CollideCoarse
         /// <summary>
         /// Obtiene la lista de proyectiles registrados
         /// </summary>
-        public AmmoRound[] Proyectiles
+        public AmmoRound[] Projectiles
         {
             get
             {
-                return this.m_ProyectileData.ToArray();
+                return this.m_ProjectileData.ToArray();
             }
         }
         /// <summary>
@@ -101,6 +105,17 @@ namespace Physics.CollideCoarse
         }
 
         /// <summary>
+        /// Evento que se produce cuando empieza una explosión
+        /// </summary>
+        public event ExplosionHandler OnExplosionStarts;
+        /// <summary>
+        /// Evento que se produce cuando termina una explosión
+        /// </summary>
+        public event ExplosionHandler OnExplosionEnds;
+
+        public event ObjectMovedHandler OnProjectileMoved;
+
+        /// <summary>
         /// Registra la primitiva que actúa como suelo
         /// </summary>
         /// <param name="scenery">Primitiva</param>
@@ -120,9 +135,9 @@ namespace Physics.CollideCoarse
         /// Registra una primitiva de colisión que actuará como disparo
         /// </summary>
         /// <param name="proyectile">Primitiva de colisión</param>
-        public void RegisterProyectile(AmmoRound proyectile)
+        public void RegisterProjectile(AmmoRound proyectile)
         {
-            this.m_ProyectileData.Add(proyectile);
+            this.m_ProjectileData.Add(proyectile);
         }
         /// <summary>
         /// Registra una explosión
@@ -131,6 +146,8 @@ namespace Physics.CollideCoarse
         public void RegisterExplosion(Explosion explosion)
         {
             this.m_ExplosionData.Add(explosion);
+
+            this.FireExplosionStartsEvent(explosion);
         }
         /// <summary>
         /// Registra un generador de contactos entre cuerpos
@@ -173,12 +190,20 @@ namespace Physics.CollideCoarse
         public void Reset()
         {
             // Desactivar todas las balas
-            foreach (AmmoRound shot in this.m_ProyectileData)
+            foreach (AmmoRound shot in this.m_ProjectileData)
             {
                 shot.Deactivate();
             }
 
             // Finalizar todas las explosiones
+            foreach (Explosion explosion in m_ExplosionData)
+            {
+                if (explosion.IsActive)
+                {
+                    this.FireExplosionEndsEvent(explosion);
+                }
+            }
+
             m_ExplosionData.Clear();
         }
 
@@ -189,12 +214,14 @@ namespace Physics.CollideCoarse
         private void UpdateObjects(float time)
         {
             // Actualizar los proyectiles
-            for (int i = 0; i < this.m_ProyectileData.Count; i++)
+            for (int i = 0; i < this.m_ProjectileData.Count; i++)
             {
                 // Si está activo
-                if (this.m_ProyectileData[i].IsActive())
+                if (this.m_ProjectileData[i].IsActive())
                 {
-                    this.m_ProyectileData[i].Integrate(time);
+                    this.m_ProjectileData[i].Integrate(time);
+
+                    this.FireProjectileMoved(this.m_ProjectileData[i]);
                 }
             }
 
@@ -220,6 +247,8 @@ namespace Physics.CollideCoarse
                     else
                     {
                         this.m_ExplosionData.Remove(explosions[e]);
+
+                        this.FireExplosionEndsEvent(explosions[e]);
                     }
                 }
             }
@@ -252,7 +281,7 @@ namespace Physics.CollideCoarse
             if (this.m_SceneryPrimitive != null)
             {
                 // Recorrer los proyectiles
-                foreach (AmmoRound sObj in this.m_ProyectileData)
+                foreach (AmmoRound sObj in this.m_ProjectileData)
                 {
                     // Si hay contactos libres
                     if (this.m_ContactData.HasFreeContacts())
@@ -269,7 +298,11 @@ namespace Physics.CollideCoarse
                                 if (sObj.GenerateExplosion)
                                 {
                                     // Explosión
-                                    this.m_ExplosionData.Add(Explosion.CreateArtilleryExplosion(sObjPrimitive.Position));
+                                    Explosion explosion = Explosion.CreateArtilleryExplosion(sObjPrimitive.Position);
+
+                                    this.m_ExplosionData.Add(explosion);
+
+                                    this.FireExplosionStartsEvent(explosion);
                                 }
 
                                 // Informar de la colisión entre la bala y el suelo
@@ -312,7 +345,7 @@ namespace Physics.CollideCoarse
             }
 
             // Chequear colisiones de los vehículos y los proyectiles
-            foreach (AmmoRound sObj in this.m_ProyectileData)
+            foreach (AmmoRound sObj in this.m_ProjectileData)
             {
                 // Si hay contactos libres
                 if (this.m_ContactData.HasFreeContacts())
@@ -333,7 +366,11 @@ namespace Physics.CollideCoarse
                                     if (sObj.GenerateExplosion)
                                     {
                                         // Explosión
-                                        this.m_ExplosionData.Add(Explosion.CreateArtilleryExplosion(sObjPrimitive.Position));
+                                        Explosion explosion = Explosion.CreateArtilleryExplosion(sObjPrimitive.Position);
+
+                                        this.m_ExplosionData.Add(explosion);
+
+                                        this.FireExplosionStartsEvent(explosion);
                                     }
 
                                     // Informar de la colisión entre la caja y la bala
@@ -414,7 +451,7 @@ namespace Physics.CollideCoarse
             for (int i = 0; i < quantity; i++)
             {
                 AmmoRound round = new AmmoRound();
-                this.RegisterProyectile(round);
+                this.RegisterProjectile(round);
                 roundList.Add(round);
             }
         }
@@ -431,9 +468,9 @@ namespace Physics.CollideCoarse
         public void Fire(float mass, float range, Vector3 position, Vector3 direction, Vector3 appliedGravity, float radius, bool generateExplosion)
         {
             // Buscar la primera bala disponible
-            for (int i = 0; i < m_ProyectileData.Count; i++)
+            for (int i = 0; i < m_ProjectileData.Count; i++)
             {
-                AmmoRound round = m_ProyectileData[i] as AmmoRound;
+                AmmoRound round = m_ProjectileData[i] as AmmoRound;
                 if (round != null && !round.IsActive())
                 {
                     // Establecer el estado inicial de la bala con el tipo de munición actual y la posición por defecto
@@ -441,6 +478,37 @@ namespace Physics.CollideCoarse
 
                     break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Disparador del evento de explosión añadida
+        /// </summary>
+        /// <param name="explosion">Explosión</param>
+        private void FireExplosionStartsEvent(Explosion explosion)
+        {
+            if (this.OnExplosionStarts != null)
+            {
+                this.OnExplosionStarts(explosion);
+            }
+        }
+        /// <summary>
+        /// Disparador del evento de explosión eliminada
+        /// </summary>
+        /// <param name="explosion">Explosión</param>
+        private void FireExplosionEndsEvent(Explosion explosion)
+        {
+            if (this.OnExplosionEnds != null)
+            {
+                this.OnExplosionEnds(explosion);
+            }
+        }
+
+        private void FireProjectileMoved(AmmoRound ammoRound)
+        {
+            if (this.OnProjectileMoved != null)
+            {
+                this.OnProjectileMoved(ammoRound, ammoRound.Position, ammoRound.Velocity);
             }
         }
     }
