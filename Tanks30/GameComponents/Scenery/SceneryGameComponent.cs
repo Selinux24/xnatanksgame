@@ -74,8 +74,8 @@ namespace GameComponents.Scenery
                 GlobalMatrices.gGlobalProjectionMatrix);
 
             this.Scenery.SetLights(
-                SceneryEnvironment.Ambient.Light0Enable,
-                SceneryEnvironment.Ambient.Light0Direction,
+                SceneryEnvironment.Ambient.LightingEnabled,
+                SceneryEnvironment.Ambient.LightDirection,
                 0.2f);
 
             this.Scenery.Draw(this.GraphicsDevice, gameTime);

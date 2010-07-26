@@ -45,6 +45,10 @@ namespace Tanks
         /// </summary>
         private SkyBoxGameComponent m_SkyBox;
         /// <summary>
+        /// Reflejo solar
+        /// </summary>
+        private LensFlareComponent m_LensFlare;
+        /// <summary>
         /// Cámara
         /// </summary>
         private CameraGameComponent m_Camera;
@@ -196,6 +200,11 @@ namespace Tanks
             //Vehicle[] squad08 = AddSquadron(VehicleTypes.Rhino, 3);
             //Vehicle[] squad09 = AddSquadron(VehicleTypes.Rhino, 3);
 
+            this.m_LensFlare = new LensFlareComponent(this);
+            this.m_LensFlare.UpdateOrder = 96;
+            this.m_LensFlare.DrawOrder = 96;
+            this.Components.Add(this.m_LensFlare);
+
             this.m_SkyBox = new SkyBoxGameComponent(this);
             this.m_SkyBox.UpdateOrder = 97;
             this.m_SkyBox.DrawOrder = 97;
@@ -291,7 +300,7 @@ namespace Tanks
         {
             this.Graphics.GraphicsDevice.Clear(SceneryEnvironment.Ambient.AmbientColor);
 
-            this.Graphics.GraphicsDevice.RenderState.FogColor = Color.White;
+            this.Graphics.GraphicsDevice.RenderState.FogColor = SceneryEnvironment.Ambient.AmbientColor;
             this.Graphics.GraphicsDevice.RenderState.FogTableMode = FogMode.Linear;
             this.Graphics.GraphicsDevice.RenderState.FogStart = SceneryEnvironment.LevelOfDetail.HighFarClip;
             this.Graphics.GraphicsDevice.RenderState.FogEnd = SceneryEnvironment.LevelOfDetail.LowFarClip;
@@ -501,21 +510,6 @@ namespace Tanks
             if (InputHelper.KeyUpEvent(m_GlobalLightningKey))
             {
                 SceneryEnvironment.Ambient.LightingEnabled = !SceneryEnvironment.Ambient.LightingEnabled;
-            }
-
-            if (InputHelper.KeyUpEvent(m_Light0Key))
-            {
-                SceneryEnvironment.Ambient.Light0Enable = !SceneryEnvironment.Ambient.Light0Enable;
-            }
-
-            if (InputHelper.KeyUpEvent(m_Light1Key))
-            {
-                SceneryEnvironment.Ambient.Light1Enable = !SceneryEnvironment.Ambient.Light1Enable;
-            }
-
-            if (InputHelper.KeyUpEvent(m_Light2Key))
-            {
-                SceneryEnvironment.Ambient.Light2Enable = !SceneryEnvironment.Ambient.Light2Enable;
             }
 
             if (InputHelper.KeyUpEvent(m_WireFrameKey))

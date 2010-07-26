@@ -9,16 +9,14 @@ namespace GameComponents.Scenery
 
     public class LensFlareComponent : DrawableGameComponent
     {
-        const float glowSize = 400;
-
-        const float querySize = 100;
-
         /// <summary>
         /// Gestor de contenidos
         /// </summary>
         protected ContentManager Content;
 
-        public Vector3 LightDirection = Vector3.Normalize(new Vector3(-1, -0.1f, 0.3f));
+        public float GlowSize = 400;
+        public float QuerySize = 100;
+        public Vector3 LightDirection = SceneryEnvironment.Ambient.LightDirection;
 
         private SpriteBatch m_SpriteBatch;
         private Texture2D m_GlowSprite;
@@ -29,39 +27,7 @@ namespace GameComponents.Scenery
         private OcclusionQuery m_OcclusionQuery;
         private bool m_OcclusionQueryActive;
         private float m_OcclusionAlpha;
-
-        class Flare
-        {
-            public Flare(float position, float scale, Color color, string textureName)
-            {
-                this.Position = position;
-                this.Scale = scale;
-                this.Color = color;
-                this.TextureName = textureName;
-            }
-
-            public float Position;
-            public float Scale;
-            public Color Color;
-            public string TextureName;
-            public Texture2D Texture;
-        }
-
-        Flare[] flares =
-        {
-            new Flare(-0.5f, 0.7f, new Color( 50,  25,  50), "flare1"),
-            new Flare( 0.3f, 0.4f, new Color(100, 255, 200), "flare1"),
-            new Flare( 1.2f, 1.0f, new Color(100,  50,  50), "flare1"),
-            new Flare( 1.5f, 1.5f, new Color( 50, 100,  50), "flare1"),
-
-            new Flare(-0.3f, 0.7f, new Color(200,  50,  50), "flare2"),
-            new Flare( 0.6f, 0.9f, new Color( 50, 100,  50), "flare2"),
-            new Flare( 0.7f, 0.4f, new Color( 50, 200, 200), "flare2"),
-
-            new Flare(-0.7f, 0.7f, new Color( 50, 100,  25), "flare3"),
-            new Flare( 0.0f, 0.6f, new Color( 25,  25,  25), "flare3"),
-            new Flare( 2.0f, 1.4f, new Color( 25,  50, 100), "flare3"),
-        };
+        private Flare[] m_Flares = Flare.Default;
 
         private void UpdateOcclusion(Vector2 lightPosition)
         {
@@ -80,7 +46,7 @@ namespace GameComponents.Scenery
                 }
 
                 // Use the occlusion query pixel count to work out what percentage of the sun is visible.
-                const float queryArea = querySize * querySize;
+                float queryArea = this.QuerySize * this.QuerySize;
 
                 this.m_OcclusionAlpha = Math.Min(this.m_OcclusionQuery.PixelCount / queryArea, 1);
             }
@@ -137,7 +103,7 @@ namespace GameComponents.Scenery
         {
             Vector4 color = new Vector4(1, 1, 1, this.m_OcclusionAlpha);
             Vector2 origin = new Vector2(this.m_GlowSprite.Width, this.m_GlowSprite.Height) / 2;
-            float scale = glowSize * 2 / this.m_GlowSprite.Width;
+            float scale = GlowSize * 2 / this.m_GlowSprite.Width;
 
             this.m_SpriteBatch.Begin(SpriteBlendMode.AlphaBlend);
 
@@ -168,7 +134,7 @@ namespace GameComponents.Scenery
             // Draw the flare sprites using additive blending.
             this.m_SpriteBatch.Begin(SpriteBlendMode.Additive);
 
-            foreach (Flare flare in flares)
+            foreach (Flare flare in m_Flares)
             {
                 // Compute the position of this flare sprite.
                 Vector2 flarePosition = lightPosition + flareVector * flare.Position;
@@ -222,7 +188,7 @@ namespace GameComponents.Scenery
             this.m_SpriteBatch = new SpriteBatch(this.GraphicsDevice);
 
             this.m_GlowSprite = this.Content.Load<Texture2D>(@"Content\LensFlare\glow");
-            foreach (Flare flare in flares)
+            foreach (Flare flare in m_Flares)
             {
                 flare.Texture = this.Content.Load<Texture2D>(@"Content\LensFlare\" + flare.TextureName);
             }
@@ -234,10 +200,10 @@ namespace GameComponents.Scenery
             this.m_VertexDeclaration = new VertexDeclaration(this.GraphicsDevice, VertexPositionColor.VertexElements);
 
             this.m_QueryVertices = new VertexPositionColor[4];
-            this.m_QueryVertices[0].Position = new Vector3(-querySize / 2, -querySize / 2, -1);
-            this.m_QueryVertices[1].Position = new Vector3(querySize / 2, -querySize / 2, -1);
-            this.m_QueryVertices[2].Position = new Vector3(querySize / 2, querySize / 2, -1);
-            this.m_QueryVertices[3].Position = new Vector3(-querySize / 2, querySize / 2, -1);
+            this.m_QueryVertices[0].Position = new Vector3(-QuerySize / 2, -QuerySize / 2, -1);
+            this.m_QueryVertices[1].Position = new Vector3(QuerySize / 2, -QuerySize / 2, -1);
+            this.m_QueryVertices[2].Position = new Vector3(QuerySize / 2, QuerySize / 2, -1);
+            this.m_QueryVertices[3].Position = new Vector3(-QuerySize / 2, QuerySize / 2, -1);
 
             this.m_OcclusionQuery = new OcclusionQuery(this.GraphicsDevice);
         }
@@ -260,7 +226,7 @@ namespace GameComponents.Scenery
             Viewport viewport = this.GraphicsDevice.Viewport;
 
             Vector3 projectedPosition = viewport.Project(
-                -LightDirection,
+                -this.LightDirection,
                 GlobalMatrices.gGlobalProjectionMatrix,
                 infiniteView,
                 Matrix.Identity);
@@ -280,6 +246,7 @@ namespace GameComponents.Scenery
             if (this.m_OcclusionAlpha > 0)
             {
                 this.DrawGlow(lightPosition);
+
                 this.DrawFlares(lightPosition);
             }
 
