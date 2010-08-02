@@ -8,7 +8,6 @@ namespace GameComponents.Buildings
     using Common;
     using Common.Helpers;
     using GameComponents.Animation;
-    using GameComponents.Particles;
     using GameComponents.Geometry;
     using GameComponents.Scenery;
     using Physics;
@@ -65,11 +64,6 @@ namespace GameComponents.Buildings
         /// Escala
         /// </summary>
         private float m_Scale = 1f;
-
-        /// <summary>
-        /// Sistema de partículas
-        /// </summary>
-        private ParticleSystem m_SmokePlumeParticles;
 
         /// <summary>
         /// Obtiene o establece la posición
@@ -159,11 +153,6 @@ namespace GameComponents.Buildings
             : base(game)
         {
             this.Content = game.Content;
-
-            this.m_SmokePlumeParticles = new SmokePlumeParticleSystem(game);
-            this.m_SmokePlumeParticles.DrawOrder = 100;
-
-            game.Components.Add(this.m_SmokePlumeParticles);
         }
 
         /// <summary>
@@ -213,12 +202,6 @@ namespace GameComponents.Buildings
             // Establecer la visibilidad
             BoundingSphere sph = this.GetSPH();
             this.Visible = sph.Intersects(GlobalMatrices.gLODHighFrustum);
-
-            // Mostrar humo
-            this.m_SmokePlumeParticles.Visible = true;
-
-            // Añadiendo humo
-            this.m_SmokePlumeParticles.AddParticle(this.Position, Vector3.Zero);
         }
         /// <summary>
         /// Dibujar

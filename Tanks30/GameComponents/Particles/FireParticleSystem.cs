@@ -12,9 +12,9 @@ namespace GameComponents.Particles
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "fire";
+            settings.TextureName = "Content/Particles/fire";
 
-            settings.MaxParticles = 800;
+            settings.MaxParticles = 1000;
 
             settings.Duration = TimeSpan.FromSeconds(2);
 

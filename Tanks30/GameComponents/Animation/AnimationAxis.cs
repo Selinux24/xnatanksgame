@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GameComponents.Vehicles.Animations
+namespace GameComponents.Animation
 {
     /// <summary>
     /// Representa una rotación entre límites

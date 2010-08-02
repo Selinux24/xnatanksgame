@@ -15,7 +15,7 @@ namespace GameComponents.Particles
         {
             settings.TextureName = "Content/Particles/smoke";
 
-            settings.MaxParticles = 500;
+            settings.MaxParticles = 1000;
 
             settings.Duration = TimeSpan.FromSeconds(4);
 
