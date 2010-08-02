@@ -5,7 +5,9 @@ namespace Physics.CollideCoarse
 {
     public delegate void ExplosionHandler(Explosion explosion);
 
-    public delegate void ObjectMovedHandler(IPhysicObject obj, Vector3 position, Vector3 velocity);
+    public delegate void VehicleHandler(IPhysicObject vehicle);
+
+    public delegate void AmmoRoundHandler(AmmoRound proyectile);
 
     /// <summary>
     /// Controlador de físicas
@@ -115,7 +117,9 @@ namespace Physics.CollideCoarse
         /// </summary>
         public event ExplosionHandler OnExplosionEnds;
 
-        public event ObjectMovedHandler OnProjectileMoved;
+        public event AmmoRoundHandler OnProjectileMoved;
+
+        public event VehicleHandler OnVehicleMoved;
 
         /// <summary>
         /// Registra la primitiva que actúa como suelo
@@ -223,7 +227,7 @@ namespace Physics.CollideCoarse
                 {
                     this.m_ProjectileData[i].Integrate(time);
 
-                    this.FireProjectileMoved(this.m_ProjectileData[i]);
+                    this.FireProjectileMovedEvent(this.m_ProjectileData[i]);
                 }
             }
 
@@ -235,6 +239,8 @@ namespace Physics.CollideCoarse
                 {
                     // Integrar y actualizar las variables
                     this.m_VehicleData[i].Integrate(time);
+
+                    this.FireVehicleMovedEvent(this.m_VehicleData[i]);
                 }
 
                 // Actualizar las explosiones contra el vehículo actual
@@ -496,7 +502,10 @@ namespace Physics.CollideCoarse
                 this.OnExplosionStarts(explosion);
             }
         }
-
+        /// <summary>
+        /// Disparador del evento de explosión actualizada
+        /// </summary>
+        /// <param name="explosion">Explosión</param>
         private void FireExplosionUpdatedEvent(Explosion explosion)
         {
             if (this.OnExplosionUpdated != null)
@@ -515,12 +524,26 @@ namespace Physics.CollideCoarse
                 this.OnExplosionEnds(explosion);
             }
         }
-
-        private void FireProjectileMoved(AmmoRound ammoRound)
+        /// <summary>
+        /// Disparador del evento de proyectil en movimiento
+        /// </summary>
+        /// <param name="ammoRound">Proyectil</param>
+        private void FireProjectileMovedEvent(AmmoRound ammoRound)
         {
             if (this.OnProjectileMoved != null)
             {
-                this.OnProjectileMoved(ammoRound, ammoRound.Position, ammoRound.Velocity);
+                this.OnProjectileMoved(ammoRound);
+            }
+        }
+        /// <summary>
+        /// Disparador del evento de vehículo en movimiento
+        /// </summary>
+        /// <param name="vehicle">Vehículo</param>
+        private void FireVehicleMovedEvent(IPhysicObject vehicle)
+        {
+            if (this.OnVehicleMoved != null)
+            {
+                this.OnVehicleMoved(vehicle);
             }
         }
     }

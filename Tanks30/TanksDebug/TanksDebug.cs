@@ -46,8 +46,6 @@ namespace TanksDebug
         /// </summary>
         private const float _TerrainSize = 300f;
 
-        private Color _AmbientColor = SceneryEnvironment.Ambient.AmbientColor;
-
         /// <summary>
         /// Dispositivo gráfico
         /// </summary>
@@ -73,6 +71,10 @@ namespace TanksDebug
         /// Colección de esferas para dibujar
         /// </summary>
         private List<BallGameComponent> m_Balls = new List<BallGameComponent>();
+        /// <summary>
+        /// Gestor de partículas
+        /// </summary>
+        private ParticleManager m_ParticleManager = null;
         /// <summary>
         /// Lentes
         /// </summary>
@@ -111,11 +113,18 @@ namespace TanksDebug
         /// </summary>
         private Vehicle m_CurrentVehicle = null;
 
-        private ParticleManager m_ParticleManager = null;
-
+        /// <summary>
+        /// Bola 1
+        /// </summary>
         private BallGameComponent ball1 = null;
-        //private BallGameComponent ball2 = null;
-        //private BallGameComponent ball3 = null;
+        /// <summary>
+        /// Bola 2
+        /// </summary>
+        private BallGameComponent ball2 = null;
+        /// <summary>
+        /// Bola 3
+        /// </summary>
+        private BallGameComponent ball3 = null;
 
         /// <summary>
         /// Constructor
@@ -131,18 +140,41 @@ namespace TanksDebug
             this.Services.AddService(typeof(PhysicsController), this.Physics);
 
             this.Physics.OnExplosionUpdated += new ExplosionHandler(Physics_OnExplosionUpdated);
-            this.Physics.OnProjectileMoved += new ObjectMovedHandler(Physics_OnProjectileMoved);
+            this.Physics.OnProjectileMoved += new AmmoRoundHandler(Physics_OnProjectileMoved);
+            this.Physics.OnVehicleMoved += new VehicleHandler(Physics_OnVehicleMoved);
         }
 
-        void Physics_OnProjectileMoved(IPhysicObject obj, Vector3 position, Vector3 velocity)
+        /// <summary>
+        /// Evento de vehículo en movimiento
+        /// </summary>
+        /// <param name="vehicle">Vehículo</param>
+        void Physics_OnVehicleMoved(IPhysicObject vehicle)
         {
-            this.m_ParticleManager.AddProjectileTrailParticle(position, velocity);
-        }
+            //if (vehicle is Vehicle)
+            //{
+            //    Vehicle v = vehicle as Vehicle;
 
+            //    this.m_ParticleManager.AddSmokePlumeParticle(v.Position, Vector3.Up * 0.2f);
+            //}
+        }
+        /// <summary>
+        /// Evento de explosión activa
+        /// </summary>
+        /// <param name="explosion">Explosión</param>
         void Physics_OnExplosionUpdated(Explosion explosion)
         {
             this.m_ParticleManager.AddExplosionParticle(explosion.DetonationCenter, Vector3.Up * 0.5f);
             this.m_ParticleManager.AddExplosionSmokeParticle(explosion.DetonationCenter, Vector3.Up * 0.5f);
+        }
+        /// <summary>
+        /// Evento de proyectil en movimiento
+        /// </summary>
+        /// <param name="obj">Objeto</param>
+        /// <param name="position">Posición</param>
+        /// <param name="velocity">Velocidad</param>
+        void Physics_OnProjectileMoved(AmmoRound ammo)
+        {
+            this.m_ParticleManager.AddProjectileTrailParticle(ammo.Position, Vector3.Zero);
         }
 
         /// <summary>
@@ -183,6 +215,12 @@ namespace TanksDebug
             // Cámara
             this.m_Camera = new CameraGameComponent(this);
             this.m_Camera.UseMouse = true;
+            this.m_Camera.Forward = Keys.Up;
+            this.m_Camera.Backward = Keys.Down;
+            this.m_Camera.Left = Keys.Left;
+            this.m_Camera.Right = Keys.Right;
+            this.m_Camera.Up = Keys.Add;
+            this.m_Camera.Down = Keys.Subtract;
             this.m_Camera.Mode = CameraGameComponent.CameraModes.FirstPerson;
             this.m_Camera.UpdateOrder = 99;
             this.Components.Add(this.m_Camera);
@@ -271,33 +309,33 @@ namespace TanksDebug
             this.Components.Add(ball1);
             this.Physics.RegisterVehicle(ball1);
 
-            //this.ball2 = new BallGameComponent(this, 1.5f, 2f);
-            //this.Components.Add(ball2);
-            //this.Physics.RegisterVehicle(ball2);
+            this.ball2 = new BallGameComponent(this, 1.5f, 2f);
+            this.Components.Add(ball2);
+            this.Physics.RegisterVehicle(ball2);
 
-            //this.ball3 = new BallGameComponent(this, 2f, 4f);
-            //this.Components.Add(ball3);
-            //this.Physics.RegisterVehicle(ball3);
+            this.ball3 = new BallGameComponent(this, 2f, 4f);
+            this.Components.Add(ball3);
+            this.Physics.RegisterVehicle(ball3);
 
-            //RodComponent rod1 = new RodComponent(this, this.ball1, Vector3.Up * this.ball1.Sphere.Radius, null, new Vector3(0, 40, 0), 10f);
-            //this.Components.Add(rod1);
-            //this.Physics.RegisterContactGenerator(rod1.Rod);
+            RodComponent rod1 = new RodComponent(this, this.ball1, Vector3.Up * this.ball1.Radius, null, new Vector3(0, 40, 0), 10f);
+            this.Components.Add(rod1);
+            this.Physics.RegisterContactGenerator(rod1.Rod);
 
-            //RodComponent rod2 = new RodComponent(this, this.ball2, Vector3.Up * this.ball2.Sphere.Radius, null, new Vector3(0, 40, 0), 10f);
-            //this.Components.Add(rod2);
-            //this.Physics.RegisterContactGenerator(rod2.Rod);
+            RodComponent rod2 = new RodComponent(this, this.ball2, Vector3.Up * this.ball2.Radius, null, new Vector3(0, 40, 0), 10f);
+            this.Components.Add(rod2);
+            this.Physics.RegisterContactGenerator(rod2.Rod);
 
-            //JointComponent joint1 = new JointComponent(this, this.ball1, Vector3.Down * this.ball1.Sphere.Radius, this.ball3, Vector3.Left * this.ball3.Sphere.Radius, 5f);
-            //this.Components.Add(joint1);
-            //this.Physics.RegisterContactGenerator(joint1.Joint);
+            JointComponent joint1 = new JointComponent(this, this.ball1, Vector3.Down * this.ball1.Radius, this.ball3, Vector3.Left * this.ball3.Radius, 5f);
+            this.Components.Add(joint1);
+            this.Physics.RegisterContactGenerator(joint1.Joint);
 
             //JointComponent joint2 = new JointComponent(this, this.ball2, Vector3.Down * this.ball2.Sphere.Radius, this.ball3, Vector3.Right * this.ball3.Sphere.Radius, 5f);
             //this.Components.Add(joint2);
             //this.Physics.RegisterContactGenerator(joint2.Joint);
 
-            Joint2Component rod24 = new Joint2Component(this, this.ball1, Vector3.Up * this.ball1.Radius, null, new Vector3(0, 40, 0), 10f);
-            this.Components.Add(rod24);
-            this.Physics.RegisterContactGenerator(rod24.Rod);
+            //Joint2Component rod24 = new Joint2Component(this, this.ball1, Vector3.Up * this.ball1.Radius, null, new Vector3(0, 40, 0), 10f);
+            //this.Components.Add(rod24);
+            //this.Physics.RegisterContactGenerator(rod24.Rod);
 
             // Establecer el foco en el vehículo
             this.SetFocus(this.m_Rhino_1);
@@ -336,8 +374,6 @@ namespace TanksDebug
             // Físicas
             this.Physics.Update(gameTime);
 
-            //this.car.Integrate(gameTime);
-
             // Actualización base
             base.Update(gameTime);
 
@@ -350,12 +386,12 @@ namespace TanksDebug
         /// <param name="gameTime">Tiempo de juego</param>
         protected override void Draw(GameTime gameTime)
         {
-            this.Graphics.GraphicsDevice.Clear(_AmbientColor);
+            this.Graphics.GraphicsDevice.Clear(SceneryEnvironment.Ambient.AmbientColor);
 
             this.GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
             this.GraphicsDevice.RenderState.FillMode = FillMode.Solid;
 
-            this.GraphicsDevice.RenderState.FogColor = _AmbientColor;
+            this.GraphicsDevice.RenderState.FogColor = SceneryEnvironment.Ambient.AmbientColor;
             this.GraphicsDevice.RenderState.FogTableMode = FogMode.Linear;
             this.GraphicsDevice.RenderState.FogStart = 75;
             this.GraphicsDevice.RenderState.FogEnd = 500;
@@ -422,10 +458,9 @@ namespace TanksDebug
                 ball.SetPosition(new Vector3(x, y, z) + GlobalTraslation);
             }
 
-            //this.ball1.SetPosition(new Vector3(120, 30, 120));
             this.ball1.SetPosition(new Vector3(5, 35, 5));
-            //this.ball2.SetPosition(new Vector3(-15, 39, -20));
-            //this.ball3.SetPosition(new Vector3(5, 20, -10));
+            this.ball2.SetPosition(new Vector3(-15, 39, -20));
+            this.ball3.SetPosition(new Vector3(5, 20, -10));
         }
         /// <summary>
         /// Actualiza la cámara
