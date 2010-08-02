@@ -97,18 +97,6 @@ namespace Tanks
         /// </summary>
         private Keys m_GlobalLightningKey = Keys.F5;
         /// <summary>
-        /// Tecla que activa o desactiva la luz 1
-        /// </summary> 
-        private Keys m_Light0Key = Keys.F6;
-        /// <summary>
-        /// Tecla que activa o desactiva la luz 2
-        /// </summary>
-        private Keys m_Light1Key = Keys.F7;
-        /// <summary>
-        /// Tecla que activa o desactiva la luz 3
-        /// </summary>
-        private Keys m_Light2Key = Keys.F8;
-        /// <summary>
         /// Tecla que activa o desactiva el wireframe
         /// </summary>
         private Keys m_WireFrameKey = Keys.F12;
