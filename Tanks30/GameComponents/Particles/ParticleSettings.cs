@@ -17,7 +17,7 @@ namespace GameComponents.Particles
         /// <summary>
         /// Número máximo de partículas
         /// </summary>
-        public int MaxParticles = 100;
+        public int MaxParticles = 1000;
         
         /// <summary>
         /// Duración de la partículas

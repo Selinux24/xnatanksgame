@@ -108,6 +108,8 @@ namespace Physics.CollideCoarse
         /// Evento que se produce cuando empieza una explosión
         /// </summary>
         public event ExplosionHandler OnExplosionStarts;
+
+        public event ExplosionHandler OnExplosionUpdated;
         /// <summary>
         /// Evento que se produce cuando termina una explosión
         /// </summary>
@@ -243,6 +245,8 @@ namespace Physics.CollideCoarse
                     {
                         IPhysicObject pObj = this.m_VehicleData[i];
                         explosions[e].UpdateForce(ref pObj, time);
+
+                        this.FireExplosionUpdatedEvent(explosions[e]);
                     }
                     else
                     {
@@ -490,6 +494,14 @@ namespace Physics.CollideCoarse
             if (this.OnExplosionStarts != null)
             {
                 this.OnExplosionStarts(explosion);
+            }
+        }
+
+        private void FireExplosionUpdatedEvent(Explosion explosion)
+        {
+            if (this.OnExplosionUpdated != null)
+            {
+                this.OnExplosionUpdated(explosion);
             }
         }
         /// <summary>

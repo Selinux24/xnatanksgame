@@ -1,7 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
-namespace GameComponents.Vehicles.Animations
+namespace GameComponents.Animation
 {
     /// <summary>
     /// Define la posición de un jugador
@@ -83,6 +84,28 @@ namespace GameComponents.Vehicles.Animations
                 position,
                 position + forward,
                 up);
+        }
+
+        /// <summary>
+        /// Crea la lista de posiciones de jugador usable por los componentes
+        /// </summary>
+        /// <param name="model">Modelo que contiene las posiciones</param>
+        /// <returns>Devuelve una lista de posiciones de jugador</returns>
+        public static PlayerPosition[] CreatePlayerPositionList(Model model, PlayerPositionInfo[] playerPositions)
+        {
+            List<PlayerPosition> m_PlayerControlList = new List<PlayerPosition>();
+
+            if (playerPositions != null && playerPositions.Length > 0)
+            {
+                foreach (PlayerPositionInfo positionInfo in playerPositions)
+                {
+                    PlayerPosition position = new PlayerPosition(positionInfo.Name, model.Bones[positionInfo.BoneName], positionInfo.Translation);
+
+                    m_PlayerControlList.Add(position);
+                }
+            }
+
+            return m_PlayerControlList.ToArray();
         }
     }
 }

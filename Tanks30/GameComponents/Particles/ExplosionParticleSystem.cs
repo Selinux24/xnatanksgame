@@ -26,7 +26,7 @@ namespace GameComponents.Particles
         {
             settings.TextureName = "Content/Particles/explosion";
 
-            settings.MaxParticles = 200;
+            settings.MaxParticles = 1000;
 
             settings.Duration = TimeSpan.FromSeconds(2);
 

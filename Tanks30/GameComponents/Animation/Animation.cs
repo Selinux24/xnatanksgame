@@ -1,7 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
-namespace GameComponents.Vehicles.Animations
+namespace GameComponents.Animation
 {
     /// <summary>
     /// Representa una rotación sobre un eje específico
@@ -125,6 +126,39 @@ namespace GameComponents.Vehicles.Animations
             string mask = "{0}:{1}";
 
             return string.Format(mask, this.GetType(), this.BoneName);
+        }
+
+        /// <summary>
+        /// Crea la lista de animaciones usable por los componentes
+        /// </summary>
+        /// <param name="model">Modelo a animar</param>
+        /// <returns>Devuelve una lista de animaciones</returns>
+        public static Animation[] CreateAnimationList(Model model, AnimationInfo[] animationControlers)
+        {
+            List<Animation> animationList = new List<Animation>();
+
+            if (animationControlers != null && animationControlers.Length > 0)
+            {
+                foreach (AnimationInfo animationInfo in animationControlers)
+                {
+                    if (animationInfo.Type == typeof(Animation).ToString())
+                    {
+                        Animation animation = new Animation(animationInfo.Name, model.Bones[animationInfo.BoneName]);
+                        animation.Initialize(animationInfo.Axis);
+
+                        animationList.Add(animation);
+                    }
+                    else if (animationInfo.Type == typeof(AnimationAxis).ToString())
+                    {
+                        AnimationAxis animation = new AnimationAxis(animationInfo.Name, model.Bones[animationInfo.BoneName]);
+                        animation.Initialize(animationInfo.Axis, animationInfo.AngleFrom, animationInfo.AngleTo, animationInfo.Velocity, animationInfo.Inverse);
+
+                        animationList.Add(animation);
+                    }
+                }
+            }
+
+            return animationList.ToArray();
         }
     }
 }

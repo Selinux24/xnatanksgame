@@ -7,7 +7,6 @@ namespace GameComponents.Vehicles
 {
     using Common;
     using Common.Helpers;
-    using GameComponents.Particles;
     using GameComponents.Geometry;
     using GameComponents.Scenery;
     using Physics;
@@ -70,11 +69,6 @@ namespace GameComponents.Vehicles
         //private Quaternion m_Rotation = Quaternion.Identity;
         // Escala
         private float m_Scale = 1f;
-
-        /// <summary>
-        /// Sistema de partículas
-        /// </summary>
-        private ParticleSystem m_SmokePlumeParticles;
 
         /// <summary>
         /// Obtiene o establece la posición
@@ -201,11 +195,6 @@ namespace GameComponents.Vehicles
         {
             this.Content = game.Content;
             this.PhysicsController = (PhysicsController)game.Services.GetService(typeof(PhysicsController));
-
-            this.m_SmokePlumeParticles = new SmokePlumeParticleSystem(game);
-            this.m_SmokePlumeParticles.DrawOrder = 100;
-
-            game.Components.Add(this.m_SmokePlumeParticles);
         }
 
         /// <summary>
@@ -286,26 +275,13 @@ namespace GameComponents.Vehicles
             // Controlador de animación
             this.m_AnimationController.Update(gameTime);
 
-            // Actualizar la rotación
-            //this.UpdateRotation(gameTime);
-
-            // Actualizar la posición
-            //this.UpdatePosition(gameTime);
-
             // Establecer la visibilidad del vehículo
             BoundingSphere sph = this.GetSPH();
             this.Visible = sph.Intersects(GlobalMatrices.gLODHighFrustum);
 
-            // Actualizar con el terreno
-            //this.UpdateWithScenery(gameTime);
-
             if (this.Damaged && this.Visible)
             {
-                // Si el vehículo ha sido dañado mostrar humo
-                this.m_SmokePlumeParticles.Visible = true;
 
-                // Añadiendo humo
-                this.m_SmokePlumeParticles.AddParticle(this.Position, Vector3.Zero);
             }
 
             this.PositionHasChanged = false;
