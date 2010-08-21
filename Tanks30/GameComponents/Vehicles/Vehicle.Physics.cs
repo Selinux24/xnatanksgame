@@ -208,6 +208,43 @@ namespace GameComponents.Vehicles
             if (this.m_OBB != null)
             {
                 this.m_OBB.Integrate(time);
+
+                if (this.Skimmer)
+                {
+                    Vector3 velocity = this.m_OBB.Velocity;
+                    Vector3 acceleration = this.m_OBB.Acceleration;
+
+                    if (this.m_OBB.Position.Y > this.MaxFlightHeight)
+                    {
+                        acceleration = Constants.GravityForce;
+                    }
+                    else if (this.m_OBB.Position.Y < this.MinFlightHeight)
+                    {
+                        if (velocity.Y < 0f)
+                        {
+                            if (velocity.Y < -1.5f)
+                            {
+                                //Descendiendo, frenar y ascender
+                                velocity.Y += -(velocity.Y * 0.5f);
+                            }
+                            else
+                            {
+                                velocity.Y += 0.5f;
+                                acceleration.Y = 0f;
+                            }
+                        }
+                        else
+                        {
+                            float distance = this.MinFlightHeight - this.m_OBB.Position.Y;
+
+                            velocity.Y = 0.5f * distance;
+                            acceleration.Y = 0f;
+                        }
+                    }
+
+                    this.m_OBB.SetVelocity(velocity);
+                    this.m_OBB.SetAcceleration(acceleration);
+                }
             }
         }
         /// <summary>
@@ -298,16 +335,22 @@ namespace GameComponents.Vehicles
                 {
                     float time = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                    if (this.Velocity >= amount)
+                    float toAdd = (0.0001f * amount * time);
+
+                    if (this.Velocity >= toAdd)
                     {
                         if (this.IsAdvancing)
                         {
-                            this.m_OBB.AddToVelocity(this.CurrentTransform.Backward * amount / time);
+                            this.m_OBB.AddToVelocity(this.CurrentTransform.Backward * toAdd);
                         }
                         else
                         {
-                            this.m_OBB.AddToVelocity(this.CurrentTransform.Forward * amount / time);
+                            this.m_OBB.AddToVelocity(this.CurrentTransform.Forward * toAdd);
                         }
+                    }
+                    else if (this.Velocity > 0f)
+                    {
+                        this.m_OBB.SetVelocity(Vector3.Zero);
                     }
                 }
             }
@@ -334,7 +377,14 @@ namespace GameComponents.Vehicles
                 {
                     float time = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                    this.m_OBB.AddToOrientation(Quaternion.CreateFromAxisAngle(this.CurrentTransform.Up, angle / time));
+                    //Rotación a añadir
+                    Quaternion toAdd = Quaternion.CreateFromAxisAngle(this.CurrentTransform.Up, angle / time);
+
+                    //Añadir a la rotación actual
+                    this.m_OBB.AddToOrientation(toAdd);
+
+                    //Actualizar velocidad
+                    this.m_OBB.SetVelocity(Vector3.Transform(this.m_OBB.Velocity, toAdd));
                 }
             }
         }
@@ -359,7 +409,14 @@ namespace GameComponents.Vehicles
                 {
                     float time = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                    this.m_OBB.AddToOrientation(Quaternion.CreateFromAxisAngle(this.CurrentTransform.Up, -angle / time));
+                    //Rotación a añadir
+                    Quaternion toAdd = Quaternion.CreateFromAxisAngle(this.CurrentTransform.Up, -angle / time);
+
+                    //Añadir a la rotación actual
+                    this.m_OBB.AddToOrientation(toAdd);
+
+                    //Actualizar velocidad
+                    this.m_OBB.SetVelocity(Vector3.Transform(this.m_OBB.Velocity, toAdd));
                 }
             }
         }
