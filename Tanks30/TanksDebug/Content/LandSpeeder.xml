@@ -3,7 +3,7 @@
   <Model>LandSpeeder</Model>
   <MaxForwardVelocity>100</MaxForwardVelocity>
   <MaxBackwardVelocity>20</MaxBackwardVelocity>
-  <AccelerationModifier>25</AccelerationModifier>
+  <AccelerationModifier>20</AccelerationModifier>
   <BrakeModifier>20</BrakeModifier>
   <AngularVelocityModifier>15</AngularVelocityModifier>
   <MaxFlightHeight>25</MaxFlightHeight>

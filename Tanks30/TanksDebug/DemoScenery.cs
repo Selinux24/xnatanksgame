@@ -6,10 +6,11 @@ using Microsoft.Xna.Framework.Graphics;
 namespace TanksDebug
 {
     using Common;
+    using Common.Components;
     using Common.Primitives;
     using Physics;
 
-    public class DemoScenery : DrawableGameComponent, IPhysicObject
+    public class DemoScenery : DrawableGameComponent, IScenery
     {
         /// <summary>
         /// Matriz de transformación del componente
@@ -293,6 +294,23 @@ namespace TanksDebug
             }
 
             this.m_Effect.End();
+        }
+
+        /// <summary>
+        /// Obtiene la posición
+        /// </summary>
+        /// <returns>Devuelve la posición</returns>
+        public Vector3 GetPosition()
+        {
+            return this.m_Position;
+        }
+        /// <summary>
+        /// Obtiene la orientación
+        /// </summary>
+        /// <returns>Devuelve la orientación</returns>
+        public Quaternion GetOrientation()
+        {
+            return this.m_Rotation;
         }
 
         public CollisionPrimitive GetPrimitive()

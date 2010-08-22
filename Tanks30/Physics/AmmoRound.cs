@@ -93,6 +93,22 @@ namespace Physics
         }
 
         /// <summary>
+        /// Obtiene la posición
+        /// </summary>
+        /// <returns>Devuelve la posición</returns>
+        public Vector3 GetPosition()
+        {
+            return this.Position;
+        }
+        /// <summary>
+        /// Obtiene la orientación
+        /// </summary>
+        /// <returns>Devuelve la orientación</returns>
+        public Quaternion GetOrientation()
+        {
+            return this.Orientation;
+        }
+        /// <summary>
         /// Obtiene la primitiva de colisión
         /// </summary>
         /// <returns>Devuelve la primitiva de colisión del objeto</returns>

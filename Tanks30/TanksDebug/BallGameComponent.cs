@@ -116,7 +116,15 @@ namespace TanksDebug
         {
             this.m_Sphere.SetInitialState(position, Quaternion.Identity);
         }
-   
+
+        public Vector3 GetPosition()
+        {
+            return this.m_Sphere.Position;
+        }
+        public Quaternion GetOrientation()
+        {
+            return Quaternion.Identity;
+        }
         public CollisionPrimitive GetPrimitive()
         {
             return this.m_Sphere;

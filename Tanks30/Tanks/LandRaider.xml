@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <VehicleComponentInfo>
   <Model>LandRaider</Model>
-  <MaxForwardVelocity>5</MaxForwardVelocity>
-  <MaxBackwardVelocity>5</MaxBackwardVelocity>
+  <MaxForwardVelocity>10</MaxForwardVelocity>
+  <MaxBackwardVelocity>4</MaxBackwardVelocity>
   <AccelerationModifier>10</AccelerationModifier>
-  <BrakeModifier>2</BrakeModifier>
+  <BrakeModifier>4</BrakeModifier>
   <AngularVelocityModifier>10</AngularVelocityModifier>
   <AnimationControlers>
     <AnimationInfo>

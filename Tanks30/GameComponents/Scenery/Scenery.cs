@@ -6,11 +6,12 @@ namespace GameComponents.Scenery
 {
     using Common.Components;
     using Common.Drawing;
+    using Physics;
 
     /// <summary>
     /// Escenario
     /// </summary>
-    public partial class Scenery
+    public partial class Scenery : IScenery
     {
         /// <summary>
         /// Textura del mapa de alturas del terreno

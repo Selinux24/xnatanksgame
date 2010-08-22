@@ -14,6 +14,17 @@ namespace Physics
     public interface IPhysicObject
     {
         /// <summary>
+        /// Obtiene la posición del objeto
+        /// </summary>
+        /// <returns>Devuelve la posición del objeto</returns>
+        Vector3 GetPosition();
+        /// <summary>
+        /// Obtiene el Quaternion del orientación del objeto
+        /// </summary>
+        /// <returns>Devuelve el Quaternion del orientación del objeto</returns>
+        Quaternion GetOrientation();
+
+        /// <summary>
         /// Obtiene la primitiva de colisión sin comprobaciones
         /// </summary>
         /// <returns>Devuelve la primitiva de colisión</returns>
