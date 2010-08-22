@@ -68,6 +68,9 @@ namespace Vehicles
 
         #endregion
 
+        float m_InitialMinFlightHeight = 0f;
+        float m_InitialMaxFlightHeight = 0f;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -100,6 +103,9 @@ namespace Vehicles
             m_Gunner = this.GetPlayerPosition("Gunner");
 
             #endregion
+
+            this.m_InitialMinFlightHeight = this.MinFlightHeight;
+            this.m_InitialMaxFlightHeight = this.MaxFlightHeight;
 
             this.SetPlayerPosition(Player.Gunner);
         }
@@ -220,6 +226,12 @@ namespace Vehicles
                     #endregion
                 }
             }
+        }
+
+        public void UpdateFlight(float currentHeight)
+        {
+            this.MinFlightHeight = m_InitialMinFlightHeight + currentHeight;
+            this.MaxFlightHeight = m_InitialMaxFlightHeight + currentHeight;
         }
 
         /// <summary>

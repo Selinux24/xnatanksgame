@@ -354,5 +354,38 @@ namespace TanksDebug
                 this.OnObjectContacted(obj);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="z"></param>
+        /// <returns></returns>
+        public float? GetHeigthAtPoint(float x, float z)
+        {
+            float maxY = 1000f;
+
+            Vector3 point = new Vector3(x, maxY, z);
+
+            // Crear un rayo desde el punto hacia abajo
+            Ray ray = new Ray(point, Vector3.Down);
+
+            // Intersectar con cada triángulo
+            foreach (Triangle triangle in this.m_CollisionPrimitive.Triangles)
+            {
+                float? distance = ray.Intersects(triangle.Plane);
+                if (distance.HasValue)
+                {
+                    Vector3 p = new Vector3(x, maxY - distance.Value, z);
+
+                    if (Triangle.PointInTriangle(triangle, p))
+                    {
+                        return p.Y;
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

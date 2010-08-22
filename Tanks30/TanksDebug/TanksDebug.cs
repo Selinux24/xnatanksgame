@@ -64,6 +64,10 @@ namespace TanksDebug
         /// </summary>
         private TextDrawerComponent m_Text;
         /// <summary>
+        /// Escenario
+        /// </summary>
+        private DemoScenery m_Scenery = null;
+        /// <summary>
         /// Colección de cajas para dibujar
         /// </summary>
         private List<CubeGameComponent> m_Cubes = new List<CubeGameComponent>();
@@ -193,10 +197,10 @@ namespace TanksDebug
 #endif
 
             // Suelo
-            DemoScenery scn = new DemoScenery(this, _TerrainSize, GlobalTraslation, @"Content/dharma");
-            scn.UpdateOrder = 0;
-            this.Components.Add(scn);
-            this.Physics.RegisterScenery(scn);
+            this.m_Scenery = new DemoScenery(this, _TerrainSize, GlobalTraslation, @"Content/dharma");
+            this.m_Scenery.UpdateOrder = 0;
+            this.Components.Add(this.m_Scenery);
+            this.Physics.RegisterScenery(this.m_Scenery);
 
             // Reflejo solar
             this.m_LensFlare = new LensFlareComponent(this);
@@ -523,6 +527,12 @@ namespace TanksDebug
                     this.m_CurrentVehicle.SetNextPlayerPosition();
                 }
             }
+
+            float? l1Height = this.m_Scenery.GetHeigthAtPoint(this.m_LandSpeeder_1.Position.X, this.m_LandSpeeder_1.Position.Z);
+            float? l2Height = this.m_Scenery.GetHeigthAtPoint(this.m_LandSpeeder_2.Position.X, this.m_LandSpeeder_2.Position.Z);
+
+            if (l1Height.HasValue) this.m_LandSpeeder_1.UpdateFlight(l1Height.Value);
+            if (l2Height.HasValue) this.m_LandSpeeder_2.UpdateFlight(l2Height.Value);
         }
         /// <summary>
         /// Establece el foco en el vehículo especificado
