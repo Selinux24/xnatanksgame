@@ -232,9 +232,9 @@ namespace GameComponents.Vehicles
             // Velocidad máxima que puede alcanzar el tanque marcha atrás
             this.MaxBackwardVelocity = componentInfo.MaxBackwardVelocity;
             // Modificador de aceleración
-            this.AccelerationModifier = this.MaxForwardVelocity / componentInfo.AccelerationModifier;
+            this.AccelerationModifier = componentInfo.AccelerationModifier;
             // Modificador de frenado
-            this.BrakeModifier = this.AccelerationModifier * componentInfo.BrakeModifier;
+            this.BrakeModifier = componentInfo.BrakeModifier;
             // Velocidad angular
             this.AngularVelocityModifier = MathHelper.ToRadians(componentInfo.AngularVelocityModifier);
             // Vehículo volador
