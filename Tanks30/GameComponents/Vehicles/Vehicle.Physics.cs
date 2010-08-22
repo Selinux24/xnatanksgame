@@ -232,10 +232,12 @@ namespace GameComponents.Vehicles
         {
             if (this.m_OBB.Position.Y > this.MaxFlightHeight)
             {
+                //Por encima del techo de vuelo. Bajar a plomo
                 this.m_OBB.SetAcceleration(Constants.GravityForce);
             }
             else if (this.m_OBB.Position.Y < this.MinFlightHeight)
             {
+                //Por debajo de la altura mínima, subir
                 Vector3 velocity = this.m_OBB.Velocity;
                 Vector3 acceleration = this.m_OBB.Acceleration;
 
@@ -270,7 +272,8 @@ namespace GameComponents.Vehicles
             }
             else
             {
-                this.m_OBB.SetAcceleration(Constants.GravityForce);
+                //En el área de vuelo, bajar despacio
+                this.m_OBB.SetAcceleration(Constants.GravityForce * 0.5f);
             }
 
             Quaternion currentOrientation = this.m_OBB.Orientation;
