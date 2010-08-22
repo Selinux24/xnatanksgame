@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <VehicleComponentInfo>
   <Model>Rhino</Model>
-  <MaxForwardVelocity>120</MaxForwardVelocity>
-  <MaxBackwardVelocity>120</MaxBackwardVelocity>
-  <AccelerationModifier>25</AccelerationModifier>
-  <BrakeModifier>20</BrakeModifier>
+  <MaxForwardVelocity>10</MaxForwardVelocity>
+  <MaxBackwardVelocity>4</MaxBackwardVelocity>
+  <AccelerationModifier>10</AccelerationModifier>
+  <BrakeModifier>4</BrakeModifier>
   <AngularVelocityModifier>10</AngularVelocityModifier>
   <AnimationControlers>
     <AnimationInfo>

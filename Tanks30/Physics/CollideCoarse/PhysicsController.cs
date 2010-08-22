@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Common.Components;
 
 namespace Physics.CollideCoarse
 {
@@ -31,7 +32,7 @@ namespace Physics.CollideCoarse
         /// <summary>
         /// Terreno
         /// </summary>
-        private IPhysicObject m_SceneryPrimitive = null;
+        private IScenery m_SceneryPrimitive = null;
         /// <summary>
         /// Colección de vehículos
         /// </summary>
@@ -52,7 +53,7 @@ namespace Physics.CollideCoarse
         /// <summary>
         /// Obtiene el escenario registrado
         /// </summary>
-        public IPhysicObject Scenery
+        public IScenery Scenery
         {
             get
             {
@@ -125,7 +126,7 @@ namespace Physics.CollideCoarse
         /// Registra la primitiva que actúa como suelo
         /// </summary>
         /// <param name="scenery">Primitiva</param>
-        public void RegisterScenery(IPhysicObject scenery)
+        public void RegisterScenery(IScenery scenery)
         {
             this.m_SceneryPrimitive = scenery;
         }
@@ -239,6 +240,17 @@ namespace Physics.CollideCoarse
                 {
                     // Integrar y actualizar las variables
                     this.m_VehicleData[i].Integrate(time);
+
+                    // Si se trata de un vehículo establecer su altura sobre el terreno
+                    IVehicle vehicleObj = this.m_VehicleData[i] as IVehicle;
+                    if (vehicleObj != null)
+                    {
+                        Vector3 position = vehicleObj.GetPosition();
+
+                        float? height = this.m_SceneryPrimitive.GetHeigthAtPoint(position.X, position.Z);
+
+                        vehicleObj.UpdateHeight(height);
+                    }
 
                     this.FireVehicleMovedEvent(this.m_VehicleData[i]);
                 }

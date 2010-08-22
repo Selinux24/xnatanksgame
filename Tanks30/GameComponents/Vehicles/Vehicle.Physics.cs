@@ -2,18 +2,22 @@
 
 namespace GameComponents.Vehicles
 {
+    using Common.Components;
     using Common.Helpers;
     using Physics;
 
     /// <summary>
     /// Control de físicas de un vehículo
     /// </summary>
-    public partial class Vehicle : IVehicleController, IPhysicObject
+    public partial class Vehicle : IVehicleController, IVehicle
     {
         /// <summary>
         /// Primitiva de colisión
         /// </summary>
         private CollisionBox m_OBB = null;
+
+        private float m_InitialMinFlightHeight = 0f;
+        private float m_InitialMaxFlightHeight = 0f;
 
         /// <summary>
         /// Velocidad máxima que puede alcanzar el tanque hacia delante
@@ -158,6 +162,22 @@ namespace GameComponents.Vehicles
         }
 
         /// <summary>
+        /// Obtiene la posición
+        /// </summary>
+        /// <returns>Devuelve la posición</returns>
+        public Vector3 GetPosition()
+        {
+            return this.Position;
+        }
+        /// <summary>
+        /// Obtiene la orientación
+        /// </summary>
+        /// <returns>Devuelve la orientación</returns>
+        public Quaternion GetOrientation()
+        {
+            return this.Orientation;
+        }
+        /// <summary>
         /// Obtiene la primitiva de colisión del vehículo
         /// </summary>
         /// <returns>Devuelve la primitiva de colisión del vehículo</returns>
@@ -286,6 +306,15 @@ namespace GameComponents.Vehicles
             Quaternion newRot = Quaternion.Slerp(this.m_OBB.Orientation, Quaternion.CreateFromYawPitchRoll(yaw, 0f, 0f), 0.1f);
 
             this.m_OBB.SetOrientation(newRot);
+        }
+
+        public void UpdateHeight(float? height)
+        {
+            if (height.HasValue)
+            {
+                this.MinFlightHeight = m_InitialMinFlightHeight + height.Value;
+                this.MaxFlightHeight = m_InitialMaxFlightHeight + height.Value;
+            }
         }
         /// <summary>
         /// Evento que se produce al ser contactado por otro objeto

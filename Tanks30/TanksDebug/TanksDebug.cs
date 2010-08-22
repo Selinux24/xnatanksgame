@@ -527,12 +527,6 @@ namespace TanksDebug
                     this.m_CurrentVehicle.SetNextPlayerPosition();
                 }
             }
-
-            float? l1Height = this.m_Scenery.GetHeigthAtPoint(this.m_LandSpeeder_1.Position.X, this.m_LandSpeeder_1.Position.Z);
-            float? l2Height = this.m_Scenery.GetHeigthAtPoint(this.m_LandSpeeder_2.Position.X, this.m_LandSpeeder_2.Position.Z);
-
-            if (l1Height.HasValue) this.m_LandSpeeder_1.UpdateFlight(l1Height.Value);
-            if (l2Height.HasValue) this.m_LandSpeeder_2.UpdateFlight(l2Height.Value);
         }
         /// <summary>
         /// Establece el foco en el vehículo especificado

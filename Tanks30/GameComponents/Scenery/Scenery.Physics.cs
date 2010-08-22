@@ -10,6 +10,22 @@ namespace GameComponents.Scenery
     public partial class Scenery : IPhysicObject
     {
         /// <summary>
+        /// Obtiene la posición
+        /// </summary>
+        /// <returns>Devuelve la posición</returns>
+        public Vector3 GetPosition()
+        {
+            return Vector3.Zero;
+        }
+        /// <summary>
+        /// Obtiene la orientación
+        /// </summary>
+        /// <returns>Devuelve la orientación</returns>
+        public Quaternion GetOrientation()
+        {
+            return Quaternion.Identity;
+        }
+        /// <summary>
         /// Obtiene la primitiva de colisión del terreno
         /// </summary>
         /// <returns>Siempre devuelve null</returns>

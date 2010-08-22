@@ -128,6 +128,14 @@ namespace TanksDebug
             this.m_Box.SetInitialState(position, orientation);
         }
 
+        public Vector3 GetPosition()
+        {
+            return this.m_Box.Position;
+        }
+        public Quaternion GetOrientation()
+        {
+            return this.m_Box.Orientation;
+        }
         public CollisionPrimitive GetPrimitive()
         {
             return this.m_Box;

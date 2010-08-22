@@ -227,6 +227,9 @@ namespace GameComponents.Vehicles
             this.m_OBB = new CollisionBox(this.TriangleInfo.AABB, 1000f);
             this.m_Offset = Matrix.CreateTranslation(new Vector3(0f, -this.m_OBB.HalfSize.Y, 0f));
 
+            this.m_InitialMaxFlightHeight = componentInfo.MaxFlightHeight;
+            this.m_InitialMinFlightHeight = componentInfo.MinFlightHeight;
+
             // Velocidad máxima que puede alcanzar el tanque hacia delante
             this.MaxForwardVelocity = componentInfo.MaxForwardVelocity;
             // Velocidad máxima que puede alcanzar el tanque marcha atrás

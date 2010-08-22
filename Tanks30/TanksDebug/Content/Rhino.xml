@@ -3,8 +3,8 @@
   <Model>Rhino</Model>
   <MaxForwardVelocity>10</MaxForwardVelocity>
   <MaxBackwardVelocity>4</MaxBackwardVelocity>
-  <AccelerationModifier>1</AccelerationModifier>
-  <BrakeModifier>2</BrakeModifier>
+  <AccelerationModifier>10</AccelerationModifier>
+  <BrakeModifier>4</BrakeModifier>
   <AngularVelocityModifier>10</AngularVelocityModifier>
   <AnimationControlers>
     <AnimationInfo>

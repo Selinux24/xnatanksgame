@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Physics;
+using GameComponents.Scenery;
 
 namespace GameComponents.Vehicles
 {
@@ -8,17 +9,29 @@ namespace GameComponents.Vehicles
     /// </summary>
     public class AutoPilot
     {
-        // Indica si el piloto automático está activado
+        /// <summary>
+        /// Indica si el piloto automático está activado
+        /// </summary>
         private bool m_Enabled = false;
-        // Posición objetivo del piloto automático
+        /// <summary>
+        /// Posición objetivo del piloto automático
+        /// </summary>
         private Vector3 m_AutoTarget;
-        // Velocidad máxima del piloto automático
+        /// <summary>
+        /// Velocidad máxima del piloto automático
+        /// </summary>
         private float m_AutoVelocity;
-        // Vehículo a seguir
+        /// <summary>
+        /// Vehículo a seguir
+        /// </summary>
         private IVehicleController m_VehicleToFollow;
-
+        /// <summary>
+        /// Indica si el vehículo están en rango
+        /// </summary>
         private bool m_OnRange = false;
-
+        /// <summary>
+        /// Distancia al objetivo
+        /// </summary>
         private float m_DistanceToTarget = 0f;
 
         /// <summary>
@@ -77,7 +90,9 @@ namespace GameComponents.Vehicles
                 return (this.m_VehicleToFollow != null);
             }
         }
-
+        /// <summary>
+        /// Indica si el vehículo están en rango
+        /// </summary>
         public bool OnRange
         {
             get
@@ -85,7 +100,9 @@ namespace GameComponents.Vehicles
                 return this.m_OnRange;
             }
         }
-
+        /// <summary>
+        /// Distancia al objetivo
+        /// </summary>
         public float DistanceToTarget
         {
             get

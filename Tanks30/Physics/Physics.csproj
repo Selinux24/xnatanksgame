@@ -93,6 +93,8 @@
     <Compile Include="Contact.cs" />
     <Compile Include="ContactGenerator.cs" />
     <Compile Include="ContactResolver.cs" />
+    <Compile Include="IScenery.cs" />
+    <Compile Include="IVehicle.cs" />
     <Compile Include="Joint2.cs" />
     <Compile Include="Rod2.cs" />
     <Compile Include="Explosion.cs" />
