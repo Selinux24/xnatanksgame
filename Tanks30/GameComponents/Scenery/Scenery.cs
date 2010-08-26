@@ -59,6 +59,11 @@ namespace GameComponents.Scenery
         /// </summary>
         public Texture2D Texture4;
 
+        public Texture2D DetailTexture1;
+        public Texture2D DetailTexture2;
+        public Texture2D DetailTexture3;
+        public Texture2D DetailTexture4;
+
         /// <summary>
         /// Nodo principal
         /// </summary>
@@ -340,12 +345,14 @@ namespace GameComponents.Scenery
 
             // Establecer los parámetros en el efecto
             this.Effect.CurrentTechnique = this.Effect.Techniques["MultiTextured"];
-            this.Effect.Parameters["xSnowTexture"].SetValue(this.Texture1);
-            this.Effect.Parameters["xRockTexture"].SetValue(this.Texture2);
-            this.Effect.Parameters["xGrassTexture"].SetValue(this.Texture3);
-            this.Effect.Parameters["xSandTexture"].SetValue(this.Texture4);
-            this.Effect.Parameters["xBlendDistance"].SetValue(SceneryEnvironment.LevelOfDetail.HighZoneDistance);
-            this.Effect.Parameters["xBlendWidth"].SetValue(24f);
+            this.Effect.Parameters["xTexture1"].SetValue(this.Texture1);
+            this.Effect.Parameters["xTexture2"].SetValue(this.Texture2);
+            this.Effect.Parameters["xTexture3"].SetValue(this.Texture3);
+            this.Effect.Parameters["xTexture4"].SetValue(this.Texture4);
+            this.Effect.Parameters["xDetailTexture1"].SetValue(this.DetailTexture1);
+            this.Effect.Parameters["xDetailTexture2"].SetValue(this.DetailTexture2);
+            this.Effect.Parameters["xDetailTexture3"].SetValue(this.DetailTexture3);
+            this.Effect.Parameters["xDetailTexture4"].SetValue(this.DetailTexture4);
 
             // Obtener los nodos visibles
             SceneryNode[] lowLODnodes = this.Root.GetNodesToDraw(LOD.Low);
@@ -357,13 +364,13 @@ namespace GameComponents.Scenery
                 // Dibujar el nivel de menos detalle
                 this.LODDraw(device, gameTime, lowLODnodes, LOD.Low);
             }
-            
+
             if (mediumLODnodes != null && mediumLODnodes.Length > 0)
             {
                 // Dibujar el nivel de detalle medio
                 this.LODDraw(device, gameTime, mediumLODnodes, LOD.Medium);
             }
-            
+
             if (highLODnodes != null && highLODnodes.Length > 0)
             {
                 // Dibujar el nivel de detall máximo

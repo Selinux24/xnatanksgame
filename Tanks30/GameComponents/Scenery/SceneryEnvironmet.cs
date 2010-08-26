@@ -60,8 +60,9 @@ namespace GameComponents.Scenery
             /// </summary>
             public static Color AmbientColor = Color.OrangeRed;
 
-            public static bool LightingEnabled = false;
+            public static bool LightingEnabled = true;
             public static Vector3 LightDirection = Vector3.Normalize(new Vector3(-1, -2f, -1f));
+            public static float AmbientLightIntensity = 0.1f;
         }
 
         /// <summary>

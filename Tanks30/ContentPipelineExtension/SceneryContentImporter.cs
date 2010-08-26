@@ -33,6 +33,10 @@ namespace ContentPipelineExtension
             info.Texture2File = Path.Combine(directory, info.Texture2File);
             info.Texture3File = Path.Combine(directory, info.Texture3File);
             info.Texture4File = Path.Combine(directory, info.Texture4File);
+            info.DetailTexture1File = Path.Combine(directory, info.DetailTexture1File);
+            info.DetailTexture2File = Path.Combine(directory, info.DetailTexture2File);
+            info.DetailTexture3File = Path.Combine(directory, info.DetailTexture3File);
+            info.DetailTexture4File = Path.Combine(directory, info.DetailTexture4File);
 
             // Devuelve la definición
             return info;

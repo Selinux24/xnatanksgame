@@ -48,6 +48,10 @@ namespace GameComponents.Readers
             scenery.Texture2 = input.ReadObject<Texture2D>();
             scenery.Texture3 = input.ReadObject<Texture2D>();
             scenery.Texture4 = input.ReadObject<Texture2D>();
+            scenery.DetailTexture1 = input.ReadObject<Texture2D>();
+            scenery.DetailTexture2 = input.ReadObject<Texture2D>();
+            scenery.DetailTexture3 = input.ReadObject<Texture2D>();
+            scenery.DetailTexture4 = input.ReadObject<Texture2D>();
 
             return scenery;
         }

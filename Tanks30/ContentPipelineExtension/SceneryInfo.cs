@@ -45,5 +45,10 @@ namespace ContentPipelineExtension
         /// Textura de la altura 4
         /// </summary>
         public Texture2DContent Texture4;
+
+        public Texture2DContent DetailTexture1;
+        public Texture2DContent DetailTexture2;
+        public Texture2DContent DetailTexture3;
+        public Texture2DContent DetailTexture4;
     }
 }
