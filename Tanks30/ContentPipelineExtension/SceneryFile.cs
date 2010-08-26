@@ -50,5 +50,10 @@ namespace ContentPipelineExtension
         /// Fichero de textura 4
         /// </summary>
         public string Texture4File;
+
+        public string DetailTexture1File;
+        public string DetailTexture2File;
+        public string DetailTexture3File;
+        public string DetailTexture4File;
     }
 }

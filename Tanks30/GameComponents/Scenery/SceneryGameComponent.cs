@@ -76,7 +76,7 @@ namespace GameComponents.Scenery
             this.Scenery.SetLights(
                 SceneryEnvironment.Ambient.LightingEnabled,
                 SceneryEnvironment.Ambient.LightDirection,
-                0.2f);
+                SceneryEnvironment.Ambient.AmbientLightIntensity);
 
             this.Scenery.Draw(this.GraphicsDevice, gameTime);
 

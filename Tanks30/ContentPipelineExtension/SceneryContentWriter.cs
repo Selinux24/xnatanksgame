@@ -51,6 +51,10 @@ namespace ContentPipelineExtension
             output.WriteObject<Texture2DContent>(sceneryInfo.Texture2);
             output.WriteObject<Texture2DContent>(sceneryInfo.Texture3);
             output.WriteObject<Texture2DContent>(sceneryInfo.Texture4);
+            output.WriteObject<Texture2DContent>(sceneryInfo.DetailTexture1);
+            output.WriteObject<Texture2DContent>(sceneryInfo.DetailTexture2);
+            output.WriteObject<Texture2DContent>(sceneryInfo.DetailTexture3);
+            output.WriteObject<Texture2DContent>(sceneryInfo.DetailTexture4);
         }
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)

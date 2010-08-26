@@ -5,12 +5,16 @@
     <HeightMapCellSize>50</HeightMapCellSize>
     <HeightMapCellScale>5</HeightMapCellScale>
     <ProportionTexture1>0.25</ProportionTexture1>
-    <ProportionTexture2>0.5</ProportionTexture2>
-    <ProportionTexture3>0.8</ProportionTexture3>
+    <ProportionTexture2>0.4</ProportionTexture2>
+    <ProportionTexture3>0.9</ProportionTexture3>
     <EffectFile>Terrain.fx</EffectFile>
     <Texture1File>snow.jpg</Texture1File>
     <Texture2File>rock.jpg</Texture2File>
     <Texture3File>sand.jpg</Texture3File>
     <Texture4File>grass.png</Texture4File>
+    <DetailTexture1File>detailsnow.jpg</DetailTexture1File>
+    <DetailTexture2File>detailrock.png</DetailTexture2File>
+    <DetailTexture3File>detailsand.jpg</DetailTexture3File>
+    <DetailTexture4File>detailgrass.jpg</DetailTexture4File>
   </Asset>
 </XnaContent>

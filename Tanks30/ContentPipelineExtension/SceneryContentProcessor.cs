@@ -60,6 +60,10 @@ namespace ContentPipelineExtension
             Texture2DContent texture2 = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.Texture2File), null);
             Texture2DContent texture3 = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.Texture3File), null);
             Texture2DContent texture4 = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.Texture4File), null);
+            Texture2DContent detailTexture1 = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.DetailTexture1File), null);
+            Texture2DContent detailTexture2 = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.DetailTexture2File), null);
+            Texture2DContent detailTexture3 = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.DetailTexture3File), null);
+            Texture2DContent detailTexture4 = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.DetailTexture4File), null);
 
             return new SceneryInfo()
             {
@@ -72,6 +76,10 @@ namespace ContentPipelineExtension
                 Texture2 = texture2,
                 Texture3 = texture3,
                 Texture4 = texture4,
+                DetailTexture1 = detailTexture1,
+                DetailTexture2 = detailTexture2,
+                DetailTexture3 = detailTexture3,
+                DetailTexture4 = detailTexture4,
             };
         }
 

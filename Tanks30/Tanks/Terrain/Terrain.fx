@@ -2,29 +2,112 @@
 float4x4 xView;
 float4x4 xProjection;
 float4x4 xWorld;
-float3 xLightDirection;
-float xAmbient;
 bool xEnableLighting;
-float xBlendDistance;
-float xBlendWidth;
+float xAmbient;
+float3 xLightDirection;
 
 //------- Texture Samplers --------
 
 Texture xTexture;
-sampler TextureSampler = sampler_state { texture = <xTexture> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
+sampler TextureSampler = sampler_state 
+{ 
+	texture = <xTexture>;
+    AddressU = Wrap;
+    AddressV = Wrap;
+    MinFilter = Point;
+    MagFilter = Linear;
+    MipFilter = Linear;
+};
 
-Texture xGrassTexture;
-sampler GrassTextureSampler = sampler_state { texture = <xGrassTexture> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
+Texture xTexture1;
+sampler Texture1Sampler = sampler_state 
+{
+	texture = <xTexture1>;
+    AddressU = Wrap;
+    AddressV = Wrap;
+    MinFilter = Point;
+    MagFilter = Linear;
+    MipFilter = Linear;
+};
 
-Texture xSandTexture;
-sampler SandTextureSampler = sampler_state { texture = <xSandTexture> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
+Texture xDetailTexture1;
+sampler DetailTexture1Sampler = sampler_state 
+{
+	texture = <xDetailTexture1>;
+    AddressU = Wrap;
+    AddressV = Wrap;
+    MinFilter = Point;
+    MagFilter = Linear;
+    MipFilter = Linear;
+};
 
-Texture xRockTexture;
-sampler RockTextureSampler = sampler_state { texture = <xRockTexture> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
+Texture xTexture2;
+sampler Texture2Sampler = sampler_state 
+{
+	texture = <xTexture2>;
+    AddressU = Wrap;
+    AddressV = Wrap;
+    MinFilter = Point;
+    MagFilter = Linear;
+    MipFilter = Linear;
+};
 
-Texture xSnowTexture;
-sampler SnowTextureSampler = sampler_state { texture = <xSnowTexture> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
+Texture xDetailTexture2;
+sampler DetailTexture2Sampler = sampler_state
+{
+	texture = <xDetailTexture2>;
+    AddressU = Wrap;
+    AddressV = Wrap;
+    MinFilter = Point;
+    MagFilter = Linear;
+    MipFilter = Linear;
+};
 
+Texture xTexture3;
+sampler Texture3Sampler = sampler_state 
+{
+	texture = <xTexture3>;
+    AddressU = Wrap;
+    AddressV = Wrap;
+    MinFilter = Point;
+    MagFilter = Linear;
+    MipFilter = Linear;
+};
+
+Texture xDetailTexture3;
+sampler DetailTexture3Sampler = sampler_state 
+{
+	texture = <xDetailTexture3>;
+    AddressU = Wrap;
+    AddressV = Wrap;
+    MinFilter = Point;
+    MagFilter = Linear;
+    MipFilter = Linear;
+};
+
+Texture xTexture4;
+sampler Texture4Sampler = sampler_state 
+{
+	texture = <xTexture4>;
+    AddressU = Wrap;
+    AddressV = Wrap;
+    MinFilter = Point;
+    MagFilter = Linear;
+    MipFilter = Linear;
+};
+
+Texture xDetailTexture4;
+sampler DetailTexture4Sampler = sampler_state
+{
+	texture = <xDetailTexture4>;
+    AddressU = Wrap;
+    AddressV = Wrap;
+    MinFilter = Point;
+    MagFilter = Linear;
+    MipFilter = Linear;
+};
+
+float3 LuminanceConv = { 0.2125f, 0.7154f, 0.0721f };
 
 //------- Technique: Textured --------
 
@@ -106,7 +189,7 @@ technique Textured
      float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
      
      Output.Position = mul(inPos, preWorldViewProjection);
-     Output.Normal = mul(normalize(inNormal), xWorld);
+     Output.Normal = normalize(mul(inNormal, xWorld));
      Output.TextureCoords = inTexCoords;
      Output.LightDirection.xyz = -xLightDirection;
      Output.LightDirection.w = 1;
@@ -120,29 +203,42 @@ technique Textured
  {
      MultiTexPixelToFrame Output = (MultiTexPixelToFrame)0;
 
-     float blendDistance = xBlendDistance;
-     float blendWidth = xBlendWidth;
-     float blendFactor = clamp((PSIn.Depth-blendDistance)/blendWidth, 0, 1);
-     
      float lightingFactor = 1;
      if (xEnableLighting)
+     {
          lightingFactor = saturate(saturate(dot(PSIn.Normal, PSIn.LightDirection)) + xAmbient);
+     }
+     else
+     {
+         lightingFactor = saturate(1 + xAmbient);
+     }
+
+     const float detailRepeat = 7.5;
+
+     float2 textureCoords = PSIn.TextureCoords;
+
+     float4 color1 = tex2D(Texture1Sampler, textureCoords);
+     float4 color2 = tex2D(Texture2Sampler, textureCoords);
+     float4 color3 = tex2D(Texture3Sampler, textureCoords);
+     float4 color4 = tex2D(Texture4Sampler, textureCoords);
+
+     float4 detailColor1 = tex2D(DetailTexture1Sampler, textureCoords * detailRepeat);
+     float4 detailColor2 = tex2D(DetailTexture2Sampler, textureCoords * detailRepeat);
+     float4 detailColor3 = tex2D(DetailTexture3Sampler, textureCoords * detailRepeat);
+     float4 detailColor4 = tex2D(DetailTexture4Sampler, textureCoords * detailRepeat);
+
+     color1.rgb *= detailColor1 * 2;
+     color2.rgb *= detailColor2 * 2;
+     color3.rgb *= detailColor3 * 2;
+     color4.rgb *= detailColor4 * 2;
+
+     float4 color;
+     color = color1 * PSIn.TextureWeights.w;
+     color += color2 * PSIn.TextureWeights.z;
+     color += color3 * PSIn.TextureWeights.y;
+     color += color4 * PSIn.TextureWeights.x;
  
-     float4 farColor;
-     farColor = tex2D(SandTextureSampler, PSIn.TextureCoords)*PSIn.TextureWeights.x;
-     farColor += tex2D(GrassTextureSampler, PSIn.TextureCoords)*PSIn.TextureWeights.y;
-     farColor += tex2D(RockTextureSampler, PSIn.TextureCoords)*PSIn.TextureWeights.z;
-     farColor += tex2D(SnowTextureSampler, PSIn.TextureCoords)*PSIn.TextureWeights.w;
- 
-     float4 nearColor;
-     float2 nearTextureCoords = PSIn.TextureCoords*3;
-     nearColor = tex2D(SandTextureSampler, nearTextureCoords)*PSIn.TextureWeights.x;
-     nearColor += tex2D(GrassTextureSampler, nearTextureCoords)*PSIn.TextureWeights.y;
-     nearColor += tex2D(RockTextureSampler, nearTextureCoords)*PSIn.TextureWeights.z;
-     nearColor += tex2D(SnowTextureSampler, nearTextureCoords)*PSIn.TextureWeights.w;
- 
-     Output.Color = farColor*blendFactor + nearColor*(1-blendFactor);
-     Output.Color *= saturate(lightingFactor + xAmbient);
+     Output.Color = saturate(color * lightingFactor);
 
      return Output;
  }
