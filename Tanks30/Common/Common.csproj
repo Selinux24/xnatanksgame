@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="BoundingBoxEx.cs" />
     <Compile Include="BoundingSphereEx.cs" />
+    <Compile Include="Drawing\Billboard.cs" />
     <Compile Include="Helpers\PolyGenerator.cs" />
     <Compile Include="GlobalMatrices.cs" />
     <Compile Include="Helpers\HeightMap.cs" />

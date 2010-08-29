@@ -80,7 +80,7 @@ namespace GameComponents.Weapons
             m_BasicEffect.VertexColorEnabled = (m_Texture == null);
 
             m_BasicEffect.View = GlobalMatrices.gViewMatrix;
-            m_BasicEffect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
+            m_BasicEffect.Projection = GlobalMatrices.gProjectionMatrix;
 
             foreach (AmmoRound round in Rounds)
             {

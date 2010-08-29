@@ -138,7 +138,7 @@ namespace DrawingComponents
                     this.GraphicsDevice, 
                     this.transform * GlobalMatrices.gWorldMatrix, 
                     GlobalMatrices.gViewMatrix, 
-                    GlobalMatrices.gGlobalProjectionMatrix);
+                    GlobalMatrices.gProjectionMatrix);
             }
         }
     }

@@ -221,12 +221,13 @@ namespace GameComponents.Buildings
                 {
                     foreach (BasicEffect effect in mesh.Effects)
                     {
-                        effect.EnableDefaultLighting();
+                        effect.World = this.m_BoneTransforms[mesh.ParentBone.Index] * modelTransform;
+                        effect.View = GlobalMatrices.gViewMatrix;
+                        effect.Projection = GlobalMatrices.gProjectionMatrix;
+
                         SceneryEnvironment.Fog.SetFogToEffect(effect);
 
-                        effect.View = GlobalMatrices.gViewMatrix;
-                        effect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
-                        effect.World = this.m_BoneTransforms[mesh.ParentBone.Index] * modelTransform;
+                        SceneryEnvironment.Ambient.SetLightToEffect(effect);
                     }
 
                     mesh.Draw();

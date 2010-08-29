@@ -121,7 +121,7 @@ namespace TanksDebug
 
             this.m_BasicEffect.World = GlobalMatrices.gWorldMatrix;
             this.m_BasicEffect.View = GlobalMatrices.gViewMatrix;
-            this.m_BasicEffect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
+            this.m_BasicEffect.Projection = GlobalMatrices.gProjectionMatrix;
 
             this.m_BasicEffect.Begin();
 

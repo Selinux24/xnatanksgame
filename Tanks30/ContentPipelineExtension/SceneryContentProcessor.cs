@@ -3,11 +3,17 @@ using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 using Microsoft.Xna.Framework.Graphics;
+using System.ComponentModel;
+using Microsoft.Xna.Framework;
+using System.IO;
+using System.Collections.Generic;
 
 namespace ContentPipelineExtension
 {
     using Common.Drawing;
     using Common.Helpers;
+    using Common.Primitives;
+    using Common.Components;
 
     /// <summary>
     /// Procesador de contenidos de mapa de alturas
@@ -42,15 +48,15 @@ namespace ContentPipelineExtension
             double lowOrderLevels = (Math.Sqrt(heightMap.DataLength) - 1) * 0.5f;
             int levelCount = Convert.ToInt32(Math.Log(lowOrderLevels, 4.0d));
             SceneryNodeInfo sceneryIndexInfo = SceneryNodeInfo.Build(
-                vertList, 
-                heightMap.Width, 
-                heightMap.Deep, 
+                vertList,
+                heightMap.Width,
+                heightMap.Deep,
                 levelCount);
 
             // Efecto de renderización
             CompiledEffect effect = Effect.CompileEffectFromFile(
-                input.EffectFile, 
-                null, 
+                input.EffectFile,
+                null,
                 null,
                 CompilerOptions.None,
                 context.TargetPlatform);
@@ -64,6 +70,18 @@ namespace ContentPipelineExtension
             Texture2DContent detailTexture2 = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.DetailTexture2File), null);
             Texture2DContent detailTexture3 = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.DetailTexture3File), null);
             Texture2DContent detailTexture4 = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.DetailTexture4File), null);
+
+            CompiledEffect billboardEffect = Effect.CompileEffectFromFile(
+                input.BillboardEffectFile,
+                null,
+                null,
+                CompilerOptions.None,
+                context.TargetPlatform);
+
+            Texture2DContent billboardGrassTexture = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.BillboardGrassTextureFile), null);
+            Texture2DContent billboardTreeTexture = context.BuildAndLoadAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(input.BillboardTreeTextureFile), null);
+            int billboardsPerTriangle = input.BillboardsPerTriangle;
+            float billboardTreesPercent = input.BillboardTreesPercent;
 
             return new SceneryInfo()
             {
@@ -80,6 +98,11 @@ namespace ContentPipelineExtension
                 DetailTexture2 = detailTexture2,
                 DetailTexture3 = detailTexture3,
                 DetailTexture4 = detailTexture4,
+                BillboardEffect = billboardEffect,
+                BillboardGrass = billboardGrassTexture,
+                BillboardTree = billboardTreeTexture,
+                BillboardsPerTriangle = billboardsPerTriangle,
+                BillboardTreesPercent = billboardTreesPercent,
             };
         }
 

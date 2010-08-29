@@ -227,7 +227,7 @@ namespace GameComponents.Scenery
 
             Vector3 projectedPosition = viewport.Project(
                 -this.LightDirection,
-                GlobalMatrices.gGlobalProjectionMatrix,
+                GlobalMatrices.gProjectionMatrix,
                 infiniteView,
                 Matrix.Identity);
 

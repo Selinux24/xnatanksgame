@@ -111,7 +111,7 @@ namespace GameComponents.Debug
             this.GraphicsDevice.Vertices[0].SetSource(buffer, 0, VertexPositionColor.SizeInBytes);
 
             effect.View = GlobalMatrices.gViewMatrix;
-            effect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
+            effect.Projection = GlobalMatrices.gProjectionMatrix;
             effect.World = m_ModelSpace;
 
             effect.TextureEnabled = false;

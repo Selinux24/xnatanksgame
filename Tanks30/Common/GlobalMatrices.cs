@@ -13,7 +13,7 @@ namespace Common
         /// <summary>
         /// Obtiene la matriz de proyección global
         /// </summary>
-        public static Matrix gGlobalProjectionMatrix;
+        public static Matrix gProjectionMatrix;
         /// <summary>
         /// Obtiene la matriz de proyección de alta definición
         /// </summary>
@@ -60,7 +60,7 @@ namespace Common
         {
             get
             {
-                return new BoundingFrustum(gViewMatrix * gGlobalProjectionMatrix);
+                return new BoundingFrustum(gViewMatrix * gProjectionMatrix);
             }
         }
         /// <summary>
@@ -127,7 +127,7 @@ namespace Common
         /// <param name="aspectRatio">Relación de aspecto</param>
         public static void UpdateProjection(float aspectRatio)
         {
-            GlobalMatrices.gGlobalProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+            GlobalMatrices.gProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.PiOver4,
                 aspectRatio,
                 GlobalMatrices.NearClipPlane,

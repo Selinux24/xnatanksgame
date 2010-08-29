@@ -220,7 +220,7 @@ namespace GameComponents.Particles
                 this.m_EffectViewParameter.SetValue(GlobalMatrices.gViewMatrix);
 
                 //Matriz proyección
-                this.m_EffectProjectionParameter.SetValue(GlobalMatrices.gGlobalProjectionMatrix);
+                this.m_EffectProjectionParameter.SetValue(GlobalMatrices.gProjectionMatrix);
 
                 //Establecer la declaración y el buffer
                 this.GraphicsDevice.Vertices[0].SetSource(this.m_VertexBuffer, 0, ParticleVertex.SizeInBytes);

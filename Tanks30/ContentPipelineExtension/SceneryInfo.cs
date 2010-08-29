@@ -45,10 +45,42 @@ namespace ContentPipelineExtension
         /// Textura de la altura 4
         /// </summary>
         public Texture2DContent Texture4;
-
+        /// <summary>
+        /// Textura de detalle de la altura 1
+        /// </summary>
         public Texture2DContent DetailTexture1;
+        /// <summary>
+        /// Textura de detalle de la altura 2
+        /// </summary>
         public Texture2DContent DetailTexture2;
+        /// <summary>
+        /// Textura de detalle de la altura 3
+        /// </summary>
         public Texture2DContent DetailTexture3;
+        /// <summary>
+        /// Textura de detalle de la altura 4
+        /// </summary>
         public Texture2DContent DetailTexture4;
+
+        /// <summary>
+        /// Efecto para dibujar billboards
+        /// </summary>
+        public CompiledEffect BillboardEffect;
+        /// <summary>
+        /// Textura para la hierba
+        /// </summary>
+        public Texture2DContent BillboardGrass;
+        /// <summary>
+        /// Textura para los árboles
+        /// </summary>
+        public Texture2DContent BillboardTree;
+        /// <summary>
+        /// Billboards por triángulo
+        /// </summary>
+        public int BillboardsPerTriangle;
+        /// <summary>
+        /// Porcentaje de árboles
+        /// </summary>
+        public float BillboardTreesPercent;
     }
 }

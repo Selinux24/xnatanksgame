@@ -31,7 +31,7 @@ namespace GameComponents.Debug
 
             DebugDrawer.Effect.World = GlobalMatrices.gWorldMatrix;
             DebugDrawer.Effect.View = GlobalMatrices.gViewMatrix;
-            DebugDrawer.Effect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
+            DebugDrawer.Effect.Projection = GlobalMatrices.gProjectionMatrix;
 
             DebugDrawer.Effect.Begin();
 

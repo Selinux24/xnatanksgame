@@ -71,7 +71,7 @@ namespace GameComponents.Scenery
             this.Scenery.SetWorldViewProjection(
                 Matrix.Identity,
                 GlobalMatrices.gViewMatrix,
-                GlobalMatrices.gGlobalProjectionMatrix);
+                GlobalMatrices.gProjectionMatrix);
 
             this.Scenery.SetLights(
                 SceneryEnvironment.Ambient.LightingEnabled,
