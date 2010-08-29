@@ -53,6 +53,11 @@ namespace GameComponents.Readers
             scenery.DetailTexture3 = input.ReadObject<Texture2D>();
             scenery.DetailTexture4 = input.ReadObject<Texture2D>();
 
+            //Leer el efecto para renderizar billboards
+            scenery.BillboardEffect = input.ReadObject<Effect>();
+            scenery.BillboardGrassTexture = input.ReadObject<Texture2D>();
+            scenery.BillboardTreeTexture = input.ReadObject<Texture2D>();
+
             return scenery;
         }
 

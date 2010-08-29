@@ -50,10 +50,42 @@ namespace ContentPipelineExtension
         /// Fichero de textura 4
         /// </summary>
         public string Texture4File;
-
+        /// <summary>
+        /// Textura de detalle 1
+        /// </summary>
         public string DetailTexture1File;
+        /// <summary>
+        /// Textura de detalle 2
+        /// </summary>
         public string DetailTexture2File;
+        /// <summary>
+        /// Textura de detalle 3
+        /// </summary>
         public string DetailTexture3File;
+        /// <summary>
+        /// Textura de detalle 4
+        /// </summary>
         public string DetailTexture4File;
+
+        /// <summary>
+        /// Efecto para vegetación
+        /// </summary>
+        public string BillboardEffectFile;
+        /// <summary>
+        /// Textura para la hierba
+        /// </summary>
+        public string BillboardGrassTextureFile;
+        /// <summary>
+        /// Textura para los árboles
+        /// </summary>
+        public string BillboardTreeTextureFile;
+        /// <summary>
+        /// Elementos por triángulo
+        /// </summary>
+        public int BillboardsPerTriangle;
+        /// <summary>
+        /// Porcentaje de árboles
+        /// </summary>
+        public float BillboardTreesPercent;
     }
 }

@@ -55,6 +55,17 @@ namespace ContentPipelineExtension
             output.WriteObject<Texture2DContent>(sceneryInfo.DetailTexture2);
             output.WriteObject<Texture2DContent>(sceneryInfo.DetailTexture3);
             output.WriteObject<Texture2DContent>(sceneryInfo.DetailTexture4);
+
+            // Escribir el efecto para renderizar billboards
+            output.WriteObject<CompiledEffect>(sceneryInfo.BillboardEffect);
+
+            // Escribir las texturas de hierba y árboles
+            output.WriteObject<Texture2DContent>(sceneryInfo.BillboardGrass);
+            output.WriteObject<Texture2DContent>(sceneryInfo.BillboardTree);
+
+            // Escribir los parámetros de vegetación
+            output.Write(sceneryInfo.BillboardsPerTriangle);
+            output.Write(sceneryInfo.BillboardTreesPercent);
         }
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)

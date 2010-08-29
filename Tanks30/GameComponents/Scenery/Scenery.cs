@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Scenery
 {
+    using Common;
     using Common.Components;
     using Common.Drawing;
     using Physics;
@@ -58,11 +59,42 @@ namespace GameComponents.Scenery
         /// Textura 4 para el terreno
         /// </summary>
         public Texture2D Texture4;
-
+        /// <summary>
+        /// Textura de detalle 1 para el terreno
+        /// </summary>
         public Texture2D DetailTexture1;
+        /// <summary>
+        /// Textura de detalle 2 para el terreno
+        /// </summary>
         public Texture2D DetailTexture2;
+        /// <summary>
+        /// Textura de detalle 3 para el terreno
+        /// </summary>
         public Texture2D DetailTexture3;
+        /// <summary>
+        /// Textura de detalle 4 para el terreno
+        /// </summary>
         public Texture2D DetailTexture4;
+
+        /// <summary>
+        /// Efecto para dibujar billboards
+        /// </summary>
+        public Effect BillboardEffect;
+        /// <summary>
+        /// Textura de hierba
+        /// </summary>
+        public Texture2D BillboardGrassTexture;
+        /// <summary>
+        /// Textura de árboles
+        /// </summary>
+        public Texture2D BillboardTreeTexture;
+        /// <summary>
+        /// Declaración de formato de vértices
+        /// </summary>
+        public VertexDeclaration BillboardDeclaration;
+
+        private Billboard[] BillboardVertices;
+        private int[] BillboardIndices;
 
         /// <summary>
         /// Nodo principal
@@ -332,6 +364,15 @@ namespace GameComponents.Scenery
         /// <param name="gameTime">Tiempo de juego</param>
         public void Draw(GraphicsDevice device, GameTime gameTime)
         {
+            if (this.BillboardVertices == null)
+            {
+                this.BillboardDeclaration = new VertexDeclaration(device, Billboard.VertexElements);
+
+                this.GenerateNodeBillboards(
+                    out this.BillboardVertices,
+                    out this.BillboardIndices);
+            }
+
             // Inicializar los nodos para el dibujado
             this.Root.PrepareForDrawing();
 
@@ -353,6 +394,13 @@ namespace GameComponents.Scenery
             this.Effect.Parameters["xDetailTexture2"].SetValue(this.DetailTexture2);
             this.Effect.Parameters["xDetailTexture3"].SetValue(this.DetailTexture3);
             this.Effect.Parameters["xDetailTexture4"].SetValue(this.DetailTexture4);
+
+            this.Effect.Parameters["xShowDetail"].SetValue(true);
+            this.Effect.Parameters["xDetailRepeat"].SetValue(100.5f);
+
+            this.Effect.Parameters["xUseLOD"].SetValue(true);
+            this.Effect.Parameters["xBlendDistance"].SetValue(400f);
+            this.Effect.Parameters["xBlendWidth"].SetValue(200f);
 
             // Obtener los nodos visibles
             SceneryNode[] lowLODnodes = this.Root.GetNodesToDraw(LOD.Low);
@@ -376,6 +424,8 @@ namespace GameComponents.Scenery
                 // Dibujar el nivel de detall máximo
                 this.LODDraw(device, gameTime, highLODnodes, LOD.High);
             }
+
+            this.DrawBillboards(device, gameTime, this.BillboardVertices, this.BillboardIndices);
 
 #if DEBUG
             this.DrawDebug(device, gameTime);
@@ -533,6 +583,78 @@ namespace GameComponents.Scenery
                     offset,
                     primitiveCount);
             }
+        }
+
+        private void GenerateNodeBillboards(out Billboard[] vertices, out int[] indices)
+        {
+            List<Billboard> vertexList = new List<Billboard>();
+
+            Vector3 position = Vector3.Zero;
+
+            float? y = this.GetHeigthAtPoint(0, 0);
+            if (y.HasValue)
+            {
+                position = new Vector3(0, y.Value, 0);
+            }
+
+            vertexList.Add(new Billboard() { Position = position, Normal = Vector3.Up, TextureCoordinate = new Vector2(0, 0), WindEffect = 0.2f });
+            vertexList.Add(new Billboard() { Position = position, Normal = Vector3.Up, TextureCoordinate = new Vector2(1, 0), WindEffect = 0.2f });
+            vertexList.Add(new Billboard() { Position = position, Normal = Vector3.Up, TextureCoordinate = new Vector2(1, 1), WindEffect = 0.2f });
+            vertexList.Add(new Billboard() { Position = position, Normal = Vector3.Up, TextureCoordinate = new Vector2(0, 1), WindEffect = 0.2f });
+
+            List<int> indexList = new List<int>();
+
+            indexList.Add(0);
+            indexList.Add(1);
+            indexList.Add(2);
+
+            indexList.Add(0);
+            indexList.Add(2);
+            indexList.Add(3);
+
+            vertices = vertexList.ToArray();
+            indices = indexList.ToArray();
+        }
+
+        private void DrawBillboards(GraphicsDevice device, GameTime gameTime, Billboard[] vertices, int[] indices)
+        {
+            float time = (float)gameTime.TotalGameTime.TotalSeconds * 0.333f;
+
+            device.VertexDeclaration = this.BillboardDeclaration;
+
+            this.BillboardEffect.Begin();
+
+            this.BillboardEffect.Parameters["World"].SetValue(GlobalMatrices.gWorldMatrix);
+            this.BillboardEffect.Parameters["View"].SetValue(GlobalMatrices.gViewMatrix);
+            this.BillboardEffect.Parameters["Projection"].SetValue(GlobalMatrices.gProjectionMatrix);
+
+            this.BillboardEffect.Parameters["EnableLighting"].SetValue(SceneryEnvironment.Ambient.LightingEnabled);
+            this.BillboardEffect.Parameters["LightDirection"].SetValue(SceneryEnvironment.Ambient.LightDirection);
+            this.BillboardEffect.Parameters["Ambient"].SetValue(SceneryEnvironment.Ambient.AmbientLightIntensity);
+
+            this.BillboardEffect.Parameters["Texture"].SetValue(this.BillboardTreeTexture);
+            this.BillboardEffect.Parameters["BillboardWidth"].SetValue(1f);
+            this.BillboardEffect.Parameters["BillboardHeight"].SetValue(3f);
+            this.BillboardEffect.Parameters["WindAmount"].SetValue(0.1f);
+            this.BillboardEffect.Parameters["WindTime"].SetValue(time);
+
+            foreach (EffectPass pass in this.BillboardEffect.CurrentTechnique.Passes)
+            {
+                pass.Begin();
+
+                device.DrawUserIndexedPrimitives<Billboard>(
+                    PrimitiveType.TriangleList,
+                    vertices,
+                    0,
+                    vertices.Length,
+                    indices,
+                    0,
+                    indices.Length / 3);
+
+                pass.End();
+            }
+
+            this.BillboardEffect.End();
         }
 
         /// <summary>

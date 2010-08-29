@@ -56,13 +56,38 @@ namespace GameComponents.Scenery
         public abstract class Ambient
         {
             /// <summary>
-            /// Color ambiental
+            /// Color del cielo
             /// </summary>
-            public static Color AmbientColor = Color.OrangeRed;
-
+            public static Color AtmosphericColor = Color.OrangeRed;
+            /// <summary>
+            /// Luz habilitada
+            /// </summary>
             public static bool LightingEnabled = true;
+            /// <summary>
+            /// Dirección de la luz
+            /// </summary>
             public static Vector3 LightDirection = Vector3.Normalize(new Vector3(-1, -2f, -1f));
-            public static float AmbientLightIntensity = 0.1f;
+            /// <summary>
+            /// Intensidad de la luz
+            /// </summary>
+            public static float AmbientLightIntensity = 1f;
+            /// <summary>
+            /// Luz ambiental
+            /// </summary>
+            public static Color AmbientLightColor = Color.White;
+
+            /// <summary>
+            /// Establece los parámetros de iluminación al efecto
+            /// </summary>
+            /// <param name="effect">Efecto</param>
+            public static void SetLightToEffect(BasicEffect effect)
+            {
+                effect.LightingEnabled = SceneryEnvironment.Ambient.LightingEnabled;
+                effect.DirectionalLight0.Enabled = SceneryEnvironment.Ambient.LightingEnabled;
+                effect.DirectionalLight0.Direction = SceneryEnvironment.Ambient.LightDirection * SceneryEnvironment.Ambient.AmbientLightIntensity;
+                effect.DirectionalLight0.DiffuseColor = SceneryEnvironment.Ambient.AmbientLightColor.ToVector3() * SceneryEnvironment.Ambient.AmbientLightIntensity;
+                effect.DirectionalLight0.SpecularColor = SceneryEnvironment.Ambient.AtmosphericColor.ToVector3() * SceneryEnvironment.Ambient.AmbientLightIntensity;
+            }
         }
 
         /// <summary>
@@ -107,7 +132,7 @@ namespace GameComponents.Scenery
             {
                 if (effect != null)
                 {
-                    effect.FogColor = SceneryEnvironment.Ambient.AmbientColor.ToVector3();
+                    effect.FogColor = SceneryEnvironment.Ambient.AtmosphericColor.ToVector3();
                     effect.FogStart = SceneryEnvironment.Fog.FogStart;
                     effect.FogEnd = SceneryEnvironment.Fog.FogEnd;
                     effect.FogEnabled = SceneryEnvironment.Fog.FogEnabled;

@@ -32,7 +32,11 @@ namespace ContentPipelineExtension
         /// <param name="deep">Profundidad del terreno</param>
         /// <param name="levels">Niveles distintos de detalle</param>
         /// <returns>Devuelve la información de nodos del terreno</returns>
-        public static SceneryNodeInfo Build(VertexMultitextured[] vertList, int width, int deep, int levels)
+        public static SceneryNodeInfo Build(
+            VertexMultitextured[] vertList, 
+            int width, 
+            int deep, 
+            int levels)
         {
             // Lista resultante de nodos
             List<SceneryTriangleNode> nodes = new List<SceneryTriangleNode>();
@@ -158,7 +162,9 @@ namespace ContentPipelineExtension
         /// <param name="vertList">Lista de vértices</param>
         /// <param name="indices">Lista de índices</param>
         /// <returns>Devuelve la lista de triángulos</returns>
-        private static Triangle[] BuildPrimitiveList(VertexMultitextured[] vertList, int[] indices)
+        private static Triangle[] BuildPrimitiveList(
+            VertexMultitextured[] vertList, 
+            int[] indices)
         {
             List<Triangle> triangleList = new List<Triangle>();
 

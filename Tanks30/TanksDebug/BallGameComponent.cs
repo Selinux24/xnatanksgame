@@ -84,7 +84,7 @@ namespace TanksDebug
 
             this.m_BasicEffect.World = this.m_Sphere.Transform * GlobalMatrices.gWorldMatrix;
             this.m_BasicEffect.View = GlobalMatrices.gViewMatrix;
-            this.m_BasicEffect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
+            this.m_BasicEffect.Projection = GlobalMatrices.gProjectionMatrix;
 
             if (this.m_Sphere.IsAwake)
             {

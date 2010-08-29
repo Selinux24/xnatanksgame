@@ -100,7 +100,7 @@ namespace DrawingComponents
 
             basicEffect.World = this.Transform * GlobalMatrices.gWorldMatrix;
             basicEffect.View = GlobalMatrices.gViewMatrix;
-            basicEffect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
+            basicEffect.Projection = GlobalMatrices.gProjectionMatrix;
 
             basicEffect.Begin();
 

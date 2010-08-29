@@ -214,7 +214,7 @@ namespace GameComponents.Camera
                 GraphicsDevice = deviceManager.GraphicsDevice;
 
                 // Calcular la matriz de proyección
-                GlobalMatrices.gGlobalProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+                GlobalMatrices.gProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(
                     MathHelper.PiOver4,
                     (float)GraphicsDevice.Viewport.Width / (float)GraphicsDevice.Viewport.Height,
                     SceneryEnvironment.GlobalNearClip,
@@ -404,7 +404,15 @@ namespace GameComponents.Camera
         /// </summary>
         private void UpdatePosition()
         {
-            float sensibilityFactor = KeyBoardSensibility / 100f;
+            float sensibilityFactor = 0f;
+            if (InputHelper.IsKeyDown(Keys.LeftShift))
+            {
+                sensibilityFactor = KeyBoardSensibility / 1000f;
+            }
+            else
+            {
+                sensibilityFactor = KeyBoardSensibility / 100f;
+            }
 
             if (InputHelper.IsKeyDown(this.Forward))
             {

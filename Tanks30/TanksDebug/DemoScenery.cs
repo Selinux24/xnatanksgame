@@ -271,7 +271,7 @@ namespace TanksDebug
 
             this.m_Effect.World = this.m_Transform * GlobalMatrices.gWorldMatrix;
             this.m_Effect.View = GlobalMatrices.gViewMatrix;
-            this.m_Effect.Projection = GlobalMatrices.gGlobalProjectionMatrix;
+            this.m_Effect.Projection = GlobalMatrices.gProjectionMatrix;
 
             this.m_Effect.Texture = this.m_Texture;
             this.m_Effect.TextureEnabled = true;

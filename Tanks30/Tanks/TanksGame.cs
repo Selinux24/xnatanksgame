@@ -286,9 +286,9 @@ namespace Tanks
         /// <param name="gameTime">Tiempo de juego</param>
         protected override void Draw(GameTime gameTime)
         {
-            this.Graphics.GraphicsDevice.Clear(SceneryEnvironment.Ambient.AmbientColor);
+            this.Graphics.GraphicsDevice.Clear(SceneryEnvironment.Ambient.AtmosphericColor);
 
-            this.Graphics.GraphicsDevice.RenderState.FogColor = SceneryEnvironment.Ambient.AmbientColor;
+            this.Graphics.GraphicsDevice.RenderState.FogColor = SceneryEnvironment.Ambient.AtmosphericColor;
             this.Graphics.GraphicsDevice.RenderState.FogTableMode = FogMode.Linear;
             this.Graphics.GraphicsDevice.RenderState.FogStart = SceneryEnvironment.LevelOfDetail.HighFarClip;
             this.Graphics.GraphicsDevice.RenderState.FogEnd = SceneryEnvironment.LevelOfDetail.LowFarClip;

@@ -16,5 +16,10 @@
     <DetailTexture2File>detailrock.png</DetailTexture2File>
     <DetailTexture3File>detailsand.jpg</DetailTexture3File>
     <DetailTexture4File>detailgrass.jpg</DetailTexture4File>
+    <BillboardEffectFile>Billboard.fx</BillboardEffectFile>
+    <BillboardGrassTextureFile>BillboardGrass.tga</BillboardGrassTextureFile>
+    <BillboardTreeTextureFile>BillboardTree.tga</BillboardTreeTextureFile>
+    <BillboardsPerTriangle>23</BillboardsPerTriangle>
+    <BillboardTreesPercent>20</BillboardTreesPercent>
   </Asset>
 </XnaContent>
