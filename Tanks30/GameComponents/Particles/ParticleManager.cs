@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace TanksDebug
+namespace GameComponents.Particles
 {
-    using GameComponents.Particles;
-
     /// <summary>
     /// Gestor de partículas
     /// </summary>
