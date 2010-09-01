@@ -86,7 +86,6 @@
     <Compile Include="Joint2Component.cs" />
     <Compile Include="DemoScenery.cs" />
     <Compile Include="CubeGameComponent.cs" />
-    <Compile Include="ParticleManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RodComponent.cs" />

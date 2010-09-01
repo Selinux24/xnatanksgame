@@ -8,16 +8,17 @@ namespace Tanks
 {
     using Common.Drawing;
     using Common.Helpers;
+    using GameComponents.Buildings;
     using GameComponents.Camera;
     using GameComponents.MathComponents;
+    using GameComponents.Particles;
     using GameComponents.Scenery;
     using GameComponents.Text;
     using GameComponents.Vehicles;
     using GameComponents.Weapons;
+    using Physics;
     using Physics.CollideCoarse;
     using Tanks.Services;
-    using Buildings;
-    using GameComponents.Buildings;
 
     /// <summary>
     /// Juego
@@ -32,6 +33,10 @@ namespace Tanks
         /// Controlador de físicas
         /// </summary>
         protected PhysicsController Physics = null;
+        /// <summary>
+        /// Gestor de partículas
+        /// </summary>
+        private ParticleManager m_ParticleManager = null;
         /// <summary>
         /// Componente de texto
         /// </summary>
@@ -126,6 +131,44 @@ namespace Tanks
             this.Physics = new PhysicsController();
             this.Physics.InitializeProyectiles(100);
             this.Services.AddService(typeof(PhysicsController), this.Physics);
+
+
+            this.Physics.OnExplosionUpdated += new ExplosionHandler(Physics_OnExplosionUpdated);
+            this.Physics.OnProjectileMoved += new AmmoRoundHandler(Physics_OnProjectileMoved);
+            this.Physics.OnVehicleMoved += new VehicleHandler(Physics_OnVehicleMoved);
+        }
+
+        /// <summary>
+        /// Evento de vehículo en movimiento
+        /// </summary>
+        /// <param name="vehicle">Vehículo</param>
+        void Physics_OnVehicleMoved(IPhysicObject vehicle)
+        {
+            //if (vehicle is Vehicle)
+            //{
+            //    Vehicle v = vehicle as Vehicle;
+
+            //    this.m_ParticleManager.AddSmokePlumeParticle(v.Position, Vector3.Up * 0.2f);
+            //}
+        }
+        /// <summary>
+        /// Evento de explosión activa
+        /// </summary>
+        /// <param name="explosion">Explosión</param>
+        void Physics_OnExplosionUpdated(Explosion explosion)
+        {
+            this.m_ParticleManager.AddExplosionParticle(explosion.DetonationCenter, Vector3.Up * 0.5f);
+            this.m_ParticleManager.AddExplosionSmokeParticle(explosion.DetonationCenter, Vector3.Up * 0.5f);
+        }
+        /// <summary>
+        /// Evento de proyectil en movimiento
+        /// </summary>
+        /// <param name="obj">Objeto</param>
+        /// <param name="position">Posición</param>
+        /// <param name="velocity">Velocidad</param>
+        void Physics_OnProjectileMoved(AmmoRound ammo)
+        {
+            this.m_ParticleManager.AddProjectileTrailParticle(ammo.Position, Vector3.Zero);
         }
 
         /// <summary>
@@ -213,6 +256,9 @@ namespace Tanks
             this.m_TextDrawer.UpdateOrder = 100;
             this.m_TextDrawer.DrawOrder = 100;
             this.Components.Add(this.m_TextDrawer);
+
+            this.m_ParticleManager = new ParticleManager(this);
+            this.Components.Add(this.m_ParticleManager);
 
             base.Initialize();
 
