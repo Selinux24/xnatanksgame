@@ -51,11 +51,11 @@ namespace GameComponents.Particles
             this.m_SmokePlume = new SmokePlumeParticleSystem(this.Game);
             this.m_ProjectileTrail = new ProjectileTrailParticleSystem(this.Game);
 
-            this.m_Explosion.DrawOrder = 100;
-            this.m_ExplosionSmoke.DrawOrder = 100;
-            this.m_Fire.DrawOrder = 100;
-            this.m_SmokePlume.DrawOrder = 100;
-            this.m_ProjectileTrail.DrawOrder = 100;
+            this.m_Explosion.DrawOrder = 0;
+            this.m_ExplosionSmoke.DrawOrder = 0;
+            this.m_Fire.DrawOrder = 0;
+            this.m_SmokePlume.DrawOrder = 0;
+            this.m_ProjectileTrail.DrawOrder = 0;
 
             this.Game.Components.Add(this.m_Explosion);
             this.Game.Components.Add(this.m_ExplosionSmoke);
