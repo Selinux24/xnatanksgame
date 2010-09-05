@@ -16,7 +16,13 @@ namespace GameComponents.Vehicles
         /// </summary>
         private CollisionBox m_OBB = null;
 
+        /// <summary>
+        /// Altura mínima base
+        /// </summary>
         private float m_InitialMinFlightHeight = 0f;
+        /// <summary>
+        /// Altura máxima base
+        /// </summary>
         private float m_InitialMaxFlightHeight = 0f;
 
         /// <summary>
@@ -250,29 +256,42 @@ namespace GameComponents.Vehicles
         /// </summary>
         private void IntegrateSkimmer()
         {
-            if (this.m_OBB.Position.Y > this.MaxFlightHeight)
+            if (!this.Destroyed)
             {
-                //Por encima del techo de vuelo. Bajar a plomo
-                this.m_OBB.SetAcceleration(Constants.GravityForce);
-            }
-            else if (this.m_OBB.Position.Y < this.MinFlightHeight)
-            {
-                //Por debajo de la altura mínima, subir
-                Vector3 velocity = this.m_OBB.Velocity;
-                Vector3 acceleration = this.m_OBB.Acceleration;
-
-                if (velocity.Y < 0f)
+                if (this.m_OBB.Position.Y > this.MaxFlightHeight)
                 {
-                    if (velocity.Y < -1.5f)
-                    {
-                        //Descendiendo, frenar y ascender
-                        velocity.Y += -(velocity.Y * 0.5f);
+                    //Por encima del techo de vuelo. Bajar a plomo
+                    this.m_OBB.SetAcceleration(Constants.GravityForce);
+                }
+                else if (this.m_OBB.Position.Y < this.MinFlightHeight)
+                {
+                    //Por debajo de la altura mínima, subir
+                    Vector3 velocity = this.m_OBB.Velocity;
+                    Vector3 acceleration = this.m_OBB.Acceleration;
 
-                        this.m_OBB.SetVelocity(velocity);
+                    if (velocity.Y < 0f)
+                    {
+                        if (velocity.Y < -1.5f)
+                        {
+                            //Descendiendo, frenar y ascender
+                            velocity.Y += -(velocity.Y * 0.5f);
+
+                            this.m_OBB.SetVelocity(velocity);
+                        }
+                        else
+                        {
+                            velocity.Y += 0.5f;
+                            acceleration.Y = 0f;
+
+                            this.m_OBB.SetVelocity(velocity);
+                            this.m_OBB.SetAcceleration(acceleration);
+                        }
                     }
                     else
                     {
-                        velocity.Y += 0.5f;
+                        float distance = this.MinFlightHeight - this.m_OBB.Position.Y;
+
+                        velocity.Y = 0.5f * distance;
                         acceleration.Y = 0f;
 
                         this.m_OBB.SetVelocity(velocity);
@@ -281,33 +300,31 @@ namespace GameComponents.Vehicles
                 }
                 else
                 {
-                    float distance = this.MinFlightHeight - this.m_OBB.Position.Y;
-
-                    velocity.Y = 0.5f * distance;
-                    acceleration.Y = 0f;
-
-                    this.m_OBB.SetVelocity(velocity);
-                    this.m_OBB.SetAcceleration(acceleration);
+                    //En el área de vuelo, bajar despacio
+                    this.m_OBB.SetAcceleration(Constants.GravityForce * 0.5f);
                 }
+
+                Quaternion currentOrientation = this.m_OBB.Orientation;
+
+                float yaw = 0f;
+                float pitch = 0f;
+                float roll = 0f;
+                currentOrientation.Decompose(out yaw, out pitch, out roll);
+
+                Quaternion newRot = Quaternion.Slerp(this.m_OBB.Orientation, Quaternion.CreateFromYawPitchRoll(yaw, 0f, 0f), 0.1f);
+
+                this.m_OBB.SetOrientation(newRot);
             }
             else
             {
-                //En el área de vuelo, bajar despacio
-                this.m_OBB.SetAcceleration(Constants.GravityForce * 0.5f);
+
+                this.m_OBB.SetAcceleration(Constants.GravityForce);
             }
-
-            Quaternion currentOrientation = this.m_OBB.Orientation;
-
-            float yaw = 0f;
-            float pitch = 0f;
-            float roll = 0f;
-            currentOrientation.Decompose(out yaw, out pitch, out roll);
-
-            Quaternion newRot = Quaternion.Slerp(this.m_OBB.Orientation, Quaternion.CreateFromYawPitchRoll(yaw, 0f, 0f), 0.1f);
-
-            this.m_OBB.SetOrientation(newRot);
         }
-
+        /// <summary>
+        /// Actualiza el techo de vuelo según la altura especificada
+        /// </summary>
+        /// <param name="height">Techo de vuelo a añadir al base</param>
         public void UpdateHeight(float? height)
         {
             if (height.HasValue)
@@ -326,6 +343,27 @@ namespace GameComponents.Vehicles
         /// <param name="obj">Objeto que ha contactado con el vehículo actual</param>
         public void Contacted(IPhysicObject obj)
         {
+            if (obj is AmmoRound)
+            {
+                this.TakeDamage(obj as AmmoRound);
+            }
+            else if (obj is IVehicle)
+            {
+                //Obtener las velocidades y calcular la magnitud del choque
+                if (this.Velocity > 15f)
+                {
+                    this.TakeDamage(this.Velocity, 0f);
+                }
+            }
+            else if (obj is IScenery)
+            {
+                //Usar la velocidad del vehículo como magnitud del choque
+                if (this.Velocity > 15f)
+                {
+                    this.TakeDamage(this.Velocity, 0f);
+                }
+            }
+
             if (this.OnObjectContacted != null)
             {
                 this.OnObjectContacted(obj);
@@ -369,26 +407,19 @@ namespace GameComponents.Vehicles
                     float toAdd = (amount / time);
 
                     //Proyección de la velocidad actual sobre la nueva velocidad
-                    float fwVelocity = 0f;
+                    Vector3 direction = Vector3.Zero;
                     if (this.IsAdvancing)
                     {
-                        fwVelocity = Vector3.Dot(this.m_OBB.Velocity, this.Direction);
+                        direction = Vector3.Normalize(this.m_OBB.Transform.Forward);
                     }
                     else
                     {
-                        fwVelocity = Vector3.Dot(this.m_OBB.Velocity, this.BackwardDirection);
+                        direction = Vector3.Normalize(this.m_OBB.Transform.Backward);
                     }
 
-                    if (fwVelocity < this.MaxForwardVelocity)
+                    if (this.Velocity < this.MaxForwardVelocity)
                     {
-                        if (this.IsAdvancing)
-                        {
-                            this.m_OBB.AddToVelocity(this.Direction * toAdd);
-                        }
-                        else
-                        {
-                            this.m_OBB.AddToVelocity(this.BackwardDirection * toAdd);
-                        }
+                        this.m_OBB.SetVelocity(direction * this.Velocity + direction * toAdd);
                     }
                 }
             }
@@ -412,28 +443,25 @@ namespace GameComponents.Vehicles
             {
                 if (amount != 0f)
                 {
-                    float time = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                    float velocity = this.Velocity;
-
-                    float newVelocity = velocity - (amount / time);
-
-                    if (newVelocity >= 0)
+                    if (!this.Velocity.IsZero())
                     {
+                        float time = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                        float toRemove = (amount / time);
+
+                        Vector3 direction = Vector3.Zero;
                         if (this.IsAdvancing)
                         {
-                            Vector3 velocityVector = Vector3.Normalize(this.CurrentTransform.Forward);
-
-                            this.m_OBB.SetVelocity(velocityVector * newVelocity);
+                            direction = Vector3.Normalize(this.m_OBB.Transform.Forward);
                         }
                         else
                         {
-                            Vector3 velocityVector = Vector3.Normalize(this.CurrentTransform.Backward);
-
-                            this.m_OBB.SetVelocity(velocityVector * newVelocity);
+                            direction = Vector3.Normalize(this.m_OBB.Transform.Backward);
                         }
+
+                        this.m_OBB.SetVelocity(direction * this.Velocity / toRemove);
                     }
-                    else if (this.Velocity > 0f)
+                    else
                     {
                         this.m_OBB.SetVelocity(Vector3.Zero);
                     }

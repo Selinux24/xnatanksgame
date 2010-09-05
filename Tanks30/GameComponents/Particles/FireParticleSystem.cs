@@ -4,17 +4,29 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Particles
 {
+    /// <summary> 
+    /// Fuego
+    /// </summary> 
     public class FireParticleSystem : ParticleSystem
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="game">Juego</param>
         public FireParticleSystem(Game game)
             : base(game)
-        { }
+        {
 
+        }
+
+        /// <summary> 
+        /// Inicializar el sistema de partículas
+        /// </summary> 
         protected override void InitializeSettings(ParticleSettings settings)
         {
             settings.TextureName = "Content/Particles/fire";
 
-            settings.MaxParticles = 1000;
+            settings.MaxParticles = 500;
 
             settings.Duration = TimeSpan.FromSeconds(2);
 

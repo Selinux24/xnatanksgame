@@ -13,8 +13,8 @@ namespace Vehicles
     {
         #region Incialización del control de animación
 
-        private AnimationAxis m_FusionCannon;
-        private AnimationAxis m_FusionCannonBase;
+        private AnimationAxis m_GunnerFusionCannon;
+        private AnimationAxis m_GunnerFusionCannonBase;
 
         #endregion
 
@@ -42,16 +42,7 @@ namespace Vehicles
 
         #region Armas
 
-        private Weapon m_MainWeapon = new Weapon()
-        {
-            Name = "Cañón de Fusión",
-            Mass = 5f,
-            Range = 90f,
-            Velocity = 50f,
-            AppliedGravity = Constants.ZeroMassGravityForce,
-            Radius = 0.3f,
-            GenerateExplosion = true,
-        };
+        private Weapon m_FussionCannon = null;
 
         #endregion
 
@@ -89,8 +80,8 @@ namespace Vehicles
 
             #region Controlador de animación
 
-            m_FusionCannon = (AnimationAxis)this.GetAnimation("FusionCannon");
-            m_FusionCannonBase = (AnimationAxis)this.GetAnimation("FusionCannonBase");
+            m_GunnerFusionCannon = (AnimationAxis)this.GetAnimation("FusionCannon");
+            m_GunnerFusionCannonBase = (AnimationAxis)this.GetAnimation("FusionCannonBase");
 
             #endregion
 
@@ -98,6 +89,12 @@ namespace Vehicles
 
             m_Driver = this.GetPlayerPosition("Driver");
             m_Gunner = this.GetPlayerPosition("Gunner");
+
+            #endregion
+
+            #region Armamento
+
+            this.m_FussionCannon = this.GetWeapon("FusionCannon");
 
             #endregion
 
@@ -229,8 +226,8 @@ namespace Vehicles
         /// <param name="yaw">Rotación en X</param>
         public void AimFusionCannon(float pitch, float yaw)
         {
-            this.m_FusionCannon.Rotate(pitch);
-            this.m_FusionCannonBase.Rotate(yaw);
+            this.m_GunnerFusionCannon.Rotate(pitch);
+            this.m_GunnerFusionCannonBase.Rotate(yaw);
         }
 
         /// <summary>
@@ -249,7 +246,7 @@ namespace Vehicles
             {
                 this.m_CurrentPlayerControl = this.m_Gunner;
 
-                this.SelectWeapon(this.m_MainWeapon);
+                this.SelectWeapon(this.m_FussionCannon);
             }
         }
     }

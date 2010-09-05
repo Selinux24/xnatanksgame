@@ -4,12 +4,24 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Particles
 {
+    /// <summary> 
+    /// Rastro de proyectil
+    /// </summary> 
     public class ProjectileTrailParticleSystem : ParticleSystem
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="game">Juego</param>
         public ProjectileTrailParticleSystem(Game game)
             : base(game)
-        { }
+        {
 
+        }
+
+        /// <summary> 
+        /// Inicializar el sistema de partículas
+        /// </summary> 
         protected override void InitializeSettings(ParticleSettings settings)
         {
             settings.TextureName = "Content/Particles/smoke";

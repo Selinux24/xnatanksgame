@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Physics;
 
 namespace GameComponents.Particles
 {
@@ -27,6 +29,10 @@ namespace GameComponents.Particles
         /// Traza de proyectil
         /// </summary>
         private ProjectileTrailParticleSystem m_ProjectileTrail = null;
+        /// <summary>
+        /// Lista de generadores de partículas estáticos
+        /// </summary>
+        private List<ParticleGenerator> m_ParticleGenerators = new List<ParticleGenerator>();
 
         /// <summary>
         /// Constructor
@@ -62,6 +68,44 @@ namespace GameComponents.Particles
             this.Game.Components.Add(this.m_Fire);
             this.Game.Components.Add(this.m_SmokePlume);
             this.Game.Components.Add(this.m_ProjectileTrail);
+        }
+        /// <summary>
+        /// Actualiza el componente
+        /// </summary>
+        /// <param name="gameTime">Tiempo de juego</param>
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (this.m_ParticleGenerators != null && this.m_ParticleGenerators.Count > 0)
+            {
+                List<ParticleGenerator> toDelete = new List<ParticleGenerator>();
+
+                foreach (ParticleGenerator generator in this.m_ParticleGenerators)
+                {
+                    if (generator.Emitter != null)
+                    {
+                        generator.ParticleSystem.AddParticle(generator.Emitter.GetPosition(), Vector3.Up);
+                    }
+
+                    generator.Duration -= elapsed;
+
+                    if (generator.Duration <= 0)
+                    {
+                        toDelete.Add(generator);
+                    }
+                }
+
+                if (toDelete.Count > 0)
+                {
+                    foreach (ParticleGenerator generator in toDelete)
+                    {
+                        this.m_ParticleGenerators.Remove(generator);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -108,6 +152,25 @@ namespace GameComponents.Particles
         public void AddProjectileTrailParticle(Vector3 position, Vector3 velocity)
         {
             this.m_ProjectileTrail.AddParticle(position, velocity);
+        }
+
+        /// <summary>
+        /// Añade un generador estático de fuego
+        /// </summary>
+        /// <param name="obj">Objeto que genera el fuego</param>
+        /// <param name="duration">Duración</param>
+        public void AddFireParticleGenerator(IPhysicObject obj, float duration)
+        {
+            this.m_ParticleGenerators.Add(new ParticleGenerator() { Emitter = obj, ParticleSystem = this.m_Fire, Duration = duration });
+        }
+        /// <summary>
+        /// Añade un generador estático de humo
+        /// </summary>
+        /// <param name="obj">Objeto que genera el humo</param>
+        /// <param name="duration">Duración</param>
+        public void AddSmokePlumeParticleGenerator(IPhysicObject obj, float duration)
+        {
+            this.m_ParticleGenerators.Add(new ParticleGenerator() { Emitter = obj, ParticleSystem = this.m_SmokePlume, Duration = duration });
         }
     }
 }

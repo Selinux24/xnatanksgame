@@ -32,6 +32,10 @@ namespace GameComponents.Camera
             /// Tercera persona
             /// </summary>
             ThirdPerson,
+            /// <summary>
+            /// Tercera persona con transición
+            /// </summary>
+            Chase,
         }
 
         /// <summary>
@@ -71,7 +75,7 @@ namespace GameComponents.Camera
         /// <summary>
         /// Modo de vista de la cámara
         /// </summary>
-        public CameraModes Mode 
+        public CameraModes Mode
         {
             get
             {
@@ -195,11 +199,32 @@ namespace GameComponents.Camera
         /// <summary>
         /// Posición relativa del espectador
         /// </summary>
-        public Vector3 ViewerRelativePosition = new Vector3(0f, 10f, 18f);
+        public Vector3 ViewerPositionOffset = new Vector3(0.0f, 4.0f, 6.0f);
+        /// <summary>
+        /// Vista relativa del espectador
+        /// </summary>
+        public Vector3 ViewerLookAtOffset = new Vector3(0.0f, 0.5f, -1.0f);
         /// <summary>
         /// Modelo que sigue la cámara
         /// </summary>
         public Vehicle ModelToFollow { get; set; }
+
+        /// <summary>
+        /// Velocidad de aproximación de la cámara al objetivo
+        /// </summary>
+        public Vector3 Velocity { get; set; }
+        /// <summary>
+        /// Coheficiente de elasticidad entre la cámara y el objetivo. Cuanto más grande menos elástico
+        /// </summary>
+        public float Stiffness = 36.0f;
+        /// <summary>
+        /// Coheficiente de atenuación de cálculos de la cámara. Evita que la cámara esté moviéndose eternamente
+        /// </summary>
+        public float Damping = 12.0f;
+        /// <summary>
+        /// Masa de la cámara
+        /// </summary>
+        public float Mass = 1.0f;
 
         /// <summary>
         /// Constructor
@@ -290,6 +315,47 @@ namespace GameComponents.Camera
                     this.m_Direction = this.CalcRelativeDirection(this.m_Position);
 
                     this.m_Vertical = Vector3.Up;
+                }
+            }
+            else if (this.Mode == CameraModes.Chase)
+            {
+                if (this.ModelToFollow != null)
+                {
+                    Matrix orientation = Matrix.CreateFromQuaternion(this.ModelToFollow.Orientation);
+
+                    Vector3 chasePosition = this.ModelToFollow.Position;
+                    Vector3 chaseDirection = Vector3.Normalize(orientation.Forward);
+                    Vector3 up = Vector3.Up;
+
+                    // Construct a matrix to transform from object space to worldspace
+                    Matrix transform = Matrix.Identity;
+                    transform.Forward = chaseDirection;
+                    transform.Up = up;
+                    transform.Right = Vector3.Cross(up, chaseDirection);
+
+                    // Calculate desired camera properties in world space
+                    Vector3 desiredPosition = chasePosition + Vector3.TransformNormal(this.ViewerPositionOffset, transform);
+                    this.m_Direction = chasePosition + Vector3.TransformNormal(this.ViewerLookAtOffset, transform);
+
+                    float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                    // Calculate spring force
+                    Vector3 stretch = this.m_Position - desiredPosition;
+                    Vector3 force = -this.Stiffness * stretch - this.Damping * this.Velocity;
+
+                    // Apply acceleration
+                    Vector3 acceleration = force / this.Mass;
+                    this.Velocity += acceleration * elapsed;
+
+                    // Apply velocity
+                    this.m_Position += this.Velocity * elapsed;
+
+                    GlobalMatrices.gViewMatrix = Matrix.CreateLookAt(
+                        this.m_Position,
+                        this.m_Direction,
+                        this.m_Vertical);
+
+                    return;
                 }
             }
 
@@ -485,7 +551,7 @@ namespace GameComponents.Camera
             Matrix rotation = Matrix.CreateFromQuaternion(this.ModelToFollow.Orientation);
 
             // Calcular la posición relativa de la cámara
-            Vector3 transformedCameraPosition = Vector3.Transform(this.ViewerRelativePosition, rotation);
+            Vector3 transformedCameraPosition = Vector3.Transform(this.ViewerPositionOffset, rotation);
 
             // Añadir la posición relativa de la cámara a la posición del modelo para obtener la posición de la cámara
             return this.ModelToFollow.Position + transformedCameraPosition;

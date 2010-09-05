@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 namespace GameComponents.Vehicles
 {
     using GameComponents.Animation;
+    using GameComponents.Weapons;
 
     /// <summary>
     /// Información de animación de un vehículo
@@ -16,6 +17,14 @@ namespace GameComponents.Vehicles
         /// Nombre del modelo
         /// </summary>
         public string Model = null;
+        /// <summary>
+        /// Integridad
+        /// </summary>
+        public float Hull;
+        /// <summary>
+        /// Blindaje del casco
+        /// </summary>
+        public float Armor;
         /// <summary>
         /// Velocidad de avance
         /// </summary>
@@ -57,6 +66,10 @@ namespace GameComponents.Vehicles
         /// </summary>
         public float DescendingAngle;
 
+        /// <summary>
+        /// Colección de armas
+        /// </summary>
+        public WeaponInfo[] Weapons;
         /// <summary>
         /// Colección de controladores de animación
         /// </summary>

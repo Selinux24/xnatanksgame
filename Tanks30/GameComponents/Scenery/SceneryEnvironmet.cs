@@ -82,11 +82,20 @@ namespace GameComponents.Scenery
             /// <param name="effect">Efecto</param>
             public static void SetLightToEffect(BasicEffect effect)
             {
+                SetLightToEffect(effect, AmbientLightIntensity);
+            }
+            /// <summary>
+            /// Establece los parámetros de iluminación al efecto
+            /// </summary>
+            /// <param name="effect">Efecto</param>
+            /// <param name="lightIntensity">Intensidad de la luz</param>
+            public static void SetLightToEffect(BasicEffect effect, float lightIntensity)
+            {
                 effect.LightingEnabled = SceneryEnvironment.Ambient.LightingEnabled;
                 effect.DirectionalLight0.Enabled = SceneryEnvironment.Ambient.LightingEnabled;
-                effect.DirectionalLight0.Direction = SceneryEnvironment.Ambient.LightDirection * SceneryEnvironment.Ambient.AmbientLightIntensity;
-                effect.DirectionalLight0.DiffuseColor = SceneryEnvironment.Ambient.AmbientLightColor.ToVector3() * SceneryEnvironment.Ambient.AmbientLightIntensity;
-                effect.DirectionalLight0.SpecularColor = SceneryEnvironment.Ambient.AtmosphericColor.ToVector3() * SceneryEnvironment.Ambient.AmbientLightIntensity;
+                effect.DirectionalLight0.Direction = SceneryEnvironment.Ambient.LightDirection * lightIntensity;
+                effect.DirectionalLight0.DiffuseColor = SceneryEnvironment.Ambient.AmbientLightColor.ToVector3() * lightIntensity;
+                effect.DirectionalLight0.SpecularColor = SceneryEnvironment.Ambient.AtmosphericColor.ToVector3() * lightIntensity;
             }
         }
 

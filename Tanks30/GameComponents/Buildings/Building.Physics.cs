@@ -2,7 +2,6 @@
 
 namespace GameComponents.Buildings
 {
-    using Common.Helpers;
     using Physics;
 
     public partial class Building: IPhysicObject

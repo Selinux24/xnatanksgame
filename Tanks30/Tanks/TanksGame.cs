@@ -46,10 +46,6 @@ namespace Tanks
         /// </summary>
         private SceneryGameComponent m_Scenery;
         /// <summary>
-        /// Cielo
-        /// </summary>
-        private SkyBoxGameComponent m_SkyBox;
-        /// <summary>
         /// Reflejo solar
         /// </summary>
         private LensFlareComponent m_LensFlare;
@@ -132,7 +128,6 @@ namespace Tanks
             this.Physics.InitializeProyectiles(100);
             this.Services.AddService(typeof(PhysicsController), this.Physics);
 
-
             this.Physics.OnExplosionUpdated += new ExplosionHandler(Physics_OnExplosionUpdated);
             this.Physics.OnProjectileMoved += new AmmoRoundHandler(Physics_OnProjectileMoved);
             this.Physics.OnVehicleMoved += new VehicleHandler(Physics_OnVehicleMoved);
@@ -144,12 +139,7 @@ namespace Tanks
         /// <param name="vehicle">Vehículo</param>
         void Physics_OnVehicleMoved(IPhysicObject vehicle)
         {
-            //if (vehicle is Vehicle)
-            //{
-            //    Vehicle v = vehicle as Vehicle;
 
-            //    this.m_ParticleManager.AddSmokePlumeParticle(v.Position, Vector3.Up * 0.2f);
-            //}
         }
         /// <summary>
         /// Evento de explosión activa
@@ -169,6 +159,31 @@ namespace Tanks
         void Physics_OnProjectileMoved(AmmoRound ammo)
         {
             this.m_ParticleManager.AddProjectileTrailParticle(ammo.Position, Vector3.Zero);
+        }
+        /// <summary>
+        /// Se dispara cuando un vehículo ha sido destruído
+        /// </summary>
+        /// <param name="sender">Vehículo</param>
+        /// <param name="e">Argumentos</param>
+        void Vehicle_OnVehicleDestroyed(IVehicle sender)
+        {
+            if (sender != null)
+            {
+                this.m_ParticleManager.AddFireParticleGenerator(sender, 15f);
+                this.m_ParticleManager.AddSmokePlumeParticleGenerator(sender, 60f);
+            }
+        }
+        /// <summary>
+        /// Se dispara cuando un vehículo ha sido dañado
+        /// </summary>
+        /// <param name="sender">Vehículo</param>
+        /// <param name="e">Argumentos</param>
+        void Vehicle_OnVehicleHeavyDamaged(IVehicle sender)
+        {
+            if (sender != null)
+            {
+                this.m_ParticleManager.AddSmokePlumeParticleGenerator(sender, 15f);
+            }
         }
 
         /// <summary>
@@ -225,7 +240,7 @@ namespace Tanks
             //Vehicle[] squad05 = AddSquadron(VehicleTypes.LandSpeeder, 3);
             //Vehicle[] squad06 = AddSquadron(VehicleTypes.LandSpeeder, 3);
             //Vehicle[] squad04 = AddSquadron(VehicleTypes.LandRaider, 2);
-            //Vehicle[] squad05 = AddSquadron(VehicleTypes.LemanRuss, 3);
+            Vehicle[] squad05 = AddSquadron(VehicleTypes.LemanRuss, 3);
             //Vehicle[] squad06 = AddSquadron(VehicleTypes.LemanRuss, 3);
             Vehicle[] squad07 = AddSquadron(VehicleTypes.Rhino, 3);
             //Vehicle[] squad08 = AddSquadron(VehicleTypes.Rhino, 3);
@@ -235,11 +250,6 @@ namespace Tanks
             this.m_LensFlare.UpdateOrder = 96;
             this.m_LensFlare.DrawOrder = 96;
             this.Components.Add(this.m_LensFlare);
-
-            this.m_SkyBox = new SkyBoxGameComponent(this);
-            this.m_SkyBox.UpdateOrder = 97;
-            this.m_SkyBox.DrawOrder = 97;
-            this.Components.Add(this.m_SkyBox);
 
             this.m_Camera = new CameraGameComponent(this);
             this.m_Camera.UseMouse = true;
@@ -270,7 +280,7 @@ namespace Tanks
             //this.InitializeSquadron(squad02);
             //this.InitializeSquadron(squad03);
             //this.InitializeSquadron(squad04);
-            //this.InitializeSquadron(squad05);
+            this.InitializeSquadron(squad05);
             //this.InitializeSquadron(squad06);
             this.InitializeSquadron(squad07);
             //this.InitializeSquadron(squad08);
@@ -344,41 +354,6 @@ namespace Tanks
             base.Draw(gameTime);
         }
 
-        private Building[] AddBuildings(BuildingTypes type, int count)
-        {
-            // Lista de componentes creados
-            List<Building> buildingList = new List<Building>();
-
-            for (int i = 0; i < count; i++)
-            {
-                if (type == BuildingTypes.Type0)
-                {
-                    buildingList.Add(m_BuilngContainer.AddType0(Point.Zero));
-                }
-            }
-
-            return buildingList.ToArray();
-        }
-
-        private void InitializeBuildings(Building[] buildings)
-        {
-            // Punto de posición del edificio
-            foreach (Building building in buildings)
-            {
-                Vector3 where = new Vector3(RandomComponent.Next(5000) + 5000, 600, RandomComponent.Next(5000) + 5000);
-
-                float? h = this.m_Scenery.Scenery.GetHeigthAtPoint(where.X, where.Z);
-                if (h.HasValue)
-                {
-                    where.Y = h.Value + 1f;
-                }
-
-                building.SetInitialState(where, Quaternion.Identity);
-
-                this.Physics.RegisterVehicle(building);
-            }
-        }
-
         /// <summary>
         /// Establece el foco en el vehículo designado
         /// </summary>
@@ -408,6 +383,50 @@ namespace Tanks
                 this.m_CurrentVehicle = vehicle;
             }
         }
+
+        /// <summary>
+        /// Añadir una lista de edificios
+        /// </summary>
+        /// <param name="type">Tipo de edificios</param>
+        /// <param name="count">Cantidad</param>
+        /// <returns>Devuelve la lista de edificios</returns>
+        private Building[] AddBuildings(BuildingTypes type, int count)
+        {
+            // Lista de componentes creados
+            List<Building> buildingList = new List<Building>();
+
+            for (int i = 0; i < count; i++)
+            {
+                if (type == BuildingTypes.Type0)
+                {
+                    buildingList.Add(m_BuilngContainer.AddType0(Point.Zero));
+                }
+            }
+
+            return buildingList.ToArray();
+        }
+        /// <summary>
+        /// Inicializa el estado de los edificios
+        /// </summary>
+        /// <param name="buildings">Lista de edificios</param>
+        private void InitializeBuildings(Building[] buildings)
+        {
+            // Punto de posición del edificio
+            foreach (Building building in buildings)
+            {
+                Vector3 where = new Vector3(RandomComponent.Next(5000) + 5000, 600, RandomComponent.Next(5000) + 5000);
+
+                float? h = this.m_Scenery.Scenery.GetHeigthAtPoint(where.X, where.Z);
+                if (h.HasValue)
+                {
+                    where.Y = h.Value + 1f;
+                }
+
+                building.SetInitialState(where, Quaternion.Identity);
+
+                this.Physics.RegisterVehicle(building);
+            }
+        }
         /// <summary>
         /// Añade un escuadrón del tipo y la cantidad especificada
         /// </summary>
@@ -420,21 +439,31 @@ namespace Tanks
 
             for (int i = 0; i < count; i++)
             {
+                Vehicle newVehicle = null;
+
                 if (type == VehicleTypes.Rhino)
                 {
-                    vehicleList.Add(m_VehicleContainer.AddRhino(Point.Zero));
+                    newVehicle = m_VehicleContainer.AddRhino(Point.Zero);
                 }
                 else if (type == VehicleTypes.LandSpeeder)
                 {
-                    vehicleList.Add(m_VehicleContainer.AddLandSpeeder(Point.Zero));
+                    newVehicle = m_VehicleContainer.AddLandSpeeder(Point.Zero);
                 }
                 else if (type == VehicleTypes.LandRaider)
                 {
-                    vehicleList.Add(m_VehicleContainer.AddLandRaider(Point.Zero));
+                    newVehicle = m_VehicleContainer.AddLandRaider(Point.Zero);
                 }
                 else if (type == VehicleTypes.LemanRuss)
                 {
-                    vehicleList.Add(m_VehicleContainer.AddLemanRuss(Point.Zero));
+                    newVehicle = m_VehicleContainer.AddLemanRuss(Point.Zero);
+                }
+
+                if (newVehicle != null)
+                {
+                    newVehicle.OnVehicleHeavyDamaged += new VehicleDamagedHandler(Vehicle_OnVehicleHeavyDamaged);
+                    newVehicle.OnVehicleDestroyed += new VehicleDamagedHandler(Vehicle_OnVehicleDestroyed);
+
+                    vehicleList.Add(newVehicle);
                 }
             }
 
@@ -477,6 +506,7 @@ namespace Tanks
                 this.Physics.RegisterVehicle(squadron[i]);
             }
         }
+
         /// <summary>
         /// Actualizar elementos del entorno
         /// </summary>
@@ -588,7 +618,7 @@ namespace Tanks
             {
                 if (InputHelper.IsKeyDown(Keys.LeftControl))
                 {
-                    this.m_Camera.Mode = CameraGameComponent.CameraModes.ThirdPerson;
+                    this.m_Camera.Mode = CameraGameComponent.CameraModes.Chase;
                 }
                 else
                 {

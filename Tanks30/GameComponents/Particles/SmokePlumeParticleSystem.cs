@@ -15,7 +15,7 @@ namespace GameComponents.Particles
         public SmokePlumeParticleSystem(Game game)
             : base(game)
         {
-        
+
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace GameComponents.Particles
         {
             settings.TextureName = "Content/Particles/smoke";
 
-            settings.MaxParticles = 1000;
+            settings.MaxParticles = 500;
 
             settings.Duration = TimeSpan.FromSeconds(10);
 

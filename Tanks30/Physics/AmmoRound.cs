@@ -21,10 +21,38 @@ namespace Physics
         /// </summary>
         private float m_Range = 0f;
         /// <summary>
+        /// Daño
+        /// </summary>
+        private float m_Damage = 0f;
+        /// <summary>
+        /// Penetración del blindaje
+        /// </summary>
+        private float m_Penetration = 0f;
+        /// <summary>
         /// Indica si la colisión del proyectil genera explosión
         /// </summary>
         private bool m_GenerateExplosion = false;
 
+        /// <summary>
+        /// Daño
+        /// </summary>
+        public float Damage
+        {
+            get
+            {
+                return this.m_Damage;
+            }
+        }
+        /// <summary>
+        /// Penetración
+        /// </summary>
+        public float Penetration
+        {
+            get
+            {
+                return this.m_Penetration;
+            }
+        }
         /// <summary>
         /// Obtiene si la colisión del proyectil genera explosión
         /// </summary>
@@ -52,12 +80,14 @@ namespace Physics
         /// </summary>
         /// <param name="mass">Masa del proyectil</param>
         /// <param name="range">Rango</param>
+        /// <param name="damage">Daño</param>
+        /// <param name="penetration">Penetración de blindaje</param>
         /// <param name="position">Posición inicial</param>
         /// <param name="direction">Dirección</param>
         /// <param name="appliedGravity">Gravedad aplicada</param>
         /// <param name="radius">Radio del proyectil</param>
         /// <param name="generateExplosion">Indica si generará explosión</param>
-        public void Fire(float mass, float range, Vector3 position, Vector3 direction, Vector3 appliedGravity, float radius, bool generateExplosion)
+        public void Fire(float mass, float range, float damage, float penetration, Vector3 position, Vector3 direction, Vector3 appliedGravity, float radius, bool generateExplosion)
         {
             // Establecer la posición de origen
             this.m_OriginalPosition = position;
@@ -70,6 +100,8 @@ namespace Physics
 
             this.Radius = radius;
             this.m_Range = range;
+            this.m_Damage = damage;
+            this.m_Penetration = penetration;
             this.m_GenerateExplosion = generateExplosion;
           
             // Rebote

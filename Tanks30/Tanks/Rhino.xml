@@ -1,11 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <VehicleComponentInfo>
   <Model>Rhino</Model>
+  <Hull>300</Hull>
+  <Armor>110</Armor>
   <MaxForwardVelocity>10</MaxForwardVelocity>
   <MaxBackwardVelocity>4</MaxBackwardVelocity>
   <AccelerationModifier>10</AccelerationModifier>
   <BrakeModifier>4</BrakeModifier>
   <AngularVelocityModifier>10</AngularVelocityModifier>
+  <Weapons>
+    <WeaponInfo>
+      <Name>AssaultBolter</Name>
+      <Mass>1</Mass>
+      <Range>60</Range>
+      <Velocity>50</Velocity>
+      <AppliedGravity>
+        <X>0</X>
+        <Y>0</Y>
+        <Z>0</Z>
+      </AppliedGravity>
+      <Radius>0.1</Radius>
+      <GenerateExplosion>false</GenerateExplosion>
+      <Damage>2</Damage>
+      <Penetration>10</Penetration>
+    </WeaponInfo>
+  </Weapons>
   <AnimationControlers>
     <AnimationInfo>
       <Name>Bolter</Name>

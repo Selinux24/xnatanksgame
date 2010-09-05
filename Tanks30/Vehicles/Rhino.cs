@@ -61,16 +61,7 @@ namespace Vehicles
 
         #region Armas
 
-        private Weapon m_Bolter = new Weapon()
-        {
-            Name = "Bolter de asalto",
-            Mass = 1f,
-            Range = 60f,
-            Velocity = 50f,
-            AppliedGravity = Constants.FastProyectileGravityForce,
-            Radius = 0.1f,
-            GenerateExplosion = false,
-        };
+        private Weapon m_AssaultBolter = null;
 
         #endregion
 
@@ -140,6 +131,12 @@ namespace Vehicles
             m_DRIVER_POSITION = this.GetPlayerPosition(_DRIVER_POSITION);
             m_GUNNER_POSITION = this.GetPlayerPosition(_GUNNER_POSITION);
             m_GUNNER_COVERED_POSITION = this.GetPlayerPosition(_GUNNER_COVERED_POSITION);
+
+            #endregion
+
+            #region Armamento
+
+            this.m_AssaultBolter = this.GetWeapon("AssaultBolter");
 
             #endregion
 
@@ -267,7 +264,7 @@ namespace Vehicles
                     }
 
                     #endregion
-                    
+
                     #region Bolter Hatch
 
                     if (InputHelper.KeyUpEvent(m_BolterHatchKey))
@@ -488,13 +485,13 @@ namespace Vehicles
             {
                 this.m_CurrentPlayerControl = this.m_GUNNER_POSITION;
 
-                this.SelectWeapon(this.m_Bolter);
+                this.SelectWeapon(this.m_AssaultBolter);
             }
             else if (position == Player.CoveredBolter)
             {
                 this.m_CurrentPlayerControl = this.m_GUNNER_COVERED_POSITION;
 
-                this.SelectWeapon(this.m_Bolter);
+                this.SelectWeapon(this.m_AssaultBolter);
             }
         }
     }

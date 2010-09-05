@@ -4,13 +4,24 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Particles
 {
+    /// <summary> 
+    /// Explosión con humo
+    /// </summary> 
     public class ExplosionSmokeParticleSystem : ParticleSystem
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="game">Juego</param>
         public ExplosionSmokeParticleSystem(Game game)
             : base(game)
         {
+
         }
 
+        /// <summary> 
+        /// Inicializar el sistema de partículas
+        /// </summary> 
         protected override void InitializeSettings(ParticleSettings settings)
         {
             settings.TextureName = "Content/Particles/smoke";
