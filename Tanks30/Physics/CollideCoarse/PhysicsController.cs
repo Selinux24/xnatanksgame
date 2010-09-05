@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Common.Components;
 
 namespace Physics.CollideCoarse
 {
@@ -111,15 +110,21 @@ namespace Physics.CollideCoarse
         /// Evento que se produce cuando empieza una explosión
         /// </summary>
         public event ExplosionHandler OnExplosionStarts;
-
+        /// <summary>
+        /// Evento que se produce cuando se actualiza una explosión
+        /// </summary>
         public event ExplosionHandler OnExplosionUpdated;
         /// <summary>
         /// Evento que se produce cuando termina una explosión
         /// </summary>
         public event ExplosionHandler OnExplosionEnds;
-
+        /// <summary>
+        /// Evento que se produce cuando se mueve un proyectil
+        /// </summary>
         public event AmmoRoundHandler OnProjectileMoved;
-
+        /// <summary>
+        /// Evento que se produce cuando se mueve un vehículo
+        /// </summary>
         public event VehicleHandler OnVehicleMoved;
 
         /// <summary>
@@ -303,24 +308,24 @@ namespace Physics.CollideCoarse
             if (this.m_SceneryPrimitive != null)
             {
                 // Recorrer los proyectiles
-                foreach (AmmoRound sObj in this.m_ProjectileData)
+                foreach (AmmoRound projectileObj in this.m_ProjectileData)
                 {
                     // Si hay contactos libres
                     if (this.m_ContactData.HasFreeContacts())
                     {
                         // Comprobar si el proyectil está activo
-                        if (sObj.IsActive())
+                        if (projectileObj.IsActive())
                         {
                             // Obtener las primitivas del proyectil y del terreno
-                            CollisionPrimitive sObjPrimitive = sObj.GetPrimitive();
-                            CollisionPrimitive sceneryPrimitive = this.m_SceneryPrimitive.GetContactedPrimitive(sObj);
-                            if (CollisionDetector.BetweenObjects(ref sObjPrimitive, ref sceneryPrimitive, ref m_ContactData))
+                            CollisionPrimitive projectileObjPrimitive = projectileObj.GetPrimitive();
+                            CollisionPrimitive sceneryPrimitive = this.m_SceneryPrimitive.GetContactedPrimitive(projectileObj);
+                            if (CollisionDetector.BetweenObjects(ref projectileObjPrimitive, ref sceneryPrimitive, ref m_ContactData))
                             {
                                 // Generar la explosión
-                                if (sObj.GenerateExplosion)
+                                if (projectileObj.GenerateExplosion)
                                 {
                                     // Explosión
-                                    Explosion explosion = Explosion.CreateArtilleryExplosion(sObjPrimitive.Position);
+                                    Explosion explosion = Explosion.CreateArtilleryExplosion(projectileObjPrimitive.Position);
 
                                     this.m_ExplosionData.Add(explosion);
 
@@ -328,7 +333,7 @@ namespace Physics.CollideCoarse
                                 }
 
                                 // Informar de la colisión entre la bala y el suelo
-                                sObj.Contacted(this.m_SceneryPrimitive);
+                                projectileObj.Contacted(this.m_SceneryPrimitive);
                             }
                         }
                     }
@@ -340,21 +345,21 @@ namespace Physics.CollideCoarse
                 }
 
                 // Recorrer los vehículos
-                foreach (IPhysicObject pObj in this.m_VehicleData)
+                foreach (IPhysicObject vehicleObj in this.m_VehicleData)
                 {
                     // Si hay contactos libres
                     if (this.m_ContactData.HasFreeContacts())
                     {
                         // Comprobar si el vehículo está activo
-                        if (pObj.IsActive())
+                        if (vehicleObj.IsActive())
                         {
                             // Obtener las primitivas del vehículo y del terreno
-                            CollisionPrimitive pObjPrimitive = pObj.GetPrimitive();
-                            CollisionPrimitive sceneryPrimitive = this.m_SceneryPrimitive.GetContactedPrimitive(pObj);
-                            if (CollisionDetector.BetweenObjects(ref pObjPrimitive, ref sceneryPrimitive, ref this.m_ContactData))
+                            CollisionPrimitive vehicleObjPrimitive = vehicleObj.GetPrimitive();
+                            CollisionPrimitive sceneryPrimitive = this.m_SceneryPrimitive.GetContactedPrimitive(vehicleObj);
+                            if (CollisionDetector.BetweenObjects(ref vehicleObjPrimitive, ref sceneryPrimitive, ref this.m_ContactData))
                             {
                                 // Informar de la colisión entre el vehículo y el terreno
-                                pObj.Contacted(this.m_SceneryPrimitive);
+                                vehicleObj.Contacted(this.m_SceneryPrimitive);
                             }
                         }
                     }
@@ -367,28 +372,28 @@ namespace Physics.CollideCoarse
             }
 
             // Chequear colisiones de los vehículos y los proyectiles
-            foreach (AmmoRound sObj in this.m_ProjectileData)
+            foreach (AmmoRound projectileObj in this.m_ProjectileData)
             {
                 // Si hay contactos libres
                 if (this.m_ContactData.HasFreeContacts())
                 {
-                    if (sObj.IsActive())
+                    if (projectileObj.IsActive())
                     {
-                        CollisionPrimitive sObjPrimitive = sObj.GetPrimitive();
+                        CollisionPrimitive projectileObjPrimitive = projectileObj.GetPrimitive();
 
                         // Recorrer los vehículos
-                        foreach (IPhysicObject pObj in this.m_VehicleData)
+                        foreach (IPhysicObject vehicleObj in this.m_VehicleData)
                         {
                             // Si hay contactos libres
                             if (this.m_ContactData.HasFreeContacts())
                             {
-                                CollisionPrimitive pObjPrimitive = pObj.GetContactedPrimitive(sObj);
-                                if (CollisionDetector.BetweenObjects(ref pObjPrimitive, ref sObjPrimitive, ref m_ContactData))
+                                CollisionPrimitive vehicleObjPrimitive = vehicleObj.GetContactedPrimitive(projectileObj);
+                                if (CollisionDetector.BetweenObjects(ref vehicleObjPrimitive, ref projectileObjPrimitive, ref m_ContactData))
                                 {
-                                    if (sObj.GenerateExplosion)
+                                    if (projectileObj.GenerateExplosion)
                                     {
                                         // Explosión
-                                        Explosion explosion = Explosion.CreateArtilleryExplosion(sObjPrimitive.Position);
+                                        Explosion explosion = Explosion.CreateArtilleryExplosion(projectileObjPrimitive.Position);
 
                                         this.m_ExplosionData.Add(explosion);
 
@@ -396,8 +401,8 @@ namespace Physics.CollideCoarse
                                     }
 
                                     // Informar de la colisión entre la caja y la bala
-                                    pObj.Contacted(sObj);
-                                    sObj.Contacted(pObj);
+                                    vehicleObj.Contacted(projectileObj);
+                                    projectileObj.Contacted(vehicleObj);
                                 }
                             }
                             else
@@ -482,12 +487,14 @@ namespace Physics.CollideCoarse
         /// </summary>
         /// <param name="mass">Masa del proyectil</param>
         /// <param name="range">Rango de disparo</param>
+        /// <param name="damage">Daño</param>
+        /// <param name="penetration">Penetración del blindaje</param>
         /// <param name="position">Posición de origen del disparo</param>
         /// <param name="direction">Dirección del disparo</param>
         /// <param name="appliedGravity">Gravedad aplicada</param>
         /// <param name="radius">Radio</param>
         /// <param name="generateExplosion">Indica si la colisión generará una explosión</param>
-        public void Fire(float mass, float range, Vector3 position, Vector3 direction, Vector3 appliedGravity, float radius, bool generateExplosion)
+        public void Fire(float mass, float range, float damage, float penetration, Vector3 position, Vector3 direction, Vector3 appliedGravity, float radius, bool generateExplosion)
         {
             // Buscar la primera bala disponible
             for (int i = 0; i < m_ProjectileData.Count; i++)
@@ -496,7 +503,16 @@ namespace Physics.CollideCoarse
                 if (round != null && !round.IsActive())
                 {
                     // Establecer el estado inicial de la bala con el tipo de munición actual y la posición por defecto
-                    round.Fire(mass, range, position, direction, appliedGravity, radius, generateExplosion);
+                    round.Fire(
+                        mass, 
+                        range, 
+                        damage,
+                        penetration,
+                        position, 
+                        direction, 
+                        appliedGravity, 
+                        radius, 
+                        generateExplosion);
 
                     break;
                 }

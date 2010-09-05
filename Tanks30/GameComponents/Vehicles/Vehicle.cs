@@ -11,6 +11,7 @@ namespace GameComponents.Vehicles
     using GameComponents.Scenery;
     using Physics;
     using Physics.CollideCoarse;
+    using GameComponents.Weapons;
 
     /// <summary>
     /// Componente tanque
@@ -230,6 +231,10 @@ namespace GameComponents.Vehicles
             this.m_InitialMaxFlightHeight = componentInfo.MaxFlightHeight;
             this.m_InitialMinFlightHeight = componentInfo.MinFlightHeight;
 
+            // Integridad
+            this.Hull = componentInfo.Hull;
+            // Blindaje
+            this.Armor = componentInfo.Armor;
             // Velocidad máxima que puede alcanzar el tanque hacia delante
             this.MaxForwardVelocity = componentInfo.MaxForwardVelocity;
             // Velocidad máxima que puede alcanzar el tanque marcha atrás
@@ -254,6 +259,8 @@ namespace GameComponents.Vehicles
             this.m_AnimationController.AddRange(Animation.Animation.CreateAnimationList(this.Model, componentInfo.AnimationControlers));
             // Posiciones
             this.m_PlayerControlList.AddRange(Animation.PlayerPosition.CreatePlayerPositionList(this.Model, componentInfo.PlayerPositions));
+            // Armas
+            this.m_WeapontList.AddRange(Weapon.CreateWeaponList(componentInfo.Weapons));
 
             // Transformaciones iniciales
             this.m_BoneTransforms = new Matrix[this.Model.Bones.Count];
@@ -315,7 +322,14 @@ namespace GameComponents.Vehicles
 
                         SceneryEnvironment.Fog.SetFogToEffect(effect);
 
-                        SceneryEnvironment.Ambient.SetLightToEffect(effect);
+                        if (!this.Destroyed)
+                        {
+                            SceneryEnvironment.Ambient.SetLightToEffect(effect);
+                        }
+                        else
+                        {
+                            SceneryEnvironment.Ambient.SetLightToEffect(effect, 0.1f);
+                        }
                     }
 
                     mesh.Draw();

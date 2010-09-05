@@ -311,6 +311,8 @@ namespace Physics
         /// <returns>Devuelve verdadero si hay colisión, o falso en el resto de los casos</returns>
         private static bool BoxAndTriangle(CollisionBox box, Triangle tri, ref CollisionData data)
         {
+            bool intersectionExists = false;
+
             if (data.ContactsLeft <= 0)
             {
                 // Si no hay más contactos disponibles se sale de la función.
@@ -340,6 +342,8 @@ namespace Physics
                     Ray r = new Ray(vertexPos, direction);
                     if (IntersectionTests.TriAndRay(tri, r))
                     {
+                        intersectionExists = true;
+
                         // Crear la información del contacto.
 
                         // El punto de contacto está a medio camino entre el vértice y el plano.
@@ -365,7 +369,7 @@ namespace Physics
                 }
             }
 
-            return false;
+            return intersectionExists;
         }
         /// <summary>
         /// Detecta la colisión entre cajas

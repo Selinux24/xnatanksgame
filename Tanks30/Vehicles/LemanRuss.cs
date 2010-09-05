@@ -6,13 +6,14 @@ namespace Vehicles
     using Common.Helpers;
     using GameComponents.Animation;
     using GameComponents.Vehicles;
+    using GameComponents.Weapons;
 
     public partial class LemanRuss : Vehicle
     {
         #region Incialización del control de animación
 
-        AnimationAxis m_BattleCannon;
-        Animation m_BattleCannonBase;
+        AnimationAxis m_BATTLECANNON;
+        Animation m_BATTLECANNONBASE;
 
         #endregion
 
@@ -35,6 +36,15 @@ namespace Vehicles
 
         PlayerPosition m_Driver;
         PlayerPosition m_BattleCannonGunner;
+
+        #endregion
+
+        #region Armas
+
+        private Weapon m_BattleCannon = null;
+        private Weapon m_LaserCannon = null;
+        private Weapon m_LeftHeavyBolter = null;
+        private Weapon m_RightHeavyBolter = null;
 
         #endregion
 
@@ -70,8 +80,8 @@ namespace Vehicles
 
             #region Controlador de animación
 
-            m_BattleCannon = (AnimationAxis)this.GetAnimation("BattleCannon");
-            m_BattleCannonBase = (Animation)this.GetAnimation("BattleCannonBase");
+            m_BATTLECANNON = (AnimationAxis)this.GetAnimation("BattleCannon");
+            m_BATTLECANNONBASE = (Animation)this.GetAnimation("BattleCannonBase");
 
             #endregion
 
@@ -79,6 +89,15 @@ namespace Vehicles
 
             m_Driver = this.GetPlayerPosition("Driver");
             m_BattleCannonGunner = this.GetPlayerPosition("BattleCannonGunner");
+
+            #endregion
+
+            #region Armamento
+
+            this.m_BattleCannon = this.GetWeapon("BattleCannon");
+            this.m_LaserCannon = this.GetWeapon("LaserCannon");
+            this.m_LeftHeavyBolter = this.GetWeapon("LeftHeavyBolter");
+            this.m_RightHeavyBolter = this.GetWeapon("RightHeavyBolter");
 
             #endregion
 
@@ -181,6 +200,17 @@ namespace Vehicles
                     // Apuntar
                     this.AimBattleCannon(InputHelper.PitchDelta, InputHelper.YawDelta);
 
+                    //Disparar el bolter
+                    if (InputHelper.LeftMouseButtonEvent())
+                    {
+                        //Obtener la posición de la boca del cañón
+                        Matrix transform = this.CurrentPlayerControlTransform;
+                        Vector3 direction = transform.Forward;
+                        Vector3 position = transform.Translation + (transform.Forward * 5f) + (transform.Down);
+
+                        this.Fire(position, direction);
+                    }
+
                     #endregion
                 }
             }
@@ -193,8 +223,8 @@ namespace Vehicles
         /// <param name="yaw">Rotación en X</param>
         public void AimBattleCannon(float pitch, float yaw)
         {
-            this.m_BattleCannon.Rotate(pitch);
-            this.m_BattleCannonBase.Rotate(yaw);
+            this.m_BATTLECANNON.Rotate(pitch);
+            this.m_BATTLECANNONBASE.Rotate(yaw);
         }
 
         /// <summary>
@@ -206,10 +236,14 @@ namespace Vehicles
             if (position == Player.Driver)
             {
                 m_CurrentPlayerControl = m_Driver;
+
+                this.SelectWeapon(null);
             }
             if (position == Player.BattleCannonGunner)
             {
                 m_CurrentPlayerControl = m_BattleCannonGunner;
+
+                this.SelectWeapon(this.m_BattleCannon);
             }
         }
     }

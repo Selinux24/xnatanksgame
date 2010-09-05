@@ -1,8 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace GameComponents.Vehicles
 {
     using GameComponents.Weapons;
+    using Physics;
+
+    public delegate void VehicleDamagedHandler(IVehicle vehicle);
 
     /// <summary>
     /// Estado del vehículo
@@ -10,13 +14,31 @@ namespace GameComponents.Vehicles
     public partial class Vehicle
     {
         /// <summary>
+        /// Integridad original
+        /// </summary>
+        public float BaseHull = 0;
+        /// <summary>
+        /// Blindaje original
+        /// </summary>
+        public float BaseArmor = 0;
+        /// <summary>
         /// Valor de integridad
         /// </summary>
-        public int Hull = 100;
+        public float Hull = 0;
         /// <summary>
         /// Valor de blindaje
         /// </summary>
-        public int Armor = 100;
+        public float Armor = 0;
+        /// <summary>
+        /// Indica si el vehículo está ligeramente dañado
+        /// </summary>
+        public bool SlightlyDamaged
+        {
+            get
+            {
+                return this.Hull < this.BaseHull;
+            }
+        }
         /// <summary>
         /// Indica si el vehículo está dañado
         /// </summary>
@@ -24,7 +46,17 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                return this.Hull < 100;
+                return this.Hull < (this.BaseHull * 0.50f);
+            }
+        }
+        /// <summary>
+        /// Indica si el vehículo está fuertemente dañado
+        /// </summary>
+        public bool HeavyDamaged
+        {
+            get
+            {
+                return this.Hull < (this.BaseHull * 0.25f);
             }
         }
         /// <summary>
@@ -47,13 +79,11 @@ namespace GameComponents.Vehicles
                 {
                     this.Hull = 0;
                     this.Armor = 0;
-
-                    this.Destroy();
                 }
                 else
                 {
-                    this.Hull = 100;
-                    this.Armor = 100;
+                    this.Hull = this.BaseHull;
+                    this.Armor = this.BaseArmor;
                 }
             }
         }
@@ -62,15 +92,138 @@ namespace GameComponents.Vehicles
         /// Arma seleccionada
         /// </summary>
         private Weapon m_CurrentWeapon = null;
+        /// <summary>
+        /// Lista de armas
+        /// </summary>
+        private WeaponList m_WeapontList = new WeaponList();
 
         /// <summary>
-        /// Destruye el vehículo
+        /// Evento que se produce cuando se daña ligeramente el vehículo
         /// </summary>
-        protected virtual void Destroy()
+        public event VehicleDamagedHandler OnVehicleSlightlyDamaged;
+        /// <summary>
+        /// Evento que se produce cuando se daña el vehículo
+        /// </summary>
+        public event VehicleDamagedHandler OnVehicleDamaged;
+        /// <summary>
+        /// Evento que se produce cuando se daña severamente el vehículo
+        /// </summary>
+        public event VehicleDamagedHandler OnVehicleHeavyDamaged;
+        /// <summary>
+        /// Evento que se produce cuando el vehículo es destruído
+        /// </summary>
+        public event VehicleDamagedHandler OnVehicleDestroyed;
+
+        /// <summary>
+        /// Disparador del evento de vehículo ligeramente dañado
+        /// </summary>
+        protected virtual void FireOnVehicleSlightlyDamaged()
         {
-            //this.m_Velocity = 0f;
+            if (this.OnVehicleSlightlyDamaged != null)
+            {
+                this.OnVehicleSlightlyDamaged(this);
+            }
+        }
+        /// <summary>
+        /// Disparador del evento de vehículo dañado
+        /// </summary>
+        protected virtual void FireOnVehicleDamaged()
+        {
+            if (this.OnVehicleDamaged != null)
+            {
+                this.OnVehicleDamaged(this);
+            }
+        }
+        /// <summary>
+        /// Disparador del evento de vehículo fuertemente dañado
+        /// </summary>
+        protected virtual void FireOnVehicleHeavyDamaged()
+        {
+            if (this.OnVehicleHeavyDamaged != null)
+            {
+                this.OnVehicleHeavyDamaged(this);
+            }
+        }
+        /// <summary>
+        /// Disparador del evento de vehículo destruído
+        /// </summary>
+        protected virtual void FireOnVehicleDestroyed()
+        {
+            if (this.OnVehicleDestroyed != null)
+            {
+                this.OnVehicleDestroyed(this);
+            }
         }
 
+        /// <summary>
+        /// Recibir daño
+        /// </summary>
+        /// <param name="damage">Daño</param>
+        /// <param name="penetration">Penetración</param>
+        public virtual void TakeDamage(float damage, float penetration)
+        {
+            if (penetration > this.Armor)
+            {
+                //Impacto interno
+                this.Hull -= damage;
+                this.Armor -= penetration * 0.25f;
+            }
+            else
+            {
+                //Impacto externo
+                this.Hull -= damage * 0.5f;
+                this.Armor -= penetration * 0.05f;
+            }
+
+            if (this.Destroyed)
+            {
+                this.FireOnVehicleDestroyed();
+            }
+            else if(this.HeavyDamaged)
+            {
+                this.FireOnVehicleHeavyDamaged();
+            }
+            else if (this.Damaged)
+            {
+                this.FireOnVehicleDamaged();
+            }
+            else if (this.SlightlyDamaged)
+            {
+                this.FireOnVehicleSlightlyDamaged();
+            }
+        }
+        /// <summary>
+        /// Recibir daño
+        /// </summary>
+        /// <param name="round">Munición</param>
+        public virtual void TakeDamage(AmmoRound round)
+        {
+            if (round != null)
+            {
+                float penetration = round.Penetration;
+                float damage = round.Damage;
+
+                this.TakeDamage(damage, penetration);
+            }
+        }
+
+        /// <summary>
+        /// Obtiene una posición de jugador por nombre
+        /// </summary>
+        /// <param name="name">Nombre de la posición del jugador</param>
+        /// <returns>Devuelve la posición del jugador</returns>
+        public Weapon GetWeapon(string name)
+        {
+            foreach (Weapon weapon in m_WeapontList)
+            {
+                if (string.Compare(weapon.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return weapon;
+                }
+            }
+
+            return null;
+        }
         /// <summary>
         /// Selecciona el arma especificada
         /// </summary>
@@ -84,14 +237,25 @@ namespace GameComponents.Vehicles
         /// </summary>
         public void Fire()
         {
+            Vector3 direction = this.CurrentPlayerControlTransform.Forward;
+            Vector3 position = this.CurrentPlayerControlTransform.Translation + (direction * 3f);
+
+            this.Fire(position, direction);
+        }
+        /// <summary>
+        /// Dispara
+        /// </summary>
+        /// <param name="position">Posición</param>
+        /// <param name="direction">Dirección</param>
+        public void Fire(Vector3 position, Vector3 direction)
+        {
             if (this.m_CurrentWeapon != null)
             {
-                Vector3 direction = this.CurrentPlayerControlTransform.Forward;
-                Vector3 position = this.CurrentPlayerControlTransform.Translation + (direction * 3f);
-
                 this.PhysicsController.Fire(
                     this.m_CurrentWeapon.Mass,
                     this.m_CurrentWeapon.Range,
+                    this.m_CurrentWeapon.Damage,
+                    this.m_CurrentWeapon.Penetration,
                     position,
                     Vector3.Normalize(direction) * this.m_CurrentWeapon.Velocity,
                     this.m_CurrentWeapon.AppliedGravity,

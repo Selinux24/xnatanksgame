@@ -139,9 +139,11 @@
     <Compile Include="Particles\ExplosionParticleSystem.cs" />
     <Compile Include="Particles\ExplosionSmokeParticleSystem.cs" />
     <Compile Include="Particles\FireParticleSystem.cs" />
+    <Compile Include="Particles\ParticleGenerator.cs" />
     <Compile Include="Particles\ParticleManager.cs" />
     <Compile Include="Particles\ParticleSettings.cs" />
     <Compile Include="Particles\ParticleSystem.cs" />
+    <Compile Include="Particles\ParticleTypes.cs" />
     <Compile Include="Particles\ParticleVertex.cs" />
     <Compile Include="Particles\ProjectileTrailParticleSystem.cs" />
     <Compile Include="Particles\SmokePlumeParticleSystem.cs" />
@@ -176,6 +178,8 @@
     <Compile Include="Vehicles\VehicleComponentInfo.cs" />
     <Compile Include="Weapons\AmmoDrawer.cs" />
     <Compile Include="Weapons\Weapon.cs" />
+    <Compile Include="Weapons\WeaponInfo.cs" />
+    <Compile Include="Weapons\WeaponList.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
