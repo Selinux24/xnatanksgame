@@ -284,29 +284,29 @@ namespace TanksDebug
                 this.Components.Add(ball);
             }
 
-            // El tanque del jugador 1
-            this.m_Rhino_1 = new Rhino(this);
-            this.m_Rhino_1.UpdateOrder = 5;
-            this.Components.Add(this.m_Rhino_1);
-            this.Physics.RegisterVehicle(m_Rhino_1);
-
-            // El tanque del jugador 2
-            this.m_Rhino_2 = new Rhino(this);
-            this.m_Rhino_2.UpdateOrder = 5;
-            this.Components.Add(this.m_Rhino_2);
-            this.Physics.RegisterVehicle(m_Rhino_2);
-
             // Land speeder 1
-            this.m_LandSpeeder_1 = new LandSpeeder(this);
+            this.m_LandSpeeder_1 = new LandSpeeder(this, "Content/Vehicles");
             this.m_LandSpeeder_1.UpdateOrder = 5;
             this.Components.Add(this.m_LandSpeeder_1);
             this.Physics.RegisterVehicle(m_LandSpeeder_1);
 
             // Land speeder 2
-            this.m_LandSpeeder_2 = new LandSpeeder(this);
+            this.m_LandSpeeder_2 = new LandSpeeder(this, "Content/Vehicles");
             this.m_LandSpeeder_2.UpdateOrder = 5;
             this.Components.Add(this.m_LandSpeeder_2);
             this.Physics.RegisterVehicle(m_LandSpeeder_2);
+
+            // El tanque del jugador 1
+            this.m_Rhino_1 = new Rhino(this, "Content/Vehicles");
+            this.m_Rhino_1.UpdateOrder = 5;
+            this.Components.Add(this.m_Rhino_1);
+            this.Physics.RegisterVehicle(m_Rhino_1);
+
+            // El tanque del jugador 2
+            this.m_Rhino_2 = new Rhino(this, "Content/Vehicles");
+            this.m_Rhino_2.UpdateOrder = 5;
+            this.Components.Add(this.m_Rhino_2);
+            this.Physics.RegisterVehicle(m_Rhino_2);
 
             // Prueba
             this.ball1 = new BallGameComponent(this, 1f, 1f);
@@ -489,7 +489,7 @@ namespace TanksDebug
             {
                 if (InputHelper.IsKeyDown(Keys.LeftControl))
                 {
-                    this.m_Camera.Mode = CameraGameComponent.CameraModes.ThirdPerson;
+                    this.m_Camera.Mode = CameraGameComponent.CameraModes.Chase;
                 }
                 else
                 {

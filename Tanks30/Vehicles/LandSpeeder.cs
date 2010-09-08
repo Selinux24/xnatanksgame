@@ -63,10 +63,11 @@ namespace Vehicles
         /// Constructor
         /// </summary>
         /// <param name="game">Juego</param>
-        public LandSpeeder(Game game)
+        public LandSpeeder(Game game, string assetsFolder)
             : base(game)
         {
-
+            this.AssetsFolder = assetsFolder;
+            this.ComponentInfoName = "LandSpeeder.xml";
         }
 
         /// <summary>
@@ -74,8 +75,6 @@ namespace Vehicles
         /// </summary>
         protected override void LoadContent()
         {
-            this.ComponentInfoName = "LandSpeeder.xml";
-
             base.LoadContent();
 
             #region Controlador de animación

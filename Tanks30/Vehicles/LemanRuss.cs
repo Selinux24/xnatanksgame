@@ -63,10 +63,11 @@ namespace Vehicles
         /// Constructor
         /// </summary>
         /// <param name="game">Juego</param>
-        public LemanRuss(Game game)
+        public LemanRuss(Game game, string assetsFolder)
             : base(game)
         {
-
+            this.AssetsFolder = assetsFolder;
+            this.ComponentInfoName = "LemanRuss.xml";
         }
 
         /// <summary>
@@ -74,8 +75,6 @@ namespace Vehicles
         /// </summary>
         protected override void LoadContent()
         {
-            this.ComponentInfoName = "LemanRuss.xml";
-
             base.LoadContent();
 
             #region Controlador de animación
