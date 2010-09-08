@@ -16,6 +16,8 @@ namespace Vehicles
     {
         #region Incialización del control de animación
 
+        private AnimationAxis m_DRIVER_OUT; string _DRIVER_OUT = "DriverOut";
+        private AnimationAxis m_DRIVER_OUT_BASE; string _DRIVER_OUT_BASE = "DriverOutBase";
         private AnimationAxis m_BOLTER; string _BOLTER = "Bolter";
         private Animation m_BOLTER_BASE; string _BOLTER_BASE = "BolterBase";
         private AnimationAxis m_BOLTER_HATCH; string _BOLTER_HATCH = "BolterHatch";
@@ -38,11 +40,11 @@ namespace Vehicles
             /// <summary>
             /// Conductor
             /// </summary>
-            Driver,
+            DriverIn,
             /// <summary>
             /// Conductor a cubierto
             /// </summary>
-            CoveredDriver,
+            DriverOut,
             /// <summary>
             /// Bolter
             /// </summary>
@@ -53,7 +55,8 @@ namespace Vehicles
             CoveredBolter
         }
 
-        private PlayerPosition m_DRIVER_POSITION; string _DRIVER_POSITION = "Driver";
+        private PlayerPosition m_DRIVER_POSITION_IN; string _DRIVER_POSITION_IN = "DriverIn";
+        private PlayerPosition m_DRIVER_POSITION_OUT; string _DRIVER_POSITION_OUT = "DriverOut";
         private PlayerPosition m_GUNNER_POSITION; string _GUNNER_POSITION = "Gunner";
         private PlayerPosition m_GUNNER_COVERED_POSITION; string _GUNNER_COVERED_POSITION = "CoveredGunner";
 
@@ -93,10 +96,11 @@ namespace Vehicles
         /// Constructor
         /// </summary>
         /// <param name="game">Juego</param>
-        public Rhino(Game game)
+        public Rhino(Game game, string assetsFolder)
             : base(game)
         {
-
+            this.AssetsFolder = assetsFolder;
+            this.ComponentInfoName = "Rhino.xml";
         }
 
         /// <summary>
@@ -104,11 +108,12 @@ namespace Vehicles
         /// </summary>
         protected override void LoadContent()
         {
-            this.ComponentInfoName = "Rhino.xml";
-
             base.LoadContent();
 
             #region Controlador de animación
+
+            m_DRIVER_OUT = (AnimationAxis)this.GetAnimation(_DRIVER_OUT);
+            m_DRIVER_OUT_BASE = (AnimationAxis)this.GetAnimation(_DRIVER_OUT_BASE);
 
             m_BOLTER = (AnimationAxis)this.GetAnimation(_BOLTER);
             m_BOLTER_BASE = this.GetAnimation(_BOLTER_BASE);
@@ -128,7 +133,8 @@ namespace Vehicles
 
             #region Controladores de posición
 
-            m_DRIVER_POSITION = this.GetPlayerPosition(_DRIVER_POSITION);
+            m_DRIVER_POSITION_IN = this.GetPlayerPosition(_DRIVER_POSITION_IN);
+            m_DRIVER_POSITION_OUT = this.GetPlayerPosition(_DRIVER_POSITION_OUT);
             m_GUNNER_POSITION = this.GetPlayerPosition(_GUNNER_POSITION);
             m_GUNNER_COVERED_POSITION = this.GetPlayerPosition(_GUNNER_COVERED_POSITION);
 
@@ -152,7 +158,8 @@ namespace Vehicles
 
             if (this.HasFocus)
             {
-                if (this.m_CurrentPlayerControl == this.m_DRIVER_POSITION)
+                if (this.m_CurrentPlayerControl == this.m_DRIVER_POSITION_IN ||
+                    this.m_CurrentPlayerControl == this.m_DRIVER_POSITION_OUT)
                 {
                     bool driving = false;
 
@@ -249,6 +256,16 @@ namespace Vehicles
                     }
 
                     #endregion
+
+                    if (this.m_CurrentPlayerControl == this.m_DRIVER_POSITION_OUT)
+                    {
+                        #region Conductor
+
+                        // Dirigir la vista
+                        this.DriverLook(InputHelper.PitchDelta, InputHelper.YawDelta);
+
+                        #endregion
+                    }
                 }
                 else if (this.m_CurrentPlayerControl == this.m_GUNNER_POSITION)
                 {
@@ -361,6 +378,17 @@ namespace Vehicles
         }
 
         /// <summary>
+        /// Dirigir la vista del conductor
+        /// </summary>
+        /// <param name="pitch">Rotación en Y</param>
+        /// <param name="yaw">Rotación en X</param>
+        public void DriverLook(float pitch, float yaw)
+        {
+            this.m_DRIVER_OUT.Rotate(pitch);
+            this.m_DRIVER_OUT_BASE.Rotate(yaw);
+        }
+
+        /// <summary>
         /// Apuntar el bolter
         /// </summary>
         /// <param name="pitch">Rotación en Y</param>
@@ -469,15 +497,15 @@ namespace Vehicles
         /// <param name="position">Posición</param>
         internal void SetPlayerPosition(Player position)
         {
-            if (position == Player.Driver)
+            if (position == Player.DriverIn)
             {
-                this.m_CurrentPlayerControl = this.m_DRIVER_POSITION;
+                this.m_CurrentPlayerControl = this.m_DRIVER_POSITION_IN;
 
                 this.SelectWeapon(null);
             }
-            else if (position == Player.CoveredDriver)
+            else if (position == Player.DriverOut)
             {
-                this.m_CurrentPlayerControl = this.m_DRIVER_POSITION;
+                this.m_CurrentPlayerControl = this.m_DRIVER_POSITION_OUT;
 
                 this.SelectWeapon(null);
             }

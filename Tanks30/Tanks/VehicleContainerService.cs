@@ -66,19 +66,19 @@ namespace Tanks.Services
 
             if (type == VehicleTypes.Rhino)
             {
-                newVehicle = new Rhino(this.Game);
+                newVehicle = new Rhino(this.Game, "Content");
             }
             else if (type == VehicleTypes.LandRaider)
             {
-                newVehicle = new LandRaider(this.Game);
+                newVehicle = new LandRaider(this.Game, "Content");
             }
             else if (type == VehicleTypes.LandSpeeder)
             {
-                newVehicle = new LandSpeeder(this.Game);
+                newVehicle = new LandSpeeder(this.Game, "Content");
             }
             else if (type == VehicleTypes.LemanRuss)
             {
-                newVehicle = new LemanRuss(this.Game);
+                newVehicle = new LemanRuss(this.Game, "Content");
             }
 
             if (newVehicle != null)

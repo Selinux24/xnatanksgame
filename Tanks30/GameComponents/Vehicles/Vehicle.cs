@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,9 +10,9 @@ namespace GameComponents.Vehicles
     using Common.Helpers;
     using GameComponents.Geometry;
     using GameComponents.Scenery;
+    using GameComponents.Weapons;
     using Physics;
     using Physics.CollideCoarse;
-    using GameComponents.Weapons;
 
     /// <summary>
     /// Componente tanque
@@ -23,6 +24,10 @@ namespace GameComponents.Vehicles
         /// </summary>
         private static Dictionary<string, GeometryInfo> g_ModelDictionary = new Dictionary<string, GeometryInfo>();
 
+        /// <summary>
+        /// Directorio de los componentes
+        /// </summary>
+        protected string AssetsFolder;
         /// <summary>
         /// Nombre del componente
         /// </summary>
@@ -206,14 +211,14 @@ namespace GameComponents.Vehicles
             base.LoadContent();
 
             // Información del componente
-            VehicleComponentInfo componentInfo = VehicleComponentInfo.Load("Content/" + this.ComponentInfoName);
+            VehicleComponentInfo componentInfo = VehicleComponentInfo.Load(Path.Combine(this.AssetsFolder, this.ComponentInfoName));
 
             // Modelo
             this.m_ModelName = componentInfo.Model;
 
             if (!g_ModelDictionary.ContainsKey(componentInfo.Model))
             {
-                Model model = Content.Load<Model>("Content/" + this.m_ModelName);
+                Model model = Content.Load<Model>(Path.Combine(this.AssetsFolder, this.m_ModelName));
                 PrimitiveInfo primitives = model.Tag as PrimitiveInfo;
 
                 GeometryInfo geometry = new GeometryInfo()

@@ -36,7 +36,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Rhino.fbx">
+    <Compile Include="Vehicles\Rhino.fbx">
       <Name>Rhino</Name>
       <Importer>FbxImporter</Importer>
       <Processor>PrimitiveInfoProcessor</Processor>
@@ -82,7 +82,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LandSpeeder.fbx">
+    <Compile Include="Vehicles\LandSpeeder.fbx">
       <Name>LandSpeeder</Name>
       <Importer>FbxImporter</Importer>
       <Processor>PrimitiveInfoProcessor</Processor>
@@ -95,7 +95,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LandSpeeder.xml">
+    <None Include="Vehicles\LandSpeeder.xml">
       <Name>LandSpeeder</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
@@ -108,7 +108,7 @@
       <Importer>XImporter</Importer>
       <Processor>PrimitiveInfoProcessor</Processor>
     </Compile>
-    <None Include="Rhino.xml">
+    <None Include="Vehicles\Rhino.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>Rhino</Name>
       <Importer>XmlImporter</Importer>
