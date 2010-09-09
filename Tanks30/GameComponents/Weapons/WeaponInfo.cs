@@ -11,6 +11,10 @@ namespace GameComponents.Weapons
         /// </summary>
         public string Name;
         /// <summary>
+        /// Nombre del nodo desde el que salen los proyectiles
+        /// </summary>
+        public string BoneName;
+        /// <summary>
         /// Masa del proyectil
         /// </summary>
         public float Mass;

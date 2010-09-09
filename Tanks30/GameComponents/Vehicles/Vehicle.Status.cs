@@ -237,10 +237,24 @@ namespace GameComponents.Vehicles
         /// </summary>
         public void Fire()
         {
-            Vector3 direction = this.CurrentPlayerControlTransform.Forward;
-            Vector3 position = this.CurrentPlayerControlTransform.Translation + (direction * 3f);
+            //Obtener el arma actual
+            if (this.m_CurrentWeapon != null)
+            {
+                // Calcular la transformación global compuesta por la transformación adicional, la transformación del bone y la transformación del modelo
+                Matrix transform = this.m_CurrentWeapon.GetModelMatrix(this.m_AnimationController, this.CurrentTransform);
 
-            this.Fire(position, direction);
+                Vector3 direction = transform.Forward;
+                Vector3 position = transform.Translation + (direction);
+
+                this.Fire(position, direction);
+            }
+            else
+            {
+                Vector3 direction = this.CurrentPlayerControlTransform.Forward;
+                Vector3 position = this.CurrentPlayerControlTransform.Translation + (direction * 3f);
+
+                this.Fire(position, direction);
+            }
         }
         /// <summary>
         /// Dispara

@@ -6,6 +6,8 @@ namespace GameComponents.Vehicles
 {
     using GameComponents.Animation;
 
+    public delegate void PlayerControlChangedHandler(PlayerPosition position);
+
     /// <summary>
     /// Información de animación de un vehículo
     /// </summary>
@@ -27,7 +29,23 @@ namespace GameComponents.Vehicles
         /// Posición actual del jugador en el modelo
         /// </summary>
         protected PlayerPosition m_CurrentPlayerControl = null;
-        
+
+        /// <summary>
+        /// Evento que se produce cuando se cambia la posición del jugador
+        /// </summary>
+        public event PlayerControlChangedHandler OnPlayerControlChanged;
+        /// <summary>
+        /// Disparador del evento de posición de jugador cambiada
+        /// </summary>
+        /// <param name="position">Posición</param>
+        protected virtual void PlayerControlChanged(PlayerPosition position)
+        {
+            if (OnPlayerControlChanged != null)
+            {
+                OnPlayerControlChanged(position);
+            }
+        }
+   
         /// <summary>
         /// Obtiene un controlador de animación específico por nombre
         /// </summary>
@@ -50,7 +68,7 @@ namespace GameComponents.Vehicles
         /// </summary>
         /// <param name="name">Nombre de la posición del jugador</param>
         /// <returns>Devuelve la posición del jugador</returns>
-        public PlayerPosition GetPlayerPosition(string name)
+        public PlayerPosition GetPlayerControl(string name)
         {
             foreach (PlayerPosition playerPosition in m_PlayerControlList)
             {
@@ -62,20 +80,29 @@ namespace GameComponents.Vehicles
 
             return null;
         }
+        /// <summary>
+        /// Establece la posición del jugador
+        /// </summary>
+        /// <param name="position">Nueva posición</param>
+        public void SetPlaterControl(PlayerPosition position)
+        {
+            m_CurrentPlayerControl = position;
 
+            this.PlayerControlChanged(position);
+        }
         /// <summary>
         /// Establecer el siguiente controlador de jugador
         /// </summary>
-        public void SetNextPlayerPosition()
+        public void SetNextPlayerControl()
         {
-            int index = m_PlayerControlList.IndexOf(m_CurrentPlayerControl);
-            if (index == m_PlayerControlList.Count - 1)
+            int index = this.m_PlayerControlList.IndexOf(this.m_CurrentPlayerControl);
+            if (index == this.m_PlayerControlList.Count - 1)
             {
-                m_CurrentPlayerControl = m_PlayerControlList[0];
+                this.SetPlaterControl(this.m_PlayerControlList[0]);
             }
             else
             {
-                m_CurrentPlayerControl = m_PlayerControlList[index + 1];
+                this.SetPlaterControl(this.m_PlayerControlList[index + 1]);
             }
         }
         /// <summary>
@@ -83,14 +110,14 @@ namespace GameComponents.Vehicles
         /// </summary>
         public void SetPreviousPlayerControl()
         {
-            int index = m_PlayerControlList.IndexOf(m_CurrentPlayerControl);
+            int index = m_PlayerControlList.IndexOf(this.m_CurrentPlayerControl);
             if (index == 0)
             {
-                m_CurrentPlayerControl = m_PlayerControlList[m_PlayerControlList.Count - 1];
+                this.SetPlaterControl(this.m_PlayerControlList[this.m_PlayerControlList.Count - 1]);
             }
             else
             {
-                m_CurrentPlayerControl = m_PlayerControlList[index - 1];
+                this.SetPlaterControl(this.m_PlayerControlList[index - 1]);
             }
         }
     }

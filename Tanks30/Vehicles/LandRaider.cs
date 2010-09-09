@@ -106,13 +106,13 @@ namespace Vehicles
 
             #region Controladores de posición
 
-            m_Driver = this.GetPlayerPosition("Driver");
-            m_CoveredDriver = this.GetPlayerPosition("CoveredDriver");
-            m_Gunner = this.GetPlayerPosition("Gunner");
-            m_LeftGunner = this.GetPlayerPosition("LeftGunner");
-            m_RightGunner = this.GetPlayerPosition("RightGunner");
-            m_Commander = this.GetPlayerPosition("Commander");
-            m_CoveredCommander = this.GetPlayerPosition("CoveredCommander");
+            m_Driver = this.GetPlayerControl("Driver");
+            m_CoveredDriver = this.GetPlayerControl("CoveredDriver");
+            m_Gunner = this.GetPlayerControl("Gunner");
+            m_LeftGunner = this.GetPlayerControl("LeftGunner");
+            m_RightGunner = this.GetPlayerControl("RightGunner");
+            m_Commander = this.GetPlayerControl("Commander");
+            m_CoveredCommander = this.GetPlayerControl("CoveredCommander");
 
             #endregion
 

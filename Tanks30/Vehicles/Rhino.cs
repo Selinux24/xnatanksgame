@@ -32,29 +32,6 @@ namespace Vehicles
 
         #region Posiciones del jugador
 
-        /// <summary>
-        /// Posiciones posibles del jugador en el modelo
-        /// </summary>
-        public enum Player
-        {
-            /// <summary>
-            /// Conductor
-            /// </summary>
-            DriverIn,
-            /// <summary>
-            /// Conductor a cubierto
-            /// </summary>
-            DriverOut,
-            /// <summary>
-            /// Bolter
-            /// </summary>
-            Bolter,
-            /// <summary>
-            /// Bolter a cubierto
-            /// </summary>
-            CoveredBolter
-        }
-
         private PlayerPosition m_DRIVER_POSITION_IN; string _DRIVER_POSITION_IN = "DriverIn";
         private PlayerPosition m_DRIVER_POSITION_OUT; string _DRIVER_POSITION_OUT = "DriverOut";
         private PlayerPosition m_GUNNER_POSITION; string _GUNNER_POSITION = "Gunner";
@@ -133,10 +110,10 @@ namespace Vehicles
 
             #region Controladores de posición
 
-            m_DRIVER_POSITION_IN = this.GetPlayerPosition(_DRIVER_POSITION_IN);
-            m_DRIVER_POSITION_OUT = this.GetPlayerPosition(_DRIVER_POSITION_OUT);
-            m_GUNNER_POSITION = this.GetPlayerPosition(_GUNNER_POSITION);
-            m_GUNNER_COVERED_POSITION = this.GetPlayerPosition(_GUNNER_COVERED_POSITION);
+            m_DRIVER_POSITION_IN = this.GetPlayerControl(_DRIVER_POSITION_IN);
+            m_DRIVER_POSITION_OUT = this.GetPlayerControl(_DRIVER_POSITION_OUT);
+            m_GUNNER_POSITION = this.GetPlayerControl(_GUNNER_POSITION);
+            m_GUNNER_COVERED_POSITION = this.GetPlayerControl(_GUNNER_COVERED_POSITION);
 
             #endregion
 
@@ -146,7 +123,7 @@ namespace Vehicles
 
             #endregion
 
-            this.SetPlayerPosition(Player.Bolter);
+            this.SetPlaterControl(this.m_DRIVER_POSITION_OUT);
         }
         /// <summary>
         /// Actualiza el estado del componente
@@ -492,32 +469,34 @@ namespace Vehicles
         }
 
         /// <summary>
-        /// Establece la posición del jugador
+        /// La posición del jugador ha cambiado
         /// </summary>
-        /// <param name="position">Posición</param>
-        internal void SetPlayerPosition(Player position)
+        /// <param name="position">Nueva posición</param>
+        protected override void PlayerControlChanged(PlayerPosition position)
         {
-            if (position == Player.DriverIn)
+            base.PlayerControlChanged(position);
+
+            if (position == this.m_DRIVER_POSITION_IN)
             {
-                this.m_CurrentPlayerControl = this.m_DRIVER_POSITION_IN;
+                this.CloseDriverHatch();
 
                 this.SelectWeapon(null);
             }
-            else if (position == Player.DriverOut)
+            else if (position == this.m_DRIVER_POSITION_OUT)
             {
-                this.m_CurrentPlayerControl = this.m_DRIVER_POSITION_OUT;
+                this.OpenDriverHatch();
 
                 this.SelectWeapon(null);
             }
-            else if (position == Player.Bolter)
+            else if (position == this.m_GUNNER_POSITION)
             {
-                this.m_CurrentPlayerControl = this.m_GUNNER_POSITION;
+                this.OpenBolterHatch();
 
                 this.SelectWeapon(this.m_AssaultBolter);
             }
-            else if (position == Player.CoveredBolter)
+            else if (position == this.m_GUNNER_COVERED_POSITION)
             {
-                this.m_CurrentPlayerControl = this.m_GUNNER_COVERED_POSITION;
+                this.CloseBolterHatch();
 
                 this.SelectWeapon(this.m_AssaultBolter);
             }

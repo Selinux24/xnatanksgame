@@ -12,39 +12,27 @@ namespace Vehicles
     {
         #region Incialización del control de animación
 
-        AnimationAxis m_BATTLECANNON;
-        Animation m_BATTLECANNONBASE;
+        AnimationAxis m_BATTLECANNON; string _BATTLECANNON = "BattleCannon";
+        Animation m_BATTLECANNONBASE; string _BATTLECANNONBASE = "BattleCannonBase";
 
         #endregion
 
         #region Posiciones del jugador
 
-        /// <summary>
-        /// Posiciones posibles del jugador en el modelo
-        /// </summary>
-        public enum Player
-        {
-            /// <summary>
-            /// Conductor
-            /// </summary>
-            Driver,
-            /// <summary>
-            /// Artillero principal
-            /// </summary>
-            BattleCannonGunner,
-        }
-
-        PlayerPosition m_Driver;
-        PlayerPosition m_BattleCannonGunner;
+        PlayerPosition m_DRIVER; string _DRIVER = "Driver";
+        PlayerPosition m_BATTLECANNONGUNNER; string _BATTLECANNONGUNNER = "BattleCannonGunner";
+        PlayerPosition m_LASERCANNONGUNNER; string _LASERCANNONGUNNER = "LaserCannonGunner";
+        PlayerPosition m_LEFTBOLTERGUNNER; string _LEFTBOLTERGUNNER = "LeftBolterGunner";
+        PlayerPosition m_RIGHTBOLTERGUNNER; string _RIGHTBOLTERGUNNER = "RightBolterGunner";
 
         #endregion
 
         #region Armas
 
-        private Weapon m_BattleCannon = null;
-        private Weapon m_LaserCannon = null;
-        private Weapon m_LeftHeavyBolter = null;
-        private Weapon m_RightHeavyBolter = null;
+        private Weapon m_BattleCannon = null; string _BattleCannon = "BattleCannon";
+        private Weapon m_LaserCannon = null; string _LaserCannon = "LaserCannon";
+        private Weapon m_LeftHeavyBolter = null; string _LeftHeavyBolter = "LeftHeavyBolter";
+        private Weapon m_RightHeavyBolter = null; string _RightHeavyBolter = "RightHeavyBolter";
 
         #endregion
 
@@ -79,28 +67,31 @@ namespace Vehicles
 
             #region Controlador de animación
 
-            m_BATTLECANNON = (AnimationAxis)this.GetAnimation("BattleCannon");
-            m_BATTLECANNONBASE = (Animation)this.GetAnimation("BattleCannonBase");
+            m_BATTLECANNON = (AnimationAxis)this.GetAnimation(_BATTLECANNON);
+            m_BATTLECANNONBASE = (Animation)this.GetAnimation(_BATTLECANNONBASE);
 
             #endregion
 
             #region Controladores de posición
 
-            m_Driver = this.GetPlayerPosition("Driver");
-            m_BattleCannonGunner = this.GetPlayerPosition("BattleCannonGunner");
+            m_DRIVER = this.GetPlayerControl(_DRIVER);
+            m_BATTLECANNONGUNNER = this.GetPlayerControl(_BATTLECANNONGUNNER);
+            m_LASERCANNONGUNNER = this.GetPlayerControl(_LASERCANNONGUNNER);
+            m_LEFTBOLTERGUNNER = this.GetPlayerControl(_LEFTBOLTERGUNNER);
+            m_RIGHTBOLTERGUNNER = this.GetPlayerControl(_RIGHTBOLTERGUNNER);
 
             #endregion
 
             #region Armamento
 
-            this.m_BattleCannon = this.GetWeapon("BattleCannon");
-            this.m_LaserCannon = this.GetWeapon("LaserCannon");
-            this.m_LeftHeavyBolter = this.GetWeapon("LeftHeavyBolter");
-            this.m_RightHeavyBolter = this.GetWeapon("RightHeavyBolter");
+            this.m_BattleCannon = this.GetWeapon(_BattleCannon);
+            this.m_LaserCannon = this.GetWeapon(_LaserCannon);
+            this.m_LeftHeavyBolter = this.GetWeapon(_LeftHeavyBolter);
+            this.m_RightHeavyBolter = this.GetWeapon(_RightHeavyBolter);
 
             #endregion
 
-            this.SetPlayerPosition(Player.BattleCannonGunner);
+            this.SetPlaterControl(this.m_BATTLECANNONGUNNER);
         }
         /// <summary>
         /// Actualiza el estado del componente
@@ -112,7 +103,7 @@ namespace Vehicles
 
             if (this.HasFocus)
             {
-                if (m_CurrentPlayerControl == m_Driver)
+                if (m_CurrentPlayerControl == m_DRIVER)
                 {
                     bool driving = false;
 
@@ -192,7 +183,7 @@ namespace Vehicles
 
                     #endregion
                 }
-                if (m_CurrentPlayerControl == m_BattleCannonGunner)
+                if (m_CurrentPlayerControl == m_BATTLECANNONGUNNER)
                 {
                     #region BattleCannonGunner
 
@@ -202,12 +193,52 @@ namespace Vehicles
                     //Disparar el bolter
                     if (InputHelper.LeftMouseButtonEvent())
                     {
-                        //Obtener la posición de la boca del cañón
-                        Matrix transform = this.CurrentPlayerControlTransform;
-                        Vector3 direction = transform.Forward;
-                        Vector3 position = transform.Translation + (transform.Forward * 5f) + (transform.Down);
+                        this.Fire();
+                    }
 
-                        this.Fire(position, direction);
+                    #endregion
+                }
+                if (m_CurrentPlayerControl == m_LASERCANNONGUNNER)
+                {
+                    #region LaserCannonGunner
+
+                    // Apuntar
+                    this.AimLaserCannon(InputHelper.PitchDelta, InputHelper.YawDelta);
+
+                    //Disparar el bolter
+                    if (InputHelper.LeftMouseButtonEvent())
+                    {
+                        this.Fire();
+                    }
+
+                    #endregion
+                }
+                if (m_CurrentPlayerControl == m_LEFTBOLTERGUNNER)
+                {
+                    #region LeftBolter
+
+                    // Apuntar
+                    this.AimLeftBolter(InputHelper.PitchDelta, InputHelper.YawDelta);
+
+                    //Disparar el bolter
+                    if (InputHelper.LeftMouseButtonEvent())
+                    {
+                        this.Fire();
+                    }
+
+                    #endregion
+                }
+                if (m_CurrentPlayerControl == m_RIGHTBOLTERGUNNER)
+                {
+                    #region RightBolter
+
+                    // Apuntar
+                    this.AimRightBolter(InputHelper.PitchDelta, InputHelper.YawDelta);
+
+                    //Disparar el bolter
+                    if (InputHelper.LeftMouseButtonEvent())
+                    {
+                        this.Fire();
                     }
 
                     #endregion
@@ -226,23 +257,48 @@ namespace Vehicles
             this.m_BATTLECANNONBASE.Rotate(yaw);
         }
 
-        /// <summary>
-        /// Establece la posición del jugador
-        /// </summary>
-        /// <param name="position">Posición</param>
-        internal void SetPlayerPosition(Player position)
+        public void AimLaserCannon(float pitch, float yaw)
         {
-            if (position == Player.Driver)
-            {
-                m_CurrentPlayerControl = m_Driver;
+            
+        }
 
+        public void AimLeftBolter(float pitch, float yaw)
+        {
+
+        }
+
+        public void AimRightBolter(float pitch, float yaw)
+        {
+
+        }
+
+        /// <summary>
+        /// La posición del jugador ha cambiado
+        /// </summary>
+        /// <param name="position">Nueva posición</param>
+        protected override void PlayerControlChanged(PlayerPosition position)
+        {
+            base.PlayerControlChanged(position);
+
+            if (position == this.m_DRIVER)
+            {
                 this.SelectWeapon(null);
             }
-            if (position == Player.BattleCannonGunner)
+            else if (position == this.m_BATTLECANNONGUNNER)
             {
-                m_CurrentPlayerControl = m_BattleCannonGunner;
-
                 this.SelectWeapon(this.m_BattleCannon);
+            }
+            else if (position == this.m_LASERCANNONGUNNER)
+            {
+                this.SelectWeapon(this.m_LaserCannon);
+            }
+            else if (position == this.m_LEFTBOLTERGUNNER)
+            {
+                this.SelectWeapon(this.m_LeftHeavyBolter);
+            }
+            else if (position == this.m_RIGHTBOLTERGUNNER)
+            {
+                this.SelectWeapon(this.m_RightHeavyBolter);
             }
         }
     }

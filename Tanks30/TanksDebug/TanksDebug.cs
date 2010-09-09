@@ -111,6 +111,10 @@ namespace TanksDebug
         /// Land speeder 2
         /// </summary>
         private LandSpeeder m_LandSpeeder_2 = null;
+        /// <summary>
+        /// Tanque Leman Russ
+        /// </summary>
+        private LemanRuss m_LemanRuss = null;
 
         /// <summary>
         /// Vehículo actual
@@ -284,6 +288,12 @@ namespace TanksDebug
                 this.Components.Add(ball);
             }
 
+            // Leman Russ
+            this.m_LemanRuss = new LemanRuss(this, "Content/Vehicles");
+            this.m_LemanRuss.UpdateOrder = 5;
+            this.Components.Add(this.m_LemanRuss);
+            this.Physics.RegisterVehicle(m_LemanRuss);
+
             // Land speeder 1
             this.m_LandSpeeder_1 = new LandSpeeder(this, "Content/Vehicles");
             this.m_LandSpeeder_1.UpdateOrder = 5;
@@ -402,7 +412,7 @@ namespace TanksDebug
             this.GraphicsDevice.RenderState.FogDensity = 0.25f;
             this.GraphicsDevice.RenderState.FogEnable = true;
 
-            this.m_Text.WriteText("Contactos en uso: " + this.Physics.UsedContacts.ToString(), 5, 5, Color.Red);
+            this.m_Text.WriteText("Contactos en uso: " + this.Physics.UsedContacts.ToString(), 5, 5, Color.Yellow);
 
             base.Draw(gameTime);
         }
@@ -435,6 +445,9 @@ namespace TanksDebug
 
             // Land Speeder 2
             m_LandSpeeder_2.SetInitialState(new Vector3(10, 60f, -10) + GlobalTraslation, Quaternion.Identity);
+
+            // Leman Russ
+            m_LemanRuss.SetInitialState(new Vector3(tankArea, 20f, -tankArea) + GlobalTraslation, Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(125f)));
 
             float objectArea = _TerrainSize * 0.8f * 0.5f;
             Random rnd = new Random(DateTime.Now.Millisecond);
@@ -519,12 +532,16 @@ namespace TanksDebug
             {
                 this.SetFocus(this.m_LandSpeeder_2);
             }
+            else if (InputHelper.KeyUpEvent(Keys.D5))
+            {
+                this.SetFocus(this.m_LemanRuss);
+            }
 
             if (InputHelper.KeyUpEvent(Keys.Tab))
             {
                 if (this.m_CurrentVehicle != null)
                 {
-                    this.m_CurrentVehicle.SetNextPlayerPosition();
+                    this.m_CurrentVehicle.SetNextPlayerControl();
                 }
             }
         }
