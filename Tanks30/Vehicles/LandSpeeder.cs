@@ -13,36 +13,23 @@ namespace Vehicles
     {
         #region Incialización del control de animación
 
-        private AnimationAxis m_GunnerFusionCannon;
-        private AnimationAxis m_GunnerFusionCannonBase;
+        private AnimationAxis m_PILOT_HEAD; string _PILOT_HEAD = "PilotHead";
+        private AnimationAxis m_PILOT_NECK; string _PILOT_NECK = "PilotNeck";
+        private AnimationAxis m_FUSION_CANNON; string _FUSION_CANNON = "FusionCannon";
+        private AnimationAxis m_FUSION_CANNON_BASE; string _FUSION_CANNON_BASE = "FusionCannonBase";
 
         #endregion
 
         #region Posiciones del jugador
 
-        /// <summary>
-        /// Posiciones posibles del jugador en el modelo
-        /// </summary>
-        public enum Player
-        {
-            /// <summary>
-            /// Conductor
-            /// </summary>
-            Driver,
-            /// <summary>
-            /// Artillero principal
-            /// </summary>
-            Gunner,
-        }
-
-        private PlayerPosition m_Driver;
-        private PlayerPosition m_Gunner;
+        private PlayerPosition m_PILOT; string _PILOT = "Pilot";
+        private PlayerPosition m_GUNNER; string _GUNNER = "Gunner";
 
         #endregion
 
         #region Armas
 
-        private Weapon m_FussionCannon = null;
+        private Weapon m_FussionCannon = null; string _FussionCannon = "FusionCannon";
 
         #endregion
 
@@ -79,25 +66,27 @@ namespace Vehicles
 
             #region Controlador de animación
 
-            m_GunnerFusionCannon = (AnimationAxis)this.GetAnimation("FusionCannon");
-            m_GunnerFusionCannonBase = (AnimationAxis)this.GetAnimation("FusionCannonBase");
+            m_PILOT_HEAD = (AnimationAxis)this.GetAnimation(_PILOT_HEAD);
+            m_PILOT_NECK = (AnimationAxis)this.GetAnimation(_PILOT_NECK);
+            m_FUSION_CANNON = (AnimationAxis)this.GetAnimation(_FUSION_CANNON);
+            m_FUSION_CANNON_BASE = (AnimationAxis)this.GetAnimation(_FUSION_CANNON_BASE);
 
             #endregion
 
             #region Controladores de posición
 
-            m_Driver = this.GetPlayerPosition("Driver");
-            m_Gunner = this.GetPlayerPosition("Gunner");
+            m_PILOT = this.GetPlayerControl(_PILOT);
+            m_GUNNER = this.GetPlayerControl(_GUNNER);
 
             #endregion
 
             #region Armamento
 
-            this.m_FussionCannon = this.GetWeapon("FusionCannon");
+            this.m_FussionCannon = this.GetWeapon(_FussionCannon);
 
             #endregion
 
-            this.SetPlayerPosition(Player.Gunner);
+            this.SetPlaterControl(this.m_PILOT);
         }
         /// <summary>
         /// Actualiza el estado del componente
@@ -109,9 +98,16 @@ namespace Vehicles
 
             if (this.HasFocus)
             {
-                if (m_CurrentPlayerControl == m_Driver)
+                if (m_CurrentPlayerControl == m_PILOT)
                 {
                     bool driving = false;
+
+                    #region Look
+
+                    // Vista del piloto
+                    this.DriverLook(InputHelper.PitchDelta, InputHelper.YawDelta);
+
+                    #endregion
 
                     #region Moving
 
@@ -201,7 +197,7 @@ namespace Vehicles
 
                     #endregion
                 }
-                if (m_CurrentPlayerControl == m_Gunner)
+                if (m_CurrentPlayerControl == m_GUNNER)
                 {
                     #region Fusion Cannon
 
@@ -219,32 +215,40 @@ namespace Vehicles
         }
 
         /// <summary>
+        /// Dirigir la vista del conductor
+        /// </summary>
+        /// <param name="pitch">Rotación en Y</param>
+        /// <param name="yaw">Rotación en X</param>
+        public void DriverLook(float pitch, float yaw)
+        {
+            this.m_PILOT_HEAD.Rotate(pitch);
+            this.m_PILOT_NECK.Rotate(yaw);
+        }
+        /// <summary>
         /// Apuntar el bolter pesado
         /// </summary>
         /// <param name="pitch">Rotación en Y</param>
         /// <param name="yaw">Rotación en X</param>
         public void AimFusionCannon(float pitch, float yaw)
         {
-            this.m_GunnerFusionCannon.Rotate(pitch);
-            this.m_GunnerFusionCannonBase.Rotate(yaw);
+            this.m_FUSION_CANNON.Rotate(pitch);
+            this.m_FUSION_CANNON_BASE.Rotate(yaw);
         }
 
         /// <summary>
-        /// Establece la posición del jugador
+        /// La posición del jugador ha cambiado
         /// </summary>
-        /// <param name="position">Posición</param>
-        internal void SetPlayerPosition(Player position)
+        /// <param name="position">Nueva posición</param>
+        protected override void PlayerControlChanged(PlayerPosition position)
         {
-            if (position == Player.Driver)
-            {
-                this.m_CurrentPlayerControl = this.m_Driver;
+            base.PlayerControlChanged(position);
 
+            if (position == this.m_PILOT)
+            {
                 this.SelectWeapon(null);
             }
-            if (position == Player.Gunner)
+            else if (position == this.m_GUNNER)
             {
-                this.m_CurrentPlayerControl = this.m_Gunner;
-
                 this.SelectWeapon(this.m_FussionCannon);
             }
         }

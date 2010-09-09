@@ -265,7 +265,7 @@ namespace GameComponents.Vehicles
             // Posiciones
             this.m_PlayerControlList.AddRange(Animation.PlayerPosition.CreatePlayerPositionList(this.Model, componentInfo.PlayerPositions));
             // Armas
-            this.m_WeapontList.AddRange(Weapon.CreateWeaponList(componentInfo.Weapons));
+            this.m_WeapontList.AddRange(Weapon.CreateWeaponList(this.Model, componentInfo.Weapons));
 
             // Transformaciones iniciales
             this.m_BoneTransforms = new Matrix[this.Model.Bones.Count];

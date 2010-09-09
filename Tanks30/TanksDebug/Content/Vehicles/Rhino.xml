@@ -11,6 +11,7 @@
   <Weapons>
     <WeaponInfo>
       <Name>AssaultBolter</Name>
+      <BoneName>HULL_BODY_BOLTER_FIRE</BoneName>      
       <Mass>1</Mass>
       <Range>60</Range>
       <Velocity>50</Velocity>

@@ -666,7 +666,7 @@ namespace Tanks
 
             if (InputHelper.KeyUpEvent(this.m_NextVehiclePositionKey))
             {
-                this.m_CurrentVehicle.SetNextPlayerPosition();
+                this.m_CurrentVehicle.SetNextPlayerControl();
             }
 
             //foreach (Vehicle vehicle in this.m_VehicleContainer.Vehicles)

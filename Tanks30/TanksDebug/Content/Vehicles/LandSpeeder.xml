@@ -16,6 +16,7 @@
   <Weapons>
     <WeaponInfo>
       <Name>FusionCannon</Name>
+      <BoneName>FUSION_CANNON_FIRE</BoneName>
       <Mass>5</Mass>
       <Range>180</Range>
       <Velocity>50</Velocity>
@@ -31,6 +32,32 @@
     </WeaponInfo>
   </Weapons>
   <AnimationControlers>
+    <AnimationInfo>
+      <Name>PilotHead</Name>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
+      <BoneName>PILOT_HEAD</BoneName>
+      <Axis>
+        <X>1</X>
+        <Y>0</Y>
+        <Z>0</Z>
+      </Axis>
+      <AngleFrom>-25</AngleFrom>
+      <AngleTo>50</AngleTo>
+      <Velocity>2</Velocity>
+    </AnimationInfo>
+    <AnimationInfo>
+      <Name>PilotNeck</Name>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
+      <BoneName>PILOT_NECK</BoneName>
+      <Axis>
+        <X>0</X>
+        <Y>1</Y>
+        <Z>0</Z>
+      </Axis>
+      <AngleFrom>-65</AngleFrom>
+      <AngleTo>65</AngleTo>
+      <Velocity>2</Velocity>
+    </AnimationInfo>
     <AnimationInfo>
       <Name>FusionCannon</Name>
       <Type>GameComponents.Animation.AnimationAxis</Type>
@@ -54,18 +81,18 @@
         <Z>0</Z>
       </Axis>
       <AngleFrom>-15</AngleFrom>
-      <AngleTo>45</AngleTo>
+      <AngleTo>75</AngleTo>
       <Velocity>0.03</Velocity>
       <Inverse>true</Inverse>
     </AnimationInfo>
   </AnimationControlers>
   <PlayerPositions>
     <PlayerPositionInfo>
-      <Name>Driver</Name>
-      <BoneName>PILOT_HEAD</BoneName>
+      <Name>Pilot</Name>
+      <BoneName>PILOT_EYES</BoneName>
       <Translation>
         <X>0.0</X>
-        <Y>0.1</Y>
+        <Y>0.0</Y>
         <Z>0.0</Z>
       </Translation>
     </PlayerPositionInfo>
