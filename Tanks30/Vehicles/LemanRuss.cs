@@ -14,6 +14,8 @@ namespace Vehicles
 
         AnimationAxis m_BATTLECANNON; string _BATTLECANNON = "BattleCannon";
         Animation m_BATTLECANNONBASE; string _BATTLECANNONBASE = "BattleCannonBase";
+        AnimationAxis m_HULL_CANNON; string _HULL_CANNON = "LaserCannon";
+        Animation m_HULL_CANNON_BASE; string _HULL_CANNON_BASE = "LaserCannonBase";
 
         #endregion
 
@@ -69,6 +71,8 @@ namespace Vehicles
 
             m_BATTLECANNON = (AnimationAxis)this.GetAnimation(_BATTLECANNON);
             m_BATTLECANNONBASE = (Animation)this.GetAnimation(_BATTLECANNONBASE);
+            m_HULL_CANNON = (AnimationAxis)this.GetAnimation(_HULL_CANNON);
+            m_HULL_CANNON_BASE = (Animation)this.GetAnimation(_HULL_CANNON_BASE);
 
             #endregion
 
@@ -247,7 +251,7 @@ namespace Vehicles
         }
 
         /// <summary>
-        /// Apuntar el bolter pesado
+        /// Apuntar el cañón de batalla pesado
         /// </summary>
         /// <param name="pitch">Rotación en Y</param>
         /// <param name="yaw">Rotación en X</param>
@@ -256,10 +260,15 @@ namespace Vehicles
             this.m_BATTLECANNON.Rotate(pitch);
             this.m_BATTLECANNONBASE.Rotate(yaw);
         }
-
+        /// <summary>
+        /// Apuntar el cañón laser
+        /// </summary>
+        /// <param name="pitch">Rotación en Y</param>
+        /// <param name="yaw">Rotación en X</param>
         public void AimLaserCannon(float pitch, float yaw)
         {
-            
+            this.m_HULL_CANNON.Rotate(pitch);
+            this.m_HULL_CANNON_BASE.Rotate(yaw);
         }
 
         public void AimLeftBolter(float pitch, float yaw)

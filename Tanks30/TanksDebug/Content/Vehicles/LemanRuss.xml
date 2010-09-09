@@ -112,6 +112,32 @@
       <AngleTo>100</AngleTo>
       <Velocity>0.08</Velocity>
     </AnimationInfo>
+    <AnimationInfo>
+      <Name>LaserCannon</Name>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
+      <BoneName>HULL_CANNON</BoneName>
+      <Axis>
+        <X>1</X>
+        <Y>0</Y>
+        <Z>0</Z>
+      </Axis>
+      <AngleFrom>-5</AngleFrom>
+      <AngleTo>5</AngleTo>
+      <Velocity>0.005</Velocity>
+    </AnimationInfo>
+    <AnimationInfo>
+      <Name>LaserCannonBase</Name>
+      <Type>GameComponents.Animation.AnimationAxis</Type>
+      <BoneName>HULL_CANNON_BASE</BoneName>
+      <Axis>
+        <X>0</X>
+        <Y>1</Y>
+        <Z>0</Z>
+      </Axis>
+      <AngleFrom>-15</AngleFrom>
+      <AngleTo>15</AngleTo>
+      <Velocity>0.005</Velocity>
+    </AnimationInfo>
   </AnimationControlers>
   <PlayerPositions>
     <PlayerPositionInfo>
@@ -129,6 +155,15 @@
       <Translation>
         <X>0.0</X>
         <Y>-0.4</Y>
+        <Z>0.0</Z>
+      </Translation>
+    </PlayerPositionInfo>
+    <PlayerPositionInfo>
+      <Name>LaserCannonGunner</Name>
+      <BoneName>POSITION_LASERCANNON_GUNNER</BoneName>
+      <Translation>
+        <X>0.0</X>
+        <Y>0.0</Y>
         <Z>0.0</Z>
       </Translation>
     </PlayerPositionInfo>
