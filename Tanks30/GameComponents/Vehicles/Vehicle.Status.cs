@@ -162,34 +162,57 @@ namespace GameComponents.Vehicles
         /// <param name="penetration">Penetración</param>
         public virtual void TakeDamage(float damage, float penetration)
         {
-            if (penetration > this.Armor)
+            if (this.Hull > 0f)
             {
-                //Impacto interno
-                this.Hull -= damage;
-                this.Armor -= penetration * 0.25f;
-            }
-            else
-            {
-                //Impacto externo
-                this.Hull -= damage * 0.5f;
-                this.Armor -= penetration * 0.05f;
-            }
+                if (this.Armor > 0f)
+                {
+                    if (penetration > this.Armor)
+                    {
+                        //Impacto interno
+                        this.Hull -= damage;
+                        this.Armor -= penetration * 0.25f;
+                    }
+                    else
+                    {
+                        //Impacto externo
+                        this.Hull -= damage * 0.5f;
+                        this.Armor -= penetration * 0.05f;
+                    }
 
-            if (this.Destroyed)
-            {
-                this.FireOnVehicleDestroyed();
-            }
-            else if(this.HeavyDamaged)
-            {
-                this.FireOnVehicleHeavyDamaged();
-            }
-            else if (this.Damaged)
-            {
-                this.FireOnVehicleDamaged();
-            }
-            else if (this.SlightlyDamaged)
-            {
-                this.FireOnVehicleSlightlyDamaged();
+                    if (this.Armor < 0f)
+                    {
+                        //Como mínimo blindaje 0
+                        this.Armor = 0f;
+                    }
+
+                    if (this.Hull < 0f)
+                    {
+                        //Como mínimo integridad 0
+                        this.Hull = 0f;
+                    }
+                }
+                else
+                {
+                    //Sin blindaje cualquier impacto destruye el vehículo
+                    this.Hull = 0f;
+                }
+
+                if (this.Destroyed)
+                {
+                    this.FireOnVehicleDestroyed();
+                }
+                else if (this.HeavyDamaged)
+                {
+                    this.FireOnVehicleHeavyDamaged();
+                }
+                else if (this.Damaged)
+                {
+                    this.FireOnVehicleDamaged();
+                }
+                else if (this.SlightlyDamaged)
+                {
+                    this.FireOnVehicleSlightlyDamaged();
+                }
             }
         }
         /// <summary>

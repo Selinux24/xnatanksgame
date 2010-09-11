@@ -16,6 +16,14 @@ namespace Vehicles
         Animation m_BATTLECANNONBASE; string _BATTLECANNONBASE = "BattleCannonBase";
         AnimationAxis m_HULL_CANNON; string _HULL_CANNON = "LaserCannon";
         Animation m_HULL_CANNON_BASE; string _HULL_CANNON_BASE = "LaserCannonBase";
+        AnimationAxis m_LEFT_BOLTER; string _LEFT_BOLTER = "LeftHeavyBolter";
+        Animation m_LEFT_BOLTER_BASE; string _LEFT_BOLTER_BASE = "LeftHeavyBolterBase";
+        AnimationAxis m_RIGHT_BOLTER; string _RIGHT_BOLTER = "RightHeavyBolter";
+        Animation m_RIGHT_BOLTER_BASE; string _RIGHT_BOLTER_BASE = "RightHeavyBolterBase";
+        AnimationAxis m_TURRET_HACTH; string _TURRET_HACTH = "TurretHatch";
+        AnimationAxis m_DRIVER_HACTH; string _DRIVER_HACTH = "DriverHatch";
+        AnimationAxis m_LEFT_HACTH; string _LEFT_HACTH = "LeftHatch";
+        AnimationAxis m_RIGHT_HACTH; string _RIGHT_HACTH = "RightHatch";
 
         #endregion
 
@@ -24,8 +32,8 @@ namespace Vehicles
         PlayerPosition m_DRIVER; string _DRIVER = "Driver";
         PlayerPosition m_BATTLECANNONGUNNER; string _BATTLECANNONGUNNER = "BattleCannonGunner";
         PlayerPosition m_LASERCANNONGUNNER; string _LASERCANNONGUNNER = "LaserCannonGunner";
-        PlayerPosition m_LEFTBOLTERGUNNER; string _LEFTBOLTERGUNNER = "LeftBolterGunner";
-        PlayerPosition m_RIGHTBOLTERGUNNER; string _RIGHTBOLTERGUNNER = "RightBolterGunner";
+        PlayerPosition m_LEFTBOLTERGUNNER; string _LEFTBOLTERGUNNER = "LeftHeavyBolterGunner";
+        PlayerPosition m_RIGHTBOLTERGUNNER; string _RIGHTBOLTERGUNNER = "RightHeavyBolterGunner";
 
         #endregion
 
@@ -45,6 +53,14 @@ namespace Vehicles
         Keys m_RotateLeftTankKey = Keys.A;
         Keys m_RotateRightTankKey = Keys.D;
         Keys m_ChangeDirectionKey = Keys.R;
+        Keys m_TurretHatchKey = Keys.O;
+        bool m_TurretHatchAction = false;
+        Keys m_DriverHatchKey = Keys.O;
+        bool m_DriverHatchAction = false;
+        Keys m_LeftHatchKey = Keys.O;
+        bool m_LeftHatchAction = false;
+        Keys m_RightHatchKey = Keys.O;
+        bool m_RightHatchAction = false;
         Keys m_AutoPilotKey = Keys.P;
 
         #endregion
@@ -73,6 +89,14 @@ namespace Vehicles
             m_BATTLECANNONBASE = (Animation)this.GetAnimation(_BATTLECANNONBASE);
             m_HULL_CANNON = (AnimationAxis)this.GetAnimation(_HULL_CANNON);
             m_HULL_CANNON_BASE = (Animation)this.GetAnimation(_HULL_CANNON_BASE);
+            m_LEFT_BOLTER = (AnimationAxis)this.GetAnimation(_LEFT_BOLTER);
+            m_LEFT_BOLTER_BASE = (AnimationAxis)this.GetAnimation(_LEFT_BOLTER_BASE);
+            m_RIGHT_BOLTER = (AnimationAxis)this.GetAnimation(_RIGHT_BOLTER);
+            m_RIGHT_BOLTER_BASE = (AnimationAxis)this.GetAnimation(_RIGHT_BOLTER_BASE);
+            m_TURRET_HACTH = (AnimationAxis)this.GetAnimation(_TURRET_HACTH);
+            m_DRIVER_HACTH = (AnimationAxis)this.GetAnimation(_DRIVER_HACTH);
+            m_LEFT_HACTH = (AnimationAxis)this.GetAnimation(_LEFT_HACTH);
+            m_RIGHT_HACTH = (AnimationAxis)this.GetAnimation(_RIGHT_HACTH);
 
             #endregion
 
@@ -95,7 +119,7 @@ namespace Vehicles
 
             #endregion
 
-            this.SetPlaterControl(this.m_BATTLECANNONGUNNER);
+            this.SetPlaterControl(this.m_DRIVER);
         }
         /// <summary>
         /// Actualiza el estado del componente
@@ -186,6 +210,24 @@ namespace Vehicles
                     }
 
                     #endregion
+
+                    #region Driver Hatch
+
+                    if (InputHelper.KeyUpEvent(m_DriverHatchKey))
+                    {
+                        m_DriverHatchAction = !m_DriverHatchAction;
+
+                        if (m_DriverHatchAction)
+                        {
+                            this.OpenDriverHatch();
+                        }
+                        else
+                        {
+                            this.CloseDriverHatch();
+                        }
+                    }
+
+                    #endregion
                 }
                 if (m_CurrentPlayerControl == m_BATTLECANNONGUNNER)
                 {
@@ -198,6 +240,24 @@ namespace Vehicles
                     if (InputHelper.LeftMouseButtonEvent())
                     {
                         this.Fire();
+                    }
+
+                    #endregion
+
+                    #region Turret Hatch
+
+                    if (InputHelper.KeyUpEvent(m_TurretHatchKey))
+                    {
+                        m_TurretHatchAction = !m_TurretHatchAction;
+
+                        if (m_TurretHatchAction)
+                        {
+                            this.OpenTurretHatch();
+                        }
+                        else
+                        {
+                            this.CloseTurretHatch();
+                        }
                     }
 
                     #endregion
@@ -231,6 +291,24 @@ namespace Vehicles
                     }
 
                     #endregion
+
+                    #region Left Hatch
+
+                    if (InputHelper.KeyUpEvent(m_LeftHatchKey))
+                    {
+                        m_LeftHatchAction = !m_LeftHatchAction;
+
+                        if (m_LeftHatchAction)
+                        {
+                            this.OpenLeftHatch();
+                        }
+                        else
+                        {
+                            this.CloseLeftHatch();
+                        }
+                    }
+
+                    #endregion
                 }
                 if (m_CurrentPlayerControl == m_RIGHTBOLTERGUNNER)
                 {
@@ -243,6 +321,24 @@ namespace Vehicles
                     if (InputHelper.LeftMouseButtonEvent())
                     {
                         this.Fire();
+                    }
+
+                    #endregion
+
+                    #region Right Hatch
+
+                    if (InputHelper.KeyUpEvent(m_RightHatchKey))
+                    {
+                        m_RightHatchAction = !m_RightHatchAction;
+
+                        if (m_RightHatchAction)
+                        {
+                            this.OpenRightHatch();
+                        }
+                        else
+                        {
+                            this.CloseRightHatch();
+                        }
                     }
 
                     #endregion
@@ -270,15 +366,81 @@ namespace Vehicles
             this.m_HULL_CANNON.Rotate(pitch);
             this.m_HULL_CANNON_BASE.Rotate(yaw);
         }
-
+        /// <summary>
+        /// Apuntar el bolter pesado izquierdo
+        /// </summary>
+        /// <param name="pitch">Rotación en Y</param>
+        /// <param name="yaw">Rotación en X</param>
         public void AimLeftBolter(float pitch, float yaw)
         {
-
+            this.m_LEFT_BOLTER.Rotate(pitch);
+            this.m_LEFT_BOLTER_BASE.Rotate(yaw);
         }
-
+        /// <summary>
+        /// Apuntar el bolter pesado derecho
+        /// </summary>
+        /// <param name="pitch">Rotación en Y</param>
+        /// <param name="yaw">Rotación en X</param>
         public void AimRightBolter(float pitch, float yaw)
         {
-
+            this.m_RIGHT_BOLTER.Rotate(pitch);
+            this.m_RIGHT_BOLTER_BASE.Rotate(yaw);
+        }
+        /// <summary>
+        /// Abrir escotilla de la torreta
+        /// </summary>
+        public void OpenTurretHatch()
+        {
+            this.m_TURRET_HACTH.Begin(false);
+        }
+        /// <summary>
+        /// Cerrar escotilla de la torreta
+        /// </summary>
+        public void CloseTurretHatch()
+        {
+            this.m_TURRET_HACTH.Begin(true);
+        }
+        /// <summary>
+        /// Abrir escotilla del conductor
+        /// </summary>
+        public void OpenDriverHatch()
+        {
+            this.m_DRIVER_HACTH.Begin(false);
+        }
+        /// <summary>
+        /// Cerrar escotilla del conductor
+        /// </summary>
+        public void CloseDriverHatch()
+        {
+            this.m_DRIVER_HACTH.Begin(true);
+        }
+        /// <summary>
+        /// Abrir escotilla izquierda
+        /// </summary>
+        public void OpenLeftHatch()
+        {
+            this.m_LEFT_HACTH.Begin(false);
+        }
+        /// <summary>
+        /// Cerrar escotilla izquierda
+        /// </summary>
+        public void CloseLeftHatch()
+        {
+            this.m_LEFT_HACTH.Begin(true);
+        }
+        /// <summary>
+        /// Abrir escotilla derecha
+        /// </summary>
+        public void OpenRightHatch()
+        {
+            this.m_RIGHT_HACTH.Begin(false);
+        }
+        /// <summary>
+        /// Cerrar escotilla derecha
+        /// </summary>
+        public void CloseRightHatch()
+        {
+            this.m_RIGHT_HACTH.Begin(true);
         }
 
         /// <summary>

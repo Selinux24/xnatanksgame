@@ -115,6 +115,10 @@ namespace TanksDebug
         /// Tanque Leman Russ
         /// </summary>
         private LemanRuss m_LemanRuss = null;
+        /// <summary>
+        /// Tanque Land Raider
+        /// </summary>
+        private LandRaider m_LandRaider = null;
 
         /// <summary>
         /// Vehículo actual
@@ -182,7 +186,7 @@ namespace TanksDebug
         /// <param name="velocity">Velocidad</param>
         void Physics_OnProjectileMoved(AmmoRound ammo)
         {
-            this.m_ParticleManager.AddProjectileTrailParticle(ammo.Position, Vector3.Zero);
+            //this.m_ParticleManager.AddProjectileTrailParticle(ammo.Position, Vector3.Zero);
         }
 
         /// <summary>
@@ -287,6 +291,12 @@ namespace TanksDebug
                 ball.UpdateOrder = 4;
                 this.Components.Add(ball);
             }
+
+            // Land Raider
+            this.m_LandRaider = new LandRaider(this, "Content/Vehicles");
+            this.m_LandRaider.UpdateOrder = 5;
+            this.Components.Add(this.m_LandRaider);
+            this.Physics.RegisterVehicle(m_LandRaider);
 
             // Leman Russ
             this.m_LemanRuss = new LemanRuss(this, "Content/Vehicles");
@@ -411,10 +421,21 @@ namespace TanksDebug
             this.GraphicsDevice.RenderState.FogEnd = 500;
             this.GraphicsDevice.RenderState.FogDensity = 0.25f;
             this.GraphicsDevice.RenderState.FogEnable = true;
-
-            this.m_Text.WriteText("Contactos en uso: " + this.Physics.UsedContacts.ToString(), 5, 5, Color.Yellow);
+            
+            this.DrawText();
 
             base.Draw(gameTime);
+        }
+        /// <summary>
+        /// Dibuja el texto
+        /// </summary>
+        private void DrawText()
+        {
+            string text = "Contactos en uso: " + this.Physics.UsedContacts.ToString() + Environment.NewLine;
+            text += "HULL: " + this.m_CurrentVehicle.Hull.ToString() + Environment.NewLine;
+            text += "ARMR: " + this.m_CurrentVehicle.Armor.ToString() + Environment.NewLine;
+
+            this.m_Text.WriteText(text, 5, 5, Color.Yellow);
         }
         /// <summary>
         /// Inicializar la posición de los cuerpos
@@ -447,7 +468,10 @@ namespace TanksDebug
             m_LandSpeeder_2.SetInitialState(new Vector3(10, 60f, -10) + GlobalTraslation, Quaternion.Identity);
 
             // Leman Russ
-            m_LemanRuss.SetInitialState(new Vector3(tankArea, 20f, -tankArea) + GlobalTraslation, Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(125f)));
+            m_LemanRuss.SetInitialState(new Vector3(tankArea, 20f, -tankArea * 0.5f) + GlobalTraslation, Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(125f)));
+
+            // Land Raider
+            m_LandRaider.SetInitialState(new Vector3(-tankArea, 20f, tankArea * 0.5f) + GlobalTraslation, Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(25f)));
 
             float objectArea = _TerrainSize * 0.8f * 0.5f;
             Random rnd = new Random(DateTime.Now.Millisecond);
@@ -535,6 +559,10 @@ namespace TanksDebug
             else if (InputHelper.KeyUpEvent(Keys.D5))
             {
                 this.SetFocus(this.m_LemanRuss);
+            }
+            else if (InputHelper.KeyUpEvent(Keys.D6))
+            {
+                this.SetFocus(this.m_LandRaider);
             }
 
             if (InputHelper.KeyUpEvent(Keys.Tab))

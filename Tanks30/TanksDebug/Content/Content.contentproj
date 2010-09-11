@@ -184,9 +184,22 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Vehicles\LandRaider.fbx">
+      <Name>LandRaider</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>PrimitiveInfoProcessor</Processor>
+    </Compile>
     <None Include="Vehicles\LemanRuss.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>LemanRuss</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Vehicles\LandRaider.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>LandRaider</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
