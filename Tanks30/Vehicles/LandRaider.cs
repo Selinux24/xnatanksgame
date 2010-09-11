@@ -6,56 +6,42 @@ namespace Vehicles
     using Common.Helpers;
     using GameComponents.Animation;
     using GameComponents.Vehicles;
+    using GameComponents.Weapons;
 
     public partial class LandRaider : Vehicle
     {
         #region Incialización del control de animación
 
-        AnimationAxis m_HeavyBolter;
-        AnimationAxis m_HeavyBolterBase;
-        AnimationAxis m_LeftLassCannon;
-        AnimationAxis m_LeftLassCannonBase;
-        AnimationAxis m_RightLassCannon;
-        AnimationAxis m_RightLassCannonBase;
-        AnimationAxis m_UpperFrontDoor;
-        AnimationAxis m_LowerFrontDoor;
+        AnimationAxis m_HeavyBolter; string _HeavyBolter = "HeavyBolter";
+        AnimationAxis m_HeavyBolterBase; string _HeavyBolterBase = "HeavyBolterBase";
+        AnimationAxis m_LeftLassCannon; string _LeftLassCannon = "LeftLassCannon";
+        AnimationAxis m_LeftLassCannonBase; string _LeftLassCannonBase = "LeftLassCannonBase";
+        AnimationAxis m_RightLassCannon; string _RightLassCannon = "RightLassCannon";
+        AnimationAxis m_RightLassCannonBase; string _RightLassCannonBase = "RightLassCannonBase";
+        AnimationAxis m_UpperFrontDoor; string _UpperFrontDoor = "UpperFrontDoor";
+        AnimationAxis m_LowerFrontDoor; string _LowerFrontDoor = "LowerFrontDoor";
+        AnimationAxis m_Driver; string _Driver = "Driver";
+        AnimationAxis m_DriverBase; string _DriverBase = "DriverBase";
+        AnimationAxis m_Commander; string _Commander = "Commander";
+        AnimationAxis m_CommanderBase; string _CommanderBase = "CommanderBase";
 
         #endregion
 
         #region Posiciones del jugador
 
-        /// <summary>
-        /// Posiciones posibles del jugador en el modelo
-        /// </summary>
-        public enum Player
-        {
-            /// <summary>
-            /// Conductor
-            /// </summary>
-            Driver,
+        PlayerPosition m_DriverPosition; string _DriverPosition = "Driver";
+        PlayerPosition m_CommanderPosition; string _CommanderPosition = "Commander";
+        PlayerPosition m_TwinLinkedHeavyBolterGunner; string _TwinLinkedHeavyBolterGunner = "HeavyBolterGunner";
+        PlayerPosition m_LeftLaserCannonGunner; string _LeftLaserCannonGunner = "LeftLaserCannonGunner";
+        PlayerPosition m_RightLaserCannonGunner; string _RightLaserCannonGunner = "RightLaserCannonGunner";
 
-            CoveredDriver,
-            /// <summary>
-            /// Artillero principal
-            /// </summary>
-            Gunner,
+        #endregion
 
-            LeftGunner,
+        #region Armas
 
-            RightGunner,
-
-            Commander,
-
-            CoveredCommander,
-        }
-
-        PlayerPosition m_Driver;
-        PlayerPosition m_CoveredDriver;
-        PlayerPosition m_Gunner;
-        PlayerPosition m_LeftGunner;
-        PlayerPosition m_RightGunner;
-        PlayerPosition m_Commander;
-        PlayerPosition m_CoveredCommander;
+        private Weapon m_TwinLinkedHeavyBolter = null; string _TwinLinkedHeavyBolter = "TwinLinkedHeavyBolter";
+        private Weapon m_LeftTwinLinkedLaserCannon = null; string _LeftTwinLinkedLaserCannon = "LeftTwinLinkedLaserCannon";
+        private Weapon m_RightTwinLinkedLaserCannon = null; string _RightTwinLinkedLaserCannon = "RightTwinLinkedLaserCannon";
 
         #endregion
 
@@ -93,30 +79,40 @@ namespace Vehicles
 
             #region Controlador de animación
 
-            m_HeavyBolter = (AnimationAxis)this.GetAnimation("HeavyBolter");
-            m_HeavyBolterBase = (AnimationAxis)this.GetAnimation("HeavyBolterBase");
-            m_LeftLassCannon = (AnimationAxis)this.GetAnimation("LeftLassCannon");
-            m_LeftLassCannonBase = (AnimationAxis)this.GetAnimation("LeftLassCannonBase");
-            m_RightLassCannon = (AnimationAxis)this.GetAnimation("RightLassCannon");
-            m_RightLassCannonBase = (AnimationAxis)this.GetAnimation("RightLassCannonBase");
-            m_UpperFrontDoor = (AnimationAxis)this.GetAnimation("UpperFrontDoor");
-            m_LowerFrontDoor = (AnimationAxis)this.GetAnimation("LowerFrontDoor");
+            m_HeavyBolter = (AnimationAxis)this.GetAnimation(_HeavyBolter);
+            m_HeavyBolterBase = (AnimationAxis)this.GetAnimation(_HeavyBolterBase);
+            m_LeftLassCannon = (AnimationAxis)this.GetAnimation(_LeftLassCannon);
+            m_LeftLassCannonBase = (AnimationAxis)this.GetAnimation(_LeftLassCannonBase);
+            m_RightLassCannon = (AnimationAxis)this.GetAnimation(_RightLassCannon);
+            m_RightLassCannonBase = (AnimationAxis)this.GetAnimation(_RightLassCannonBase);
+            m_UpperFrontDoor = (AnimationAxis)this.GetAnimation(_UpperFrontDoor);
+            m_LowerFrontDoor = (AnimationAxis)this.GetAnimation(_LowerFrontDoor);
+            m_Driver = (AnimationAxis)this.GetAnimation(_Driver);
+            m_DriverBase = (AnimationAxis)this.GetAnimation(_DriverBase);
+            m_Commander = (AnimationAxis)this.GetAnimation(_Commander);
+            m_CommanderBase = (AnimationAxis)this.GetAnimation(_CommanderBase);
 
             #endregion
 
             #region Controladores de posición
 
-            m_Driver = this.GetPlayerControl("Driver");
-            m_CoveredDriver = this.GetPlayerControl("CoveredDriver");
-            m_Gunner = this.GetPlayerControl("Gunner");
-            m_LeftGunner = this.GetPlayerControl("LeftGunner");
-            m_RightGunner = this.GetPlayerControl("RightGunner");
-            m_Commander = this.GetPlayerControl("Commander");
-            m_CoveredCommander = this.GetPlayerControl("CoveredCommander");
+            m_DriverPosition = this.GetPlayerControl(_DriverPosition);
+            m_CommanderPosition = this.GetPlayerControl(_CommanderPosition);
+            m_TwinLinkedHeavyBolterGunner = this.GetPlayerControl(_TwinLinkedHeavyBolterGunner);
+            m_LeftLaserCannonGunner = this.GetPlayerControl(_LeftLaserCannonGunner);
+            m_RightLaserCannonGunner = this.GetPlayerControl(_RightLaserCannonGunner);
 
             #endregion
 
-            this.SetPlayerPosition(Player.Gunner);
+            #region Armamento
+
+            this.m_TwinLinkedHeavyBolter = this.GetWeapon(_TwinLinkedHeavyBolter);
+            this.m_LeftTwinLinkedLaserCannon = this.GetWeapon(_LeftTwinLinkedLaserCannon);
+            this.m_RightTwinLinkedLaserCannon = this.GetWeapon(_RightTwinLinkedLaserCannon);
+
+            #endregion
+
+            this.SetPlaterControl(this.m_DriverPosition);
         }
         /// <summary>
         /// Actualiza el estado del componente
@@ -128,7 +124,7 @@ namespace Vehicles
 
             if (this.HasFocus)
             {
-                if (m_CurrentPlayerControl == m_Driver || m_CurrentPlayerControl == m_CoveredDriver)
+                if (m_CurrentPlayerControl == m_DriverPosition)
                 {
                     bool driving = false;
 
@@ -207,36 +203,68 @@ namespace Vehicles
                     }
 
                     #endregion
+
+                    #region Look
+
+                    // Dirigir la vista
+                    this.DriverLook(InputHelper.PitchDelta, InputHelper.YawDelta);
+
+                    #endregion
                 }
-                if (m_CurrentPlayerControl == m_Gunner)
+                if (m_CurrentPlayerControl == m_TwinLinkedHeavyBolterGunner)
                 {
                     #region Heavy Bolter
 
                     // Apuntar el bolter
                     this.AimHeavyBolter(InputHelper.PitchDelta, InputHelper.YawDelta);
 
+                    //Disparar el bolter
+                    if (InputHelper.LeftMouseButtonEvent())
+                    {
+                        this.Fire();
+                    }
+
                     #endregion
                 }
-                if (m_CurrentPlayerControl == m_LeftGunner)
+                if (m_CurrentPlayerControl == m_LeftLaserCannonGunner)
                 {
                     #region Left LassCannon
 
                     // Apuntar
                     this.AimLeftLassCannon(InputHelper.PitchDelta, InputHelper.YawDelta);
 
+                    //Disparar el bolter
+                    if (InputHelper.LeftMouseButtonEvent())
+                    {
+                        this.Fire();
+                    }
+
                     #endregion
                 }
-                if (m_CurrentPlayerControl == m_RightGunner)
+                if (m_CurrentPlayerControl == m_RightLaserCannonGunner)
                 {
                     #region Right LassCannon
 
                     // Apuntar
                     this.AimRightLassCannon(InputHelper.PitchDelta, InputHelper.YawDelta);
 
+                    //Disparar el bolter
+                    if (InputHelper.LeftMouseButtonEvent())
+                    {
+                        this.Fire();
+                    }
+
                     #endregion
                 }
-                if (m_CurrentPlayerControl == m_Commander || m_CurrentPlayerControl == m_CoveredCommander)
+                if (m_CurrentPlayerControl == m_CommanderPosition)
                 {
+                    #region Look
+
+                    // Dirigir la vista
+                    this.CommanderLook(InputHelper.PitchDelta, InputHelper.YawDelta);
+
+                    #endregion
+
                     #region Hatch
 
                     if (InputHelper.KeyUpEvent(m_FrontDoorKey))
@@ -256,6 +284,27 @@ namespace Vehicles
                     #endregion
                 }
             }
+        }
+
+        /// <summary>
+        /// Dirige la vista del piloto
+        /// </summary>
+        /// <param name="pitch">Rotación en Y</param>
+        /// <param name="yaw">Rotación en X</param>
+        public void DriverLook(float pitch, float yaw)
+        {
+            this.m_Driver.Rotate(pitch);
+            this.m_DriverBase.Rotate(yaw);
+        }
+        /// <summary>
+        /// Dirige la vista del comandante
+        /// </summary>
+        /// <param name="pitch">Rotación en Y</param>
+        /// <param name="yaw">Rotación en X</param>
+        public void CommanderLook(float pitch, float yaw)
+        {
+            this.m_Commander.Rotate(pitch);
+            this.m_CommanderBase.Rotate(yaw);
         }
 
         /// <summary>
@@ -307,38 +356,32 @@ namespace Vehicles
         }
 
         /// <summary>
-        /// Establece la posición del jugador
+        /// La posición del jugador ha cambiado
         /// </summary>
-        /// <param name="position">Posición</param>
-        internal void SetPlayerPosition(Player position)
+        /// <param name="position">Nueva posición</param>
+        protected override void PlayerControlChanged(PlayerPosition position)
         {
-            if (position == Player.Driver)
+            base.PlayerControlChanged(position);
+
+            if (position == this.m_DriverPosition)
             {
-                m_CurrentPlayerControl = m_Driver;
+                this.SelectWeapon(null);
             }
-            if (position == Player.CoveredDriver)
+            else if (position == this.m_CommanderPosition)
             {
-                m_CurrentPlayerControl = m_CoveredDriver;
+                this.SelectWeapon(null);
             }
-            if (position == Player.Gunner)
+            else if (position == this.m_TwinLinkedHeavyBolterGunner)
             {
-                m_CurrentPlayerControl = m_Gunner;
+                this.SelectWeapon(this.m_TwinLinkedHeavyBolter);
             }
-            if (position == Player.LeftGunner)
+            else if (position == this.m_LeftLaserCannonGunner)
             {
-                m_CurrentPlayerControl = m_LeftGunner;
+                this.SelectWeapon(this.m_LeftTwinLinkedLaserCannon);
             }
-            if (position == Player.RightGunner)
+            else if (position == this.m_RightLaserCannonGunner)
             {
-                m_CurrentPlayerControl = m_RightGunner;
-            }
-            if (position == Player.Commander)
-            {
-                m_CurrentPlayerControl = m_Commander;
-            }
-            if (position == Player.CoveredCommander)
-            {
-                m_CurrentPlayerControl = m_CoveredCommander;
+                this.SelectWeapon(this.m_RightTwinLinkedLaserCannon);
             }
         }
     }
