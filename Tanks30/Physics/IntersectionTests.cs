@@ -506,7 +506,6 @@ namespace Physics
             return false;
         }
 
-
         /// <summary>
         /// Obtiene si hay superposición de las cajas sobre el eje especificado
         /// </summary>

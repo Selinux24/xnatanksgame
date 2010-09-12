@@ -10,7 +10,7 @@ namespace GameComponents.Particles
         /// <summary>
         /// Tipo de partícula
         /// </summary>
-        public ParticleSystem ParticleSystem;
+        public ParticleSystemTypes ParticleType;
         /// <summary>
         /// Duración del generador
         /// </summary>

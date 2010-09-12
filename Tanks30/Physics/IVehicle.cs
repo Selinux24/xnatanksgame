@@ -1,7 +1,7 @@
 ﻿
 namespace Physics
 {
-    public delegate void VehicleDamagedHandler(IVehicle vehicle);
+    public delegate void VehicleStateHandler(IVehicle vehicle);
 
     /// <summary>
     /// Vehículo
@@ -17,18 +17,18 @@ namespace Physics
         /// <summary>
         /// Evento que se produce cuando se daña ligeramente el vehículo
         /// </summary>
-        event VehicleDamagedHandler OnVehicleSlightlyDamaged;
+        event VehicleStateHandler OnVehicleSlightlyDamaged;
         /// <summary>
         /// Evento que se produce cuando se daña el vehículo
         /// </summary>
-        event VehicleDamagedHandler OnVehicleDamaged;
+        event VehicleStateHandler OnVehicleDamaged;
         /// <summary>
         /// Evento que se produce cuando se daña severamente el vehículo
         /// </summary>
-        event VehicleDamagedHandler OnVehicleHeavyDamaged;
+        event VehicleStateHandler OnVehicleHeavyDamaged;
         /// <summary>
         /// Evento que se produce cuando el vehículo es destruído
         /// </summary>
-        event VehicleDamagedHandler OnVehicleDestroyed;
+        event VehicleStateHandler OnVehicleDestroyed;
     }
 }

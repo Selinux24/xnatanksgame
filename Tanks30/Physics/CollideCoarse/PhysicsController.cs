@@ -145,7 +145,7 @@ namespace Physics.CollideCoarse
 
             if (obj is IVehicle)
             {
-                ((IVehicle)obj).OnVehicleDestroyed += new VehicleDamagedHandler(PhysicsController_OnVehicleDestroyed);
+                ((IVehicle)obj).OnVehicleDestroyed += new VehicleStateHandler(PhysicsController_OnVehicleDestroyed);
             }
         }
         /// <summary>
