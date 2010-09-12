@@ -362,5 +362,19 @@ namespace Common.Primitives
 
             return tri.Point1 + s * edge1 + t * edge2;
         }
+        /// <summary>
+        /// Obtiene la magnitud de la proyección del triángulo sobre el vector especificado
+        /// </summary>
+        /// <param name="vector">Vector</param>
+        /// <returns>Devuelve la magnitud del triángulo sobre el vector</returns>
+        public float ProyectToVector(Vector3 vector)
+        {
+            //TODO: Esta función está mal
+            float d1 = System.Math.Abs(Vector3.Dot(Vector3.Subtract(this.Point2, this.Point1), vector));
+            float d2 = System.Math.Abs(Vector3.Dot(Vector3.Subtract(this.Point3, this.Point1), vector));
+            float d3 = System.Math.Abs(Vector3.Dot(Vector3.Subtract(this.Point2, this.Point3), vector));
+
+            return MathHelper.Max(d1, MathHelper.Max(d2, d3));
+        }
     }
 }

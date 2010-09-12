@@ -162,12 +162,12 @@ namespace TanksDebug
         /// <param name="vehicle">Vehículo</param>
         void Physics_OnVehicleMoved(IPhysicObject vehicle)
         {
-            //if (vehicle is Vehicle)
-            //{
-            //    Vehicle v = vehicle as Vehicle;
+            if (vehicle is Vehicle)
+            {
+                Vehicle v = vehicle as Vehicle;
 
-            //    this.m_ParticleManager.AddSmokePlumeParticle(v.Position, Vector3.Up * 0.2f);
-            //}
+                this.m_ParticleManager.AddSmokePlumeParticle(v.Position, Vector3.Up * 0.01f);
+            }
         }
         /// <summary>
         /// Evento de explosión activa
@@ -233,7 +233,7 @@ namespace TanksDebug
             this.m_Camera.Right = Keys.Right;
             this.m_Camera.Up = Keys.Add;
             this.m_Camera.Down = Keys.Subtract;
-            this.m_Camera.Mode = CameraGameComponent.CameraModes.FirstPerson;
+            this.m_Camera.Mode = CameraGameComponent.CameraModes.Free;
             this.m_Camera.UpdateOrder = 99;
             this.Components.Add(this.m_Camera);
 
@@ -241,19 +241,19 @@ namespace TanksDebug
             this.m_Building_1 = new BuildingType0(this, @"Content/Buildings/", @"WHBuilding01.xml");
             this.m_Building_1.UpdateOrder = 3;
             this.Components.Add(this.m_Building_1);
-            this.Physics.RegisterVehicle(this.m_Building_1);
+            this.Physics.RegisterObject(this.m_Building_1);
 
             // Otro edificio
             this.m_Building_2 = new BuildingType0(this, @"Content/Buildings/", @"WHBuilding02.xml");
             this.m_Building_2.UpdateOrder = 3;
             this.Components.Add(this.m_Building_2);
-            this.Physics.RegisterVehicle(this.m_Building_2);
+            this.Physics.RegisterObject(this.m_Building_2);
 
             // Otro edificio
             this.m_Building_3 = new BuildingType0(this, @"Content/Buildings/", @"WHBuilding03.xml");
             this.m_Building_3.UpdateOrder = 3;
             this.Components.Add(this.m_Building_3);
-            this.Physics.RegisterVehicle(this.m_Building_3);
+            this.Physics.RegisterObject(this.m_Building_3);
 
             AmmoDrawer ammoDrawer = new AmmoDrawer(this, @"Content/dharma");
             ammoDrawer.Rounds = this.Physics.Projectiles;
@@ -273,7 +273,7 @@ namespace TanksDebug
                 Vector3 max = new Vector3(hsX, hsY, hsZ);
 
                 CubeGameComponent cube = new CubeGameComponent(this, min, max, (max - min).Length() * 20f);
-                this.Physics.RegisterVehicle(cube);
+                this.Physics.RegisterObject(cube);
                 this.m_Cubes.Add(cube);
                 cube.UpdateOrder = 4;
                 this.Components.Add(cube);
@@ -286,7 +286,7 @@ namespace TanksDebug
                 float radius = 0.5f + ((float)rnd.NextDouble() * 1.5f);
 
                 BallGameComponent ball = new BallGameComponent(this, radius, radius);
-                this.Physics.RegisterVehicle(ball);
+                this.Physics.RegisterObject(ball);
                 this.m_Balls.Add(ball);
                 ball.UpdateOrder = 4;
                 this.Components.Add(ball);
@@ -296,62 +296,62 @@ namespace TanksDebug
             this.m_LandRaider = new LandRaider(this, "Content/Vehicles");
             this.m_LandRaider.UpdateOrder = 5;
             this.Components.Add(this.m_LandRaider);
-            this.Physics.RegisterVehicle(m_LandRaider);
+            this.Physics.RegisterObject(m_LandRaider);
 
             // Leman Russ
             this.m_LemanRuss = new LemanRuss(this, "Content/Vehicles");
             this.m_LemanRuss.UpdateOrder = 5;
             this.Components.Add(this.m_LemanRuss);
-            this.Physics.RegisterVehicle(m_LemanRuss);
+            this.Physics.RegisterObject(m_LemanRuss);
 
             // Land speeder 1
             this.m_LandSpeeder_1 = new LandSpeeder(this, "Content/Vehicles");
             this.m_LandSpeeder_1.UpdateOrder = 5;
             this.Components.Add(this.m_LandSpeeder_1);
-            this.Physics.RegisterVehicle(m_LandSpeeder_1);
+            this.Physics.RegisterObject(m_LandSpeeder_1);
 
             // Land speeder 2
             this.m_LandSpeeder_2 = new LandSpeeder(this, "Content/Vehicles");
             this.m_LandSpeeder_2.UpdateOrder = 5;
             this.Components.Add(this.m_LandSpeeder_2);
-            this.Physics.RegisterVehicle(m_LandSpeeder_2);
+            this.Physics.RegisterObject(m_LandSpeeder_2);
 
             // El tanque del jugador 1
             this.m_Rhino_1 = new Rhino(this, "Content/Vehicles");
             this.m_Rhino_1.UpdateOrder = 5;
             this.Components.Add(this.m_Rhino_1);
-            this.Physics.RegisterVehicle(m_Rhino_1);
+            this.Physics.RegisterObject(m_Rhino_1);
 
             // El tanque del jugador 2
             this.m_Rhino_2 = new Rhino(this, "Content/Vehicles");
             this.m_Rhino_2.UpdateOrder = 5;
             this.Components.Add(this.m_Rhino_2);
-            this.Physics.RegisterVehicle(m_Rhino_2);
+            this.Physics.RegisterObject(m_Rhino_2);
 
             // Prueba
-            this.ball1 = new BallGameComponent(this, 1f, 1f);
-            this.Components.Add(ball1);
-            this.Physics.RegisterVehicle(ball1);
+            //this.ball1 = new BallGameComponent(this, 1f, 1f);
+            //this.Components.Add(ball1);
+            //this.Physics.RegisterVehicle(ball1);
 
-            this.ball2 = new BallGameComponent(this, 1.5f, 2f);
-            this.Components.Add(ball2);
-            this.Physics.RegisterVehicle(ball2);
+            //this.ball2 = new BallGameComponent(this, 1.5f, 2f);
+            //this.Components.Add(ball2);
+            //this.Physics.RegisterVehicle(ball2);
 
-            this.ball3 = new BallGameComponent(this, 2f, 4f);
-            this.Components.Add(ball3);
-            this.Physics.RegisterVehicle(ball3);
+            //this.ball3 = new BallGameComponent(this, 2f, 4f);
+            //this.Components.Add(ball3);
+            //this.Physics.RegisterVehicle(ball3);
 
-            RodComponent rod1 = new RodComponent(this, this.ball1, Vector3.Up * this.ball1.Radius, null, new Vector3(0, 40, 0), 10f);
-            this.Components.Add(rod1);
-            this.Physics.RegisterContactGenerator(rod1.Rod);
+            //RodComponent rod1 = new RodComponent(this, this.ball1, Vector3.Up * this.ball1.Radius, null, new Vector3(0, 40, 0), 10f);
+            //this.Components.Add(rod1);
+            //this.Physics.RegisterContactGenerator(rod1.Rod);
 
-            RodComponent rod2 = new RodComponent(this, this.ball2, Vector3.Up * this.ball2.Radius, null, new Vector3(0, 40, 0), 10f);
-            this.Components.Add(rod2);
-            this.Physics.RegisterContactGenerator(rod2.Rod);
+            //RodComponent rod2 = new RodComponent(this, this.ball2, Vector3.Up * this.ball2.Radius, null, new Vector3(0, 40, 0), 10f);
+            //this.Components.Add(rod2);
+            //this.Physics.RegisterContactGenerator(rod2.Rod);
 
-            JointComponent joint1 = new JointComponent(this, this.ball1, Vector3.Down * this.ball1.Radius, this.ball3, Vector3.Left * this.ball3.Radius, 5f);
-            this.Components.Add(joint1);
-            this.Physics.RegisterContactGenerator(joint1.Joint);
+            //JointComponent joint1 = new JointComponent(this, this.ball1, Vector3.Down * this.ball1.Radius, this.ball3, Vector3.Left * this.ball3.Radius, 5f);
+            //this.Components.Add(joint1);
+            //this.Physics.RegisterContactGenerator(joint1.Joint);
 
             //JointComponent joint2 = new JointComponent(this, this.ball2, Vector3.Down * this.ball2.Sphere.Radius, this.ball3, Vector3.Right * this.ball3.Sphere.Radius, 5f);
             //this.Components.Add(joint2);
@@ -421,10 +421,30 @@ namespace TanksDebug
             this.GraphicsDevice.RenderState.FogEnd = 500;
             this.GraphicsDevice.RenderState.FogDensity = 0.25f;
             this.GraphicsDevice.RenderState.FogEnable = true;
-            
+
             this.DrawText();
 
             base.Draw(gameTime);
+
+#if DEBUG
+            for (int i = 0; i < IntersectionTests.m_DEBUGAABBCOUNT; i++)
+            {
+                GameComponents.Debug.DebugDrawer.DrawDebugAABB(this.GraphicsDevice, IntersectionTests.m_DEBUGAABB[i]);
+            }
+            IntersectionTests.m_DEBUGAABBCOUNT = 0;
+
+            for (int i = 0; i < IntersectionTests.m_DEBUGTRICOUNT; i++)
+            {
+                GameComponents.Debug.DebugDrawer.DrawDebugTriangle(this.GraphicsDevice, IntersectionTests.m_DEBUGTRI[i]);
+            }
+            IntersectionTests.m_DEBUGTRICOUNT = 0;
+
+            for (int i = 0; i < IntersectionTests.m_DEBUGEDGESCOUNT; i++)
+            {
+                GameComponents.Debug.DebugDrawer.DrawDebugEdge(this.GraphicsDevice, IntersectionTests.m_DEBUGEDGES[i]);
+            }
+            IntersectionTests.m_DEBUGEDGESCOUNT = 0;
+#endif
         }
         /// <summary>
         /// Dibuja el texto
@@ -432,8 +452,12 @@ namespace TanksDebug
         private void DrawText()
         {
             string text = "Contactos en uso: " + this.Physics.UsedContacts.ToString() + Environment.NewLine;
-            text += "HULL: " + this.m_CurrentVehicle.Hull.ToString() + Environment.NewLine;
-            text += "ARMR: " + this.m_CurrentVehicle.Armor.ToString() + Environment.NewLine;
+            if (this.m_CurrentVehicle != null)
+            {
+                text += "POSICION: " + this.m_CurrentVehicle.Position.ToString() + Environment.NewLine;
+                text += "HULL: " + this.m_CurrentVehicle.Hull.ToString() + Environment.NewLine;
+                text += "ARMR: " + this.m_CurrentVehicle.Armor.ToString() + Environment.NewLine;
+            }
 
             this.m_Text.WriteText(text, 5, 5, Color.Yellow);
         }
@@ -499,9 +523,9 @@ namespace TanksDebug
                 ball.SetPosition(new Vector3(x, y, z) + GlobalTraslation);
             }
 
-            this.ball1.SetPosition(new Vector3(5, 35, 5));
-            this.ball2.SetPosition(new Vector3(-15, 39, -20));
-            this.ball3.SetPosition(new Vector3(5, 20, -10));
+            //this.ball1.SetPosition(new Vector3(5, 35, 5));
+            //this.ball2.SetPosition(new Vector3(-15, 39, -20));
+            //this.ball3.SetPosition(new Vector3(5, 20, -10));
         }
         /// <summary>
         /// Actualiza la cámara

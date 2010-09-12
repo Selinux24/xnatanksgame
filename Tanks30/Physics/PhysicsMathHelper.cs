@@ -1,9 +1,10 @@
 using System;
-using System.IO;
 using Microsoft.Xna.Framework;
 
 namespace Physics
 {
+    using Common.Primitives;
+
     public static class PhysicsMathHelper
     {
         /// <summary>
@@ -198,6 +199,55 @@ namespace Physics
         {
             // 4/3 de PI por el radio al cubo
             return 1.333333f * MathHelper.Pi * sphere.Radius * sphere.Radius * sphere.Radius;
+        }
+        /// <summary>
+        /// Obtiene el AABB circundante del triángulo
+        /// </summary>
+        /// <param name="triangle">Triángulo</param>
+        /// <returns>Devuelve el AABB circundante</returns>
+        public static BoundingBox GenerateFromTriangle(Triangle triangle)
+        {
+            BoundingBox aabb = new BoundingBox();
+
+            aabb.Min.X = Math.Min(triangle.Point1.X, Math.Min(triangle.Point2.X, triangle.Point3.X));
+            aabb.Min.Y = Math.Min(triangle.Point1.Y, Math.Min(triangle.Point2.Y, triangle.Point3.Y));
+            aabb.Min.Z = Math.Min(triangle.Point1.Z, Math.Min(triangle.Point2.Z, triangle.Point3.Z));
+
+            aabb.Max.X = Math.Max(triangle.Point1.X, Math.Max(triangle.Point2.X, triangle.Point3.X));
+            aabb.Max.Y = Math.Max(triangle.Point1.Y, Math.Max(triangle.Point2.Y, triangle.Point3.Y));
+            aabb.Max.Z = Math.Max(triangle.Point1.Z, Math.Max(triangle.Point2.Z, triangle.Point3.Z));
+
+            return aabb;
+        }
+        /// <summary>
+        /// Obtiene el vector con la información de distancias del centro a las caras del AABB
+        /// </summary>
+        /// <param name="aabb">AABB</param>
+        /// <returns>Devuelve un vector con la información de distancias del centro a las caras en cada componente</returns>
+        public static Vector3 GetHalfSizes(this BoundingBox aabb)
+        {
+            Vector3 halfSizes;
+
+            halfSizes.X = (aabb.Max.X - aabb.Min.X) * 0.5f;
+            halfSizes.Y = (aabb.Max.Y - aabb.Min.Y) * 0.5f;
+            halfSizes.Z = (aabb.Max.Z - aabb.Min.Z) * 0.5f;
+
+            return halfSizes;
+        }
+        /// <summary>
+        /// Obtiene el punto central del AABB
+        /// </summary>
+        /// <param name="aabb">AABB</param>
+        /// <returns>Devuelve el punto central del AABB</returns>
+        public static Vector3 GetCenter(this BoundingBox aabb)
+        {
+            Vector3 center;
+
+            center.X = (aabb.Max.X + aabb.Min.X) * 0.5f;
+            center.Y = (aabb.Max.Y + aabb.Min.Y) * 0.5f;
+            center.Z = (aabb.Max.Z + aabb.Min.Z) * 0.5f;
+
+            return center;
         }
     }
 }

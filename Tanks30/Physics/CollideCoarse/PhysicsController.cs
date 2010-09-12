@@ -35,7 +35,7 @@ namespace Physics.CollideCoarse
         /// <summary>
         /// Colección de vehículos
         /// </summary>
-        private List<IPhysicObject> m_VehicleData = new List<IPhysicObject>();
+        private List<IPhysicObject> m_ObjectData = new List<IPhysicObject>();
         /// <summary>
         /// Colección de proyectiles
         /// </summary>
@@ -66,7 +66,7 @@ namespace Physics.CollideCoarse
         {
             get
             {
-                return this.m_VehicleData.ToArray();
+                return this.m_ObjectData.ToArray();
             }
         }
         /// <summary>
@@ -99,7 +99,7 @@ namespace Physics.CollideCoarse
             {
                 if (this.m_ContactData != null)
                 {
-                    return this.m_ContactData.ContactCount - 1;
+                    return this.m_ContactData.ContactCount;
                 }
 
                 return 0;
@@ -136,12 +136,17 @@ namespace Physics.CollideCoarse
             this.m_SceneryPrimitive = scenery;
         }
         /// <summary>
-        /// Registra una primitiva de colisión que actuará como vehículo
+        /// Registra una primitiva de colisión que actuará como objecto
         /// </summary>
         /// <param name="primitive">Primitiva de colisión</param>
-        public void RegisterVehicle(IPhysicObject vehicle)
+        public void RegisterObject(IPhysicObject obj)
         {
-            this.m_VehicleData.Add(vehicle);
+            this.m_ObjectData.Add(obj);
+
+            if (obj is IVehicle)
+            {
+                ((IVehicle)obj).OnVehicleDestroyed += new VehicleDamagedHandler(PhysicsController_OnVehicleDestroyed);
+            }
         }
         /// <summary>
         /// Registra una primitiva de colisión que actuará como disparo
@@ -238,16 +243,16 @@ namespace Physics.CollideCoarse
             }
 
             // Actualizar los vehículos
-            for (int i = 0; i < this.m_VehicleData.Count; i++)
+            for (int i = 0; i < this.m_ObjectData.Count; i++)
             {
                 // Si está activo
-                if (this.m_VehicleData[i].IsActive())
+                if (this.m_ObjectData[i].IsActive())
                 {
                     // Integrar y actualizar las variables
-                    this.m_VehicleData[i].Integrate(time);
+                    this.m_ObjectData[i].Integrate(time);
 
                     // Si se trata de un vehículo establecer su altura sobre el terreno
-                    IVehicle vehicleObj = this.m_VehicleData[i] as IVehicle;
+                    IVehicle vehicleObj = this.m_ObjectData[i] as IVehicle;
                     if (vehicleObj != null)
                     {
                         Vector3 position = vehicleObj.GetPosition();
@@ -257,7 +262,7 @@ namespace Physics.CollideCoarse
                         vehicleObj.UpdateHeight(height);
                     }
 
-                    this.FireVehicleMovedEvent(this.m_VehicleData[i]);
+                    this.FireVehicleMovedEvent(this.m_ObjectData[i]);
                 }
 
                 // Actualizar las explosiones contra el vehículo actual
@@ -266,7 +271,7 @@ namespace Physics.CollideCoarse
                 {
                     if (explosions[e].IsActive)
                     {
-                        IPhysicObject pObj = this.m_VehicleData[i];
+                        IPhysicObject pObj = this.m_ObjectData[i];
                         explosions[e].UpdateForce(ref pObj, time);
 
                         this.FireExplosionUpdatedEvent(explosions[e]);
@@ -345,7 +350,7 @@ namespace Physics.CollideCoarse
                 }
 
                 // Recorrer los vehículos
-                foreach (IPhysicObject vehicleObj in this.m_VehicleData)
+                foreach (IPhysicObject vehicleObj in this.m_ObjectData)
                 {
                     // Si hay contactos libres
                     if (this.m_ContactData.HasFreeContacts())
@@ -382,7 +387,7 @@ namespace Physics.CollideCoarse
                         CollisionPrimitive projectileObjPrimitive = projectileObj.GetPrimitive();
 
                         // Recorrer los vehículos
-                        foreach (IPhysicObject vehicleObj in this.m_VehicleData)
+                        foreach (IPhysicObject vehicleObj in this.m_ObjectData)
                         {
                             // Si hay contactos libres
                             if (this.m_ContactData.HasFreeContacts())
@@ -421,26 +426,26 @@ namespace Physics.CollideCoarse
             }
 
             // Chequear colisiones entre vehículos
-            for (int i = 0; i < this.m_VehicleData.Count; i++)
+            for (int i = 0; i < this.m_ObjectData.Count; i++)
             {
                 if (this.m_ContactData.HasFreeContacts())
                 {
                     // Obtener la primitiva de colisión
-                    CollisionPrimitive primitive1 = this.m_VehicleData[i].GetPrimitive();
+                    CollisionPrimitive primitive1 = this.m_ObjectData[i].GetPrimitive();
 
-                    for (int x = i + 1; x < this.m_VehicleData.Count; x++)
+                    for (int x = i + 1; x < this.m_ObjectData.Count; x++)
                     {
                         if (this.m_ContactData.HasFreeContacts())
                         {
-                            if (this.m_VehicleData[i].IsActive() || this.m_VehicleData[x].IsActive())
+                            if (this.m_ObjectData[i].IsActive() || this.m_ObjectData[x].IsActive())
                             {
                                 // Obtener la segunda primitiva de colisión
-                                CollisionPrimitive primitive2 = this.m_VehicleData[x].GetContactedPrimitive(this.m_VehicleData[i]);
+                                CollisionPrimitive primitive2 = this.m_ObjectData[x].GetContactedPrimitive(this.m_ObjectData[i]);
                                 if (CollisionDetector.BetweenObjects(ref primitive1, ref primitive2, ref this.m_ContactData))
                                 {
                                     // Informar de la colisión entre cajas
-                                    this.m_VehicleData[i].Contacted(this.m_VehicleData[x]);
-                                    this.m_VehicleData[x].Contacted(this.m_VehicleData[i]);
+                                    this.m_ObjectData[i].Contacted(this.m_ObjectData[x]);
+                                    this.m_ObjectData[x].Contacted(this.m_ObjectData[i]);
                                 }
                             }
                         }
@@ -573,6 +578,15 @@ namespace Physics.CollideCoarse
             {
                 this.OnVehicleMoved(vehicle);
             }
+        }
+
+        /// <summary>
+        /// Evento que se produce cuando se destruye un vehículo
+        /// </summary>
+        /// <param name="vehicle">Vehículo</param>
+        private void PhysicsController_OnVehicleDestroyed(IVehicle vehicle)
+        {
+            this.RegisterExplosion(Explosion.CreateArtilleryExplosion(vehicle.GetPosition()));
         }
     }
 }

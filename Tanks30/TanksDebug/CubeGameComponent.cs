@@ -37,6 +37,10 @@ namespace TanksDebug
         /// Efecto
         /// </summary>
         private BasicEffect m_BasicEffect = null;
+        /// <summary>
+        /// Modo de relleno
+        /// </summary>
+        public FillMode FillMode = FillMode.Solid;
 
         /// <summary>
         /// Constructor
@@ -70,7 +74,7 @@ namespace TanksDebug
 
             this.m_Geometry = new BufferedGeometryInfo()
             {
-                FillMode = FillMode.Solid,
+                FillMode = this.FillMode,
                 Indexed = false,
                 PrimitiveType = PrimitiveType.TriangleList,
                 PrimitiveCount = primitiveCount,
@@ -116,6 +120,9 @@ namespace TanksDebug
 #if DEBUG
             // Dibujar el AABB
             GameComponents.Debug.DebugDrawer.DrawDebugAABB(this.GraphicsDevice, this.GetAABB());
+            
+            // Dibujar el objeto físico
+            GameComponents.Debug.DebugDrawer.DrawDebugPhysicObject(this.GraphicsDevice, this as IPhysicObject);
 #endif
         }
         /// <summary>
