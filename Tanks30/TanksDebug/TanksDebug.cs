@@ -433,23 +433,26 @@ namespace TanksDebug
             base.Draw(gameTime);
 
 #if DEBUG
-            for (int i = 0; i < IntersectionTests.m_DEBUGAABBCOUNT; i++)
+            if (IntersectionTests.m_DEBUGUSE)
             {
-                GameComponents.Debug.DebugDrawer.DrawDebugAABB(this.GraphicsDevice, IntersectionTests.m_DEBUGAABB[i]);
-            }
-            IntersectionTests.m_DEBUGAABBCOUNT = 0;
+                for (int i = 0; i < IntersectionTests.m_DEBUGAABBCOUNT; i++)
+                {
+                    GameComponents.Debug.DebugDrawer.DrawDebugAABB(this.GraphicsDevice, IntersectionTests.m_DEBUGAABB[i]);
+                }
+                IntersectionTests.m_DEBUGAABBCOUNT = 0;
 
-            for (int i = 0; i < IntersectionTests.m_DEBUGTRICOUNT; i++)
-            {
-                GameComponents.Debug.DebugDrawer.DrawDebugTriangle(this.GraphicsDevice, IntersectionTests.m_DEBUGTRI[i]);
-            }
-            IntersectionTests.m_DEBUGTRICOUNT = 0;
+                for (int i = 0; i < IntersectionTests.m_DEBUGTRICOUNT; i++)
+                {
+                    GameComponents.Debug.DebugDrawer.DrawDebugTriangle(this.GraphicsDevice, IntersectionTests.m_DEBUGTRI[i]);
+                }
+                IntersectionTests.m_DEBUGTRICOUNT = 0;
 
-            for (int i = 0; i < IntersectionTests.m_DEBUGEDGESCOUNT; i++)
-            {
-                GameComponents.Debug.DebugDrawer.DrawDebugEdge(this.GraphicsDevice, IntersectionTests.m_DEBUGEDGES[i]);
+                for (int i = 0; i < IntersectionTests.m_DEBUGEDGESCOUNT; i++)
+                {
+                    GameComponents.Debug.DebugDrawer.DrawDebugEdge(this.GraphicsDevice, IntersectionTests.m_DEBUGEDGES[i]);
+                }
+                IntersectionTests.m_DEBUGEDGESCOUNT = 0;
             }
-            IntersectionTests.m_DEBUGEDGESCOUNT = 0;
 #endif
         }
         /// <summary>
