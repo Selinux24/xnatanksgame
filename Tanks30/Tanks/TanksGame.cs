@@ -147,8 +147,8 @@ namespace Tanks
         /// <param name="explosion">Explosión</param>
         void Physics_OnExplosionUpdated(Explosion explosion)
         {
-            this.m_ParticleManager.AddExplosionParticle(explosion.DetonationCenter, Vector3.Up * 0.5f);
-            this.m_ParticleManager.AddExplosionSmokeParticle(explosion.DetonationCenter, Vector3.Up * 0.5f);
+            this.m_ParticleManager.AddParticle(ParticleSystemTypes.Explosion, explosion.DetonationCenter, Vector3.Up * 0.5f);
+            this.m_ParticleManager.AddParticle(ParticleSystemTypes.ExplosionSmoke, explosion.DetonationCenter, Vector3.Up * 0.5f);
         }
         /// <summary>
         /// Evento de proyectil en movimiento
@@ -158,7 +158,7 @@ namespace Tanks
         /// <param name="velocity">Velocidad</param>
         void Physics_OnProjectileMoved(AmmoRound ammo)
         {
-            this.m_ParticleManager.AddProjectileTrailParticle(ammo.Position, Vector3.Zero);
+            this.m_ParticleManager.AddParticle(ParticleSystemTypes.ProjectileTrail, ammo.Position, Vector3.Zero);
         }
         /// <summary>
         /// Se dispara cuando un vehículo ha sido destruído
@@ -169,8 +169,8 @@ namespace Tanks
         {
             if (sender != null)
             {
-                this.m_ParticleManager.AddFireParticleGenerator(sender, 15f);
-                this.m_ParticleManager.AddSmokePlumeParticleGenerator(sender, 60f);
+                this.m_ParticleManager.AddParticleGenerator(ParticleSystemTypes.Fire, sender, 15f);
+                this.m_ParticleManager.AddParticleGenerator(ParticleSystemTypes.SmokePlume, sender, 60f);
             }
         }
         /// <summary>
@@ -182,7 +182,7 @@ namespace Tanks
         {
             if (sender != null)
             {
-                this.m_ParticleManager.AddSmokePlumeParticleGenerator(sender, 15f);
+                this.m_ParticleManager.AddParticleGenerator(ParticleSystemTypes.SmokePlume, sender, 15f);
             }
         }
 
@@ -460,8 +460,8 @@ namespace Tanks
 
                 if (newVehicle != null)
                 {
-                    newVehicle.OnVehicleHeavyDamaged += new VehicleDamagedHandler(Vehicle_OnVehicleHeavyDamaged);
-                    newVehicle.OnVehicleDestroyed += new VehicleDamagedHandler(Vehicle_OnVehicleDestroyed);
+                    newVehicle.OnVehicleHeavyDamaged += new VehicleStateHandler(Vehicle_OnVehicleHeavyDamaged);
+                    newVehicle.OnVehicleDestroyed += new VehicleStateHandler(Vehicle_OnVehicleDestroyed);
 
                     vehicleList.Add(newVehicle);
                 }

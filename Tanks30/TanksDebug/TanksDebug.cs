@@ -6,18 +6,18 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TanksDebug
 {
+    using Buildings;
     using Common;
     using Common.Helpers;
     using GameComponents.Camera;
+    using GameComponents.Particles;
+    using GameComponents.Scenery;
+    using GameComponents.Text;
     using GameComponents.Vehicles;
     using GameComponents.Weapons;
+    using Physics;
     using Physics.CollideCoarse;
     using Vehicles;
-    using GameComponents.Text;
-    using Buildings;
-    using GameComponents.Scenery;
-    using Physics;
-    using GameComponents.Particles;
 
     /// <summary>
     /// Demostración de disparos
@@ -165,8 +165,14 @@ namespace TanksDebug
             if (vehicle is Vehicle)
             {
                 Vehicle v = vehicle as Vehicle;
-
-                this.m_ParticleManager.AddSmokePlumeParticle(v.Position, Vector3.Up * 0.01f);
+                if (v.IsSkimmer)
+                {
+                    this.m_ParticleManager.AddParticle(ParticleSystemTypes.SmokeEngine, v.Position, Vector3.Up * 0.01f);
+                }
+                else
+                {
+                    this.m_ParticleManager.AddParticle(ParticleSystemTypes.Dust, v.Position, Vector3.Up * 0.01f);
+                }
             }
         }
         /// <summary>
@@ -175,8 +181,8 @@ namespace TanksDebug
         /// <param name="explosion">Explosión</param>
         void Physics_OnExplosionUpdated(Explosion explosion)
         {
-            this.m_ParticleManager.AddExplosionParticle(explosion.DetonationCenter, Vector3.Up * 0.5f);
-            this.m_ParticleManager.AddExplosionSmokeParticle(explosion.DetonationCenter, Vector3.Up * 0.5f);
+            this.m_ParticleManager.AddParticle(ParticleSystemTypes.Explosion, explosion.DetonationCenter, Vector3.Up * 0.5f);
+            this.m_ParticleManager.AddParticle(ParticleSystemTypes.ExplosionSmoke, explosion.DetonationCenter, Vector3.Up * 0.5f);
         }
         /// <summary>
         /// Evento de proyectil en movimiento
@@ -186,7 +192,7 @@ namespace TanksDebug
         /// <param name="velocity">Velocidad</param>
         void Physics_OnProjectileMoved(AmmoRound ammo)
         {
-            //this.m_ParticleManager.AddProjectileTrailParticle(ammo.Position, Vector3.Zero);
+            this.m_ParticleManager.AddParticle(ParticleSystemTypes.ProjectileTrail, ammo.Position, Vector3.Zero);
         }
 
         /// <summary>
@@ -452,6 +458,8 @@ namespace TanksDebug
         private void DrawText()
         {
             string text = "Contactos en uso: " + this.Physics.UsedContacts.ToString() + Environment.NewLine;
+            text += "Particulas de humo de motor en uso: " + this.m_ParticleManager.GetUsedParticlesCount(ParticleSystemTypes.SmokeEngine).ToString() + Environment.NewLine;
+            text += "Particulas de polvo en uso: " + this.m_ParticleManager.GetUsedParticlesCount(ParticleSystemTypes.Dust).ToString() + Environment.NewLine;
             if (this.m_CurrentVehicle != null)
             {
                 text += "POSICION: " + this.m_CurrentVehicle.Position.ToString() + Environment.NewLine;

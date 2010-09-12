@@ -135,6 +135,16 @@ namespace GameComponents.Vehicles
                 return (this.Velocity <= 1f);
             }
         }
+        /// <summary>
+        /// Indica si el vehículo es volador
+        /// </summary>
+        public bool IsSkimmer
+        {
+            get
+            {
+                return (this.Skimmer);
+            }
+        }
 
         /// <summary>
         /// Obtiene el piloto automático

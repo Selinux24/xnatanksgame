@@ -11,12 +11,16 @@ namespace GameComponents.Particles
     /// <summary>
     /// Sistema de partículas
     /// </summary>
-    public abstract class ParticleSystem : DrawableGameComponent
+    public class ParticleSystem : DrawableGameComponent
     {
         /// <summary>
         /// Configuración de la apariencia de las partículas del sistema de partículas
         /// </summary>
         protected ParticleSettings Settings = new ParticleSettings();
+        /// <summary>
+        /// Tipo de partícula
+        /// </summary>
+        protected ParticleSystemTypes ParticleType = ParticleSystemTypes.None;
 
         /// <summary>
         /// Efecto para dibujar las partículas
@@ -76,6 +80,24 @@ namespace GameComponents.Particles
         private int m_DrawCounter;
 
         /// <summary>
+        /// Obtiene la cantidad de partículas en uso
+        /// </summary>
+        public int UsedParticles
+        {
+            get
+            {
+                if (this.m_FirstActiveParticle < this.m_FirstFreeParticle)
+                {
+                    return this.m_FirstFreeParticle - this.m_FirstActiveParticle;
+                }
+                else
+                {
+                    return this.m_Particles.Length - this.m_FirstActiveParticle + this.m_FirstFreeParticle;
+                }
+            }
+        }
+
+        /// <summary>
         /// Gestor de contenidos
         /// </summary>
         protected ContentManager Content
@@ -89,10 +111,10 @@ namespace GameComponents.Particles
         /// <summary>
         /// Constructor.
         /// </summary>
-        protected ParticleSystem(Game game)
+        public ParticleSystem(Game game, ParticleSystemTypes particleType)
             : base(game)
         {
-
+            this.ParticleType = particleType;
         }
 
         /// <summary>
@@ -101,18 +123,272 @@ namespace GameComponents.Particles
         public override void Initialize()
         {
             //Inicialización
-            this.InitializeSettings(Settings);
+            if (this.ParticleType == ParticleSystemTypes.Dust)
+            {
+                this.InitializeDust(Settings);
+            }
+            else if (this.ParticleType == ParticleSystemTypes.Explosion)
+            {
+                this.InitializeExplosion(Settings);
+            }
+            else if (this.ParticleType == ParticleSystemTypes.ExplosionSmoke)
+            {
+                this.InitializeExplosionSmoke(Settings);
+            }
+            else if (this.ParticleType == ParticleSystemTypes.Fire)
+            {
+                this.InitializeFire(Settings);
+            }
+            else if (this.ParticleType == ParticleSystemTypes.ProjectileTrail)
+            {
+                this.InitializeProjectileTrail(Settings);
+            }
+            else if (this.ParticleType == ParticleSystemTypes.SmokeEngine)
+            {
+                this.InitializeSmokeEngine(Settings);
+            }
+            else if (this.ParticleType == ParticleSystemTypes.SmokePlume)
+            {
+                this.InitializeSmokePlume(Settings);
+            }
 
             //Lista de partículas
             this.m_Particles = new ParticleVertex[this.Settings.MaxParticles];
 
             base.Initialize();
         }
+
+        /// <summary> 
+        /// Inicializar el sistema de partículas
+        /// </summary> 
+        protected void InitializeDust(ParticleSettings settings)
+        {
+            settings.TextureName = "Content/Particles/smoke";
+
+            settings.MaxParticles = 1000;
+
+            settings.Duration = TimeSpan.FromSeconds(1);
+
+            settings.MinHorizontalVelocity = 0;
+            settings.MaxHorizontalVelocity = 2;
+
+            settings.MinVerticalVelocity = 0;
+            settings.MaxVerticalVelocity = 2;
+
+            settings.Gravity = new Vector3(-0.15f, -0.15f, 0);
+
+            settings.EndVelocity = 0.1f;
+
+            settings.MinColor = Color.SandyBrown;
+            settings.MaxColor = Color.SandyBrown;
+
+            settings.MinRotateSpeed = -1;
+            settings.MaxRotateSpeed = 1;
+
+            settings.MinStartSize = 1;
+            settings.MaxStartSize = 2;
+
+            settings.MinEndSize = 5;
+            settings.MaxEndSize = 10;
+        }
+        /// <summary> 
+        /// Inicializar el sistema de partículas
+        /// </summary> 
+        protected void InitializeExplosion(ParticleSettings settings)
+        {
+            settings.TextureName = "Content/Particles/explosion";
+
+            settings.MaxParticles = 1000;
+
+            settings.Duration = TimeSpan.FromSeconds(2);
+
+            settings.DurationRandomness = 1;
+
+            settings.MinHorizontalVelocity = 20;
+            settings.MaxHorizontalVelocity = 30;
+
+            settings.MinVerticalVelocity = -20;
+            settings.MaxVerticalVelocity = 20;
+
+            settings.EndVelocity = 0;
+
+            settings.MinColor = Color.DarkGray;
+            settings.MaxColor = Color.Gray;
+
+            settings.MinRotateSpeed = -1;
+            settings.MaxRotateSpeed = 1;
+
+            settings.MinStartSize = 10;
+            settings.MaxStartSize = 10;
+
+            settings.MinEndSize = 100;
+            settings.MaxEndSize = 200;
+
+            settings.SourceBlend = Blend.SourceAlpha;
+            settings.DestinationBlend = Blend.One;
+        }
+        /// <summary> 
+        /// Inicializar el sistema de partículas
+        /// </summary> 
+        protected void InitializeExplosionSmoke(ParticleSettings settings)
+        {
+            settings.TextureName = "Content/Particles/smoke";
+
+            settings.MaxParticles = 1000;
+
+            settings.Duration = TimeSpan.FromSeconds(4);
+
+            settings.MinHorizontalVelocity = 0;
+            settings.MaxHorizontalVelocity = 50;
+
+            settings.MinVerticalVelocity = -10;
+            settings.MaxVerticalVelocity = 50;
+
+            settings.Gravity = new Vector3(0, -20, 0);
+
+            settings.EndVelocity = 0;
+
+            settings.MinColor = Color.LightGray;
+            settings.MaxColor = Color.White;
+
+            settings.MinRotateSpeed = -2;
+            settings.MaxRotateSpeed = 2;
+
+            settings.MinStartSize = 10;
+            settings.MaxStartSize = 10;
+
+            settings.MinEndSize = 100;
+            settings.MaxEndSize = 200;
+        }
+        /// <summary> 
+        /// Inicializar el sistema de partículas
+        /// </summary> 
+        protected void InitializeFire(ParticleSettings settings)
+        {
+            settings.TextureName = "Content/Particles/fire";
+
+            settings.MaxParticles = 500;
+
+            settings.Duration = TimeSpan.FromSeconds(2);
+
+            settings.DurationRandomness = 1;
+
+            settings.MinHorizontalVelocity = 0;
+            settings.MaxHorizontalVelocity = 15;
+
+            settings.MinVerticalVelocity = -10;
+            settings.MaxVerticalVelocity = 10;
+
+            settings.Gravity = new Vector3(0, 15, 0);
+
+            settings.MinColor = new Color(255, 255, 255, 10);
+            settings.MaxColor = new Color(255, 255, 255, 40);
+
+            settings.MinStartSize = 5;
+            settings.MaxStartSize = 10;
+
+            settings.MinEndSize = 10;
+            settings.MaxEndSize = 40;
+
+            settings.SourceBlend = Blend.SourceAlpha;
+            settings.DestinationBlend = Blend.One;
+        }
         /// <summary>
-        /// Establece la configuración del sistema de partículas
+        /// Humo de motor
         /// </summary>
-        /// <param name="settings">Configuración</param>
-        protected abstract void InitializeSettings(ParticleSettings settings);
+        /// <param name="settings">Propiedades</param>
+        protected void InitializeSmokeEngine(ParticleSettings settings)
+        {
+            settings.TextureName = "Content/Particles/smoke";
+
+            settings.MaxParticles = 1000;
+
+            settings.Duration = TimeSpan.FromSeconds(1);
+
+            settings.MinHorizontalVelocity = 0;
+            settings.MaxHorizontalVelocity = 2;
+
+            settings.MinVerticalVelocity = 0;
+            settings.MaxVerticalVelocity = 2;
+
+            settings.Gravity = new Vector3(-1, -1, 0);
+
+            settings.EndVelocity = 0.15f;
+
+            settings.MinRotateSpeed = -1;
+            settings.MaxRotateSpeed = 1;
+
+            settings.MinStartSize = 1;
+            settings.MaxStartSize = 2;
+
+            settings.MinEndSize = 2;
+            settings.MaxEndSize = 4;
+        }
+        /// <summary>
+        /// Inicializar
+        /// </summary>
+        /// <param name="settings">Parámetros</param>
+        protected void InitializeSmokePlume(ParticleSettings settings)
+        {
+            settings.TextureName = "Content/Particles/smoke";
+
+            settings.MaxParticles = 5000;
+
+            settings.Duration = TimeSpan.FromSeconds(10);
+
+            settings.MinHorizontalVelocity = 0;
+            settings.MaxHorizontalVelocity = 5;
+
+            settings.MinVerticalVelocity = 10;
+            settings.MaxVerticalVelocity = 20;
+
+            settings.Gravity = new Vector3(-20, -5, 0);
+
+            settings.EndVelocity = 0.75f;
+
+            settings.MinRotateSpeed = -1;
+            settings.MaxRotateSpeed = 1;
+
+            settings.MinStartSize = 5;
+            settings.MaxStartSize = 10;
+
+            settings.MinEndSize = 50;
+            settings.MaxEndSize = 200;
+        }
+        /// <summary> 
+        /// Inicializar el sistema de partículas
+        /// </summary> 
+        protected void InitializeProjectileTrail(ParticleSettings settings)
+        {
+            settings.TextureName = "Content/Particles/smoke";
+
+            settings.MaxParticles = 250;
+
+            settings.Duration = TimeSpan.FromSeconds(0.5f);
+
+            settings.DurationRandomness = 1.5f;
+
+            settings.EmitterVelocitySensitivity = 0.1f;
+
+            settings.MinHorizontalVelocity = -1;
+            settings.MaxHorizontalVelocity = 1;
+
+            settings.MinVerticalVelocity = -1;
+            settings.MaxVerticalVelocity = 1;
+
+            settings.MinColor = Color.Gray;
+            settings.MaxColor = Color.White;
+
+            settings.MinRotateSpeed = 1;
+            settings.MaxRotateSpeed = 1;
+
+            settings.MinStartSize = 0.5f;
+            settings.MaxStartSize = 1f;
+
+            settings.MinEndSize = 1f;
+            settings.MaxEndSize = 2f;
+        }
+
         /// <summary>
         /// Carga del contenido
         /// </summary>

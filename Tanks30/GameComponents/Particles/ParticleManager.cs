@@ -1,34 +1,19 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Physics;
 
 namespace GameComponents.Particles
 {
+    using Physics;
+
     /// <summary>
     /// Gestor de partículas
     /// </summary>
     public class ParticleManager : GameComponent
     {
         /// <summary>
-        /// Explosión
+        /// Diccionario de sistemas de partículas por tipo
         /// </summary>
-        private ExplosionParticleSystem m_Explosion = null;
-        /// <summary>
-        /// Explosión con humo
-        /// </summary>
-        private ExplosionSmokeParticleSystem m_ExplosionSmoke = null;
-        /// <summary>
-        /// Fuego
-        /// </summary>
-        private FireParticleSystem m_Fire = null;
-        /// <summary>
-        /// Humo
-        /// </summary>
-        private SmokePlumeParticleSystem m_SmokePlume = null;
-        /// <summary>
-        /// Traza de proyectil
-        /// </summary>
-        private ProjectileTrailParticleSystem m_ProjectileTrail = null;
+        private Dictionary<ParticleSystemTypes, ParticleSystem> m_ParticleDictionary = new Dictionary<ParticleSystemTypes, ParticleSystem>();
         /// <summary>
         /// Lista de generadores de partículas estáticos
         /// </summary>
@@ -44,31 +29,6 @@ namespace GameComponents.Particles
 
         }
 
-        /// <summary>
-        /// Inicialización
-        /// </summary>
-        public override void Initialize()
-        {
-            base.Initialize();
-
-            this.m_Explosion = new ExplosionParticleSystem(this.Game);
-            this.m_ExplosionSmoke = new ExplosionSmokeParticleSystem(this.Game);
-            this.m_Fire = new FireParticleSystem(this.Game);
-            this.m_SmokePlume = new SmokePlumeParticleSystem(this.Game);
-            this.m_ProjectileTrail = new ProjectileTrailParticleSystem(this.Game);
-
-            this.m_Explosion.DrawOrder = 0;
-            this.m_ExplosionSmoke.DrawOrder = 0;
-            this.m_Fire.DrawOrder = 0;
-            this.m_SmokePlume.DrawOrder = 0;
-            this.m_ProjectileTrail.DrawOrder = 0;
-
-            this.Game.Components.Add(this.m_Explosion);
-            this.Game.Components.Add(this.m_ExplosionSmoke);
-            this.Game.Components.Add(this.m_Fire);
-            this.Game.Components.Add(this.m_SmokePlume);
-            this.Game.Components.Add(this.m_ProjectileTrail);
-        }
         /// <summary>
         /// Actualiza el componente
         /// </summary>
@@ -87,7 +47,7 @@ namespace GameComponents.Particles
                 {
                     if (generator.Emitter != null)
                     {
-                        generator.ParticleSystem.AddParticle(generator.Emitter.GetPosition(), Vector3.Up);
+                        this.AddParticle(generator.ParticleType, generator.Emitter.GetPosition(), Vector3.Up);
                     }
 
                     generator.Duration -= elapsed;
@@ -109,68 +69,56 @@ namespace GameComponents.Particles
         }
 
         /// <summary>
-        /// Añade una partícula de explosión
+        /// Obtiene la cantidad de partículas en uso del tipo especificado
         /// </summary>
-        /// <param name="position">Posición</param>
-        /// <param name="velocity">Velocidad</param>
-        public void AddExplosionParticle(Vector3 position, Vector3 velocity)
+        /// <param name="particleType">Tipo de partículas</param>
+        /// <returns>Devuelve el número de partículas en uso</returns>
+        public int GetUsedParticlesCount(ParticleSystemTypes particleType)
         {
-            this.m_Explosion.AddParticle(position, velocity);
-        }
-        /// <summary>
-        /// Añade una partícula de explosión con humo
-        /// </summary>
-        /// <param name="position">Posición</param>
-        /// <param name="velocity">Velocidad</param>
-        public void AddExplosionSmokeParticle(Vector3 position, Vector3 velocity)
-        {
-            this.m_ExplosionSmoke.AddParticle(position, velocity);
-        }
-        /// <summary>
-        /// Añade una partícula de fuego
-        /// </summary>
-        /// <param name="position">Posición</param>
-        /// <param name="velocity">Velocidad</param>
-        public void AddFireParticle(Vector3 position, Vector3 velocity)
-        {
-            this.m_Fire.AddParticle(position, velocity);
-        }
-        /// <summary>
-        /// Añade una partícula de humo
-        /// </summary>
-        /// <param name="position">Posición</param>
-        /// <param name="velocity">Velocidad</param>
-        public void AddSmokePlumeParticle(Vector3 position, Vector3 velocity)
-        {
-            this.m_SmokePlume.AddParticle(position, velocity);
-        }
-        /// <summary>
-        /// Añade una partícula de traza de proyectil
-        /// </summary>
-        /// <param name="position">Posición</param>
-        /// <param name="velocity">Velocidad</param>
-        public void AddProjectileTrailParticle(Vector3 position, Vector3 velocity)
-        {
-            this.m_ProjectileTrail.AddParticle(position, velocity);
-        }
+            if (particleType != ParticleSystemTypes.None)
+            {
+                if (this.m_ParticleDictionary.ContainsKey(particleType))
+                {
+                    return this.m_ParticleDictionary[particleType].UsedParticles;
+                }
+            }
 
+            return 0;
+        }
+        /// <summary>
+        /// Añade una partícula del tipo especificado
+        /// </summary>
+        /// <param name="particleType">Tipo de partícula</param>
+        /// <param name="position">Posición</param>
+        /// <param name="velocity">Velocidad</param>
+        public void AddParticle(ParticleSystemTypes particleType, Vector3 position, Vector3 velocity)
+        {
+            if (particleType != ParticleSystemTypes.None)
+            {
+                if (!this.m_ParticleDictionary.ContainsKey(particleType))
+                {
+                    ParticleSystem particleSystem = new ParticleSystem(this.Game, particleType);
+                    particleSystem.DrawOrder = 0;
+                    this.Game.Components.Add(particleSystem);
+
+                    this.m_ParticleDictionary.Add(particleType, particleSystem);
+                }
+
+                this.m_ParticleDictionary[particleType].AddParticle(position, velocity);
+            }
+        }
         /// <summary>
         /// Añade un generador estático de fuego
         /// </summary>
+        /// <param name="particleType">Tipo de partícula</param>
         /// <param name="obj">Objeto que genera el fuego</param>
         /// <param name="duration">Duración</param>
-        public void AddFireParticleGenerator(IPhysicObject obj, float duration)
+        public void AddParticleGenerator(ParticleSystemTypes particleType, IPhysicObject obj, float duration)
         {
-            this.m_ParticleGenerators.Add(new ParticleGenerator() { Emitter = obj, ParticleSystem = this.m_Fire, Duration = duration });
-        }
-        /// <summary>
-        /// Añade un generador estático de humo
-        /// </summary>
-        /// <param name="obj">Objeto que genera el humo</param>
-        /// <param name="duration">Duración</param>
-        public void AddSmokePlumeParticleGenerator(IPhysicObject obj, float duration)
-        {
-            this.m_ParticleGenerators.Add(new ParticleGenerator() { Emitter = obj, ParticleSystem = this.m_SmokePlume, Duration = duration });
+            if (particleType != ParticleSystemTypes.None)
+            {
+                this.m_ParticleGenerators.Add(new ParticleGenerator() { Emitter = obj, ParticleType = particleType, Duration = duration });
+            }
         }
     }
 }

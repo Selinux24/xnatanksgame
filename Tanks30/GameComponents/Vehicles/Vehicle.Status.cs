@@ -98,19 +98,19 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Evento que se produce cuando se daña ligeramente el vehículo
         /// </summary>
-        public event VehicleDamagedHandler OnVehicleSlightlyDamaged;
+        public event VehicleStateHandler OnVehicleSlightlyDamaged;
         /// <summary>
         /// Evento que se produce cuando se daña el vehículo
         /// </summary>
-        public event VehicleDamagedHandler OnVehicleDamaged;
+        public event VehicleStateHandler OnVehicleDamaged;
         /// <summary>
         /// Evento que se produce cuando se daña severamente el vehículo
         /// </summary>
-        public event VehicleDamagedHandler OnVehicleHeavyDamaged;
+        public event VehicleStateHandler OnVehicleHeavyDamaged;
         /// <summary>
         /// Evento que se produce cuando el vehículo es destruído
         /// </summary>
-        public event VehicleDamagedHandler OnVehicleDestroyed;
+        public event VehicleStateHandler OnVehicleDestroyed;
 
         /// <summary>
         /// Disparador del evento de vehículo ligeramente dañado
