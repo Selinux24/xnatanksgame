@@ -11,6 +11,7 @@ namespace Physics
     public abstract class IntersectionTests
     {
 #if DEBUG
+        public static bool m_DEBUGUSE = false;
         public static BoundingBox[] m_DEBUGAABB = new BoundingBox[1024];
         public static int m_DEBUGAABBCOUNT = 0;
         public static Triangle[] m_DEBUGTRI = new Triangle[1024];
@@ -267,8 +268,11 @@ namespace Physics
             if (OverlapOnAxis(box, localTri, edge3, 2)) { return false; }
 
 #if DEBUG
-            m_DEBUGTRI[m_DEBUGTRICOUNT++] = tri;
-            m_DEBUGAABB[m_DEBUGAABBCOUNT++] = PhysicsMathHelper.GenerateFromTriangle(tri);
+            if (m_DEBUGUSE)
+            {
+                m_DEBUGTRI[m_DEBUGTRICOUNT++] = tri;
+                m_DEBUGAABB[m_DEBUGAABBCOUNT++] = PhysicsMathHelper.GenerateFromTriangle(tri);
+            }
 #endif
 
             return true;

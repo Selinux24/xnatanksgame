@@ -83,7 +83,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Rhino.fbx">
+    <Compile Include="Vehicles\Rhino.fbx">
       <Importer>FbxImporter</Importer>
       <Processor>PrimitiveInfoProcessor</Processor>
       <Name>Rhino</Name>
@@ -112,21 +112,21 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LandRaider.fbx">
+    <Compile Include="Vehicles\LandRaider.fbx">
       <Importer>FbxImporter</Importer>
       <Processor>PrimitiveInfoProcessor</Processor>
       <Name>LandRaider</Name>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LandSpeeder.fbx">
+    <Compile Include="Vehicles\LandSpeeder.fbx">
       <Importer>FbxImporter</Importer>
       <Processor>PrimitiveInfoProcessor</Processor>
       <Name>LandSpeeder</Name>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LemanRuss.fbx">
+    <Compile Include="Vehicles\LemanRuss.fbx">
       <Importer>FbxImporter</Importer>
       <Processor>PrimitiveInfoProcessor</Processor>
       <Name>LemanRuss</Name>
@@ -161,7 +161,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Rhino.xml">
+    <None Include="Vehicles\Rhino.xml">
       <Name>Rhino</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
@@ -169,7 +169,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LandRaider.xml">
+    <None Include="Vehicles\LandRaider.xml">
       <Name>LandRaider</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
@@ -177,7 +177,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LandSpeeder.xml">
+    <None Include="Vehicles\LandSpeeder.xml">
       <Name>LandSpeeder</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
@@ -195,7 +195,7 @@
       <Importer>XImporter</Importer>
       <Processor>PrimitiveInfoProcessor</Processor>
     </Compile>
-    <None Include="LemanRuss.xml">
+    <None Include="Vehicles\LemanRuss.xml">
       <Name>LemanRuss</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
@@ -320,6 +320,58 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Vehicles\Textures\Black Chaos.png">
+      <Name>Black Chaos</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Vehicles\Textures\Blood Red.png">
+      <Name>Blood Red</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Vehicles\Textures\Codex Gray.png">
+      <Name>Codex Gray</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Vehicles\Textures\Golden Yellow.png">
+      <Name>Golden Yellow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Vehicles\Textures\Gray.png">
+      <Name>Gray</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Vehicles\Textures\Sunburst Yellow.png">
+      <Name>Sunburst Yellow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Vehicles\Textures\Ultramarine Blue.png">
+      <Name>Ultramarine Blue</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Vehicles\Textures\Steel 4.jpg">
+      <Name>Steel 4</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
