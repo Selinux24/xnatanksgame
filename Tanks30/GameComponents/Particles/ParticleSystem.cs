@@ -207,24 +207,55 @@ namespace GameComponents.Particles
             //Si hay partículas activas, renderizar
             if (this.m_FirstActiveParticle != this.m_FirstFreeParticle)
             {
-                //Establecer la configuración del renderizador
-                this.SetParticleRenderStates(this.GraphicsDevice.RenderState);
+                //Guardar el estado anterior
+                bool pointSpriteEnable = this.GraphicsDevice.RenderState.PointSpriteEnable;
+                float pointSizeMax = this.GraphicsDevice.RenderState.PointSizeMax;
+                bool alphaBlendEnable = this.GraphicsDevice.RenderState.AlphaBlendEnable;
+                BlendFunction alphaBlendOperation = this.GraphicsDevice.RenderState.AlphaBlendOperation;
+                Blend sourceBlend = this.GraphicsDevice.RenderState.SourceBlend;
+                Blend destinationBlend = this.GraphicsDevice.RenderState.DestinationBlend;
+                bool alphaTestEnable = this.GraphicsDevice.RenderState.AlphaTestEnable;
+                CompareFunction alphaFunction = this.GraphicsDevice.RenderState.AlphaFunction;
+                int referenceAlpha = this.GraphicsDevice.RenderState.ReferenceAlpha;
+                bool depthBufferEnable = this.GraphicsDevice.RenderState.DepthBufferEnable;
+                bool depthBufferWriteEnable = this.GraphicsDevice.RenderState.DepthBufferWriteEnable;
 
-                //Altura del ViewPort
-                this.m_EffectViewportHeightParameter.SetValue(this.GraphicsDevice.Viewport.Height);
+                //PointSprites
+                this.GraphicsDevice.RenderState.PointSpriteEnable = true;
+                this.GraphicsDevice.RenderState.PointSizeMax = 256;
 
-                //Tiempo actual
-                this.m_EffectTimeParameter.SetValue(this.m_CurrentTime);
+                //AlphaBlend
+                this.GraphicsDevice.RenderState.AlphaBlendEnable = true;
+                this.GraphicsDevice.RenderState.AlphaBlendOperation = BlendFunction.Add;
+                this.GraphicsDevice.RenderState.SourceBlend = Settings.SourceBlend;
+                this.GraphicsDevice.RenderState.DestinationBlend = Settings.DestinationBlend;
 
-                //Matriz vista
-                this.m_EffectViewParameter.SetValue(GlobalMatrices.gViewMatrix);
+                //AlphaTest
+                this.GraphicsDevice.RenderState.AlphaTestEnable = true;
+                this.GraphicsDevice.RenderState.AlphaFunction = CompareFunction.Greater;
+                this.GraphicsDevice.RenderState.ReferenceAlpha = 0;
 
-                //Matriz proyección
-                this.m_EffectProjectionParameter.SetValue(GlobalMatrices.gProjectionMatrix);
+                //DepthBuffer para que se oculten tras otros objetos
+                this.GraphicsDevice.RenderState.DepthBufferEnable = true;
+
+                //DepthBufferWrite para que no influyan en otras partículas
+                this.GraphicsDevice.RenderState.DepthBufferWriteEnable = false;
+
+                //Niebla
+                Scenery.SceneryEnvironment.Fog.SetFogToDevice(this.GraphicsDevice);
 
                 //Establecer la declaración y el buffer
                 this.GraphicsDevice.Vertices[0].SetSource(this.m_VertexBuffer, 0, ParticleVertex.SizeInBytes);
                 this.GraphicsDevice.VertexDeclaration = this.m_VertexDeclaration;
+
+                //Altura del ViewPort
+                this.m_EffectViewportHeightParameter.SetValue(this.GraphicsDevice.Viewport.Height);
+                //Tiempo actual
+                this.m_EffectTimeParameter.SetValue(this.m_CurrentTime);
+                //Matriz vista
+                this.m_EffectViewParameter.SetValue(GlobalMatrices.gViewMatrix);
+                //Matriz proyección
+                this.m_EffectProjectionParameter.SetValue(GlobalMatrices.gProjectionMatrix);
 
                 //Comenzar a dibujar
                 this.m_ParticleEffect.Begin();
@@ -265,8 +296,30 @@ namespace GameComponents.Particles
                 this.m_ParticleEffect.End();
 
                 //Resetear el renderizador
-                this.GraphicsDevice.RenderState.PointSpriteEnable = false;
-                this.GraphicsDevice.RenderState.DepthBufferWriteEnable = true;
+
+                //PointSprites
+                this.GraphicsDevice.RenderState.PointSpriteEnable = pointSpriteEnable;
+                this.GraphicsDevice.RenderState.PointSizeMax = pointSizeMax;
+
+                //AlphaBlend
+                this.GraphicsDevice.RenderState.AlphaBlendEnable = alphaBlendEnable;
+                this.GraphicsDevice.RenderState.AlphaBlendOperation = alphaBlendOperation;
+                this.GraphicsDevice.RenderState.SourceBlend = sourceBlend;
+                this.GraphicsDevice.RenderState.DestinationBlend = destinationBlend;
+
+                //AlphaTest
+                this.GraphicsDevice.RenderState.AlphaTestEnable = alphaTestEnable;
+                this.GraphicsDevice.RenderState.AlphaFunction = alphaFunction;
+                this.GraphicsDevice.RenderState.ReferenceAlpha = referenceAlpha;
+
+                //DepthBuffer para que se oculten tras otros objetos
+                this.GraphicsDevice.RenderState.DepthBufferEnable = depthBufferEnable;
+
+                //DepthBufferWrite para que no influyan en otras partículas
+                this.GraphicsDevice.RenderState.DepthBufferWriteEnable = depthBufferWriteEnable;
+
+                //Restablecer la declaración 
+                this.GraphicsDevice.VertexDeclaration = null;
             }
 
             this.m_DrawCounter++;
@@ -369,32 +422,6 @@ namespace GameComponents.Particles
             //Establecer el indice para dejar las partículas en el área activa
             this.m_FirstNewParticle = this.m_FirstFreeParticle;
         }
-        /// <summary>
-        /// Configura el renderizador para cada partícula
-        /// </summary>
-        void SetParticleRenderStates(RenderState renderState)
-        {
-            //PointSprites
-            renderState.PointSpriteEnable = true;
-            renderState.PointSizeMax = 256;
-
-            //AlphaBlend
-            renderState.AlphaBlendEnable = true;
-            renderState.AlphaBlendOperation = BlendFunction.Add;
-            renderState.SourceBlend = Settings.SourceBlend;
-            renderState.DestinationBlend = Settings.DestinationBlend;
-
-            //AlphaTest
-            renderState.AlphaTestEnable = true;
-            renderState.AlphaFunction = CompareFunction.Greater;
-            renderState.ReferenceAlpha = 0;
-
-            //DepthBuffer para que se oculten tras otros objetos
-            renderState.DepthBufferEnable = true;
-
-            //DepthBufferWrite para que no influyan en otras partículas
-            renderState.DepthBufferWriteEnable = false;
-        }
 
         /// <summary>
         /// Añade una nueva partícula al sistema
@@ -424,7 +451,7 @@ namespace GameComponents.Particles
             //Añadir algo de velocidad horizontal
             float horizontalVelocity = MathHelper.Lerp(
                 this.Settings.MinHorizontalVelocity,
-                this.Settings.MaxHorizontalVelocity,                                                       
+                this.Settings.MaxHorizontalVelocity,
                 RandomComponent.NextFloat());
 
             double horizontalAngle = RandomComponent.NextDouble() * MathHelper.TwoPi;
@@ -435,7 +462,7 @@ namespace GameComponents.Particles
             //Añadir algo de velocidad vertical
             velocity.Y += MathHelper.Lerp(
                 this.Settings.MinVerticalVelocity,
-                this.Settings.MaxVerticalVelocity,                                          
+                this.Settings.MaxVerticalVelocity,
                 RandomComponent.NextFloat());
 
             //Colores

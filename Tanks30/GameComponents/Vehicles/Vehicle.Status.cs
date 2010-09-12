@@ -6,8 +6,6 @@ namespace GameComponents.Vehicles
     using GameComponents.Weapons;
     using Physics;
 
-    public delegate void VehicleDamagedHandler(IVehicle vehicle);
-
     /// <summary>
     /// Estado del vehículo
     /// </summary>

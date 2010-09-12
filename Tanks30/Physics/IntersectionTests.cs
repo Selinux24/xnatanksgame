@@ -10,6 +10,15 @@ namespace Physics
     /// </summary>
     public abstract class IntersectionTests
     {
+#if DEBUG
+        public static BoundingBox[] m_DEBUGAABB = new BoundingBox[1024];
+        public static int m_DEBUGAABBCOUNT = 0;
+        public static Triangle[] m_DEBUGTRI = new Triangle[1024];
+        public static int m_DEBUGTRICOUNT = 0;
+        public static Vector3[] m_DEBUGEDGES = new Vector3[1024];
+        public static int m_DEBUGEDGESCOUNT = 0;
+#endif
+
         /// <summary>
         /// Detecta la intersección entre una esfera y un plano
         /// </summary>
@@ -160,7 +169,7 @@ namespace Physics
         public static bool BoxAndPlane(CollisionBox box, Vector3 normal, float d)
         {
             // Proyectar la caja sobre la normal del plano
-            float projectedBox = TransformToAxis(box, normal);
+            float projectedBox = box.ProyectToVector(normal);
 
             // Obtener la distancia del centro de la caja al plano sobre la normal
             float boxDistance = Vector3.Dot(normal, box.Position) - projectedBox;
@@ -176,31 +185,92 @@ namespace Physics
         /// <returns>Devuelve verdadero si hay intersección</returns>
         public static bool BoxAndTri(CollisionBox box, Triangle tri)
         {
-            // Pasar el triángulo al espacio de coordenadas de la caja
-            Triangle trnTri = new Triangle(
-                Vector3.Subtract(tri.Point1, box.Position),
-                Vector3.Subtract(tri.Point2, box.Position),
-                Vector3.Subtract(tri.Point3, box.Position));
+            //Transformar la caja a coordenadas locales para poder usar un AABB-Triangle
+            Quaternion orientation = box.Orientation;
+            Quaternion orientationInv;
+            Quaternion.Conjugate(ref orientation, out orientationInv);
 
-            // Eje 0
-            Vector3 edge0 = Vector3.Subtract(trnTri.Point2, trnTri.Point1);
-            if (!AxisTest_X(trnTri.Point1, trnTri.Point3, box.HalfSize, edge0.Z, edge0.Y)) return false;
-            if (!AxisTest_Y(trnTri.Point1, trnTri.Point3, box.HalfSize, edge0.Z, edge0.X)) return false;
-            if (!AxisTest_Z(trnTri.Point2, trnTri.Point3, box.HalfSize, edge0.Y, edge0.X)) return false;
+            //Llevar el triángulo a las coordenadas de la caja
+            Matrix minv = Matrix.CreateFromQuaternion(orientationInv);
+            Vector3 localPoint1 = Vector3.TransformNormal(tri.Point1 - box.Position, minv);
+            Vector3 localPoint2 = Vector3.TransformNormal(tri.Point2 - box.Position, minv);
+            Vector3 localPoint3 = Vector3.TransformNormal(tri.Point3 - box.Position, minv);
+            Triangle localTri = new Triangle(localPoint1, localPoint2, localPoint3);
 
-            // Eje 1
-            Vector3 edge1 = Vector3.Subtract(trnTri.Point3, trnTri.Point2);
-            if (!AxisTest_X(trnTri.Point1, trnTri.Point3, box.HalfSize, edge1.Z, edge1.Y)) return false;
-            if (!AxisTest_Y(trnTri.Point1, trnTri.Point3, box.HalfSize, edge1.Z, edge1.X)) return false;
-            if (!AxisTest_Z(trnTri.Point1, trnTri.Point2, box.HalfSize, edge1.Y, edge1.X)) return false;
+            BoundingBox localTriBounds = PhysicsMathHelper.GenerateFromTriangle(localTri);
+            Vector3 localTriBoundhalfExtent = localTriBounds.GetHalfSizes();
+            Vector3 localTriBoundCenter = localTriBounds.GetCenter();
 
-            // Eje 2
-            Vector3 edge2 = Vector3.Subtract(trnTri.Point1, trnTri.Point3);
-            if (!AxisTest_X(trnTri.Point1, trnTri.Point2, box.HalfSize, edge2.Z, edge2.Y)) return false;
-            if (!AxisTest_Y(trnTri.Point1, trnTri.Point2, box.HalfSize, edge2.Z, edge2.X)) return false;
-            if (!AxisTest_Z(trnTri.Point2, trnTri.Point3, box.HalfSize, edge2.Y, edge2.X)) return false;
+            float localTriBoundCenterX = Math.Abs(localTriBoundCenter.X);
+            float localTriBoundCenterY = Math.Abs(localTriBoundCenter.Y);
+            float localTriBoundCenterZ = Math.Abs(localTriBoundCenter.Z);
 
-            // Hay intersección
+            if (localTriBoundhalfExtent.X + box.HalfSize.X <= localTriBoundCenterX ||
+                localTriBoundhalfExtent.Y + box.HalfSize.Y <= localTriBoundCenterY ||
+                localTriBoundhalfExtent.Z + box.HalfSize.Z <= localTriBoundCenterZ)
+            {
+                //El cuerpo está fuera de la caja
+                return false;
+            }
+
+            if (localTriBoundhalfExtent.X + localTriBoundCenterX <= box.HalfSize.X &&
+                localTriBoundhalfExtent.Y + localTriBoundCenterY <= box.HalfSize.Y &&
+                localTriBoundhalfExtent.Z + localTriBoundCenterZ <= box.HalfSize.Z)
+            {
+                //El cuerpo está dentro de la caja
+                return true;
+            }
+
+            Vector3 point1 = localTri.Point1;
+            Vector3 point2 = localTri.Point2;
+            Vector3 point3 = localTri.Point3;
+
+            //Obtener eje 1, entre el punto 1 y el 2 del triángulo
+            Vector3 edge1;
+            Vector3.Subtract(ref point2, ref point1, out edge1);
+
+            //Obtener eje 2, entre el punto 1 y el 3 del triángulo
+            Vector3 edge2;
+            Vector3.Subtract(ref point3, ref point1, out edge2);
+
+            //Obtener el eje perpendicular entre los dos ejes
+            Vector3 crossEdge;
+            Vector3.Cross(ref edge1, ref edge2, out crossEdge);
+
+            //Obtener la distancia del triángulo al eje
+            float triangleDist = Vector3.Dot(localTri.Point1, crossEdge);
+            if (Math.Abs(crossEdge.X * box.HalfSize.X) +
+                Math.Abs(crossEdge.Y * box.HalfSize.Y) +
+                Math.Abs(crossEdge.Z * box.HalfSize.Z) <= Math.Abs(triangleDist))
+            {
+                return false;
+            }
+
+            // No hay resultados en los tests con el AABB del triángulo, hay que probar los 9 casos, 3 por eje
+            // Al usar la transformación local de la caja, cada plano calculado es paralelo a cada eje de la caja
+            // Como son paralelos, el producto es siempre 0 y se puede omitir
+
+            //Obtener eje 3, entre el punto 2 y el 3 del triángulo
+            Vector3 edge3;
+            Vector3.Subtract(ref point2, ref point3, out edge3);
+
+            if (OverlapOnAxis(box, localTri, edge1, 0)) { return false; }
+            if (OverlapOnAxis(box, localTri, edge2, 0)) { return false; }
+            if (OverlapOnAxis(box, localTri, edge3, 0)) { return false; }
+
+            if (OverlapOnAxis(box, localTri, edge1, 1)) { return false; }
+            if (OverlapOnAxis(box, localTri, edge2, 1)) { return false; }
+            if (OverlapOnAxis(box, localTri, edge3, 1)) { return false; }
+
+            if (OverlapOnAxis(box, localTri, edge1, 2)) { return false; }
+            if (OverlapOnAxis(box, localTri, edge2, 2)) { return false; }
+            if (OverlapOnAxis(box, localTri, edge3, 2)) { return false; }
+
+#if DEBUG
+            m_DEBUGTRI[m_DEBUGTRICOUNT++] = tri;
+            m_DEBUGAABB[m_DEBUGAABBCOUNT++] = PhysicsMathHelper.GenerateFromTriangle(tri);
+#endif
+
             return true;
         }
         /// <summary>
@@ -344,11 +414,11 @@ namespace Physics
             if (ray.Intersects(triangleSoup.AABB).HasValue)
             {
                 return TriangleListAndRay(
-                    triangleSoup.Triangles, 
-                    ray, 
-                    out triangle, 
-                    out intersectionPoint, 
-                    out distanceToPoint, 
+                    triangleSoup.Triangles,
+                    ray,
+                    out triangle,
+                    out intersectionPoint,
+                    out distanceToPoint,
                     findNearest);
             }
 
@@ -436,19 +506,20 @@ namespace Physics
             return false;
         }
 
-        private static float TransformToAxis(CollisionBox box, Vector3 axis)
-        {
-            return
-                box.HalfSize.X * Math.Abs(Vector3.Dot(axis, box.XAxis)) +
-                box.HalfSize.Y * Math.Abs(Vector3.Dot(axis, box.YAxis)) +
-                box.HalfSize.Z * Math.Abs(Vector3.Dot(axis, box.ZAxis));
-        }
 
+        /// <summary>
+        /// Obtiene si hay superposición de las cajas sobre el eje especificado
+        /// </summary>
+        /// <param name="one">Caja primera</param>
+        /// <param name="two">Caja segunda</param>
+        /// <param name="axis">Eje</param>
+        /// <param name="toCentre">Vector de separación entre centros</param>
+        /// <returns>Devuelve verdadero si hay superposición</returns>
         private static bool OverlapOnAxis(CollisionBox one, CollisionBox two, Vector3 axis, Vector3 toCentre)
         {
             // Proyectar las extensiones sobre el eje
-            float oneProject = TransformToAxis(one, axis);
-            float twoProject = TransformToAxis(two, axis);
+            float oneProject = one.ProyectToVector(axis);
+            float twoProject = two.ProyectToVector(axis);
 
             // Projectar el vector entre los centros en el eje
             float distance = Math.Abs(Vector3.Dot(toCentre, axis));
@@ -456,98 +527,74 @@ namespace Physics
             // Si la distancia entre centros es mayor que la suma de las proyecciones, no hay intersección
             return (distance < oneProject + twoProject);
         }
-
-        private static bool AxisTest_X(Vector3 v0, Vector3 v1, Vector3 boxhalfsize, float a, float b)
+        /// <summary>
+        /// Ejecuta el test de intersección entre el OBB y el Triángulo
+        /// </summary>
+        /// <param name="box">OBB</param>
+        /// <param name="tri">Triángulo</param>
+        /// <param name="edge">Lado</param>
+        /// <param name="axis">Eje a testear (0, 1 ó 2)</param>
+        /// <returns>Devuelve verdadero si la intersección no ha sido descartada</returns>
+        private static bool OverlapOnAxis(CollisionBox box, Triangle tri, Vector3 edge, int axis)
         {
-            if (a != 0f && b != 0f)
+            if (axis == 0)
             {
-                float min, max;
-                float p0 = a * v0.Y - b * v0.Z;
-                float p1 = a * v1.Y - b * v1.Z;
-                if (p0 < p1)
+                // a.X ^ b.X = (1,0,0) ^ edge
+                // axis = Vector3(0, -edge.Z, edge.Y);
+                float dPoint1 = tri.Point1.Z * edge.Y - tri.Point1.Y * edge.Z;
+                float dPoint2 = tri.Point2.Z * edge.Y - tri.Point2.Y * edge.Z;
+                float dPoint3 = tri.Point3.Z * edge.Y - tri.Point3.Y * edge.Z;
+                float dhalf = Math.Abs(box.HalfSize.Y * edge.Z) + Math.Abs(box.HalfSize.Z * edge.Y);
+                if (Math.Min(dPoint1, Math.Min(dPoint2, dPoint3)) >= dhalf ||
+                    Math.Max(dPoint1, Math.Max(dPoint2, dPoint3)) <= -dhalf)
                 {
-                    min = p0;
-                    max = p1;
+                    return true;
                 }
                 else
-                {
-                    min = p1;
-                    max = p0;
-                }
-
-                float fa = Math.Abs(a);
-                float fb = Math.Abs(b);
-
-                float rad = fa * boxhalfsize.Y + fb * boxhalfsize.Z;
-                if (min > rad || max < -rad)
                 {
                     return false;
                 }
             }
-
-            return true;
-        }
-
-        private static bool AxisTest_Y(Vector3 v0, Vector3 v1, Vector3 boxhalfsize, float a, float b)
-        {
-            if (a != 0f && b != 0f)
+            else if (axis == 1)
             {
-                float min, max;
-                float p0 = -a * v0.X + b * v0.Z;
-                float p1 = -a * v1.X + b * v1.Z;
-                if (p0 < p1)
+                // a.Y ^ b.X = (0,1,0) ^ edge
+                // axis = Vector3(edge.Z, 0, -edge.X);
+                float dPoint1 = tri.Point1.X * edge.Z - tri.Point1.Z * edge.X;
+                float dPoint2 = tri.Point2.X * edge.Z - tri.Point2.Z * edge.X;
+                float dPoint3 = tri.Point3.X * edge.Z - tri.Point3.Z * edge.X;
+                float dhalf = Math.Abs(box.HalfSize.X * edge.Z) + Math.Abs(box.HalfSize.Z * edge.X);
+                if (Math.Min(dPoint1, Math.Min(dPoint2, dPoint3)) >= dhalf ||
+                    Math.Max(dPoint1, Math.Max(dPoint2, dPoint3)) <= -dhalf)
                 {
-                    min = p0;
-                    max = p1;
+                    return true;
                 }
                 else
-                {
-                    min = p1;
-                    max = p0;
-                }
-
-                float fa = Math.Abs(a);
-                float fb = Math.Abs(b);
-
-                float rad = fa * boxhalfsize.X + fb * boxhalfsize.Z;
-                if (min > rad || max < -rad)
                 {
                     return false;
                 }
             }
-
-            return true;
-        }
-
-        private static bool AxisTest_Z(Vector3 v0, Vector3 v1, Vector3 boxhalfsize, float a, float b)
-        {
-            if (a != 0f && b != 0f)
+            else if (axis == 2)
             {
-                float min, max;
-                float p0 = a * v0.X - b * v0.Y;
-                float p1 = a * v1.X - b * v1.Y;
-                if (p0 < p1)
+                // a.Y ^ b.X = (0,0,1) ^ edge
+                // axis = Vector3(-edge.Y, edge.X, 0);
+                float dPoint1 = tri.Point1.Y * edge.X - tri.Point1.X * edge.Y;
+                float dPoint2 = tri.Point2.Y * edge.X - tri.Point2.X * edge.Y;
+                float dPoint3 = tri.Point3.Y * edge.X - tri.Point3.X * edge.Y;
+                float dhalf = Math.Abs(box.HalfSize.Y * edge.X) + Math.Abs(box.HalfSize.X * edge.Y);
+                if (Math.Min(dPoint1, Math.Min(dPoint2, dPoint3)) >= dhalf ||
+                    Math.Max(dPoint1, Math.Max(dPoint2, dPoint3)) <= -dhalf)
                 {
-                    min = p0;
-                    max = p1;
+                    return true;
                 }
                 else
-                {
-                    min = p1;
-                    max = p0;
-                }
-
-                float fa = Math.Abs(a);
-                float fb = Math.Abs(b);
-
-                float rad = fa * boxhalfsize.X + fb * boxhalfsize.Y;
-                if (min > rad || max < -rad)
                 {
                     return false;
                 }
             }
-
-            return true;
+            else
+            {
+                throw new Exception();
+            }
         }
     }
 }

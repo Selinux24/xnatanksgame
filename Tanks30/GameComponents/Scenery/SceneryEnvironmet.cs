@@ -147,6 +147,19 @@ namespace GameComponents.Scenery
                     effect.FogEnabled = SceneryEnvironment.Fog.FogEnabled;
                 }
             }
+            /// <summary>
+            /// Establece los parámetros de niebla en el dispositivo
+            /// </summary>
+            /// <param name="device">Dispositivo</param>
+            public static void SetFogToDevice(GraphicsDevice device)
+            {
+                device.RenderState.FogColor = SceneryEnvironment.Ambient.AtmosphericColor;
+                device.RenderState.FogTableMode = FogMode.Linear;
+                device.RenderState.FogStart = SceneryEnvironment.LevelOfDetail.HighFarClip;
+                device.RenderState.FogEnd = SceneryEnvironment.LevelOfDetail.LowFarClip;
+                device.RenderState.FogDensity = 0.5f;
+                device.RenderState.FogEnable = true;
+            }
         }
     }
 }

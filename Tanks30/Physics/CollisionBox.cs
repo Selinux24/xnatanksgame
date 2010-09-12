@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System;
 
 namespace Physics
 {
@@ -184,6 +185,19 @@ namespace Physics
             closestPoint += closestZ * box.Transform.Backward;
 
             return closestPoint;
+        }
+        /// <summary>
+        /// Proyecta el OBB sobre el vector especificado
+        /// </summary>
+        /// <param name="box">OBB</param>
+        /// <param name="vector">Vector</param>
+        /// <returns>Devuelve la magnitud sobre el eje especificado</returns>
+        public float ProyectToVector(Vector3 vector)
+        {
+            return
+                this.HalfSize.X * Math.Abs(Vector3.Dot(vector, this.XAxis)) +
+                this.HalfSize.Y * Math.Abs(Vector3.Dot(vector, this.YAxis)) +
+                this.HalfSize.Z * Math.Abs(Vector3.Dot(vector, this.ZAxis));
         }
     }
 }

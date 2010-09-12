@@ -270,10 +270,10 @@ namespace Physics
                 Vector3 vertexPos = box.GetCorner(i);
 
                 // Calcular la distancia al plano
-                float vertexDistance = Vector3.Dot(vertexPos, plane.Normal);
+                float vertexDistance = plane.D + Vector3.Dot(vertexPos, plane.Normal);
 
                 // Comparar las distancias
-                if (vertexDistance <= plane.D)
+                if (vertexDistance <= 0f)
                 {
                     // Crear la información del contacto.
 
@@ -282,7 +282,7 @@ namespace Physics
                     Contact contact = data.CurrentContact;
                     contact.ContactPoint = vertexPos;
                     contact.ContactNormal = plane.Normal;
-                    contact.Penetration = plane.D - vertexDistance;
+                    contact.Penetration = -vertexDistance;
 
                     // Establecer los datos del contacto
                     RigidBody one = box;
@@ -319,10 +319,6 @@ namespace Physics
                 return false;
             }
 
-            // Obtener si la posición está bajo el plano
-            Plane plane = tri.Plane;
-            float posDistanceToPlane = plane.Distance(box.Position);
-
             // Hay intersección, ahora hay que encontrar los puntos de intersección.
             // Podemos hacerlo únicamente chequeando los vértices.
             // Si la caja está descansando sobre el plano o un eje, se reportarán cuatro o dos puntos de contacto.
@@ -332,7 +328,7 @@ namespace Physics
                 Vector3 vertexPos = box.GetCorner(i);
 
                 // Calcular la distancia al plano
-                float distanceToPlane = plane.Distance(vertexPos);
+                float distanceToPlane = tri.Plane.Distance(vertexPos);
                 if (distanceToPlane <= 0f)
                 {
                     // Si la distancia es negativa está tras el plano. Si es 0, está en el plano
@@ -350,7 +346,7 @@ namespace Physics
                         // Se obtiene multiplicando la dirección por la mitad de la distancia de separación, y añadiendo la posición del vértice.
                         Contact contact = data.CurrentContact;
                         contact.ContactPoint = vertexPos;
-                        contact.ContactNormal = plane.Normal;
+                        contact.ContactNormal = tri.Plane.Normal;
                         contact.Penetration = -distanceToPlane;
 
                         // Establecer los datos del contacto
@@ -632,6 +628,10 @@ namespace Physics
         /// <returns>Devuelve verdadero si existe colisión, falso en el resto de los casos</returns>
         private static bool BoxAndTriangleSoup(CollisionBox box, CollisionTriangleSoup triangleSoup, ref CollisionData data)
         {
+            //CollisionPlane plane = new CollisionPlane(triangleSoup.Triangles[0].Plane, triangleSoup.Mass);
+
+            //return BoxAndHalfSpace(box, plane, ref data);
+
             return BoxAndTriangleList(box, triangleSoup.Triangles, ref data);
         }
         /// <summary>
@@ -653,6 +653,8 @@ namespace Physics
 
             if (data.ContactsLeft > 0)
             {
+                int firstContact = data.ContactCount;
+
                 foreach (Triangle triangle in triangleList)
                 {
                     // Comprobar la intersección con el triángulo
@@ -671,6 +673,34 @@ namespace Physics
                         }
                     }
                 }
+
+                //int contactCount = data.ContactCount - firstContact;
+
+                //if (intersection && contactCount > 1)
+                //{
+                //    //Agrupar los contactos
+                //    Vector3 contactPoint = Vector3.Zero;
+                //    Vector3 contactNormal = Vector3.Zero;
+                //    float penetration = 0f;
+
+                //    for (int i = firstContact; i < data.ContactCount; i++)
+                //    {
+                //        contactPoint += data.ContactArray[i].ContactPoint;
+                //        contactNormal += data.ContactArray[i].ContactNormal;
+                //        penetration += data.ContactArray[i].Penetration;
+                //    }
+
+                //    contactPoint /= contactCount;
+                //    contactNormal /= contactCount;
+                //    penetration /= contactCount;
+
+                //    Contact newContact = new Contact();
+                //    data.ContactArray[firstContact].ContactPoint = contactPoint;
+                //    data.ContactArray[firstContact].ContactNormal = Vector3.Normalize(contactNormal);
+                //    data.ContactArray[firstContact].Penetration = penetration;
+
+                //    data.SetContactIndex(firstContact + 1);
+                //}
             }
 
             return intersection;
@@ -725,27 +755,14 @@ namespace Physics
         private static float PenetrationOnAxis(CollisionBox one, CollisionBox two, Vector3 axis, Vector3 toCentre)
         {
             // Proyectar las extensiones de cada caja sobre el eje
-            float oneProject = TransformToAxis(one, axis);
-            float twoProject = TransformToAxis(two, axis);
+            float oneProject = one.ProyectToVector(axis);
+            float twoProject = two.ProyectToVector(axis);
 
             // Obtener la distancia entre centros de las cajas sobre el eje
             float distance = Convert.ToSingle(Math.Abs(Vector3.Dot(toCentre, axis)));
 
             // Positivo indica solapamiento, negativo separación
             return (oneProject + twoProject - distance);
-        }
-        /// <summary>
-        /// Obtiene la magnitud de la proyección de la caja sobre el eje especificado
-        /// </summary>
-        /// <param name="box">Caja</param>
-        /// <param name="axis">Eje</param>
-        /// <returns>Devuelve la magnitud de la caja sobre el eje</returns>
-        private static float TransformToAxis(CollisionBox box, Vector3 axis)
-        {
-            return
-                box.HalfSize.X * Convert.ToSingle(Math.Abs(Vector3.Dot(axis, box.XAxis))) +
-                box.HalfSize.Y * Convert.ToSingle(Math.Abs(Vector3.Dot(axis, box.YAxis))) +
-                box.HalfSize.Z * Convert.ToSingle(Math.Abs(Vector3.Dot(axis, box.ZAxis)));
         }
         /// <summary>
         /// Llena la información de colisión entre dos cajas, una vez se conoce que hay contacto del tipo vértice - cara
@@ -831,6 +848,27 @@ namespace Physics
 
                 return cOne * 0.5f + cTwo * 0.5f;
             }
+        }
+
+        /// <summary>
+        /// Obtiene la penetración de las proyecciones de las cajas en el eje especificado
+        /// </summary>
+        /// <param name="one">Caja uno</param>
+        /// <param name="two">Caja dos</param>
+        /// <param name="axis">Eje</param>
+        /// <param name="toCentre">Distancia entre centros</param>
+        /// <returns>Devuelve la penetración de las proyecciones de las cajas sobre el eje.</returns>
+        private static float PenetrationOnAxis(CollisionBox box, Triangle tri, Vector3 edge, Vector3 toCentre)
+        {
+            // Proyectar las extensiones de cada caja sobre el eje
+            float oneProject = box.ProyectToVector(edge);
+            float twoProject = tri.ProyectToVector(edge);
+
+            // Obtener la distancia entre centros de las cajas sobre el eje
+            float distance = Convert.ToSingle(Math.Abs(Vector3.Dot(toCentre, edge)));
+
+            // Positivo indica solapamiento, negativo separación
+            return (oneProject + twoProject - distance);
         }
     }
 }

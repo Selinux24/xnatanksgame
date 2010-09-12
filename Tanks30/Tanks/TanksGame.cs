@@ -424,7 +424,7 @@ namespace Tanks
 
                 building.SetInitialState(where, Quaternion.Identity);
 
-                this.Physics.RegisterVehicle(building);
+                this.Physics.RegisterObject(building);
             }
         }
         /// <summary>
@@ -486,7 +486,7 @@ namespace Tanks
 
             squadron[0].SetInitialState(where, Quaternion.Identity);
 
-            this.Physics.RegisterVehicle(squadron[0]);
+            this.Physics.RegisterObject(squadron[0]);
 
             for (int i = 1; i < squadron.Length; i++)
             {
@@ -503,7 +503,7 @@ namespace Tanks
                 // Indicar a cada vehículo que siga al anterior
                 //squadron[i].AutoPilot.Follow(squadron[i - 1], 150f);
 
-                this.Physics.RegisterVehicle(squadron[i]);
+                this.Physics.RegisterObject(squadron[i]);
             }
         }
 

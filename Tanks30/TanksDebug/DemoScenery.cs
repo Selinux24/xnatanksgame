@@ -108,9 +108,9 @@ namespace TanksDebug
             Vector3 A = new Vector3(size, 15, size) + position;
             Vector3 B = new Vector3(size, 15, 0) + position;
             Vector3 C = new Vector3(size, 15, -size) + position;
-            Vector3 D = new Vector3(0, 15, size) + position;
-            Vector3 E = new Vector3(0, -10, 0) + position;
-            Vector3 F = new Vector3(0, 15, -size) + position;
+            Vector3 D = new Vector3(0, -15, size) + position;
+            Vector3 E = new Vector3(0, 0, 0) + position;
+            Vector3 F = new Vector3(0, -15, -size) + position;
             Vector3 G = new Vector3(-size, 15, size) + position;
             Vector3 H = new Vector3(-size, 15, 0) + position;
             Vector3 I = new Vector3(-size, 15, -size) + position;
@@ -283,11 +283,11 @@ namespace TanksDebug
                 pass.Begin();
 
                 this.GraphicsDevice.DrawIndexedPrimitives(
-                    PrimitiveType.TriangleList, 
-                    0, 
-                    0, 
-                    this.m_Geometry.Length, 
-                    0, 
+                    PrimitiveType.TriangleList,
+                    0,
+                    0,
+                    this.m_Geometry.Length,
+                    0,
                     this.m_PrimitiveCount);
 
                 pass.End();
@@ -312,12 +312,19 @@ namespace TanksDebug
         {
             return this.m_Rotation;
         }
-
+        /// <summary>
+        /// Obtiene la primitiva de colisión
+        /// </summary>
+        /// <returns>Devuelve la primitiva de colisión del cuerpo</returns>
         public CollisionPrimitive GetPrimitive()
         {
             return this.m_CollisionPrimitive;
         }
-
+        /// <summary>
+        /// Obtiene la primitiva de colisión realizando el test de colisión con el cuerpo especificado
+        /// </summary>
+        /// <param name="physicObject">Cuerpo</param>
+        /// <returns>Devuelve la primitiva de colisión en contacto con el cuerpo especificado</returns>
         public CollisionPrimitive GetContactedPrimitive(IPhysicObject physicObject)
         {
             if (physicObject != null)
@@ -342,29 +349,46 @@ namespace TanksDebug
 
             return null;
         }
-
+        /// <summary>
+        /// Obtiene el AABB circundante del cuerpo
+        /// </summary>
+        /// <returns>Devuelve el AABB circundante del cuerpo</returns>
         public BoundingBox GetAABB()
         {
             return this.m_CollisionPrimitive.AABB;
         }
-
+        /// <summary>
+        /// Obtiene la esfera circundante del cuerpo
+        /// </summary>
+        /// <returns>Devuelve la esfera circundante del cuerpo</returns>
         public BoundingSphere GetSPH()
         {
             return this.m_CollisionPrimitive.SPH;
         }
-
+        /// <summary>
+        /// Indica si el cuerpo está activo
+        /// </summary>
+        /// <returns>Devuelve verdadero si el cuerpo está activo</returns>
         public bool IsActive()
         {
             return false;
         }
-
+        /// <summary>
+        /// Integra el cuerpo en el motor de físicas
+        /// </summary>
+        /// <param name="time">Tiempo</param>
         public void Integrate(float time)
         {
 
         }
-
+        /// <summary>
+        /// Evento que se produce cuando un cuerpo hace contacto con el objeto actual
+        /// </summary>
         public event ObjectInContactDelegate OnObjectContacted;
-
+        /// <summary>
+        /// Disparador del evento de contacto
+        /// </summary>
+        /// <param name="obj"></param>
         public void Contacted(IPhysicObject obj)
         {
             if (this.OnObjectContacted != null)
