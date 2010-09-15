@@ -8,6 +8,7 @@ namespace Vehicles
     using GameComponents.Vehicles;
     using GameComponents.Weapons;
     using Physics;
+    using GameComponents.Particles;
 
     public partial class LandSpeeder : Vehicle
     {
@@ -33,8 +34,18 @@ namespace Vehicles
 
         #endregion
 
+        #region Emisores de partículas
+
+        private ParticleEmitter m_LeftEngine = null; string _LeftEngine = "LeftEngine";
+        private ParticleEmitter m_RightEngine = null; string _RightEngine = "RightEngine";
+        private ParticleEmitter m_LeftSmokeEmitter = null; string _LeftSmokeEmitter = "LeftSmokeEmitter";
+        private ParticleEmitter m_RightSmokeEmitter = null; string _RightSmokeEmitter = "RightSmokeEmitter";
+
+        #endregion
+
         #region Teclas
 
+        Keys m_StartEngines = Keys.O;
         private Keys m_MoveForwardKey = Keys.W;
         private Keys m_MoveBackwardKey = Keys.S;
         private Keys m_MoveUpKey = Keys.U;
@@ -86,6 +97,15 @@ namespace Vehicles
 
             #endregion
 
+            #region Emisores
+
+            this.m_LeftEngine = this.GetParticleEmitter(_LeftEngine);
+            this.m_RightEngine = this.GetParticleEmitter(_RightEngine);
+            this.m_LeftSmokeEmitter = this.GetParticleEmitter(_LeftSmokeEmitter);
+            this.m_RightSmokeEmitter = this.GetParticleEmitter(_RightSmokeEmitter);
+
+            #endregion
+
             this.SetPlaterControl(this.m_PILOT);
         }
         /// <summary>
@@ -101,6 +121,22 @@ namespace Vehicles
                 if (m_CurrentPlayerControl == m_PILOT)
                 {
                     bool driving = false;
+
+                    #region Motor
+
+                    if (InputHelper.KeyUpEvent(m_StartEngines))
+                    {
+                        if (!this.Engine.Active)
+                        {
+                            this.StartEngine();
+                        }
+                        else
+                        {
+                            this.StopEngine();
+                        }
+                    }
+
+                    #endregion
 
                     #region Look
 
@@ -251,6 +287,38 @@ namespace Vehicles
             {
                 this.SelectWeapon(this.m_FussionCannon);
             }
+        }
+
+        protected override void OnStartMoving()
+        {
+            base.OnStartMoving();
+
+            this.m_LeftEngine.Active = true;
+            this.m_RightEngine.Active = true;
+        }
+
+        protected override void OnStopMoving()
+        {
+            base.OnStopMoving();
+
+            this.m_LeftEngine.Active = false;
+            this.m_RightEngine.Active = false;
+        }
+
+        protected override void OnAccelerating()
+        {
+            base.OnAccelerating();
+
+            this.m_LeftEngine.Active = true;
+            this.m_RightEngine.Active = true;
+        }
+
+        protected override void OnDamaged()
+        {
+            base.OnDamaged();
+
+            this.m_LeftSmokeEmitter.Active = true;
+            this.m_RightSmokeEmitter.Active = true;
         }
     }
 }

@@ -139,6 +139,10 @@ namespace GameComponents.Particles
             {
                 this.InitializeFire(Settings);
             }
+            else if (this.ParticleType == ParticleSystemTypes.PlasmaEngine)
+            {
+                this.InitializePlasmaEngine(Settings);
+            }
             else if (this.ParticleType == ParticleSystemTypes.ProjectileTrail)
             {
                 this.InitializeProjectileTrail(Settings);
@@ -161,6 +165,7 @@ namespace GameComponents.Particles
         /// <summary> 
         /// Inicializar el sistema de partículas
         /// </summary> 
+        /// <param name="settings">Propiedades</param>
         protected void InitializeDust(ParticleSettings settings)
         {
             settings.TextureName = "Content/Particles/smoke";
@@ -194,6 +199,7 @@ namespace GameComponents.Particles
         /// <summary> 
         /// Inicializar el sistema de partículas
         /// </summary> 
+        /// <param name="settings">Propiedades</param>
         protected void InitializeExplosion(ParticleSettings settings)
         {
             settings.TextureName = "Content/Particles/explosion";
@@ -230,6 +236,7 @@ namespace GameComponents.Particles
         /// <summary> 
         /// Inicializar el sistema de partículas
         /// </summary> 
+        /// <param name="settings">Propiedades</param>
         protected void InitializeExplosionSmoke(ParticleSettings settings)
         {
             settings.TextureName = "Content/Particles/smoke";
@@ -263,6 +270,7 @@ namespace GameComponents.Particles
         /// <summary> 
         /// Inicializar el sistema de partículas
         /// </summary> 
+        /// <param name="settings">Propiedades</param>
         protected void InitializeFire(ParticleSettings settings)
         {
             settings.TextureName = "Content/Particles/fire";
@@ -292,6 +300,74 @@ namespace GameComponents.Particles
 
             settings.SourceBlend = Blend.SourceAlpha;
             settings.DestinationBlend = Blend.One;
+        }
+        /// <summary> 
+        /// Inicializar el sistema de partículas
+        /// </summary> 
+        /// <param name="settings">Propiedades</param>
+        protected void InitializePlasmaEngine(ParticleSettings settings)
+        {
+            settings.TextureName = "Content/Particles/fire";
+
+            settings.MaxParticles = 500;
+
+            settings.Duration = TimeSpan.FromSeconds(0.5f);
+
+            settings.DurationRandomness = 0f;
+
+            settings.MinHorizontalVelocity = 0;
+            settings.MaxHorizontalVelocity = 0;
+
+            settings.MinVerticalVelocity = 0;
+            settings.MaxVerticalVelocity = 0;
+
+            settings.Gravity = new Vector3(0, 0, 0);
+
+            settings.MinColor = Color.AliceBlue;
+            settings.MaxColor = Color.LightBlue;
+
+            settings.MinStartSize = 1f;
+            settings.MaxStartSize = 1f;
+
+            settings.MinEndSize = 0.1f;
+            settings.MaxEndSize = 0.1f;
+
+            settings.SourceBlend = Blend.SourceAlpha;
+            settings.DestinationBlend = Blend.One;
+        }
+        /// <summary> 
+        /// Inicializar el sistema de partículas
+        /// </summary> 
+        /// <param name="settings">Propiedades</param>
+        protected void InitializeProjectileTrail(ParticleSettings settings)
+        {
+            settings.TextureName = "Content/Particles/smoke";
+
+            settings.MaxParticles = 250;
+
+            settings.Duration = TimeSpan.FromSeconds(0.5f);
+
+            settings.DurationRandomness = 1.5f;
+
+            settings.EmitterVelocitySensitivity = 0.1f;
+
+            settings.MinHorizontalVelocity = -1;
+            settings.MaxHorizontalVelocity = 1;
+
+            settings.MinVerticalVelocity = -1;
+            settings.MaxVerticalVelocity = 1;
+
+            settings.MinColor = Color.Gray;
+            settings.MaxColor = Color.White;
+
+            settings.MinRotateSpeed = 1;
+            settings.MaxRotateSpeed = 1;
+
+            settings.MinStartSize = 0.5f;
+            settings.MaxStartSize = 1f;
+
+            settings.MinEndSize = 1f;
+            settings.MaxEndSize = 2f;
         }
         /// <summary>
         /// Humo de motor
@@ -354,39 +430,6 @@ namespace GameComponents.Particles
 
             settings.MinEndSize = 50;
             settings.MaxEndSize = 200;
-        }
-        /// <summary> 
-        /// Inicializar el sistema de partículas
-        /// </summary> 
-        protected void InitializeProjectileTrail(ParticleSettings settings)
-        {
-            settings.TextureName = "Content/Particles/smoke";
-
-            settings.MaxParticles = 250;
-
-            settings.Duration = TimeSpan.FromSeconds(0.5f);
-
-            settings.DurationRandomness = 1.5f;
-
-            settings.EmitterVelocitySensitivity = 0.1f;
-
-            settings.MinHorizontalVelocity = -1;
-            settings.MaxHorizontalVelocity = 1;
-
-            settings.MinVerticalVelocity = -1;
-            settings.MaxVerticalVelocity = 1;
-
-            settings.MinColor = Color.Gray;
-            settings.MaxColor = Color.White;
-
-            settings.MinRotateSpeed = 1;
-            settings.MaxRotateSpeed = 1;
-
-            settings.MinStartSize = 0.5f;
-            settings.MaxStartSize = 1f;
-
-            settings.MinEndSize = 1f;
-            settings.MaxEndSize = 2f;
         }
 
         /// <summary>

@@ -6,7 +6,7 @@
   <MaxForwardVelocity>100</MaxForwardVelocity>
   <MaxBackwardVelocity>20</MaxBackwardVelocity>
   <AccelerationModifier>20</AccelerationModifier>
-  <BrakeModifier>20</BrakeModifier>
+  <BrakeModifier>0.9</BrakeModifier>
   <AngularVelocityModifier>15</AngularVelocityModifier>
   <MaxFlightHeight>25</MaxFlightHeight>
   <MinFlightHeight>10</MinFlightHeight>
@@ -106,4 +106,30 @@
       </Translation>
     </PlayerPositionInfo>
   </PlayerPositions>
+  <ParticleEmitters>
+    <ParticleEmitterInfo>
+      <Name>LeftEngine</Name>
+      <ParticleType>PlasmaEngine</ParticleType>
+      <BoneName>ENGINE_EMITTER_1</BoneName>
+      <UniqueParticle>false</UniqueParticle>
+    </ParticleEmitterInfo>
+    <ParticleEmitterInfo>
+      <Name>RightEngine</Name>
+      <ParticleType>PlasmaEngine</ParticleType>
+      <BoneName>ENGINE_EMITTER_2</BoneName>
+      <UniqueParticle>false</UniqueParticle>
+    </ParticleEmitterInfo>
+    <ParticleEmitterInfo>
+      <Name>LeftSmokeEmitter</Name>
+      <ParticleType>SmokeEngine</ParticleType>
+      <BoneName>SMOKE_EMITTER_1</BoneName>
+      <UniqueParticle>false</UniqueParticle>
+    </ParticleEmitterInfo>
+    <ParticleEmitterInfo>
+      <Name>RightSmokeEmitter</Name>
+      <ParticleType>SmokeEngine</ParticleType>
+      <BoneName>SMOKE_EMITTER_2</BoneName>
+      <UniqueParticle>false</UniqueParticle>
+    </ParticleEmitterInfo>
+  </ParticleEmitters>
 </VehicleComponentInfo>

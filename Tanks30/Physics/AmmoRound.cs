@@ -115,6 +115,8 @@ namespace Physics
 
             // Activar
             this.m_Active = true;
+
+            this.OnActivated();
         }
         /// <summary>
         /// Desactiva la bala
@@ -122,6 +124,8 @@ namespace Physics
         public void Deactivate()
         {
             this.m_Active = false;
+
+            this.OnDeactivated();
         }
 
         /// <summary>
@@ -198,6 +202,8 @@ namespace Physics
                 {
                     // Está fuera de rango
                     this.m_Active = false;
+
+                    this.OnDeactivated();
                 }
             }
 
@@ -206,18 +212,49 @@ namespace Physics
         /// <summary>
         /// Evento que se produce cuando el objeto ha sido contactado
         /// </summary>
-        public event ObjectInContactDelegate OnObjectContacted;
+        public event ObjectInContactDelegate Contacted;
+        /// <summary>
+        /// Ocurre cuando un objeto se activa
+        /// </summary>
+        public event ObjectStateHandler Activated;
+        /// <summary>
+        /// Ocurre cuando un objeto se desactiva
+        /// </summary>
+        public event ObjectStateHandler Deactivated;
+
         /// <summary>
         /// Disparador del evento de contacto
         /// </summary>
         /// <param name="obj">Objeto contactado</param>
-        public void Contacted(IPhysicObject obj)
+        public void SetContactedWith(IPhysicObject obj)
         {
             this.m_Active = false;
 
-            if(this.OnObjectContacted != null)
+            this.OnDeactivated();
+
+            if(this.Contacted != null)
             {
-                this.OnObjectContacted(obj);
+                this.Contacted(obj);
+            }
+        }
+        /// <summary>
+        /// Disparador del evento de activación
+        /// </summary>
+        public void OnActivated()
+        {
+            if (this.Activated != null)
+            {
+                this.Activated(this);
+            }
+        }
+        /// <summary>
+        /// Disparador del evento de desactivación
+        /// </summary>
+        public void OnDeactivated()
+        {
+            if (this.Deactivated != null)
+            {
+                this.Deactivated(this);
             }
         }
     }

@@ -2,6 +2,8 @@
 
 namespace GameComponents.Particles
 {
+    using Common;
+
     /// <summary>
     /// Generador
     /// </summary>

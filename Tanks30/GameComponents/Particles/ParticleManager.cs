@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace GameComponents.Particles
 {
+    using Common;
     using Physics;
 
     /// <summary>

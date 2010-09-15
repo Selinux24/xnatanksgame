@@ -6,7 +6,7 @@
   <MaxForwardVelocity>10</MaxForwardVelocity>
   <MaxBackwardVelocity>4</MaxBackwardVelocity>
   <AccelerationModifier>10</AccelerationModifier>
-  <BrakeModifier>4</BrakeModifier>
+  <BrakeModifier>0.80</BrakeModifier>
   <AngularVelocityModifier>10</AngularVelocityModifier>
   <Weapons>
     <WeaponInfo>

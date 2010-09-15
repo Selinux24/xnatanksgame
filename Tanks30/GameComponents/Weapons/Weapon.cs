@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameComponents.Weapons
 {
+    using Common.Helpers;
     using GameComponents.Animation;
 
     /// <summary>

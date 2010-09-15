@@ -131,16 +131,15 @@
     <Compile Include="Buildings\Building.cs" />
     <Compile Include="Buildings\Building.Debug.cs" />
     <Compile Include="Buildings\Building.Physics.cs" />
-    <Compile Include="Buildings\BuildingComponentInfo.cs" />
     <Compile Include="Debug\DebugDrawer.cs" />
     <Compile Include="Geometry\BufferedGeometryInfo.cs" />
     <Compile Include="Geometry\GeometryInfo.cs" />
     <Compile Include="MathComponents\RandomComponent.cs" />
+    <Compile Include="Particles\ParticleEmitter.cs" />
     <Compile Include="Particles\ParticleGenerator.cs" />
     <Compile Include="Particles\ParticleManager.cs" />
     <Compile Include="Particles\ParticleSettings.cs" />
     <Compile Include="Particles\ParticleSystem.cs" />
-    <Compile Include="Particles\ParticleSystemTypes.cs" />
     <Compile Include="Particles\ParticleVertex.cs" />
     <Compile Include="Readers\PrimitiveInfoReader.cs" />
     <Compile Include="Readers\PrimitiveListReader.cs" />
@@ -159,9 +158,7 @@
     <Compile Include="Animation\Animation.cs" />
     <Compile Include="Animation\AnimationAxis.cs" />
     <Compile Include="Animation\AnimationController.cs" />
-    <Compile Include="Animation\AnimationInfo.cs" />
     <Compile Include="Animation\PlayerPosition.cs" />
-    <Compile Include="Animation\PlayerPositionInfo.cs" />
     <Compile Include="Vehicles\AutoPilot.cs" />
     <Compile Include="Vehicles\IVehicleController.cs" />
     <Compile Include="Vehicles\MovingDirections.cs" />
@@ -170,10 +167,9 @@
     <Compile Include="Vehicles\Vehicle.Debug.cs" />
     <Compile Include="Vehicles\Vehicle.Physics.cs" />
     <Compile Include="Vehicles\Vehicle.Status.cs" />
-    <Compile Include="Vehicles\VehicleComponentInfo.cs" />
+    <Compile Include="Vehicles\VehicleEngine.cs" />
     <Compile Include="Weapons\AmmoDrawer.cs" />
     <Compile Include="Weapons\Weapon.cs" />
-    <Compile Include="Weapons\WeaponInfo.cs" />
     <Compile Include="Weapons\WeaponList.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

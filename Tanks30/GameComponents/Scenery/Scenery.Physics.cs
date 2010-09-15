@@ -131,16 +131,45 @@ namespace GameComponents.Scenery
         /// <summary>
         /// Evento que se produce cuando el escenario ha sido contactado
         /// </summary>
-        public event ObjectInContactDelegate OnObjectContacted;
+        public event ObjectInContactDelegate Contacted;
+        /// <summary>
+        /// Ocurre cuando un objeto se activa
+        /// </summary>
+        public event ObjectStateHandler Activated;
+        /// <summary>
+        /// Ocurre cuando un objeto se desactiva
+        /// </summary>
+        public event ObjectStateHandler Deactivated;
+        
         /// <summary>
         /// Disparador del evento de escenario contactado
         /// </summary>
         /// <param name="obj"></param>
-        public void Contacted(IPhysicObject obj)
+        public void SetContactedWith(IPhysicObject obj)
         {
-            if (this.OnObjectContacted != null)
+            if (this.Contacted != null)
             {
-                this.OnObjectContacted(obj);
+                this.Contacted(obj);
+            }
+        }
+        /// <summary>
+        /// Disparador del evento de activación
+        /// </summary>
+        private void FireActivated()
+        {
+            if (this.Activated != null)
+            {
+                this.Activated(this);
+            }
+        }
+        /// <summary>
+        /// Disparador del evento de desactivación
+        /// </summary>
+        private void FireDeactivated()
+        {
+            if (this.Deactivated != null)
+            {
+                this.Deactivated(this);
             }
         }
     }
