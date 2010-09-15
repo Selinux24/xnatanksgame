@@ -109,23 +109,23 @@ namespace Physics.CollideCoarse
         /// <summary>
         /// Evento que se produce cuando empieza una explosión
         /// </summary>
-        public event ExplosionHandler OnExplosionStarts;
+        public event ExplosionHandler ExplosionStarts;
         /// <summary>
         /// Evento que se produce cuando se actualiza una explosión
         /// </summary>
-        public event ExplosionHandler OnExplosionUpdated;
+        public event ExplosionHandler ExplosionUpdated;
         /// <summary>
         /// Evento que se produce cuando termina una explosión
         /// </summary>
-        public event ExplosionHandler OnExplosionEnds;
+        public event ExplosionHandler ExplosionEnds;
         /// <summary>
         /// Evento que se produce cuando se mueve un proyectil
         /// </summary>
-        public event AmmoRoundHandler OnProjectileMoved;
+        public event AmmoRoundHandler ProjectileMoved;
         /// <summary>
         /// Evento que se produce cuando se mueve un vehículo
         /// </summary>
-        public event VehicleHandler OnVehicleMoved;
+        public event VehicleHandler VehicleMoved;
 
         /// <summary>
         /// Registra la primitiva que actúa como suelo
@@ -145,7 +145,7 @@ namespace Physics.CollideCoarse
 
             if (obj is IVehicle)
             {
-                ((IVehicle)obj).OnVehicleDestroyed += new VehicleStateHandler(PhysicsController_OnVehicleDestroyed);
+                ((IVehicle)obj).Destroyed += new VehicleStateHandler(PhysicsController_OnVehicleDestroyed);
             }
         }
         /// <summary>
@@ -251,17 +251,6 @@ namespace Physics.CollideCoarse
                     // Integrar y actualizar las variables
                     this.m_ObjectData[i].Integrate(time);
 
-                    // Si se trata de un vehículo establecer su altura sobre el terreno
-                    IVehicle vehicleObj = this.m_ObjectData[i] as IVehicle;
-                    if (vehicleObj != null)
-                    {
-                        Vector3 position = vehicleObj.GetPosition();
-
-                        float? height = this.m_SceneryPrimitive.GetHeigthAtPoint(position.X, position.Z);
-
-                        vehicleObj.UpdateHeight(height);
-                    }
-
                     this.FireVehicleMovedEvent(this.m_ObjectData[i]);
                 }
 
@@ -338,7 +327,7 @@ namespace Physics.CollideCoarse
                                 }
 
                                 // Informar de la colisión entre la bala y el suelo
-                                projectileObj.Contacted(this.m_SceneryPrimitive);
+                                projectileObj.SetContactedWith(this.m_SceneryPrimitive);
                             }
                         }
                     }
@@ -364,7 +353,7 @@ namespace Physics.CollideCoarse
                             if (CollisionDetector.BetweenObjects(ref vehicleObjPrimitive, ref sceneryPrimitive, ref this.m_ContactData))
                             {
                                 // Informar de la colisión entre el vehículo y el terreno
-                                vehicleObj.Contacted(this.m_SceneryPrimitive);
+                                vehicleObj.SetContactedWith(this.m_SceneryPrimitive);
                             }
                         }
                     }
@@ -406,8 +395,8 @@ namespace Physics.CollideCoarse
                                     }
 
                                     // Informar de la colisión entre la caja y la bala
-                                    vehicleObj.Contacted(projectileObj);
-                                    projectileObj.Contacted(vehicleObj);
+                                    vehicleObj.SetContactedWith(projectileObj);
+                                    projectileObj.SetContactedWith(vehicleObj);
                                 }
                             }
                             else
@@ -444,8 +433,8 @@ namespace Physics.CollideCoarse
                                 if (CollisionDetector.BetweenObjects(ref primitive1, ref primitive2, ref this.m_ContactData))
                                 {
                                     // Informar de la colisión entre cajas
-                                    this.m_ObjectData[i].Contacted(this.m_ObjectData[x]);
-                                    this.m_ObjectData[x].Contacted(this.m_ObjectData[i]);
+                                    this.m_ObjectData[i].SetContactedWith(this.m_ObjectData[x]);
+                                    this.m_ObjectData[x].SetContactedWith(this.m_ObjectData[i]);
                                 }
                             }
                         }
@@ -530,9 +519,9 @@ namespace Physics.CollideCoarse
         /// <param name="explosion">Explosión</param>
         private void FireExplosionStartsEvent(Explosion explosion)
         {
-            if (this.OnExplosionStarts != null)
+            if (this.ExplosionStarts != null)
             {
-                this.OnExplosionStarts(explosion);
+                this.ExplosionStarts(explosion);
             }
         }
         /// <summary>
@@ -541,9 +530,9 @@ namespace Physics.CollideCoarse
         /// <param name="explosion">Explosión</param>
         private void FireExplosionUpdatedEvent(Explosion explosion)
         {
-            if (this.OnExplosionUpdated != null)
+            if (this.ExplosionUpdated != null)
             {
-                this.OnExplosionUpdated(explosion);
+                this.ExplosionUpdated(explosion);
             }
         }
         /// <summary>
@@ -552,9 +541,9 @@ namespace Physics.CollideCoarse
         /// <param name="explosion">Explosión</param>
         private void FireExplosionEndsEvent(Explosion explosion)
         {
-            if (this.OnExplosionEnds != null)
+            if (this.ExplosionEnds != null)
             {
-                this.OnExplosionEnds(explosion);
+                this.ExplosionEnds(explosion);
             }
         }
         /// <summary>
@@ -563,9 +552,9 @@ namespace Physics.CollideCoarse
         /// <param name="ammoRound">Proyectil</param>
         private void FireProjectileMovedEvent(AmmoRound ammoRound)
         {
-            if (this.OnProjectileMoved != null)
+            if (this.ProjectileMoved != null)
             {
-                this.OnProjectileMoved(ammoRound);
+                this.ProjectileMoved(ammoRound);
             }
         }
         /// <summary>
@@ -574,9 +563,9 @@ namespace Physics.CollideCoarse
         /// <param name="vehicle">Vehículo</param>
         private void FireVehicleMovedEvent(IPhysicObject vehicle)
         {
-            if (this.OnVehicleMoved != null)
+            if (this.VehicleMoved != null)
             {
-                this.OnVehicleMoved(vehicle);
+                this.VehicleMoved(vehicle);
             }
         }
 

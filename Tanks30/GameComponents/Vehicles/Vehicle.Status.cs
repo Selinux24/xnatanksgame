@@ -30,7 +30,7 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Indica si el vehículo está ligeramente dañado
         /// </summary>
-        public bool SlightlyDamaged
+        public bool IsSlightlyDamaged
         {
             get
             {
@@ -40,7 +40,7 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Indica si el vehículo está dañado
         /// </summary>
-        public bool Damaged
+        public bool IsDamaged
         {
             get
             {
@@ -50,7 +50,7 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Indica si el vehículo está fuertemente dañado
         /// </summary>
-        public bool HeavyDamaged
+        public bool IsHeavyDamaged
         {
             get
             {
@@ -60,7 +60,7 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Indica si el vehículo está destruido
         /// </summary>
-        public bool Destroyed
+        public bool IsDestroyed
         {
             get
             {
@@ -96,61 +96,121 @@ namespace GameComponents.Vehicles
         private WeaponList m_WeapontList = new WeaponList();
 
         /// <summary>
+        /// Evento que se produce cuando el vehículo recibe daños
+        /// </summary>
+        public event VehicleStateHandler TakingDamage;
+        /// <summary>
         /// Evento que se produce cuando se daña ligeramente el vehículo
         /// </summary>
-        public event VehicleStateHandler OnVehicleSlightlyDamaged;
+        public event VehicleStateHandler SlightlyDamaged;
         /// <summary>
         /// Evento que se produce cuando se daña el vehículo
         /// </summary>
-        public event VehicleStateHandler OnVehicleDamaged;
+        public event VehicleStateHandler Damaged;
         /// <summary>
         /// Evento que se produce cuando se daña severamente el vehículo
         /// </summary>
-        public event VehicleStateHandler OnVehicleHeavyDamaged;
+        public event VehicleStateHandler HeavyDamaged;
         /// <summary>
         /// Evento que se produce cuando el vehículo es destruído
         /// </summary>
-        public event VehicleStateHandler OnVehicleDestroyed;
+        public event VehicleStateHandler Destroyed;
 
+        /// <summary>
+        /// Disparador del evento de vehículo recibiendo daños
+        /// </summary>
+        protected void FireTakingDamage()
+        {
+            if (this.TakingDamage != null)
+            {
+                this.TakingDamage(this);
+            }
+
+            this.OnTakingDamage();
+        }
         /// <summary>
         /// Disparador del evento de vehículo ligeramente dañado
         /// </summary>
-        protected virtual void FireOnVehicleSlightlyDamaged()
+        protected void FireSlightlyDamaged()
         {
-            if (this.OnVehicleSlightlyDamaged != null)
+            if (this.SlightlyDamaged != null)
             {
-                this.OnVehicleSlightlyDamaged(this);
+                this.SlightlyDamaged(this);
             }
+
+            this.OnSlightlyDamaged();
         }
         /// <summary>
         /// Disparador del evento de vehículo dañado
         /// </summary>
-        protected virtual void FireOnVehicleDamaged()
+        protected void FireDamaged()
         {
-            if (this.OnVehicleDamaged != null)
+            if (this.Damaged != null)
             {
-                this.OnVehicleDamaged(this);
+                this.Damaged(this);
             }
+
+            this.OnDamaged();
         }
         /// <summary>
         /// Disparador del evento de vehículo fuertemente dañado
         /// </summary>
-        protected virtual void FireOnVehicleHeavyDamaged()
+        protected void FireHeavyDamaged()
         {
-            if (this.OnVehicleHeavyDamaged != null)
+            if (this.HeavyDamaged != null)
             {
-                this.OnVehicleHeavyDamaged(this);
+                this.HeavyDamaged(this);
             }
+
+            this.OnHeavyDamaged();
         }
         /// <summary>
         /// Disparador del evento de vehículo destruído
         /// </summary>
-        protected virtual void FireOnVehicleDestroyed()
+        protected void FireDestroyed()
         {
-            if (this.OnVehicleDestroyed != null)
+            if (this.Destroyed != null)
             {
-                this.OnVehicleDestroyed(this);
+                this.Destroyed(this);
             }
+
+            this.OnDestroyed();
+        }
+
+        /// <summary>
+        /// Se produce cuando el vehículo está recibiendo daños
+        /// </summary>
+        protected virtual void OnTakingDamage()
+        {
+
+        }
+        /// <summary>
+        /// Se produce cuando el vehículo recibe daños
+        /// </summary>
+        protected virtual void OnSlightlyDamaged()
+        {
+
+        }
+        /// <summary>
+        /// Se produce cuando el vehículo tiene daños severos
+        /// </summary>
+        protected virtual void OnDamaged()
+        {
+
+        }
+        /// <summary>
+        /// Se produce cuando el vehículo tiene grandes daños
+        /// </summary>
+        protected virtual void OnHeavyDamaged()
+        {
+
+        }
+        /// <summary>
+        /// Se produce cuando el vehículo es destruído
+        /// </summary>
+        protected virtual void OnDestroyed()
+        {
+
         }
 
         /// <summary>
@@ -162,6 +222,8 @@ namespace GameComponents.Vehicles
         {
             if (this.Hull > 0f)
             {
+                this.FireTakingDamage();
+
                 if (this.Armor > 0f)
                 {
                     if (penetration > this.Armor)
@@ -195,21 +257,23 @@ namespace GameComponents.Vehicles
                     this.Hull = 0f;
                 }
 
-                if (this.Destroyed)
+                if (this.IsDestroyed)
                 {
-                    this.FireOnVehicleDestroyed();
+                    this.StopEngine();
+
+                    this.FireDestroyed();
                 }
-                else if (this.HeavyDamaged)
+                else if (this.IsHeavyDamaged)
                 {
-                    this.FireOnVehicleHeavyDamaged();
+                    this.FireHeavyDamaged();
                 }
-                else if (this.Damaged)
+                else if (this.IsDamaged)
                 {
-                    this.FireOnVehicleDamaged();
+                    this.FireDamaged();
                 }
-                else if (this.SlightlyDamaged)
+                else if (this.IsSlightlyDamaged)
                 {
-                    this.FireOnVehicleSlightlyDamaged();
+                    this.FireSlightlyDamaged();
                 }
             }
         }

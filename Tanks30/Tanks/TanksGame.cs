@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Tanks
 {
+    using Common;
     using Common.Drawing;
     using Common.Helpers;
     using GameComponents.Buildings;
@@ -128,9 +129,9 @@ namespace Tanks
             this.Physics.InitializeProyectiles(100);
             this.Services.AddService(typeof(PhysicsController), this.Physics);
 
-            this.Physics.OnExplosionUpdated += new ExplosionHandler(Physics_OnExplosionUpdated);
-            this.Physics.OnProjectileMoved += new AmmoRoundHandler(Physics_OnProjectileMoved);
-            this.Physics.OnVehicleMoved += new VehicleHandler(Physics_OnVehicleMoved);
+            this.Physics.ExplosionUpdated += new ExplosionHandler(Physics_OnExplosionUpdated);
+            this.Physics.ProjectileMoved += new AmmoRoundHandler(Physics_OnProjectileMoved);
+            this.Physics.VehicleMoved += new VehicleHandler(Physics_OnVehicleMoved);
         }
 
         /// <summary>
@@ -485,8 +486,8 @@ namespace Tanks
 
                 if (newVehicle != null)
                 {
-                    newVehicle.OnVehicleHeavyDamaged += new VehicleStateHandler(Vehicle_OnVehicleHeavyDamaged);
-                    newVehicle.OnVehicleDestroyed += new VehicleStateHandler(Vehicle_OnVehicleDestroyed);
+                    newVehicle.HeavyDamaged += new VehicleStateHandler(Vehicle_OnVehicleHeavyDamaged);
+                    newVehicle.Destroyed += new VehicleStateHandler(Vehicle_OnVehicleDestroyed);
 
                     vehicleList.Add(newVehicle);
                 }

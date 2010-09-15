@@ -5,6 +5,7 @@ namespace Vehicles
 {
     using Common.Helpers;
     using GameComponents.Animation;
+    using GameComponents.Particles;
     using GameComponents.Vehicles;
     using GameComponents.Weapons;
 
@@ -45,8 +46,18 @@ namespace Vehicles
 
         #endregion
 
+        #region Emisores de partículas
+
+        private ParticleEmitter m_LeftEngine = null; string _LeftEngine = "LeftEngine";
+        private ParticleEmitter m_RightEngine = null; string _RightEngine = "RightEngine";
+        private ParticleEmitter m_LeftCaterpillar = null; string _LeftCaterpillar = "LeftCaterpillar";
+        private ParticleEmitter m_RightCaterpillar = null; string _RightCaterpillar = "RightCaterpillar";
+
+        #endregion
+
         #region Teclas
 
+        Keys m_StartEngines = Keys.O;
         Keys m_MoveForwardKey = Keys.W;
         Keys m_MoveBackwardKey = Keys.S;
         Keys m_RotateLeftTankKey = Keys.A;
@@ -112,6 +123,15 @@ namespace Vehicles
 
             #endregion
 
+            #region Emisores
+
+            this.m_LeftEngine = this.GetParticleEmitter(_LeftEngine);
+            this.m_RightEngine = this.GetParticleEmitter(_RightEngine);
+            this.m_LeftCaterpillar = this.GetParticleEmitter(_LeftCaterpillar);
+            this.m_RightCaterpillar = this.GetParticleEmitter(_RightCaterpillar);
+
+            #endregion
+
             this.SetPlaterControl(this.m_DriverPosition);
         }
         /// <summary>
@@ -128,9 +148,25 @@ namespace Vehicles
                 {
                     bool driving = false;
 
+                    #region Motor
+
+                    if (InputHelper.KeyUpEvent(m_StartEngines))
+                    {
+                        if (!this.Engine.Active)
+                        {
+                            this.StartEngine();
+                        }
+                        else
+                        {
+                            this.StopEngine();
+                        }
+                    }
+
+                    #endregion
+
                     #region Moving Tank
 
-                    if (Keyboard.GetState().IsKeyDown(m_MoveForwardKey))
+                    if (InputHelper.IsKeyDown(m_MoveForwardKey))
                     {
                         driving = true;
 
@@ -143,7 +179,7 @@ namespace Vehicles
                             this.Brake(gameTime);
                         }
                     }
-                    if (Keyboard.GetState().IsKeyDown(m_MoveBackwardKey))
+                    if (InputHelper.IsKeyDown(m_MoveBackwardKey))
                     {
                         driving = true;
 
@@ -161,13 +197,13 @@ namespace Vehicles
 
                     #region Rotating Tank
 
-                    if (Keyboard.GetState().IsKeyDown(m_RotateLeftTankKey))
+                    if (InputHelper.IsKeyDown(m_RotateLeftTankKey))
                     {
                         driving = true;
 
                         this.TurnLeft(gameTime);
                     }
-                    if (Keyboard.GetState().IsKeyDown(m_RotateRightTankKey))
+                    if (InputHelper.IsKeyDown(m_RotateRightTankKey))
                     {
                         driving = true;
 
@@ -383,6 +419,30 @@ namespace Vehicles
             {
                 this.SelectWeapon(this.m_RightTwinLinkedLaserCannon);
             }
+        }
+
+        protected override void OnStartMoving()
+        {
+            base.OnStartMoving();
+
+            this.m_LeftEngine.Active = true;
+            this.m_RightEngine.Active = true;
+        }
+
+        protected override void OnStopMoving()
+        {
+            base.OnStopMoving();
+
+            this.m_LeftEngine.Active = false;
+            this.m_RightEngine.Active = false;
+        }
+
+        protected override void OnAccelerating()
+        {
+            base.OnAccelerating();
+
+            this.m_LeftCaterpillar.Active = true;
+            this.m_RightCaterpillar.Active = true;
         }
     }
 }

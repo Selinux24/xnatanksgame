@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 namespace GameComponents.Vehicles
 {
     using GameComponents.Animation;
+using GameComponents.Particles;
 
     public delegate void PlayerControlChangedHandler(PlayerPosition position);
 
@@ -29,6 +30,10 @@ namespace GameComponents.Vehicles
         /// Posición actual del jugador en el modelo
         /// </summary>
         protected PlayerPosition m_CurrentPlayerControl = null;
+        /// <summary>
+        /// Lista de emisores de partículas
+        /// </summary>
+        protected List<ParticleEmitter> m_ParticleEmitterList = new List<ParticleEmitter>();
 
         /// <summary>
         /// Evento que se produce cuando se cambia la posición del jugador
@@ -58,6 +63,23 @@ namespace GameComponents.Vehicles
                 if (string.Compare(animation.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return animation;
+                }
+            }
+
+            return null;
+        }
+        /// <summary>
+        /// Obtiene un emisor de partículas específico por nombre
+        /// </summary>
+        /// <param name="name">Nombre del emisor de partículas</param>
+        /// <returns>Devuelve el emisor de partículas</returns>
+        public ParticleEmitter GetParticleEmitter(string name)
+        {
+            foreach (ParticleEmitter emitter in m_ParticleEmitterList)
+            {
+                if (string.Compare(emitter.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return emitter;
                 }
             }
 
@@ -118,6 +140,28 @@ namespace GameComponents.Vehicles
             else
             {
                 this.SetPlaterControl(this.m_PlayerControlList[index - 1]);
+            }
+        }
+
+        /// <summary>
+        /// Actualiza las partículas activas en el gestor de partículas
+        /// </summary>
+        /// <param name="particleManager">Gestor de partículas</param>
+        protected void UpdateParticles(ParticleManager particleManager)
+        {
+            foreach (ParticleEmitter emitter in this.m_ParticleEmitterList)
+            {
+                if (emitter.Active)
+                {
+                    Matrix mtr = emitter.GetModelMatrix(this.m_AnimationController, this.CurrentTransform);
+
+                    particleManager.AddParticle(emitter.ParticleType, mtr.Translation, mtr.Backward);
+
+                    if (emitter.UniqueParticle)
+                    {
+                        emitter.Active = false;
+                    }
+                }
             }
         }
     }

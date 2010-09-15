@@ -181,12 +181,49 @@ namespace TanksDebug
                 this.m_Box.Integrate(time);
             }
         }
-        public event ObjectInContactDelegate OnObjectContacted;
-        public void Contacted(IPhysicObject obj)
+
+        /// <summary>
+        /// Evento que se produce cuando un cuerpo hace contacto con el objeto actual
+        /// </summary>
+        public event ObjectInContactDelegate Contacted;
+        /// <summary>
+        /// Ocurre cuando un objeto se activa
+        /// </summary>
+        public event ObjectStateHandler Activated;
+        /// <summary>
+        /// Ocurre cuando un objeto se desactiva
+        /// </summary>
+        public event ObjectStateHandler Deactivated;
+
+        /// <summary>
+        /// Cuando el vehículo es contactado por otro, se notifica el causante del contacto
+        /// </summary>
+        /// <param name="obj">Objeto que ha contactado con el vehículo actual</param>
+        public void SetContactedWith(IPhysicObject obj)
         {
-            if (this.OnObjectContacted != null)
+            if (this.Contacted != null)
             {
-                this.OnObjectContacted(obj);
+                this.Contacted(obj);
+            }
+        }
+        /// <summary>
+        /// Disparador del evento de activación
+        /// </summary>
+        private void FireActivated()
+        {
+            if (this.Activated != null)
+            {
+                this.Activated(this);
+            }
+        }
+        /// <summary>
+        /// Disparador del evento de desactivación
+        /// </summary>
+        private void FireDeactivated()
+        {
+            if (this.Deactivated != null)
+            {
+                this.Deactivated(this);
             }
         }
     }

@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 
 namespace GameComponents.Animation
 {
+    using Common.Helpers;
+
     /// <summary>
     /// Representa una rotación sobre un eje específico
     /// </summary>

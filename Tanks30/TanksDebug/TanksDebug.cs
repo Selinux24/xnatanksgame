@@ -149,11 +149,15 @@ namespace TanksDebug
 
             this.Physics = new PhysicsController();
             this.Physics.InitializeProyectiles(_AmmoRounds);
-            this.Services.AddService(typeof(PhysicsController), this.Physics);
+            this.Services.AddService<PhysicsController>(this.Physics);
 
-            this.Physics.OnExplosionUpdated += new ExplosionHandler(Physics_OnExplosionUpdated);
-            this.Physics.OnProjectileMoved += new AmmoRoundHandler(Physics_OnProjectileMoved);
-            this.Physics.OnVehicleMoved += new VehicleHandler(Physics_OnVehicleMoved);
+            this.Physics.ExplosionUpdated += new ExplosionHandler(Physics_OnExplosionUpdated);
+            this.Physics.ProjectileMoved += new AmmoRoundHandler(Physics_OnProjectileMoved);
+            this.Physics.VehicleMoved += new VehicleHandler(Physics_OnVehicleMoved);
+
+            // Partículas
+            this.m_ParticleManager = new ParticleManager(this);
+            this.Services.AddService<ParticleManager>(this.m_ParticleManager);
         }
 
         /// <summary>
@@ -162,18 +166,18 @@ namespace TanksDebug
         /// <param name="vehicle">Vehículo</param>
         void Physics_OnVehicleMoved(IPhysicObject vehicle)
         {
-            if (vehicle is Vehicle)
-            {
-                Vehicle v = vehicle as Vehicle;
-                if (v.IsSkimmer)
-                {
-                    this.m_ParticleManager.AddParticle(ParticleSystemTypes.SmokeEngine, v.Position, Vector3.Up * 0.01f);
-                }
-                else
-                {
-                    this.m_ParticleManager.AddParticle(ParticleSystemTypes.Dust, v.Position, Vector3.Up * 0.01f);
-                }
-            }
+            //if (vehicle is Vehicle)
+            //{
+            //    Vehicle v = vehicle as Vehicle;
+            //    if (v.IsSkimmer)
+            //    {
+            //        this.m_ParticleManager.AddParticle(ParticleSystemTypes.SmokeEngine, v.Position, Vector3.Up * 0.01f);
+            //    }
+            //    else
+            //    {
+            //        this.m_ParticleManager.AddParticle(ParticleSystemTypes.Dust, v.Position, Vector3.Up * 0.01f);
+            //    }
+            //}
         }
         /// <summary>
         /// Evento de explosión activa
@@ -220,10 +224,6 @@ namespace TanksDebug
             this.m_LensFlare = new LensFlareComponent(this);
             this.m_LensFlare.DrawOrder = 98;
             this.Components.Add(this.m_LensFlare);
-
-            // Partículas
-            this.m_ParticleManager = new ParticleManager(this);
-            this.Components.Add(this.m_ParticleManager);
 
             // Texto
             this.m_Text = new TextDrawerComponent(this);

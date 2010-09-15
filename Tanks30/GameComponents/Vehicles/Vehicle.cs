@@ -13,6 +13,7 @@ namespace GameComponents.Vehicles
     using GameComponents.Weapons;
     using Physics;
     using Physics.CollideCoarse;
+    using GameComponents.Particles;
 
     /// <summary>
     /// Componente tanque
@@ -233,39 +234,42 @@ namespace GameComponents.Vehicles
             this.m_OBB = new CollisionBox(this.TriangleInfo.AABB, 1000f);
             this.m_Offset = Matrix.CreateTranslation(new Vector3(0f, -this.m_OBB.HalfSize.Y, 0f));
 
-            this.m_InitialMaxFlightHeight = componentInfo.MaxFlightHeight;
-            this.m_InitialMinFlightHeight = componentInfo.MinFlightHeight;
-
             // Integridad
-            this.Hull = componentInfo.Hull;
+            this.BaseHull = this.Hull = componentInfo.Hull;
             // Blindaje
-            this.Armor = componentInfo.Armor;
+            this.BaseArmor = this.Armor = componentInfo.Armor;
+
+            this.Engine.InitialMaxFlightHeight = componentInfo.MaxFlightHeight;
+            this.Engine.InitialMinFlightHeight = componentInfo.MinFlightHeight;
+
             // Velocidad máxima que puede alcanzar el tanque hacia delante
-            this.MaxForwardVelocity = componentInfo.MaxForwardVelocity;
+            this.Engine.MaxForwardVelocity = componentInfo.MaxForwardVelocity;
             // Velocidad máxima que puede alcanzar el tanque marcha atrás
-            this.MaxBackwardVelocity = componentInfo.MaxBackwardVelocity;
+            this.Engine.MaxBackwardVelocity = componentInfo.MaxBackwardVelocity;
             // Modificador de aceleración
-            this.AccelerationModifier = componentInfo.AccelerationModifier;
+            this.Engine.AccelerationModifier = componentInfo.AccelerationModifier;
             // Modificador de frenado
-            this.BrakeModifier = componentInfo.BrakeModifier;
+            this.Engine.BrakeModifier = componentInfo.BrakeModifier;
             // Velocidad angular
-            this.AngularVelocityModifier = MathHelper.ToRadians(componentInfo.AngularVelocityModifier);
+            this.Engine.AngularVelocityModifier = MathHelper.ToRadians(componentInfo.AngularVelocityModifier);
             // Vehículo volador
-            this.Skimmer = componentInfo.Skimmer;
+            this.Engine.Skimmer = componentInfo.Skimmer;
             // Altura máxima
-            this.MaxFlightHeight = componentInfo.MaxFlightHeight;
+            this.Engine.MaxFlightHeight = componentInfo.MaxFlightHeight;
             // Altura mínima
-            this.MinFlightHeight = componentInfo.MinFlightHeight;
+            this.Engine.MinFlightHeight = componentInfo.MinFlightHeight;
             // Rotación ascendente del morro
-            this.AscendingAngle = MathHelper.ToRadians(componentInfo.AscendingAngle);
+            this.Engine.AscendingAngle = MathHelper.ToRadians(componentInfo.AscendingAngle);
             // Rotación descendente del morro
-            this.DescendingAngle = MathHelper.ToRadians(componentInfo.DescendingAngle);
+            this.Engine.DescendingAngle = MathHelper.ToRadians(componentInfo.DescendingAngle);
             // Controles de animación
             this.m_AnimationController.AddRange(Animation.Animation.CreateAnimationList(this.Model, componentInfo.AnimationControlers));
             // Posiciones
             this.m_PlayerControlList.AddRange(Animation.PlayerPosition.CreatePlayerPositionList(this.Model, componentInfo.PlayerPositions));
             // Armas
             this.m_WeapontList.AddRange(Weapon.CreateWeaponList(this.Model, componentInfo.Weapons));
+            // Emisores de partículas
+            this.m_ParticleEmitterList.AddRange(ParticleEmitter.CreateParticleEmitterList(this.Model, componentInfo.ParticleEmitters));
 
             // Transformaciones iniciales
             this.m_BoneTransforms = new Matrix[this.Model.Bones.Count];
@@ -278,7 +282,7 @@ namespace GameComponents.Vehicles
         {
             base.Update(gameTime);
 
-            if (!this.Destroyed)
+            if (!this.IsDestroyed)
             {
                 if (this.m_Autopilot.Enabled)
                 {
@@ -294,14 +298,16 @@ namespace GameComponents.Vehicles
             BoundingSphere sph = this.GetSPH();
             this.Visible = sph.Intersects(GlobalMatrices.gLODHighFrustum);
 
-            if (this.Damaged && this.Visible)
-            {
-
-            }
-
             this.PositionHasChanged = false;
             this.RotationHasChanged = false;
             this.ScaleHasChanged = false;
+
+            //Partículas
+            ParticleManager particleManager = this.Game.Services.GetService<ParticleManager>();
+            if (particleManager != null)
+            {
+                this.UpdateParticles(particleManager);
+            }
         }
         /// <summary>
         /// Dibujar
@@ -327,7 +333,7 @@ namespace GameComponents.Vehicles
 
                         SceneryEnvironment.Fog.SetFogToEffect(effect);
 
-                        if (!this.Destroyed)
+                        if (!this.IsDestroyed)
                         {
                             SceneryEnvironment.Ambient.SetLightToEffect(effect);
                         }

@@ -7,6 +7,11 @@ namespace Physics
     /// </summary>
     /// <param name="obj">Objeto que ha contactado con el actual</param>
     public delegate void ObjectInContactDelegate(IPhysicObject obj);
+    /// <summary>
+    /// Gestor de eventos de estado de objeto
+    /// </summary>
+    /// <param name="obj">Objeto</param>
+    public delegate void ObjectStateHandler(IPhysicObject obj);
 
     /// <summary>
     /// Interfaz de objeto físico
@@ -60,11 +65,20 @@ namespace Physics
         /// <summary>
         /// Ocurre cuando un objeto contacta con el actual
         /// </summary>
-        event ObjectInContactDelegate OnObjectContacted;
+        event ObjectInContactDelegate Contacted;
+        /// <summary>
+        /// Ocurre cuando un objeto se activa
+        /// </summary>
+        event ObjectStateHandler Activated;
+        /// <summary>
+        /// Ocurre cuando un objeto se desactiva
+        /// </summary>
+        event ObjectStateHandler Deactivated;
+
         /// <summary>
         /// Establece que el objeto actual ha sido contactada por otro
         /// </summary>
         /// <param name="obj">Objeto que ha contactado con el actual</param>
-        void Contacted(IPhysicObject obj);
+        void SetContactedWith(IPhysicObject obj);
     }
 }
