@@ -12,56 +12,57 @@ namespace Vehicles
     {
         #region Incialización del control de animación
 
-        AnimationAxis m_BATTLECANNON; string _BATTLECANNON = "BattleCannon";
-        Animation m_BATTLECANNONBASE; string _BATTLECANNONBASE = "BattleCannonBase";
-        AnimationAxis m_HULL_CANNON; string _HULL_CANNON = "LaserCannon";
-        Animation m_HULL_CANNON_BASE; string _HULL_CANNON_BASE = "LaserCannonBase";
-        AnimationAxis m_LEFT_BOLTER; string _LEFT_BOLTER = "LeftHeavyBolter";
-        Animation m_LEFT_BOLTER_BASE; string _LEFT_BOLTER_BASE = "LeftHeavyBolterBase";
-        AnimationAxis m_RIGHT_BOLTER; string _RIGHT_BOLTER = "RightHeavyBolter";
-        Animation m_RIGHT_BOLTER_BASE; string _RIGHT_BOLTER_BASE = "RightHeavyBolterBase";
-        AnimationAxis m_TURRET_HACTH; string _TURRET_HACTH = "TurretHatch";
-        AnimationAxis m_DRIVER_HACTH; string _DRIVER_HACTH = "DriverHatch";
-        AnimationAxis m_LEFT_HACTH; string _LEFT_HACTH = "LeftHatch";
-        AnimationAxis m_RIGHT_HACTH; string _RIGHT_HACTH = "RightHatch";
+        private AnimationAxis m_BATTLECANNON; private string _BATTLECANNON = "BattleCannon";
+        private Animation m_BATTLECANNONBASE; private string _BATTLECANNONBASE = "BattleCannonBase";
+        private AnimationAxis m_HULL_CANNON; private string _HULL_CANNON = "LaserCannon";
+        private Animation m_HULL_CANNON_BASE; private string _HULL_CANNON_BASE = "LaserCannonBase";
+        private AnimationAxis m_LEFT_BOLTER; private string _LEFT_BOLTER = "LeftHeavyBolter";
+        private Animation m_LEFT_BOLTER_BASE; private string _LEFT_BOLTER_BASE = "LeftHeavyBolterBase";
+        private AnimationAxis m_RIGHT_BOLTER; private string _RIGHT_BOLTER = "RightHeavyBolter";
+        private Animation m_RIGHT_BOLTER_BASE; private string _RIGHT_BOLTER_BASE = "RightHeavyBolterBase";
+        private AnimationAxis m_TURRET_HACTH; private string _TURRET_HACTH = "TurretHatch";
+        private AnimationAxis m_DRIVER_HACTH; private string _DRIVER_HACTH = "DriverHatch";
+        private AnimationAxis m_LEFT_HACTH; private string _LEFT_HACTH = "LeftHatch";
+        private AnimationAxis m_RIGHT_HACTH; private string _RIGHT_HACTH = "RightHatch";
 
         #endregion
 
         #region Posiciones del jugador
 
-        PlayerPosition m_DRIVER; string _DRIVER = "Driver";
-        PlayerPosition m_BATTLECANNONGUNNER; string _BATTLECANNONGUNNER = "BattleCannonGunner";
-        PlayerPosition m_LASERCANNONGUNNER; string _LASERCANNONGUNNER = "LaserCannonGunner";
-        PlayerPosition m_LEFTBOLTERGUNNER; string _LEFTBOLTERGUNNER = "LeftHeavyBolterGunner";
-        PlayerPosition m_RIGHTBOLTERGUNNER; string _RIGHTBOLTERGUNNER = "RightHeavyBolterGunner";
+        private PlayerPosition m_DRIVER; private string _DRIVER = "Driver";
+        private PlayerPosition m_BATTLECANNONGUNNER; private string _BATTLECANNONGUNNER = "BattleCannonGunner";
+        private PlayerPosition m_LASERCANNONGUNNER; private string _LASERCANNONGUNNER = "LaserCannonGunner";
+        private PlayerPosition m_LEFTBOLTERGUNNER; private string _LEFTBOLTERGUNNER = "LeftHeavyBolterGunner";
+        private PlayerPosition m_RIGHTBOLTERGUNNER; private string _RIGHTBOLTERGUNNER = "RightHeavyBolterGunner";
 
         #endregion
 
         #region Armas
 
-        private Weapon m_BattleCannon = null; string _BattleCannon = "BattleCannon";
-        private Weapon m_LaserCannon = null; string _LaserCannon = "LaserCannon";
-        private Weapon m_LeftHeavyBolter = null; string _LeftHeavyBolter = "LeftHeavyBolter";
-        private Weapon m_RightHeavyBolter = null; string _RightHeavyBolter = "RightHeavyBolter";
+        private Weapon m_BattleCannon = null; private string _BattleCannon = "BattleCannon";
+        private Weapon m_LaserCannon = null; private string _LaserCannon = "LaserCannon";
+        private Weapon m_LeftHeavyBolter = null; private string _LeftHeavyBolter = "LeftHeavyBolter";
+        private Weapon m_RightHeavyBolter = null; private string _RightHeavyBolter = "RightHeavyBolter";
 
         #endregion
 
         #region Teclas
 
-        Keys m_MoveForwardKey = Keys.W;
-        Keys m_MoveBackwardKey = Keys.S;
-        Keys m_RotateLeftTankKey = Keys.A;
-        Keys m_RotateRightTankKey = Keys.D;
-        Keys m_ChangeDirectionKey = Keys.R;
-        Keys m_TurretHatchKey = Keys.O;
-        bool m_TurretHatchAction = false;
-        Keys m_DriverHatchKey = Keys.O;
-        bool m_DriverHatchAction = false;
-        Keys m_LeftHatchKey = Keys.O;
-        bool m_LeftHatchAction = false;
-        Keys m_RightHatchKey = Keys.O;
-        bool m_RightHatchAction = false;
-        Keys m_AutoPilotKey = Keys.P;
+        private Keys m_StartEngines = Keys.O;
+        private Keys m_MoveForwardKey = Keys.W;
+        private Keys m_MoveBackwardKey = Keys.S;
+        private Keys m_RotateLeftTankKey = Keys.A;
+        private Keys m_RotateRightTankKey = Keys.D;
+        private Keys m_ChangeDirectionKey = Keys.R;
+        private Keys m_TurretHatchKey = Keys.O;
+        private bool m_TurretHatchAction = false;
+        private Keys m_DriverHatchKey = Keys.O;
+        private bool m_DriverHatchAction = false;
+        private Keys m_LeftHatchKey = Keys.O;
+        private bool m_LeftHatchAction = false;
+        private Keys m_RightHatchKey = Keys.O;
+        private bool m_RightHatchAction = false;
+        private Keys m_AutoPilotKey = Keys.P;
 
         #endregion
 
@@ -134,6 +135,22 @@ namespace Vehicles
                 if (m_CurrentPlayerControl == m_DRIVER)
                 {
                     bool driving = false;
+
+                    #region Motor
+
+                    if (InputHelper.KeyUpEvent(m_StartEngines))
+                    {
+                        if (!this.IsEngineStarted)
+                        {
+                            this.StartEngine();
+                        }
+                        else
+                        {
+                            this.StopEngine();
+                        }
+                    }
+
+                    #endregion
 
                     #region Moving
 

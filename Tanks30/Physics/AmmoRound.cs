@@ -6,7 +6,7 @@ namespace Physics
     /// <summary>
     /// Una bala
     /// </summary>
-    public class AmmoRound : CollisionSphere , IPhysicObject
+    public class AmmoRound : CollisionSphere, IPhysicObject
     {
         /// <summary>
         /// Indica si el proyectil está activo
@@ -103,13 +103,13 @@ namespace Physics
             this.m_Damage = damage;
             this.m_Penetration = penetration;
             this.m_GenerateExplosion = generateExplosion;
-          
+
             // Rebote
             this.SetDamping(0.99f, 0.8f);
 
             // Establecer la inercia
             this.SetIntertia(0.4f * mass * radius * radius);
-            
+
             // Este objeto no puede dormir
             this.CanSleep = false;
 
@@ -129,28 +129,14 @@ namespace Physics
         }
 
         /// <summary>
-        /// Obtiene la posición
-        /// </summary>
-        /// <returns>Devuelve la posición</returns>
-        public Vector3 GetPosition()
-        {
-            return this.Position;
-        }
-        /// <summary>
-        /// Obtiene la orientación
-        /// </summary>
-        /// <returns>Devuelve la orientación</returns>
-        public Quaternion GetOrientation()
-        {
-            return this.Orientation;
-        }
-        /// <summary>
         /// Obtiene la primitiva de colisión
         /// </summary>
-        /// <returns>Devuelve la primitiva de colisión del objeto</returns>
-        public CollisionPrimitive GetPrimitive()
+        public CollisionPrimitive Primitive
         {
-            return this;
+            get
+            {
+                return this;
+            }
         }
         /// <summary>
         /// Obtiene la primitiva de colisión que contacta con el objeto especificado
@@ -159,56 +145,44 @@ namespace Physics
         /// <returns>Devuelve la primitiva de colisión que contacta con el objeto especificado</returns>
         public CollisionPrimitive GetContactedPrimitive(IPhysicObject physicObject)
         {
-            if(physicObject != null)
+            if (physicObject != null)
             {
-                BoundingSphere thisSph = this.GetSPH();
-                BoundingSphere sph = physicObject.GetSPH();
+                BoundingSphere thisSph = this.SPH;
+                BoundingSphere sph = physicObject.SPH;
 
                 if (thisSph.Intersects(sph))
                 {
                     return this;
-                }                
+                }
             }
 
             return null;
         }
         /// <summary>
-        /// Obtiene el AABB que contiene al objeto
-        /// </summary>
-        /// <returns>Devuelve el AABB que contiene al objeto</returns>
-        public BoundingBox GetAABB()
-        {
-            return BoundingBox.CreateFromSphere(this.GetSPH());
-        }
-        /// <summary>
-        /// Obtiene la esfera que contiene al objeto
-        /// </summary>
-        /// <returns>Devuelve la esfera que contiene al objeto</returns>
-        public BoundingSphere GetSPH()
-        {
-            return new BoundingSphere(this.Position, this.Radius);
-        }
-        /// <summary>
         /// Obtiene si el objeto está activo
         /// </summary>
         /// <returns></returns>
-        public bool IsActive()
+        public bool IsActive
         {
-            if (this.m_Active)
+            get
             {
-                // Obtener la distancia recorrida
-                float distance = Math.Abs(Vector3.Distance(this.m_OriginalPosition, this.Position));
-                if (distance > this.m_Range)
+                if (this.m_Active)
                 {
-                    // Está fuera de rango
-                    this.m_Active = false;
+                    // Obtener la distancia recorrida
+                    float distance = Math.Abs(Vector3.Distance(this.m_OriginalPosition, this.Position));
+                    if (distance > this.m_Range)
+                    {
+                        // Está fuera de rango
+                        this.m_Active = false;
 
-                    this.OnDeactivated();
+                        this.OnDeactivated();
+                    }
                 }
-            }
 
-            return this.m_Active;
+                return this.m_Active;
+            }
         }
+
         /// <summary>
         /// Evento que se produce cuando el objeto ha sido contactado
         /// </summary>
@@ -232,7 +206,7 @@ namespace Physics
 
             this.OnDeactivated();
 
-            if(this.Contacted != null)
+            if (this.Contacted != null)
             {
                 this.Contacted(obj);
             }

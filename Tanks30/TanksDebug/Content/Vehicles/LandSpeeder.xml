@@ -3,11 +3,11 @@
   <Model>LandSpeeder</Model>
   <Hull>100</Hull>
   <Armor>100</Armor>
-  <MaxForwardVelocity>100</MaxForwardVelocity>
-  <MaxBackwardVelocity>20</MaxBackwardVelocity>
-  <AccelerationModifier>20</AccelerationModifier>
-  <BrakeModifier>0.9</BrakeModifier>
-  <AngularVelocityModifier>15</AngularVelocityModifier>
+  <MaxForwardVelocity>0.6</MaxForwardVelocity>
+  <MaxBackwardVelocity>0</MaxBackwardVelocity>
+  <AccelerationModifier>0.5</AccelerationModifier>
+  <BrakeModifier>1.0</BrakeModifier>
+  <AngularVelocityModifier>35</AngularVelocityModifier>
   <MaxFlightHeight>25</MaxFlightHeight>
   <MinFlightHeight>10</MinFlightHeight>
   <AscendingAngle>15</AscendingAngle>

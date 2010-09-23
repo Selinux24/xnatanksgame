@@ -13,60 +13,60 @@ namespace Vehicles
     {
         #region Incialización del control de animación
 
-        AnimationAxis m_HeavyBolter; string _HeavyBolter = "HeavyBolter";
-        AnimationAxis m_HeavyBolterBase; string _HeavyBolterBase = "HeavyBolterBase";
-        AnimationAxis m_LeftLassCannon; string _LeftLassCannon = "LeftLassCannon";
-        AnimationAxis m_LeftLassCannonBase; string _LeftLassCannonBase = "LeftLassCannonBase";
-        AnimationAxis m_RightLassCannon; string _RightLassCannon = "RightLassCannon";
-        AnimationAxis m_RightLassCannonBase; string _RightLassCannonBase = "RightLassCannonBase";
-        AnimationAxis m_UpperFrontDoor; string _UpperFrontDoor = "UpperFrontDoor";
-        AnimationAxis m_LowerFrontDoor; string _LowerFrontDoor = "LowerFrontDoor";
-        AnimationAxis m_Driver; string _Driver = "Driver";
-        AnimationAxis m_DriverBase; string _DriverBase = "DriverBase";
-        AnimationAxis m_Commander; string _Commander = "Commander";
-        AnimationAxis m_CommanderBase; string _CommanderBase = "CommanderBase";
+        private AnimationAxis m_HeavyBolter; private string _HeavyBolter = "HeavyBolter";
+        private AnimationAxis m_HeavyBolterBase; private string _HeavyBolterBase = "HeavyBolterBase";
+        private AnimationAxis m_LeftLassCannon; private string _LeftLassCannon = "LeftLassCannon";
+        private AnimationAxis m_LeftLassCannonBase; private string _LeftLassCannonBase = "LeftLassCannonBase";
+        private AnimationAxis m_RightLassCannon; private string _RightLassCannon = "RightLassCannon";
+        private AnimationAxis m_RightLassCannonBase; private string _RightLassCannonBase = "RightLassCannonBase";
+        private AnimationAxis m_UpperFrontDoor; private string _UpperFrontDoor = "UpperFrontDoor";
+        private AnimationAxis m_LowerFrontDoor; private string _LowerFrontDoor = "LowerFrontDoor";
+        private AnimationAxis m_Driver; private string _Driver = "Driver";
+        private AnimationAxis m_DriverBase; private string _DriverBase = "DriverBase";
+        private AnimationAxis m_Commander; private string _Commander = "Commander";
+        private AnimationAxis m_CommanderBase; private string _CommanderBase = "CommanderBase";
 
         #endregion
 
         #region Posiciones del jugador
 
-        PlayerPosition m_DriverPosition; string _DriverPosition = "Driver";
-        PlayerPosition m_CommanderPosition; string _CommanderPosition = "Commander";
-        PlayerPosition m_TwinLinkedHeavyBolterGunner; string _TwinLinkedHeavyBolterGunner = "HeavyBolterGunner";
-        PlayerPosition m_LeftLaserCannonGunner; string _LeftLaserCannonGunner = "LeftLaserCannonGunner";
-        PlayerPosition m_RightLaserCannonGunner; string _RightLaserCannonGunner = "RightLaserCannonGunner";
+        private PlayerPosition m_DriverPosition; private string _DriverPosition = "Driver";
+        private PlayerPosition m_CommanderPosition; private string _CommanderPosition = "Commander";
+        private PlayerPosition m_TwinLinkedHeavyBolterGunner; private string _TwinLinkedHeavyBolterGunner = "HeavyBolterGunner";
+        private PlayerPosition m_LeftLaserCannonGunner; private string _LeftLaserCannonGunner = "LeftLaserCannonGunner";
+        private PlayerPosition m_RightLaserCannonGunner; private string _RightLaserCannonGunner = "RightLaserCannonGunner";
 
         #endregion
 
         #region Armas
 
-        private Weapon m_TwinLinkedHeavyBolter = null; string _TwinLinkedHeavyBolter = "TwinLinkedHeavyBolter";
-        private Weapon m_LeftTwinLinkedLaserCannon = null; string _LeftTwinLinkedLaserCannon = "LeftTwinLinkedLaserCannon";
-        private Weapon m_RightTwinLinkedLaserCannon = null; string _RightTwinLinkedLaserCannon = "RightTwinLinkedLaserCannon";
+        private Weapon m_TwinLinkedHeavyBolter = null; private string _TwinLinkedHeavyBolter = "TwinLinkedHeavyBolter";
+        private Weapon m_LeftTwinLinkedLaserCannon = null; private string _LeftTwinLinkedLaserCannon = "LeftTwinLinkedLaserCannon";
+        private Weapon m_RightTwinLinkedLaserCannon = null; private string _RightTwinLinkedLaserCannon = "RightTwinLinkedLaserCannon";
 
         #endregion
 
         #region Emisores de partículas
 
-        private ParticleEmitter m_LeftEngine = null; string _LeftEngine = "LeftEngine";
-        private ParticleEmitter m_RightEngine = null; string _RightEngine = "RightEngine";
-        private ParticleEmitter m_LeftCaterpillar = null; string _LeftCaterpillar = "LeftCaterpillar";
-        private ParticleEmitter m_RightCaterpillar = null; string _RightCaterpillar = "RightCaterpillar";
+        private ParticleEmitter m_LeftEngine = null; private string _LeftEngine = "LeftEngine";
+        private ParticleEmitter m_RightEngine = null; private string _RightEngine = "RightEngine";
+        private ParticleEmitter m_LeftCaterpillar = null; private string _LeftCaterpillar = "LeftCaterpillar";
+        private ParticleEmitter m_RightCaterpillar = null; private string _RightCaterpillar = "RightCaterpillar";
 
         #endregion
 
         #region Teclas
 
-        Keys m_StartEngines = Keys.O;
-        Keys m_MoveForwardKey = Keys.W;
-        Keys m_MoveBackwardKey = Keys.S;
-        Keys m_RotateLeftTankKey = Keys.A;
-        Keys m_RotateRightTankKey = Keys.D;
-        Keys m_ChangeDirectionKey = Keys.R;
-        Keys m_AutoPilotKey = Keys.P;
+        private Keys m_StartEngines = Keys.O;
+        private Keys m_MoveForwardKey = Keys.W;
+        private Keys m_MoveBackwardKey = Keys.S;
+        private Keys m_RotateLeftTankKey = Keys.A;
+        private Keys m_RotateRightTankKey = Keys.D;
+        private Keys m_ChangeDirectionKey = Keys.R;
+        private Keys m_AutoPilotKey = Keys.P;
 
-        Keys m_FrontDoorKey = Keys.NumPad8;
-        bool m_FrontDoorAction = false;
+        private Keys m_FrontDoorKey = Keys.NumPad8;
+        private bool m_FrontDoorAction = false;
 
         #endregion
 
@@ -152,7 +152,7 @@ namespace Vehicles
 
                     if (InputHelper.KeyUpEvent(m_StartEngines))
                     {
-                        if (!this.Engine.Active)
+                        if (!this.IsEngineStarted)
                         {
                             this.StartEngine();
                         }

@@ -205,6 +205,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audio\Sounds.xap">
+      <Name>Sounds</Name>
+      <Importer>XactImporter</Importer>
+      <Processor>XactProcessor</Processor>
+    </Compile>
     <None Include="Vehicles\Textures\Black Chaos.png">
       <Name>Black Chaos</Name>
       <Importer>TextureImporter</Importer>

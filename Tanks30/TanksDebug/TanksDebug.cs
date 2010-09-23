@@ -466,6 +466,7 @@ namespace TanksDebug
             if (this.m_CurrentVehicle != null)
             {
                 text += "POSICION: " + this.m_CurrentVehicle.Position.ToString() + Environment.NewLine;
+                text += "VELOCIDAD: " + this.m_CurrentVehicle.Velocity.ToString() + Environment.NewLine;
                 text += "HULL: " + this.m_CurrentVehicle.Hull.ToString() + Environment.NewLine;
                 text += "ARMR: " + this.m_CurrentVehicle.Armor.ToString() + Environment.NewLine;
             }

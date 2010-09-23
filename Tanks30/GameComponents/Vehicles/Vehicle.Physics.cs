@@ -16,17 +16,16 @@ namespace GameComponents.Vehicles
         /// <summary>
         /// Primitiva de colisión
         /// </summary>
-        private CollisionBox m_OBB = null;
+        private CollisionPrimitive m_CollisionPrimitive = null;
 
         /// <summary>
         /// Piloto automático
         /// </summary>
         private AutoPilot m_Autopilot = new AutoPilot();
-
         /// <summary>
         /// Motor
         /// </summary>
-        protected VehicleEngine Engine = new VehicleEngine();
+        private VehicleEngine Engine = new VehicleEngine();
 
         /// <summary>
         /// Obtiene la cantidad de velocidad
@@ -35,7 +34,7 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                return this.m_OBB.Velocity.Length();
+                return this.m_CollisionPrimitive.Velocity.Length();
             }
         }
         /// <summary>
@@ -45,7 +44,7 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                return Vector3.Normalize(this.m_OBB.Transform.Forward);
+                return Vector3.Normalize(this.m_CollisionPrimitive.Transform.Forward);
             }
         }
         /// <summary>
@@ -55,7 +54,7 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                return Vector3.Normalize(this.m_OBB.Transform.Backward);
+                return Vector3.Normalize(this.m_CollisionPrimitive.Transform.Backward);
             }
         }
         /// <summary>
@@ -86,6 +85,16 @@ namespace GameComponents.Vehicles
             get
             {
                 return (this.Velocity <= 1f);
+            }
+        }
+        /// <summary>
+        /// Indica si el motor está encendido
+        /// </summary>
+        public virtual bool IsEngineStarted
+        {
+            get
+            {
+                return this.Engine.Active;
             }
         }
         /// <summary>
@@ -131,28 +140,15 @@ namespace GameComponents.Vehicles
         }
 
         /// <summary>
-        /// Obtiene la posición
-        /// </summary>
-        /// <returns>Devuelve la posición</returns>
-        public Vector3 GetPosition()
-        {
-            return this.Position;
-        }
-        /// <summary>
-        /// Obtiene la orientación
-        /// </summary>
-        /// <returns>Devuelve la orientación</returns>
-        public Quaternion GetOrientation()
-        {
-            return this.Orientation;
-        }
-        /// <summary>
         /// Obtiene la primitiva de colisión del vehículo
         /// </summary>
         /// <returns>Devuelve la primitiva de colisión del vehículo</returns>
-        public virtual CollisionPrimitive GetPrimitive()
+        public virtual CollisionPrimitive Primitive
         {
-            return this.m_OBB;
+            get
+            {
+                return this.m_CollisionPrimitive;
+            }
         }
         /// <summary>
         /// Obtiene la primitiva de colisión del vehículo
@@ -164,11 +160,11 @@ namespace GameComponents.Vehicles
             if (physicObject != null)
             {
                 // Obtener las esferas circundantes y detectar colisión potencial
-                BoundingSphere thisSPH = this.GetSPH();
-                BoundingSphere otherSph = physicObject.GetSPH();
+                BoundingSphere thisSPH = this.SPH;
+                BoundingSphere otherSph = physicObject.SPH;
                 if (thisSPH.Intersects(otherSph))
                 {
-                    return this.m_OBB;
+                    return this.m_CollisionPrimitive;
                 }
             }
 
@@ -178,25 +174,34 @@ namespace GameComponents.Vehicles
         /// Obtiene la caja alineada con los ejes que circunda el vehículo, en coordenadas del mundo
         /// </summary>
         /// <returns>Devuelve una caja alineada con los ejes</returns>
-        public virtual BoundingBox GetAABB()
+        public virtual BoundingBox AABB
         {
-            return this.m_OBB.AABB;
+            get
+            {
+                return this.m_CollisionPrimitive.AABB;
+            }
         }
         /// <summary>
         /// Obtiene la esfera que circunda el vehículo, en coordenadas del mundo
         /// </summary>
         /// <returns>Devuelve una esfera</returns>
-        public virtual BoundingSphere GetSPH()
+        public virtual BoundingSphere SPH
         {
-            return this.m_OBB.SPH;
+            get
+            {
+                return this.m_CollisionPrimitive.SPH;
+            }
         }
         /// <summary>
         /// Obtiene si el vehículo está estático
         /// </summary>
         /// <returns>Devuelve verdadero si está estático</returns>
-        public virtual bool IsActive()
+        public virtual bool IsActive
         {
-            return this.m_OBB.IsAwake;
+            get
+            {
+                return this.m_CollisionPrimitive.IsAwake;
+            }
         }
         /// <summary>
         /// Integra el cuerpo del vehículo en el tiempo
@@ -204,96 +209,9 @@ namespace GameComponents.Vehicles
         /// <param name="time">Cantidad de tiempo</param>
         public void Integrate(float time)
         {
-            if (this.m_OBB != null)
+            if (this.m_CollisionPrimitive != null)
             {
-                this.m_OBB.Integrate(time);
-
-                if (this.Engine.Skimmer)
-                {
-                    this.IntegrateSkimmer();
-                }
-            }
-        }
-        /// <summary>
-        /// Postintegración para vehículos voladores
-        /// </summary>
-        private void IntegrateSkimmer()
-        {
-            if (!this.IsDestroyed)
-            {
-                //Actualizar la altura
-                PhysicsController physicsController = this.Game.Services.GetService<PhysicsController>();
-                if (physicsController != null)
-                {
-                    float? height = physicsController.Scenery.GetHeigthAtPoint(this.Position.X, this.Position.Z);
-                    if (height.HasValue)
-                    {
-                        this.Engine.MinFlightHeight = this.Engine.InitialMinFlightHeight + height.Value;
-                        this.Engine.MaxFlightHeight = this.Engine.InitialMaxFlightHeight + height.Value;
-                    }
-                }
-
-                if (this.m_OBB.Position.Y > this.Engine.MaxFlightHeight)
-                {
-                    //Por encima del techo de vuelo. Bajar a plomo
-                    this.m_OBB.SetAcceleration(Constants.GravityForce);
-                }
-                else if (this.m_OBB.Position.Y < this.Engine.MinFlightHeight)
-                {
-                    //Por debajo de la altura mínima, subir
-                    Vector3 velocity = this.m_OBB.Velocity;
-                    Vector3 acceleration = this.m_OBB.Acceleration;
-
-                    if (velocity.Y < 0f)
-                    {
-                        if (velocity.Y < -1.5f)
-                        {
-                            //Descendiendo, frenar y ascender
-                            velocity.Y += -(velocity.Y * 0.5f);
-
-                            this.m_OBB.SetVelocity(velocity);
-                        }
-                        else
-                        {
-                            velocity.Y += 0.5f;
-                            acceleration.Y = 0f;
-
-                            this.m_OBB.SetVelocity(velocity);
-                            this.m_OBB.SetAcceleration(acceleration);
-                        }
-                    }
-                    else
-                    {
-                        float distance = this.Engine.MinFlightHeight - this.m_OBB.Position.Y;
-
-                        velocity.Y = 0.5f * distance;
-                        acceleration.Y = 0f;
-
-                        this.m_OBB.SetVelocity(velocity);
-                        this.m_OBB.SetAcceleration(acceleration);
-                    }
-                }
-                else
-                {
-                    //En el área de vuelo, bajar despacio
-                    this.m_OBB.SetAcceleration(Constants.GravityForce * 0.5f);
-                }
-
-                Quaternion currentOrientation = this.m_OBB.Orientation;
-
-                float yaw = 0f;
-                float pitch = 0f;
-                float roll = 0f;
-                currentOrientation.Decompose(out yaw, out pitch, out roll);
-
-                Quaternion newRot = Quaternion.Slerp(this.m_OBB.Orientation, Quaternion.CreateFromYawPitchRoll(yaw, 0f, 0f), 0.1f);
-
-                this.m_OBB.SetOrientation(newRot);
-            }
-            else
-            {
-
-                this.m_OBB.SetAcceleration(Constants.GravityForce);
+                this.m_CollisionPrimitive.Integrate(time);
             }
         }
 
@@ -304,9 +222,9 @@ namespace GameComponents.Vehicles
         /// <param name="orientation">Orientación</param>
         public virtual void SetInitialState(Vector3 position, Quaternion orientation)
         {
-            if (this.m_OBB != null)
+            if (this.m_CollisionPrimitive != null)
             {
-                this.m_OBB.SetInitialState(position, orientation);
+                this.m_CollisionPrimitive.SetInitialState(position, orientation);
             }
         }
 
@@ -371,7 +289,7 @@ namespace GameComponents.Vehicles
                 this.Contacted(obj);
             }
         }
-       
+
         /// <summary>
         /// Disparador del evento de activación
         /// </summary>
@@ -403,7 +321,7 @@ namespace GameComponents.Vehicles
         {
             if (StartMoving != null)
             {
-                this.StartMoving(this, this.m_OBB.Velocity, this.m_OBB.Acceleration);
+                this.StartMoving(this, this.m_CollisionPrimitive.Velocity, this.m_CollisionPrimitive.Acceleration);
             }
 
             this.OnStartMoving();
@@ -415,7 +333,7 @@ namespace GameComponents.Vehicles
         {
             if (Accelerating != null)
             {
-                this.Accelerating(this, this.m_OBB.Velocity, this.m_OBB.Acceleration);
+                this.Accelerating(this, this.m_CollisionPrimitive.Velocity, this.m_CollisionPrimitive.Acceleration);
             }
 
             this.OnAccelerating();
@@ -427,7 +345,7 @@ namespace GameComponents.Vehicles
         {
             if (Braking != null)
             {
-                this.Braking(this, this.m_OBB.Velocity, this.m_OBB.Acceleration);
+                this.Braking(this, this.m_CollisionPrimitive.Velocity, this.m_CollisionPrimitive.Acceleration);
             }
 
             this.OnBraking();
@@ -439,7 +357,7 @@ namespace GameComponents.Vehicles
         {
             if (StopMoving != null)
             {
-                this.StopMoving(this, this.m_OBB.Velocity, this.m_OBB.Acceleration);
+                this.StopMoving(this, this.m_CollisionPrimitive.Velocity, this.m_CollisionPrimitive.Acceleration);
             }
 
             this.OnStopMoving();
@@ -493,18 +411,33 @@ namespace GameComponents.Vehicles
         /// </summary>
         public void StartEngine()
         {
-            this.Engine.Active = true;
+            if (!this.IsDestroyed)
+            {
+                this.Engine.Start();
 
-            this.FireStartMoving();
+                this.FireStartMoving();
+            }
         }
         /// <summary>
         /// Apaga el motor
         /// </summary>
         public void StopEngine()
         {
-            this.Engine.Active = false;
+            if (!this.IsDestroyed)
+            {
+                this.Engine.Stop();
 
-            this.FireStopMoving();
+                this.FireStopMoving();
+            }
+        }
+
+        /// <summary>
+        /// Cambia la dirección del vehículo
+        /// </summary>
+        /// <param name="movingDirection">Dirección</param>
+        public void ChangeDirection(MovingDirections movingDirection)
+        {
+            this.Engine.ChangeDirection(movingDirection);
         }
 
         /// <summary>
@@ -513,41 +446,9 @@ namespace GameComponents.Vehicles
         /// <param name="gameTime">Tiempo de juego</param>
         public virtual void Accelerate(GameTime gameTime)
         {
-            this.Accelerate(gameTime, this.Engine.AccelerationModifier);
-        }
-        /// <summary>
-        /// Aumenta la velocidad de traslación del modelo
-        /// </summary>
-        /// <param name="gameTime">Tiempo de juego</param>
-        /// <param name="amount">Cantidad de movimiento a añadir</param>
-        public virtual void Accelerate(GameTime gameTime, float amount)
-        {
-            if (this.Engine.Active && !this.IsDestroyed)
+            if (!this.IsDestroyed)
             {
-                if (amount != 0f)
-                {
-                    float time = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                    float toAdd = (amount / time);
-
-                    //Proyección de la velocidad actual sobre la nueva velocidad
-                    Vector3 direction = Vector3.Zero;
-                    if (this.IsAdvancing)
-                    {
-                        direction = Vector3.Normalize(this.m_OBB.Transform.Forward);
-                    }
-                    else
-                    {
-                        direction = Vector3.Normalize(this.m_OBB.Transform.Backward);
-                    }
-
-                    if (this.Velocity < this.Engine.MaxForwardVelocity)
-                    {
-                        this.m_OBB.SetVelocity(direction * this.Velocity + direction * toAdd);
-                    }
-
-                    this.FireAccelerating();
-                }
+                this.Engine.Accelerate(gameTime);
             }
         }
         /// <summary>
@@ -556,42 +457,9 @@ namespace GameComponents.Vehicles
         /// <param name="gameTime">Tiempo de juego</param>
         public virtual void Brake(GameTime gameTime)
         {
-            this.Brake(gameTime, this.Engine.BrakeModifier);
-        }
-        /// <summary>
-        /// Disminuye la velocidad de traslación del modelo
-        /// </summary>
-        /// <param name="gameTime">Tiempo de juego</param>
-        /// <param name="amount">Cantidad de movimiento a disminuir</param>
-        public virtual void Brake(GameTime gameTime, float amount)
-        {
-            if (this.Engine.Active && !this.IsDestroyed && !this.IsStatic)
+            if (!this.IsDestroyed)
             {
-                if (amount != 0f)
-                {
-                    if (!this.Velocity.IsZero())
-                    {
-                        Vector3 direction = Vector3.Zero;
-                        if (this.IsAdvancing)
-                        {
-                            direction = Vector3.Normalize(this.m_OBB.Transform.Forward);
-                        }
-                        else
-                        {
-                            direction = Vector3.Normalize(this.m_OBB.Transform.Backward);
-                        }
-
-                        this.m_OBB.SetVelocity(direction * this.Velocity * amount);
-
-                        this.FireBraking();
-                    }
-                    else
-                    {
-                        this.m_OBB.SetVelocity(Vector3.Zero);
-
-                        this.FireBraking();
-                    }
-                }
+                this.Engine.Decelerate(gameTime);
             }
         }
 
@@ -601,34 +469,9 @@ namespace GameComponents.Vehicles
         /// <param name="gameTime">Tiempo de juego</param>
         public virtual void TurnLeft(GameTime gameTime)
         {
-            this.TurnLeft(gameTime, this.Engine.AngularVelocityModifier);
-        }
-        /// <summary>
-        /// Gira el modelo a la izquierda
-        /// </summary>
-        /// <param name="gameTime">Tiempo de juego</param>
-        /// <param name="angle">Ángulo</param>
-        public virtual void TurnLeft(GameTime gameTime, float angle)
-        {
-            if (this.Engine.Active && !this.IsDestroyed)
+            if (!this.IsDestroyed)
             {
-                if (angle != 0f)
-                {
-                    float time = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                    //Rotación a añadir
-                    Quaternion toAdd = Quaternion.CreateFromAxisAngle(this.CurrentTransform.Up, angle / time);
-
-                    //Añadir a la rotación actual
-                    this.m_OBB.AddToOrientation(toAdd);
-
-                    if (this.Engine.Skimmer)
-                    {
-                        this.m_OBB.SetVelocity(Vector3.Transform(this.m_OBB.Velocity, toAdd));
-                    }
-
-                    this.FireAccelerating();
-                }
+                this.Engine.TurnLeft(gameTime);
             }
         }
         /// <summary>
@@ -637,34 +480,32 @@ namespace GameComponents.Vehicles
         /// <param name="gameTime">Tiempo de juego</param>
         public virtual void TurnRight(GameTime gameTime)
         {
-            this.TurnRight(gameTime, this.Engine.AngularVelocityModifier);
+            if (!this.IsDestroyed)
+            {
+                this.Engine.TurnRight(gameTime);
+            }
         }
+
         /// <summary>
-        /// Gira el modelo a la derecha
+        /// Gira el modelo hacia arriba
         /// </summary>
         /// <param name="gameTime">Tiempo de juego</param>
-        /// <param name="angle">Ángulo</param>
-        public virtual void TurnRight(GameTime gameTime, float angle)
+        public virtual void TurnUp(GameTime gameTime)
         {
-            if (this.Engine.Active && !this.IsDestroyed)
+            if (!this.IsDestroyed)
             {
-                if (angle != 0f)
-                {
-                    float time = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                    //Rotación a añadir
-                    Quaternion toAdd = Quaternion.CreateFromAxisAngle(this.CurrentTransform.Up, -angle / time);
-
-                    //Añadir a la rotación actual
-                    this.m_OBB.AddToOrientation(toAdd);
-
-                    if (this.Engine.Skimmer)
-                    {
-                        this.m_OBB.SetVelocity(Vector3.Transform(this.m_OBB.Velocity, toAdd));
-                    }
-
-                    this.FireAccelerating();
-                }
+                this.Engine.TurnUp(gameTime);
+            }
+        }
+        /// <summary>
+        /// Gira el modelo hacia abajo
+        /// </summary>
+        /// <param name="gameTime">Tiempo de juego</param>
+        public virtual void TurnDown(GameTime gameTime)
+        {
+            if (!this.IsDestroyed)
+            {
+                this.Engine.TurnDown(gameTime);
             }
         }
 
@@ -672,64 +513,22 @@ namespace GameComponents.Vehicles
         /// Mueve el vehículo hacia arriba
         /// </summary>
         /// <param name="gameTime">Tiempo de juego</param>
-        public virtual void GoUp(GameTime gameTime)
+        public virtual void Elevate(GameTime gameTime)
         {
-            this.GoUp(gameTime, this.Engine.AccelerationModifier);
-        }
-        /// <summary>
-        /// Mueve el vehículo hacia arriba la cantidad especificada
-        /// </summary>
-        /// <param name="gameTime">Tiempo de juego</param>
-        /// <param name="amount">Cantidad</param>
-        public virtual void GoUp(GameTime gameTime, float amount)
-        {
-            if (this.Engine.Active && !this.IsDestroyed)
+            if (!this.IsDestroyed)
             {
-                float time = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                float toAdd = amount / time;
-
-                if (toAdd != 0f)
-                {
-                    if (this.m_OBB.Position.Y < this.Engine.MaxFlightHeight)
-                    {
-                        this.m_OBB.AddToVelocity(this.CurrentTransform.Up * toAdd);
-
-                        this.FireAccelerating();
-                    }
-                }
+                this.Engine.Elevate(gameTime);
             }
         }
         /// <summary>
         /// Mueve el vehículo hacia abajo
         /// </summary>
         /// <param name="gameTime">Tiempo de juego</param>
-        public virtual void GoDown(GameTime gameTime)
+        public virtual void Descend(GameTime gameTime)
         {
-            this.GoDown(gameTime, this.Engine.AccelerationModifier);
-        }
-        /// <summary>
-        /// Mueve el vehículo hacia abajo la cantidad especificada
-        /// </summary>
-        /// <param name="gameTime">Tiempo de juego</param>
-        /// <param name="amount">Cantidad</param>
-        public virtual void GoDown(GameTime gameTime, float amount)
-        {
-            if (this.Engine.Active && !this.IsDestroyed)
+            if (!this.IsDestroyed)
             {
-                float time = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                float toAdd = amount / time;
-
-                if (toAdd != 0f)
-                {
-                    if (this.m_OBB.Position.Y > this.Engine.MinFlightHeight)
-                    {
-                        this.m_OBB.AddToVelocity(this.CurrentTransform.Down * toAdd);
-
-                        this.FireAccelerating();
-                    }
-                }
+                this.Engine.Descend(gameTime);
             }
         }
     }

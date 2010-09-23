@@ -3,11 +3,11 @@
   <Model>Rhino</Model>
   <Hull>300</Hull>
   <Armor>110</Armor>
-  <MaxForwardVelocity>10</MaxForwardVelocity>
-  <MaxBackwardVelocity>4</MaxBackwardVelocity>
-  <AccelerationModifier>10</AccelerationModifier>
-  <BrakeModifier>4</BrakeModifier>
-  <AngularVelocityModifier>10</AngularVelocityModifier>
+  <MaxForwardVelocity>0.3</MaxForwardVelocity>
+  <MaxBackwardVelocity>0.3</MaxBackwardVelocity>
+  <AccelerationModifier>0.2</AccelerationModifier>
+  <BrakeModifier>0.5</BrakeModifier>
+  <AngularVelocityModifier>25</AngularVelocityModifier>
   <Weapons>
     <WeaponInfo>
       <Name>AssaultBolter</Name>

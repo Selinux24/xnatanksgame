@@ -9,7 +9,7 @@ namespace GameComponents.Buildings
         /// <summary>
         /// Primitiva de colisión
         /// </summary>
-        private CollisionBox m_OBB = null;
+        private CollisionPrimitive m_CollisionPrimitive = null;
     
         /// <summary>
         /// Indica si el vehículo está detenido
@@ -23,28 +23,15 @@ namespace GameComponents.Buildings
         }
 
         /// <summary>
-        /// Obtiene la posición
-        /// </summary>
-        /// <returns>Devuelve la posición</returns>
-        public Vector3 GetPosition()
-        {
-            return this.Position;
-        }
-        /// <summary>
-        /// Obtiene la orientación
-        /// </summary>
-        /// <returns>Devuelve la orientación</returns>
-        public Quaternion GetOrientation()
-        {
-            return this.Orientation;
-        }
-        /// <summary>
         /// Obtiene la primitiva de colisión del vehículo
         /// </summary>
         /// <returns>Devuelve la primitiva de colisión del vehículo</returns>
-        public virtual CollisionPrimitive GetPrimitive()
+        public virtual CollisionPrimitive Primitive
         {
-            return this.m_OBB;
+            get
+            {
+                return this.m_CollisionPrimitive;
+            }
         }
         /// <summary>
         /// Obtiene la primitiva de colisión del vehículo
@@ -56,11 +43,11 @@ namespace GameComponents.Buildings
             if (physicObject != null)
             {
                 // Obtener las esferas circundantes y detectar colisión potencial
-                BoundingSphere thisSPH = this.GetSPH();
-                BoundingSphere otherSph = physicObject.GetSPH();
+                BoundingSphere thisSPH = this.SPH;
+                BoundingSphere otherSph = physicObject.SPH;
                 if (thisSPH.Intersects(otherSph))
                 {
-                    return this.m_OBB;
+                    return this.m_CollisionPrimitive;
                 }
             }
 
@@ -70,25 +57,34 @@ namespace GameComponents.Buildings
         /// Obtiene la caja alineada con los ejes que circunda el vehículo, en coordenadas del mundo
         /// </summary>
         /// <returns>Devuelve una caja alineada con los ejes</returns>
-        public virtual BoundingBox GetAABB()
+        public virtual BoundingBox AABB
         {
-            return this.m_OBB.AABB;
+            get
+            {
+            return this.m_CollisionPrimitive.AABB;
+            }
         }
         /// <summary>
         /// Obtiene la esfera que circunda el vehículo, en coordenadas del mundo
         /// </summary>
         /// <returns>Devuelve una esfera</returns>
-        public virtual BoundingSphere GetSPH()
+        public virtual BoundingSphere SPH
         {
-            return this.m_OBB.SPH;
+            get
+            {
+                return this.m_CollisionPrimitive.SPH;
+            }
         }
         /// <summary>
         /// Obtiene si el vehículo está estático
         /// </summary>
         /// <returns>Devuelve verdadero si está estático</returns>
-        public virtual bool IsActive()
+        public virtual bool IsActive
         {
-            return this.m_OBB.IsAwake;
+            get
+            {
+                return this.m_CollisionPrimitive.IsAwake;
+            }
         }
         /// <summary>
         /// Integra el cuerpo del vehículo en el tiempo
@@ -96,9 +92,9 @@ namespace GameComponents.Buildings
         /// <param name="time">Cantidad de tiempo</param>
         public void Integrate(float time)
         {
-            if (this.m_OBB != null)
+            if (this.m_CollisionPrimitive != null)
             {
-                this.m_OBB.Integrate(time);
+                this.m_CollisionPrimitive.Integrate(time);
             }
         }
 
@@ -154,9 +150,9 @@ namespace GameComponents.Buildings
         /// <param name="orientation">Orientación</param>
         public virtual void SetInitialState(Vector3 position, Quaternion orientation)
         {
-            if (this.m_OBB != null)
+            if (this.m_CollisionPrimitive != null)
             {
-                this.m_OBB.SetInitialState(position, orientation);
+                this.m_CollisionPrimitive.SetInitialState(position, orientation);
             }
         }
 

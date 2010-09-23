@@ -117,39 +117,57 @@ namespace TanksDebug
             this.m_Sphere.SetInitialState(position, Quaternion.Identity);
         }
 
-        public Vector3 GetPosition()
+        public Vector3 Position
         {
-            return this.m_Sphere.Position;
+            get
+            {
+                return this.m_Sphere.Position;
+            }
         }
-        public Quaternion GetOrientation()
+        public Quaternion Orientation
         {
-            return Quaternion.Identity;
+            get
+            {
+                return Quaternion.Identity;
+            }
         }
-        public CollisionPrimitive GetPrimitive()
+        public CollisionPrimitive Primitive
         {
-            return this.m_Sphere;
+            get
+            {
+                return this.m_Sphere;
+            }
         }
         public CollisionPrimitive GetContactedPrimitive(IPhysicObject physicObject)
         {
             return this.m_Sphere;
         }
-        public BoundingBox GetAABB()
+        public BoundingBox AABB
         {
-            return this.m_Sphere.AABB;
+            get
+            {
+                return this.m_Sphere.AABB;
+            }
         }
-        public BoundingSphere GetSPH()
+        public BoundingSphere SPH
         {
-            return this.m_Sphere.SPH;
+            get
+            {
+                return this.m_Sphere.SPH;
+            }
         }
-        public bool IsActive()
+        public bool IsActive
         {
-            return this.m_Sphere.IsAwake;
+            get
+            {
+                return this.m_Sphere.IsAwake;
+            }
         }
         public void Integrate(float duration)
         {
             this.m_Sphere.Integrate(duration);
         }
-       
+
         /// <summary>
         /// Evento que se produce al ser contactado por otro objeto
         /// </summary>
@@ -162,7 +180,7 @@ namespace TanksDebug
         /// Ocurre cuando un objeto se desactiva
         /// </summary>
         public event ObjectStateHandler Deactivated;
-       
+
         /// <summary>
         /// Cuando el vehículo es contactado por otro, se notifica el causante del contacto
         /// </summary>

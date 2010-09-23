@@ -36,7 +36,7 @@ namespace Physics
                 CollisionPrimitive objectOne = null;
                 if (this.m_BodyOne != null)
                 {
-                    objectOne = this.m_BodyOne.GetPrimitive();
+                    objectOne = this.m_BodyOne.Primitive;
                     if (objectOne != null)
                     {
                         return objectOne.GetPointInWorldSpace(this.m_RelativePointOne);
@@ -56,7 +56,7 @@ namespace Physics
                 CollisionPrimitive objectTwo = null;
                 if (this.m_BodyTwo != null)
                 {
-                    objectTwo = this.m_BodyTwo.GetPrimitive();
+                    objectTwo = this.m_BodyTwo.Primitive;
                     if (objectTwo != null)
                     {
                         return objectTwo.GetPointInWorldSpace(this.m_RelativePointTwo);
@@ -113,13 +113,13 @@ namespace Physics
                 CollisionPrimitive objectOne = null;
                 if (this.m_BodyOne != null)
                 {
-                    objectOne = this.m_BodyOne.GetPrimitive();
+                    objectOne = this.m_BodyOne.Primitive;
                 }
 
                 CollisionPrimitive objectTwo = null;
                 if (this.m_BodyTwo != null)
                 {
-                    objectTwo = this.m_BodyTwo.GetPrimitive();
+                    objectTwo = this.m_BodyTwo.Primitive;
                 }
 
                 Vector3 positionOne = this.m_RelativePointOne;

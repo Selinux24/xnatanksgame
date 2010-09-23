@@ -606,6 +606,27 @@ namespace Physics
         {
             return Vector3.Transform(direction, this.m_TransformMatrix);
         }
+        /// <summary>
+        /// Obtiene los ejes de transformación de la primitiva.
+        /// </summary>
+        /// <param name="axis">Eje</param>
+        public Vector3 GetAxis(TransformAxis axis)
+        {
+            if (axis == TransformAxis.X)
+            {
+                return this.XAxis;
+            }
+            else if (axis == TransformAxis.Y)
+            {
+                return this.YAxis;
+            }
+            else if (axis == TransformAxis.Z)
+            {
+                return this.ZAxis;
+            }
+
+            throw new NotSupportedException("Tipo de eje no soportado: " + axis.ToString());
+        }
 
         /// <summary>
         /// Establece el coheficiente de inercia del cuerpo
@@ -627,6 +648,14 @@ namespace Physics
             this.ClearAccumulators();
 
             this.CalculateDerivedData();
+        }
+
+        /// <summary>
+        /// Activa la primitiva actual
+        /// </summary>
+        public void Activate()
+        {
+            this.IsAwake = true;
         }
 
         /// <summary>

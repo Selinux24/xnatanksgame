@@ -212,7 +212,7 @@ namespace GameComponents.Debug
         public static void DrawDebugPhysicObject(GraphicsDevice device, IPhysicObject iPhysicObject)
         {
             //Primitiva
-            CollisionPrimitive pr = iPhysicObject.GetPrimitive();
+            CollisionPrimitive pr = iPhysicObject.Primitive;
 
             //Transformación
             Matrix transform = pr.Transform;
