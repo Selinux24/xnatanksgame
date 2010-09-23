@@ -96,6 +96,7 @@
     <Compile Include="Drawing\LOD.cs" />
     <Compile Include="Helpers\VehicleComponentInfo.cs" />
     <Compile Include="Helpers\WeaponInfo.cs" />
+    <Compile Include="IObject.cs" />
     <Compile Include="Math\Matrix3.cs" />
     <Compile Include="Helpers\PrimitiveInfo.cs" />
     <Compile Include="Components\SceneryInfoNodeDrawn.cs" />

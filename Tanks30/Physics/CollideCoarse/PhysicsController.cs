@@ -234,7 +234,7 @@ namespace Physics.CollideCoarse
             for (int i = 0; i < this.m_ProjectileData.Count; i++)
             {
                 // Si está activo
-                if (this.m_ProjectileData[i].IsActive())
+                if (this.m_ProjectileData[i].IsActive)
                 {
                     this.m_ProjectileData[i].Integrate(time);
 
@@ -246,7 +246,7 @@ namespace Physics.CollideCoarse
             for (int i = 0; i < this.m_ObjectData.Count; i++)
             {
                 // Si está activo
-                if (this.m_ObjectData[i].IsActive())
+                if (this.m_ObjectData[i].IsActive)
                 {
                     // Integrar y actualizar las variables
                     this.m_ObjectData[i].Integrate(time);
@@ -308,10 +308,10 @@ namespace Physics.CollideCoarse
                     if (this.m_ContactData.HasFreeContacts())
                     {
                         // Comprobar si el proyectil está activo
-                        if (projectileObj.IsActive())
+                        if (projectileObj.IsActive)
                         {
                             // Obtener las primitivas del proyectil y del terreno
-                            CollisionPrimitive projectileObjPrimitive = projectileObj.GetPrimitive();
+                            CollisionPrimitive projectileObjPrimitive = projectileObj.Primitive;
                             CollisionPrimitive sceneryPrimitive = this.m_SceneryPrimitive.GetContactedPrimitive(projectileObj);
                             if (CollisionDetector.BetweenObjects(ref projectileObjPrimitive, ref sceneryPrimitive, ref m_ContactData))
                             {
@@ -345,10 +345,10 @@ namespace Physics.CollideCoarse
                     if (this.m_ContactData.HasFreeContacts())
                     {
                         // Comprobar si el vehículo está activo
-                        if (vehicleObj.IsActive())
+                        if (vehicleObj.IsActive)
                         {
                             // Obtener las primitivas del vehículo y del terreno
-                            CollisionPrimitive vehicleObjPrimitive = vehicleObj.GetPrimitive();
+                            CollisionPrimitive vehicleObjPrimitive = vehicleObj.Primitive;
                             CollisionPrimitive sceneryPrimitive = this.m_SceneryPrimitive.GetContactedPrimitive(vehicleObj);
                             if (CollisionDetector.BetweenObjects(ref vehicleObjPrimitive, ref sceneryPrimitive, ref this.m_ContactData))
                             {
@@ -371,9 +371,9 @@ namespace Physics.CollideCoarse
                 // Si hay contactos libres
                 if (this.m_ContactData.HasFreeContacts())
                 {
-                    if (projectileObj.IsActive())
+                    if (projectileObj.IsActive)
                     {
-                        CollisionPrimitive projectileObjPrimitive = projectileObj.GetPrimitive();
+                        CollisionPrimitive projectileObjPrimitive = projectileObj.Primitive;
 
                         // Recorrer los vehículos
                         foreach (IPhysicObject vehicleObj in this.m_ObjectData)
@@ -420,13 +420,13 @@ namespace Physics.CollideCoarse
                 if (this.m_ContactData.HasFreeContacts())
                 {
                     // Obtener la primitiva de colisión
-                    CollisionPrimitive primitive1 = this.m_ObjectData[i].GetPrimitive();
+                    CollisionPrimitive primitive1 = this.m_ObjectData[i].Primitive;
 
                     for (int x = i + 1; x < this.m_ObjectData.Count; x++)
                     {
                         if (this.m_ContactData.HasFreeContacts())
                         {
-                            if (this.m_ObjectData[i].IsActive() || this.m_ObjectData[x].IsActive())
+                            if (this.m_ObjectData[i].IsActive || this.m_ObjectData[x].IsActive)
                             {
                                 // Obtener la segunda primitiva de colisión
                                 CollisionPrimitive primitive2 = this.m_ObjectData[x].GetContactedPrimitive(this.m_ObjectData[i]);
@@ -494,7 +494,7 @@ namespace Physics.CollideCoarse
             for (int i = 0; i < m_ProjectileData.Count; i++)
             {
                 AmmoRound round = m_ProjectileData[i] as AmmoRound;
-                if (round != null && !round.IsActive())
+                if (round != null && !round.IsActive)
                 {
                     // Establecer el estado inicial de la bala con el tipo de munición actual y la posición por defecto
                     round.Fire(
@@ -575,7 +575,7 @@ namespace Physics.CollideCoarse
         /// <param name="vehicle">Vehículo</param>
         private void PhysicsController_OnVehicleDestroyed(IVehicle vehicle)
         {
-            this.RegisterExplosion(Explosion.CreateArtilleryExplosion(vehicle.GetPosition()));
+            this.RegisterExplosion(Explosion.CreateArtilleryExplosion(vehicle.Position));
         }
     }
 }

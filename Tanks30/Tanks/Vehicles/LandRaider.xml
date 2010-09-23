@@ -3,11 +3,11 @@
   <Model>LandRaider</Model>
   <Hull>500</Hull>
   <Armor>200</Armor>
-  <MaxForwardVelocity>10</MaxForwardVelocity>
-  <MaxBackwardVelocity>4</MaxBackwardVelocity>
-  <AccelerationModifier>10</AccelerationModifier>
-  <BrakeModifier>4</BrakeModifier>
-  <AngularVelocityModifier>10</AngularVelocityModifier>
+  <MaxForwardVelocity>0.3</MaxForwardVelocity>
+  <MaxBackwardVelocity>0.3</MaxBackwardVelocity>
+  <AccelerationModifier>0.2</AccelerationModifier>
+  <BrakeModifier>0.5</BrakeModifier>
+  <AngularVelocityModifier>25</AngularVelocityModifier>
   <Weapons>
     <WeaponInfo>
       <Name>TwinLinkedHeavyBolter</Name>
@@ -262,4 +262,30 @@
       </Translation>
     </PlayerPositionInfo>
   </PlayerPositions>
+  <ParticleEmitters>
+    <ParticleEmitterInfo>
+      <Name>LeftEngine</Name>
+      <ParticleType>SmokeEngine</ParticleType>
+      <BoneName>SMOKE_EMITTER_1</BoneName>
+      <UniqueParticle>false</UniqueParticle>
+    </ParticleEmitterInfo>
+    <ParticleEmitterInfo>
+      <Name>RightEngine</Name>
+      <ParticleType>SmokeEngine</ParticleType>
+      <BoneName>SMOKE_EMITTER_2</BoneName>
+      <UniqueParticle>false</UniqueParticle>
+    </ParticleEmitterInfo>
+    <ParticleEmitterInfo>
+      <Name>LeftCaterpillar</Name>
+      <ParticleType>Dust</ParticleType>
+      <BoneName>LEFT_DUST_EMITTER</BoneName>
+      <UniqueParticle>true</UniqueParticle>
+    </ParticleEmitterInfo>
+    <ParticleEmitterInfo>
+      <Name>RightCaterpillar</Name>
+      <ParticleType>Dust</ParticleType>
+      <BoneName>RIGHT_DUST_EMITTER</BoneName>
+      <UniqueParticle>true</UniqueParticle>
+    </ParticleEmitterInfo>
+</ParticleEmitters>
 </VehicleComponentInfo>

@@ -61,7 +61,7 @@ namespace Physics
         public override void UpdateForce(ref IPhysicObject obj, float duration)
         {
             // Obtener el cuerpo del objeto
-            CollisionPrimitive primitive = obj.GetPrimitive();
+            CollisionPrimitive primitive = obj.Primitive;
             if (primitive != null)
             {
                 // Calculate the two ends in world space

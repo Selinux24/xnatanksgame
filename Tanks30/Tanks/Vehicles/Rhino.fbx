@@ -10,18 +10,18 @@ FBXHeaderExtension:  {
         Version: 1000
         Year: 2010
         Month: 9
-        Day: 12
-        Hour: 23
-        Minute: 55
-        Second: 40
-        Millisecond: 356
+        Day: 24
+        Hour: 0
+        Minute: 12
+        Second: 34
+        Millisecond: 334
     }
     Creator: "FBX SDK/FBX Plugins build 20070228"
     OtherFlags:  {
         FlagPLE: 0
     }
 }
-CreationTime: "2010-09-12 23:55:40:356"
+CreationTime: "2010-09-24 00:12:34:334"
 Creator: "FBX SDK/FBX Plugins build 20070228"
 
 ; Object definitions

@@ -259,20 +259,26 @@ namespace GameComponents.Vehicles
 
                 if (this.IsDestroyed)
                 {
-                    this.StopEngine();
+                    this.Engine.TakeDamage(1f);
 
                     this.FireDestroyed();
                 }
                 else if (this.IsHeavyDamaged)
                 {
+                    this.Engine.TakeDamage(0.5f);
+
                     this.FireHeavyDamaged();
                 }
                 else if (this.IsDamaged)
                 {
+                    this.Engine.TakeDamage(0.05f);
+
                     this.FireDamaged();
                 }
                 else if (this.IsSlightlyDamaged)
                 {
+                    this.Engine.TakeDamage(0.005f);
+
                     this.FireSlightlyDamaged();
                 }
             }
@@ -322,23 +328,26 @@ namespace GameComponents.Vehicles
         /// </summary>
         public void Fire()
         {
-            //Obtener el arma actual
-            if (this.m_CurrentWeapon != null)
+            if (!this.IsDestroyed)
             {
-                // Calcular la transformación global compuesta por la transformación adicional, la transformación del bone y la transformación del modelo
-                Matrix transform = this.m_CurrentWeapon.GetModelMatrix(this.m_AnimationController, this.CurrentTransform);
+                //Obtener el arma actual
+                if (this.m_CurrentWeapon != null)
+                {
+                    // Calcular la transformación global compuesta por la transformación adicional, la transformación del bone y la transformación del modelo
+                    Matrix transform = this.m_CurrentWeapon.GetModelMatrix(this.m_AnimationController, this.CurrentTransform);
 
-                Vector3 direction = transform.Forward;
-                Vector3 position = transform.Translation + (direction);
+                    Vector3 direction = transform.Forward;
+                    Vector3 position = transform.Translation + (direction);
 
-                this.Fire(position, direction);
-            }
-            else
-            {
-                Vector3 direction = this.CurrentPlayerControlTransform.Forward;
-                Vector3 position = this.CurrentPlayerControlTransform.Translation + (direction * 3f);
+                    this.Fire(position, direction);
+                }
+                else
+                {
+                    Vector3 direction = this.CurrentPlayerControlTransform.Forward;
+                    Vector3 position = this.CurrentPlayerControlTransform.Translation + (direction * 3f);
 
-                this.Fire(position, direction);
+                    this.Fire(position, direction);
+                }
             }
         }
         /// <summary>
@@ -348,18 +357,21 @@ namespace GameComponents.Vehicles
         /// <param name="direction">Dirección</param>
         public void Fire(Vector3 position, Vector3 direction)
         {
-            if (this.m_CurrentWeapon != null)
+            if (!this.IsDestroyed)
             {
-                this.PhysicsController.Fire(
-                    this.m_CurrentWeapon.Mass,
-                    this.m_CurrentWeapon.Range,
-                    this.m_CurrentWeapon.Damage,
-                    this.m_CurrentWeapon.Penetration,
-                    position,
-                    Vector3.Normalize(direction) * this.m_CurrentWeapon.Velocity,
-                    this.m_CurrentWeapon.AppliedGravity,
-                    this.m_CurrentWeapon.Radius,
-                    this.m_CurrentWeapon.GenerateExplosion);
+                if (this.m_CurrentWeapon != null)
+                {
+                    this.PhysicsController.Fire(
+                        this.m_CurrentWeapon.Mass,
+                        this.m_CurrentWeapon.Range,
+                        this.m_CurrentWeapon.Damage,
+                        this.m_CurrentWeapon.Penetration,
+                        position,
+                        Vector3.Normalize(direction) * this.m_CurrentWeapon.Velocity,
+                        this.m_CurrentWeapon.AppliedGravity,
+                        this.m_CurrentWeapon.Radius,
+                        this.m_CurrentWeapon.GenerateExplosion);
+                }
             }
         }
     }

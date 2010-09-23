@@ -47,6 +47,10 @@ namespace GameComponents.Vehicles
         bool IsStatic { get; }
 
         /// <summary>
+        /// Cambiar de sentido
+        /// </summary>
+        void ChangeDirection();
+        /// <summary>
         /// Acelerar
         /// </summary>
         void Accelerate(GameTime gameTime);
@@ -55,20 +59,6 @@ namespace GameComponents.Vehicles
         /// </summary>
         void Brake(GameTime gameTime);
         /// <summary>
-        /// Acelerar un cantidad determinada
-        /// </summary>
-        /// <param name="amount">Cantidad</param>
-        void Accelerate(GameTime gameTime, float amount);
-        /// <summary>
-        /// Frenar una cantidad determinada
-        /// </summary>
-        /// <param name="amount">Cantidad</param>
-        void Brake(GameTime gameTime, float amount);
-        /// <summary>
-        /// Cambiar de sentido
-        /// </summary>
-        void ChangeDirection();
-        /// <summary>
         /// Girar a la izquierda
         /// </summary>
         void TurnLeft(GameTime gameTime);
@@ -76,15 +66,5 @@ namespace GameComponents.Vehicles
         /// Girar a la derecha
         /// </summary>
         void TurnRight(GameTime gameTime);
-        /// <summary>
-        /// Girar a la izquierda un ángulo determinado
-        /// </summary>
-        /// <param name="angle">Angulo</param>
-        void TurnLeft(GameTime gameTime, float angle);
-        /// <summary>
-        /// Girar a la derecha un ángulo determinado
-        /// </summary>
-        /// <param name="angle">Angulo</param>
-        void TurnRight(GameTime gameTime, float angle);
     }
 }

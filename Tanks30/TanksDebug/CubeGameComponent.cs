@@ -82,7 +82,7 @@ namespace TanksDebug
                 VertexDeclaration = new VertexDeclaration(this.GraphicsDevice, VertexPositionNormalTexture.VertexElements),
                 Texture = this.Game.Content.Load<Texture2D>(@"Content/crate"),
             };
-            
+
             this.m_BasicEffect = new BasicEffect(this.GraphicsDevice, null);
             this.m_BasicEffect.EnableDefaultLighting();
 
@@ -119,8 +119,8 @@ namespace TanksDebug
 
 #if DEBUG
             // Dibujar el AABB
-            GameComponents.Debug.DebugDrawer.DrawDebugAABB(this.GraphicsDevice, this.GetAABB());
-            
+            GameComponents.Debug.DebugDrawer.DrawDebugAABB(this.GraphicsDevice, this.AABB);
+
             // Dibujar el objeto físico
             GameComponents.Debug.DebugDrawer.DrawDebugPhysicObject(this.GraphicsDevice, this as IPhysicObject);
 #endif
@@ -135,24 +135,33 @@ namespace TanksDebug
             this.m_Box.SetInitialState(position, orientation);
         }
 
-        public Vector3 GetPosition()
+        public Vector3 Position
         {
-            return this.m_Box.Position;
+            get
+            {
+                return this.m_Box.Position;
+            }
         }
-        public Quaternion GetOrientation()
+        public Quaternion Orientation
         {
-            return this.m_Box.Orientation;
+            get
+            {
+                return this.m_Box.Orientation;
+            }
         }
-        public CollisionPrimitive GetPrimitive()
+        public CollisionPrimitive Primitive
         {
-            return this.m_Box;
+            get
+            {
+                return this.m_Box;
+            }
         }
         public CollisionPrimitive GetContactedPrimitive(IPhysicObject physicObject)
         {
             if (physicObject != null)
             {
-                BoundingSphere sph = physicObject.GetSPH();
-                BoundingSphere thisSph = this.GetSPH();
+                BoundingSphere sph = physicObject.SPH;
+                BoundingSphere thisSph = this.SPH;
 
                 if (sph.Contains(thisSph) != ContainmentType.Disjoint)
                 {
@@ -162,17 +171,26 @@ namespace TanksDebug
 
             return null;
         }
-        public BoundingBox GetAABB()
+        public BoundingBox AABB
         {
-            return this.m_Box.AABB;
+            get
+            {
+                return this.m_Box.AABB;
+            }
         }
-        public BoundingSphere GetSPH()
+        public BoundingSphere SPH
         {
-            return this.m_Box.SPH;
+            get
+            {
+                return this.m_Box.SPH;
+            }
         }
-        public bool IsActive()
+        public bool IsActive
         {
-            return this.m_Box.IsAwake;
+            get
+            {
+                return this.m_Box.IsAwake;
+            }
         }
         public void Integrate(float time)
         {

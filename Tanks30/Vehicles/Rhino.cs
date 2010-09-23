@@ -16,37 +16,38 @@ namespace Vehicles
     {
         #region Incialización del control de animación
 
-        private AnimationAxis m_DRIVER_OUT; string _DRIVER_OUT = "DriverOut";
-        private AnimationAxis m_DRIVER_OUT_BASE; string _DRIVER_OUT_BASE = "DriverOutBase";
-        private AnimationAxis m_BOLTER; string _BOLTER = "Bolter";
-        private Animation m_BOLTER_BASE; string _BOLTER_BASE = "BolterBase";
-        private AnimationAxis m_BOLTER_HATCH; string _BOLTER_HATCH = "BolterHatch";
-        private AnimationAxis m_DRIVER_HATCH; string _DRIVER_HATCH = "DriverHatch";
-        private AnimationAxis m_RIGHT_HATCH; string _RIGHT_HATCH = "RightHatch";
-        private AnimationAxis m_LEFT_HATCH; string _LEFT_HATCH = "LeftHatch";
-        private AnimationAxis m_RIGHT_DOOR; string _RIGHT_DOOR = "RightDoor";
-        private AnimationAxis m_LEFT_DOOR; string _LEFT_DOOR = "LeftDoor";
-        private AnimationAxis m_BACK_DOOR; string _BACK_DOOR = "BackDoor";
+        private AnimationAxis m_DRIVER_OUT; private string _DRIVER_OUT = "DriverOut";
+        private AnimationAxis m_DRIVER_OUT_BASE; private string _DRIVER_OUT_BASE = "DriverOutBase";
+        private AnimationAxis m_BOLTER; private string _BOLTER = "Bolter";
+        private Animation m_BOLTER_BASE; private string _BOLTER_BASE = "BolterBase";
+        private AnimationAxis m_BOLTER_HATCH; private string _BOLTER_HATCH = "BolterHatch";
+        private AnimationAxis m_DRIVER_HATCH; private string _DRIVER_HATCH = "DriverHatch";
+        private AnimationAxis m_RIGHT_HATCH; private string _RIGHT_HATCH = "RightHatch";
+        private AnimationAxis m_LEFT_HATCH; private string _LEFT_HATCH = "LeftHatch";
+        private AnimationAxis m_RIGHT_DOOR; private string _RIGHT_DOOR = "RightDoor";
+        private AnimationAxis m_LEFT_DOOR; private string _LEFT_DOOR = "LeftDoor";
+        private AnimationAxis m_BACK_DOOR; private string _BACK_DOOR = "BackDoor";
 
         #endregion
 
         #region Posiciones del jugador
 
-        private PlayerPosition m_DRIVER_POSITION_IN; string _DRIVER_POSITION_IN = "DriverIn";
-        private PlayerPosition m_DRIVER_POSITION_OUT; string _DRIVER_POSITION_OUT = "DriverOut";
-        private PlayerPosition m_GUNNER_POSITION; string _GUNNER_POSITION = "Gunner";
-        private PlayerPosition m_GUNNER_COVERED_POSITION; string _GUNNER_COVERED_POSITION = "CoveredGunner";
+        private PlayerPosition m_DRIVER_POSITION_IN; private string _DRIVER_POSITION_IN = "DriverIn";
+        private PlayerPosition m_DRIVER_POSITION_OUT; private string _DRIVER_POSITION_OUT = "DriverOut";
+        private PlayerPosition m_GUNNER_POSITION; private string _GUNNER_POSITION = "Gunner";
+        private PlayerPosition m_GUNNER_COVERED_POSITION; private string _GUNNER_COVERED_POSITION = "CoveredGunner";
 
         #endregion
 
         #region Armas
 
-        private Weapon m_AssaultBolter = null;
+        private Weapon m_AssaultBolter = null; private string _AssaultBolter = "AssaultBolter";
 
         #endregion
 
         #region Teclas
 
+        private Keys m_StartEngines = Keys.O;
         private Keys m_MoveForwardKey = Keys.W;
         private Keys m_MoveBackwardKey = Keys.S;
         private Keys m_RotateLeftTankKey = Keys.A;
@@ -119,7 +120,7 @@ namespace Vehicles
 
             #region Armamento
 
-            this.m_AssaultBolter = this.GetWeapon("AssaultBolter");
+            this.m_AssaultBolter = this.GetWeapon(_AssaultBolter);
 
             #endregion
 
@@ -139,6 +140,22 @@ namespace Vehicles
                     this.m_CurrentPlayerControl == this.m_DRIVER_POSITION_OUT)
                 {
                     bool driving = false;
+
+                    #region Motor
+
+                    if (InputHelper.KeyUpEvent(m_StartEngines))
+                    {
+                        if (!this.IsEngineStarted)
+                        {
+                            this.StartEngine();
+                        }
+                        else
+                        {
+                            this.StopEngine();
+                        }
+                    }
+
+                    #endregion
 
                     #region Moving Tank
 

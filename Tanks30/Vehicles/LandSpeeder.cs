@@ -14,44 +14,46 @@ namespace Vehicles
     {
         #region Incialización del control de animación
 
-        private AnimationAxis m_PILOT_HEAD; string _PILOT_HEAD = "PilotHead";
-        private AnimationAxis m_PILOT_NECK; string _PILOT_NECK = "PilotNeck";
-        private AnimationAxis m_FUSION_CANNON; string _FUSION_CANNON = "FusionCannon";
-        private AnimationAxis m_FUSION_CANNON_BASE; string _FUSION_CANNON_BASE = "FusionCannonBase";
+        private AnimationAxis m_PILOT_HEAD; private string _PILOT_HEAD = "PilotHead";
+        private AnimationAxis m_PILOT_NECK; private string _PILOT_NECK = "PilotNeck";
+        private AnimationAxis m_FUSION_CANNON; private string _FUSION_CANNON = "FusionCannon";
+        private AnimationAxis m_FUSION_CANNON_BASE; private string _FUSION_CANNON_BASE = "FusionCannonBase";
 
         #endregion
 
         #region Posiciones del jugador
 
-        private PlayerPosition m_PILOT; string _PILOT = "Pilot";
-        private PlayerPosition m_GUNNER; string _GUNNER = "Gunner";
+        private PlayerPosition m_PILOT; private string _PILOT = "Pilot";
+        private PlayerPosition m_GUNNER; private string _GUNNER = "Gunner";
 
         #endregion
 
         #region Armas
 
-        private Weapon m_FussionCannon = null; string _FussionCannon = "FusionCannon";
+        private Weapon m_FussionCannon = null; private string _FussionCannon = "FusionCannon";
 
         #endregion
 
         #region Emisores de partículas
 
-        private ParticleEmitter m_LeftEngine = null; string _LeftEngine = "LeftEngine";
-        private ParticleEmitter m_RightEngine = null; string _RightEngine = "RightEngine";
-        private ParticleEmitter m_LeftSmokeEmitter = null; string _LeftSmokeEmitter = "LeftSmokeEmitter";
-        private ParticleEmitter m_RightSmokeEmitter = null; string _RightSmokeEmitter = "RightSmokeEmitter";
+        private ParticleEmitter m_LeftEngine = null; private string _LeftEngine = "LeftEngine";
+        private ParticleEmitter m_RightEngine = null; private string _RightEngine = "RightEngine";
+        private ParticleEmitter m_LeftSmokeEmitter = null; private string _LeftSmokeEmitter = "LeftSmokeEmitter";
+        private ParticleEmitter m_RightSmokeEmitter = null; private string _RightSmokeEmitter = "RightSmokeEmitter";
 
         #endregion
 
         #region Teclas
 
-        Keys m_StartEngines = Keys.O;
+        private Keys m_StartEngines = Keys.O;
         private Keys m_MoveForwardKey = Keys.W;
         private Keys m_MoveBackwardKey = Keys.S;
-        private Keys m_MoveUpKey = Keys.U;
-        private Keys m_MoveDownKey = Keys.I;
-        private Keys m_RotateLeftTankKey = Keys.A;
-        private Keys m_RotateRightTankKey = Keys.D;
+        private Keys m_MoveUpKey = Keys.Q;
+        private Keys m_MoveDownKey = Keys.E;
+        private Keys m_RotateLeftKey = Keys.A;
+        private Keys m_RotateRightKey = Keys.D;
+        private Keys m_RotateUpKey = Keys.U;
+        private Keys m_RotateDownKey = Keys.I;
         private Keys m_ChangeDirectionKey = Keys.R;
         private Keys m_AutoPilotKey = Keys.P;
 
@@ -126,7 +128,7 @@ namespace Vehicles
 
                     if (InputHelper.KeyUpEvent(m_StartEngines))
                     {
-                        if (!this.Engine.Active)
+                        if (!this.IsEngineStarted)
                         {
                             this.StartEngine();
                         }
@@ -177,30 +179,42 @@ namespace Vehicles
                     {
                         driving = true;
 
-                        this.GoUp(gameTime);
+                        this.Elevate(gameTime);
                     }
                     if (Keyboard.GetState().IsKeyDown(m_MoveDownKey))
                     {
                         driving = true;
 
-                        this.GoDown(gameTime);
+                        this.Descend(gameTime);
                     }
 
                     #endregion
 
                     #region Rotating
 
-                    if (Keyboard.GetState().IsKeyDown(m_RotateLeftTankKey))
+                    if (Keyboard.GetState().IsKeyDown(m_RotateLeftKey))
                     {
                         driving = true;
 
                         this.TurnLeft(gameTime);
                     }
-                    if (Keyboard.GetState().IsKeyDown(m_RotateRightTankKey))
+                    if (Keyboard.GetState().IsKeyDown(m_RotateRightKey))
                     {
                         driving = true;
 
                         this.TurnRight(gameTime);
+                    }
+                    if (Keyboard.GetState().IsKeyDown(m_RotateUpKey))
+                    {
+                        driving = true;
+
+                        this.TurnUp(gameTime);
+                    }
+                    if (Keyboard.GetState().IsKeyDown(m_RotateDownKey))
+                    {
+                        driving = true;
+
+                        this.TurnDown(gameTime);
                     }
 
                     #endregion

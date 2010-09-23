@@ -48,7 +48,7 @@ namespace GameComponents.Particles
                 {
                     if (generator.Emitter != null)
                     {
-                        this.AddParticle(generator.ParticleType, generator.Emitter.GetPosition(), Vector3.Up);
+                        this.AddParticle(generator.ParticleType, generator.Emitter.Position, Vector3.Up);
                     }
 
                     generator.Duration -= elapsed;

@@ -13,25 +13,34 @@ namespace GameComponents.Scenery
         /// Obtiene la posición
         /// </summary>
         /// <returns>Devuelve la posición</returns>
-        public Vector3 GetPosition()
+        public Vector3 Position
         {
-            return Vector3.Zero;
+            get
+            {
+                return Vector3.Zero;
+            }
         }
         /// <summary>
         /// Obtiene la orientación
         /// </summary>
         /// <returns>Devuelve la orientación</returns>
-        public Quaternion GetOrientation()
+        public Quaternion Orientation
         {
-            return Quaternion.Identity;
+            get
+            {
+                return Quaternion.Identity;
+            }
         }
         /// <summary>
         /// Obtiene la primitiva de colisión del terreno
         /// </summary>
         /// <returns>Siempre devuelve null</returns>
-        public CollisionPrimitive GetPrimitive()
+        public CollisionPrimitive Primitive
         {
-            return null;
+            get
+            {
+                return null;
+            }
         }
         /// <summary>
         /// Obtiene la primitiva de colisión del objeto actual que potencialmente puede colisionar con el objeto especificado
@@ -57,68 +66,35 @@ namespace GameComponents.Scenery
         /// Obtiene la caja alineada con los ejes que rodea a todo el terreno
         /// </summary>
         /// <returns>Devuelve la caja alineada con los ejes que rodea a todo el terreno</returns>
-        public BoundingBox GetAABB()
+        public BoundingBox AABB
         {
-            return this.Root.AABB;
+            get
+            {
+                return this.Root.AABB;
+            }
         }
         /// <summary>
         /// Obtiene la esfera que rodea a todo el terreno
         /// </summary>
         /// <returns>Devuelve la esfera que rodea a todo el terreno</returns>
-        public BoundingSphere GetSPH()
+        public BoundingSphere SPH
         {
-            return this.Root.SPH;
+            get
+            {
+                return this.Root.SPH;
+            }
         }
         /// <summary>
         /// Devuelve si el terreno está activo
         /// </summary>
         /// <returns>El terreno nunca está activo. Siempre devuelve falso</returns>
-        public bool IsActive()
+        public bool IsActive
         {
-            return false;
-        }
-        /// <summary>
-        /// Obtiene la lista de triángulos con los que potencialmente puede haber colisión
-        /// </summary>
-        /// <param name="physicObject">Objeto físico</param>
-        /// <returns>Devuelve la lista de triángulos que pueden colisionar con el objeto</returns>
-        private Triangle[] GetIntersected(IPhysicObject physicObject)
-        {
-            // Obtener la primitiva de colisión del objeto
-            if (physicObject != null)
+            get
             {
-                // Obtener la caja circundante en coordenadas del objeto
-                BoundingBox aabb = physicObject.GetAABB();
-
-                // Obtener los nodos en los que se encentra el AABB del objeto
-                SceneryTriangleNode[] nodes = this.GetNodes(aabb);
-                if (nodes != null && nodes.Length > 0)
-                {
-                    // Obtener la esfera circundate en coordenadas del objeto
-                    BoundingSphere shp = physicObject.GetSPH();
-
-                    List<Triangle> triangleList = new List<Triangle>();
-
-                    foreach (SceneryTriangleNode node in nodes)
-                    {
-                        // Obtener la lista de triángulos que potencial pueden intersectar con la SPH del objeto
-                        Triangle[] triangles = node.GetIntersectedTriangles(shp);
-                        if (triangles != null && triangles.Length > 0)
-                        {
-                            triangleList.AddRange(triangles);
-                        }
-                    }
-
-                    if (triangleList.Count > 0)
-                    {
-                        return triangleList.ToArray();
-                    }
-                }
+                return false;
             }
-
-            return null;
         }
-
         /// <summary>
         /// Actualiza las variables físicas del escenario
         /// </summary>
@@ -140,7 +116,7 @@ namespace GameComponents.Scenery
         /// Ocurre cuando un objeto se desactiva
         /// </summary>
         public event ObjectStateHandler Deactivated;
-        
+
         /// <summary>
         /// Disparador del evento de escenario contactado
         /// </summary>
@@ -171,6 +147,48 @@ namespace GameComponents.Scenery
             {
                 this.Deactivated(this);
             }
+        }
+
+        /// <summary>
+        /// Obtiene la lista de triángulos con los que potencialmente puede haber colisión
+        /// </summary>
+        /// <param name="physicObject">Objeto físico</param>
+        /// <returns>Devuelve la lista de triángulos que pueden colisionar con el objeto</returns>
+        private Triangle[] GetIntersected(IPhysicObject physicObject)
+        {
+            // Obtener la primitiva de colisión del objeto
+            if (physicObject != null)
+            {
+                // Obtener la caja circundante en coordenadas del objeto
+                BoundingBox aabb = physicObject.AABB;
+
+                // Obtener los nodos en los que se encentra el AABB del objeto
+                SceneryTriangleNode[] nodes = this.GetNodes(aabb);
+                if (nodes != null && nodes.Length > 0)
+                {
+                    // Obtener la esfera circundate en coordenadas del objeto
+                    BoundingSphere shp = physicObject.SPH;
+
+                    List<Triangle> triangleList = new List<Triangle>();
+
+                    foreach (SceneryTriangleNode node in nodes)
+                    {
+                        // Obtener la lista de triángulos que potencial pueden intersectar con la SPH del objeto
+                        Triangle[] triangles = node.GetIntersectedTriangles(shp);
+                        if (triangles != null && triangles.Length > 0)
+                        {
+                            triangleList.AddRange(triangles);
+                        }
+                    }
+
+                    if (triangleList.Count > 0)
+                    {
+                        return triangleList.ToArray();
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

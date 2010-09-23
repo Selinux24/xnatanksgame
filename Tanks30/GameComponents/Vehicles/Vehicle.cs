@@ -16,7 +16,7 @@ namespace GameComponents.Vehicles
     using GameComponents.Particles;
 
     /// <summary>
-    /// Componente tanque
+    /// Componente vehículo
     /// </summary>
     public partial class Vehicle : DrawableGameComponent
     {
@@ -84,18 +84,18 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                if (this.m_OBB != null)
+                if (this.m_CollisionPrimitive != null)
                 {
-                    return this.m_OBB.Position;
+                    return this.m_CollisionPrimitive.Position;
                 }
 
                 return Vector3.Zero;
             }
             set
             {
-                if (this.m_OBB != null)
+                if (this.m_CollisionPrimitive != null)
                 {
-                    this.m_OBB.SetPosition(value);
+                    this.m_CollisionPrimitive.SetPosition(value);
                 }
             }
         }
@@ -106,18 +106,18 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                if (this.m_OBB != null)
+                if (this.m_CollisionPrimitive != null)
                 {
-                    return this.m_OBB.Orientation;
+                    return this.m_CollisionPrimitive.Orientation;
                 }
 
                 return Quaternion.Identity;
             }
             set
             {
-                if (this.m_OBB != null)
+                if (this.m_CollisionPrimitive != null)
                 {
-                    this.m_OBB.SetOrientation(value);
+                    this.m_CollisionPrimitive.SetOrientation(value);
                 }
 
                 this.RotationHasChanged = true;
@@ -156,7 +156,7 @@ namespace GameComponents.Vehicles
         protected bool ScaleHasChanged = false;
 
         /// <summary>
-        /// Indica si el tanque tiene el foco
+        /// Indica si el vehículo tiene el foco
         /// </summary>
         public bool HasFocus = false;
 
@@ -167,9 +167,9 @@ namespace GameComponents.Vehicles
         {
             get
             {
-                if (this.m_OBB != null)
+                if (this.m_CollisionPrimitive != null)
                 {
-                    return this.m_Offset * this.m_OBB.Transform;
+                    return this.m_Offset * this.m_CollisionPrimitive.Transform;
                 }
 
                 return this.m_Offset * Matrix.Identity;
@@ -231,20 +231,24 @@ namespace GameComponents.Vehicles
                 g_ModelDictionary.Add(this.m_ModelName, geometry);
             }
 
-            this.m_OBB = new CollisionBox(this.TriangleInfo.AABB, 1000f);
-            this.m_Offset = Matrix.CreateTranslation(new Vector3(0f, -this.m_OBB.HalfSize.Y, 0f));
+            CollisionBox box = new CollisionBox(this.TriangleInfo.AABB, 1000f);
+
+            this.m_CollisionPrimitive = box;
+            this.m_Offset = Matrix.CreateTranslation(new Vector3(0f, -box.HalfSize.Y, 0f));
 
             // Integridad
             this.BaseHull = this.Hull = componentInfo.Hull;
             // Blindaje
             this.BaseArmor = this.Armor = componentInfo.Armor;
 
+            // Altura máxima de vuelo
             this.Engine.InitialMaxFlightHeight = componentInfo.MaxFlightHeight;
+            // Altura mínima de vuelo
             this.Engine.InitialMinFlightHeight = componentInfo.MinFlightHeight;
 
-            // Velocidad máxima que puede alcanzar el tanque hacia delante
+            // Velocidad máxima que puede alcanzar el vehículo hacia delante
             this.Engine.MaxForwardVelocity = componentInfo.MaxForwardVelocity;
-            // Velocidad máxima que puede alcanzar el tanque marcha atrás
+            // Velocidad máxima que puede alcanzar el vehículo marcha atrás
             this.Engine.MaxBackwardVelocity = componentInfo.MaxBackwardVelocity;
             // Modificador de aceleración
             this.Engine.AccelerationModifier = componentInfo.AccelerationModifier;
@@ -291,11 +295,20 @@ namespace GameComponents.Vehicles
                 }
             }
 
+            //Motor
+            this.Engine.UpdateVehicle(this);
+            if (this.Engine.Moving)
+            {
+                this.Primitive.Activate();
+
+                this.FireAccelerating();
+            }
+
             // Controlador de animación
             this.m_AnimationController.Update(gameTime);
 
             // Establecer la visibilidad del vehículo
-            BoundingSphere sph = this.GetSPH();
+            BoundingSphere sph = this.SPH;
             this.Visible = sph.Intersects(GlobalMatrices.gLODHighFrustum);
 
             this.PositionHasChanged = false;

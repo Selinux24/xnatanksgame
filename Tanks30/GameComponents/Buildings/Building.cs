@@ -72,18 +72,18 @@ namespace GameComponents.Buildings
         {
             get
             {
-                if (this.m_OBB != null)
+                if (this.m_CollisionPrimitive != null)
                 {
-                    return this.m_OBB.Position;
+                    return this.m_CollisionPrimitive.Position;
                 }
 
                 return Vector3.Zero;
             }
             set
             {
-                if (this.m_OBB != null)
+                if (this.m_CollisionPrimitive != null)
                 {
-                    this.m_OBB.SetPosition(value);
+                    this.m_CollisionPrimitive.SetPosition(value);
                 }
             }
         }
@@ -94,18 +94,18 @@ namespace GameComponents.Buildings
         {
             get
             {
-                if (this.m_OBB != null)
+                if (this.m_CollisionPrimitive != null)
                 {
-                    return this.m_OBB.Orientation;
+                    return this.m_CollisionPrimitive.Orientation;
                 }
 
                 return Quaternion.Identity;
             }
             set
             {
-                if (this.m_OBB != null)
+                if (this.m_CollisionPrimitive != null)
                 {
-                    this.m_OBB.SetOrientation(value);
+                    this.m_CollisionPrimitive.SetOrientation(value);
                 }
             }
         }
@@ -136,9 +136,9 @@ namespace GameComponents.Buildings
         {
             get
             {
-                if (this.m_OBB != null)
+                if (this.m_CollisionPrimitive != null)
                 {
-                    return this.m_Offset * this.m_OBB.Transform;
+                    return this.m_Offset * this.m_CollisionPrimitive.Transform;
                 }
 
                 return this.m_Offset * Matrix.Identity;
@@ -182,8 +182,10 @@ namespace GameComponents.Buildings
                 g_ModelDictionary.Add(this.m_ModelName, geometry);
             }
 
-            this.m_OBB = new CollisionBox(this.TriangleInfo.AABB, 1000000f);
-            this.m_Offset = Matrix.CreateTranslation(new Vector3(0f, -this.m_OBB.HalfSize.Y, 0f));
+            CollisionBox obb = new CollisionBox(this.TriangleInfo.AABB, 1000000f);
+
+            this.m_CollisionPrimitive = obb;
+            this.m_Offset = Matrix.CreateTranslation(new Vector3(0f, -obb.HalfSize.Y, 0f));
          
             // Controles de animación
             this.m_AnimationController.AddRange(Animation.CreateAnimationList(this.Model, componentInfo.AnimationControlers));
@@ -200,7 +202,7 @@ namespace GameComponents.Buildings
             base.Update(gameTime);
 
             // Establecer la visibilidad
-            BoundingSphere sph = this.GetSPH();
+            BoundingSphere sph = this.SPH;
             this.Visible = sph.Intersects(GlobalMatrices.gLODHighFrustum);
         }
         /// <summary>

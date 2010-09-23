@@ -154,6 +154,7 @@
     <Compile Include="Scenery\SceneryGameComponent.cs" />
     <Compile Include="Scenery\SceneryInfoGameComponent.cs" />
     <Compile Include="Scenery\SkyBoxGameComponent.cs" />
+    <Compile Include="Sound\SoundComponent.cs" />
     <Compile Include="Text\TextDrawerComponent.cs" />
     <Compile Include="Animation\Animation.cs" />
     <Compile Include="Animation\AnimationAxis.cs" />

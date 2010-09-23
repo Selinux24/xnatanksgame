@@ -22,18 +22,18 @@ namespace Physics
         /// Obtiene la posición del objeto
         /// </summary>
         /// <returns>Devuelve la posición del objeto</returns>
-        Vector3 GetPosition();
+        Vector3 Position { get; }
         /// <summary>
         /// Obtiene el Quaternion del orientación del objeto
         /// </summary>
         /// <returns>Devuelve el Quaternion del orientación del objeto</returns>
-        Quaternion GetOrientation();
+        Quaternion Orientation { get; }
 
         /// <summary>
         /// Obtiene la primitiva de colisión sin comprobaciones
         /// </summary>
         /// <returns>Devuelve la primitiva de colisión</returns>
-        CollisionPrimitive GetPrimitive();
+        CollisionPrimitive Primitive { get; }
         /// <summary>
         /// Obtiene la primitiva del objeto que contacta al objeto físico especificado
         /// </summary>
@@ -44,17 +44,17 @@ namespace Physics
         /// Obtiene la caja alineada con los ejes que circunda al objeto
         /// </summary>
         /// <returns>Devuelve una caja alineada con los ejes</returns>
-        BoundingBox GetAABB();
+        BoundingBox AABB { get; }
         /// <summary>
         /// Obtiene una esfera que circunda al objeto
         /// </summary>
         /// <returns>Devuelve una esfera</returns>
-        BoundingSphere GetSPH();
+        BoundingSphere SPH { get; }
         /// <summary>
         /// Obtiene si el objeto está activo
         /// </summary>
         /// <returns>Devuelve verdadero si el objeto está activo</returns>
-        bool IsActive();
+        bool IsActive { get; }
 
         /// <summary>
         /// Integrar el objeto en el tiempo

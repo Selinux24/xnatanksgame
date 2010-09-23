@@ -84,7 +84,7 @@ namespace GameComponents.Weapons
 
             foreach (AmmoRound round in Rounds)
             {
-                if (round.IsActive())
+                if (round.IsActive)
                 {
                     float radius = round.Radius;
 

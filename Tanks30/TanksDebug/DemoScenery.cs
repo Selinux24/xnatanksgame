@@ -82,7 +82,7 @@ namespace TanksDebug
         /// <summary>
         /// Obtiene o establece la orientación
         /// </summary>
-        public Quaternion Rotation
+        public Quaternion Orientation
         {
             get
             {
@@ -297,28 +297,15 @@ namespace TanksDebug
         }
 
         /// <summary>
-        /// Obtiene la posición
-        /// </summary>
-        /// <returns>Devuelve la posición</returns>
-        public Vector3 GetPosition()
-        {
-            return this.m_Position;
-        }
-        /// <summary>
-        /// Obtiene la orientación
-        /// </summary>
-        /// <returns>Devuelve la orientación</returns>
-        public Quaternion GetOrientation()
-        {
-            return this.m_Rotation;
-        }
-        /// <summary>
         /// Obtiene la primitiva de colisión
         /// </summary>
         /// <returns>Devuelve la primitiva de colisión del cuerpo</returns>
-        public CollisionPrimitive GetPrimitive()
+        public CollisionPrimitive Primitive
         {
-            return this.m_CollisionPrimitive;
+            get
+            {
+                return this.m_CollisionPrimitive;
+            }
         }
         /// <summary>
         /// Obtiene la primitiva de colisión realizando el test de colisión con el cuerpo especificado
@@ -329,7 +316,7 @@ namespace TanksDebug
         {
             if (physicObject != null)
             {
-                BoundingSphere otherSPH = physicObject.GetSPH();
+                BoundingSphere otherSPH = physicObject.SPH;
 
                 List<Triangle> triangleList = new List<Triangle>();
 
@@ -353,25 +340,34 @@ namespace TanksDebug
         /// Obtiene el AABB circundante del cuerpo
         /// </summary>
         /// <returns>Devuelve el AABB circundante del cuerpo</returns>
-        public BoundingBox GetAABB()
+        public BoundingBox AABB
         {
-            return this.m_CollisionPrimitive.AABB;
+            get
+            {
+                return this.m_CollisionPrimitive.AABB;
+            }
         }
         /// <summary>
         /// Obtiene la esfera circundante del cuerpo
         /// </summary>
         /// <returns>Devuelve la esfera circundante del cuerpo</returns>
-        public BoundingSphere GetSPH()
+        public BoundingSphere SPH
         {
-            return this.m_CollisionPrimitive.SPH;
+            get
+            {
+                return this.m_CollisionPrimitive.SPH;
+            }
         }
         /// <summary>
         /// Indica si el cuerpo está activo
         /// </summary>
         /// <returns>Devuelve verdadero si el cuerpo está activo</returns>
-        public bool IsActive()
+        public bool IsActive
         {
-            return false;
+            get
+            {
+                return false;
+            }
         }
         /// <summary>
         /// Integra el cuerpo en el motor de físicas
@@ -381,7 +377,7 @@ namespace TanksDebug
         {
 
         }
-   
+
         /// <summary>
         /// Evento que se produce cuando un cuerpo hace contacto con el objeto actual
         /// </summary>
